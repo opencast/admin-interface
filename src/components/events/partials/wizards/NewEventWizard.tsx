@@ -35,7 +35,10 @@ const NewEventWizard = ({
 }) => {
 	const dispatch = useAppDispatch();
 
-	const uploadSourceOptions = useAppSelector(state => getSourceUploadOptions(state));
+	const uploadSourceOptions = useAppSelector(state => {
+	console.log(state)
+      return getSourceUploadOptions(state)
+	});
 	const assetUploadOptions = useAppSelector(state => getAssetUploadOptions(state));
 	const metadataFields = useAppSelector(state => getEventMetadata(state));
 	const extendedMetadata = useAppSelector(state => getExtendedEventMetadata(state));
@@ -267,7 +270,7 @@ const getInitialValues = (
 	user: UserInfoState
 ) => {
 	let initialValues = initialFormValuesNewEvents;
-
+	console.log(metadataFields)
 	// Transform metadata fields provided by backend (saved in redux)
 	initialValues = {...initialValues, ...getInitialMetadataFieldValues(
 		metadataFields
