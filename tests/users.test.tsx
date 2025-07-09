@@ -33,7 +33,7 @@ createServer([
   }
 ]);
 
-describe.only('username', () => {
+describe('username', () => {
 
 it('shows same name in table and header', async () => {
   renderWithStore(<Users />);

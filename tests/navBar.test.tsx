@@ -18,7 +18,7 @@ describe("NavBar", () => {
       uploadAssetOptions: [],
       isFetchingAssetUploadOptions: false,
       metadata: { title: "event", flavor: "someFlavor", fields: [] },
-      extendedMetadata:[],
+      extendedMetadata: [],
       total: 0,
   },
     };
