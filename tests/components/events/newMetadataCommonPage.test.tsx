@@ -2,7 +2,8 @@ import React from 'react';
 import {render, screen} from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 import { Formik } from "formik";
-import NewMetadataCommonPage from '../src/components/events/partials/ModalTabsAndPages/NewMetadataCommonPage';
+import NewMetadataCommonPage from '../../../src/components/events/partials/ModalTabsAndPages/NewMetadataCommonPage';
+
 
 const mockMetadata = {
     title: 'Example Catalog',

@@ -1,0 +1,47 @@
+# Test Utilities: Setup Guide for Each Test File
+
+
+1. `setupServer` – for mocking API calls using MSW
+2. `renderWithProviders` / `createTestStore` – for wrapping test components with a Redux store
+
+These utilities help ensure each test is **isolated**, **predictable**, and does **not depend on real APIs or a running app**.
+
+---
+
+## `setupServer.ts` – MSW API Mocking
+
+### Purpose
+
+In each test file that involves **API calls**, we use `setupServer` to:
+
+- Intercept real HTTP requests (e.g., `fetch`, `axios`)
+- Replace them with mocked responses
+- Simulate different backend states or failures
+
+This ensures that tests:
+- Run offline and faster
+- Don’t depend on real servers
+- Stay reliable even if the backend changes
+
+### Why Use in Each Test File?
+
+We define the mock **handlers per test file**, so that:
+- We only mock what we need for that test
+- We avoid accidental side effects between tests
+- Tests are more readable and maintainable
+
+
+
+### `createTestStore` – Creating a Redux Store for Tests
+
+#### What It Does
+`createTestStore` is a helper function that:
+
+- Uses your root reducer (or a test-specific reducer)
+- Initializes the store with optional `preloadedState`
+- Returns a fully functional Redux store instance
+
+#### Why It’s Useful
+- Creates **a clean store for each test**
+- Lets you test components with **initial state** if needed
+- Keeps tests **independent** from each other

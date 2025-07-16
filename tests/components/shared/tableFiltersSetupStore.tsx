@@ -4,10 +4,10 @@ import { Provider } from "react-redux";
 import { configureStore, EnhancedStore } from "@reduxjs/toolkit";
 import { RenderOptions } from "@testing-library/react";
 
-import tableFilterReducer from "../src/slices/tableFilterSlice";
-import tableFilterProfilesReducer from "../src/slices/tableFilterProfilesSlice"
+import tableFilterReducer from "../../../src/slices/tableFilterSlice";
+import tableFilterProfilesReducer from "../../../src/slices/tableFilterProfilesSlice"
 
-// Your root reducer combining actual reducers
+//root reducer combining actual reducers
 export const rootReducer = {
   tableFilters: tableFilterReducer,
   tableFilterProfiles: tableFilterProfilesReducer,

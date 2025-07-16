@@ -1,11 +1,11 @@
-import userReducer from '../src/slices/userSlice';
-import userInfoReducer from '../src/slices/userInfoSlice'; // your real userInfo reducer
+import userReducer from '../../src/slices/userSlice';
+import userInfoReducer from '../../src/slices/userInfoSlice'; // your real userInfo reducer
 
 import { Provider } from 'react-redux';
 import { render } from '@testing-library/react';
 import { BrowserRouter } from 'react-router';
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import {rootReducer} from "./tableSetupStore";
+import {rootReducer} from "./shared/tableSetupStore";
 
 const userRootReducer = combineReducers({
   users: (state = {}) => state,

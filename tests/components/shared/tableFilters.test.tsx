@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import renderWithProviders from './tableFiltersSetupStore';
-import TableFilters from '../src/components/shared/TableFilters';
+import TableFilters from '../../../src/components/shared/TableFilters';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const mockLoadResource = createAsyncThunk('resource/load', async () => Promise.resolve());
@@ -9,7 +9,7 @@ const mockLoadResourceIntoTable = () => (dispatch:any) => {}; // dummy thunk doe
 const mockResource = "testResource";
 
 describe('TableFilterText', () => {
-  test('dispatches editTextFilter action when input changes', async () => {
+  it('dispatches editTextFilter action when input changes', async () => {
     const user = userEvent.setup();
 
     // initial preloaded state with empty textFilter

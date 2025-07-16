@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import Table from "../src/components/shared/Table";
+import Table from "../../../src/components/shared/Table";
 import renderWithProviders, {store, rootReducer} from "./tableSetupStore";
 import { combineReducers } from "@reduxjs/toolkit";
 

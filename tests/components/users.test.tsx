@@ -1,6 +1,6 @@
 import {render, screen} from '@testing-library/react';
-import Users from '../src/components/users/Users';
-import {createServer} from './server';
+import Users from '../../src/components/users/Users';
+import {createServer} from '../server';
 import {renderWithStore} from './usersSetupStore';
 
 createServer([

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import userEvent from "@testing-library/user-event";
-import NavBar from "../src/components/NavBar";
+import NavBar from "../../src/components/NavBar";
 import renderWithStore from "./navBarSetupStore";
 
 describe("NavBar", () => {
