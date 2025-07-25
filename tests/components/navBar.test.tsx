@@ -3,6 +3,17 @@ import userEvent from "@testing-library/user-event";
 import NavBar from "../../src/components/NavBar";
 import renderWithStore from "./navBarSetupStore";
 
+vi.mock("../../src/components/shared/MainNav", () => ({
+  default: () => <div />,
+}));
+
+vi.mock("../../src/components/shared/NewResourceModal", () => {
+  return {
+    __esModule: true,
+    default: () => <div />,
+  };
+});
+
 describe("NavBar", () => {
   it("renders Add button and calls onShowModal when clicked", async () => {
     const onShowModal = vi.fn();
@@ -37,7 +48,7 @@ describe("NavBar", () => {
           isDisplay: true,
         }}
       />,
-      preloadedState
+      preloadedState,
     );
 
     const user = userEvent.setup();

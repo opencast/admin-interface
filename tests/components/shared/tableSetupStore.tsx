@@ -1,8 +1,8 @@
-import React, { ReactNode, ReactElement} from "react";
+import React, { ReactNode, ReactElement } from "react";
 import { render } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { configureStore, EnhancedStore } from "@reduxjs/toolkit";
-import { RenderOptions } from '@testing-library/react';
+import { RenderOptions } from "@testing-library/react";
 
 export const rootReducer = {
   table: () => ({
@@ -39,7 +39,7 @@ function renderWithProviders(
   {
     storeInstance = store,
     ...renderOptions
-  }: { storeInstance?: EnhancedStore } & RenderOptions = {}
+  }: { storeInstance?: EnhancedStore } & RenderOptions = {},
 ) {
   function Wrapper({ children }: { children: ReactNode }) {
   return <Provider store={storeInstance}>{children}</Provider>;

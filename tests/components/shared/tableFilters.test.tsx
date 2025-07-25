@@ -6,7 +6,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const mockLoadResource = createAsyncThunk('resource/load', async () => Promise.resolve());
 const mockLoadResourceIntoTable = () => (dispatch:any) => {}; // dummy thunk does nothing
-const mockResource = "testResource";
+const mockResource = "events";
 
 describe('TableFilterText', () => {
   it('dispatches editTextFilter action when input changes', async () => {
@@ -16,10 +16,10 @@ describe('TableFilterText', () => {
     const preloadedState = {
       tableFilters: {
         data: [],
-        stats: {},
-        textFilter: "",
-        selectedFilter: null,
-        secondFilter: null,
+        stats: [],
+        textFilter: [],
+        selectedFilter: "",
+        secondFilter: "",
         currentResource: mockResource,
       },
     tableFilterProfiles: {
@@ -43,6 +43,10 @@ describe('TableFilterText', () => {
     await user.type(input, 'hello');
 
     // Check Redux store textFilter value updated
-    expect(store.getState().tableFilters.textFilter).toBe('hello');
+    expect(store.getState().tableFilters.textFilter).toEqual(
+    expect.arrayContaining([
+    expect.objectContaining({ resource: mockResource, text: 'hello' }),
+  ])
+);
   });
 });

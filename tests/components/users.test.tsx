@@ -36,7 +36,7 @@ createServer([
 describe('username', () => {
 
 it('shows same name in table and header', async () => {
-  renderWithStore(<Users />);
+  renderWithStore(<Users />, {}, '/users/');
 
   const tableCell = await screen.findByText('Test User');
   const headerButton = await screen.findByRole('button', {

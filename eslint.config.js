@@ -9,6 +9,9 @@ export default [
     },
 
     {
+        env: {
+            "vitest-globals/env": true,
+        },
         rules: {
             // TODO: We want to turn these on eventually
             "indent": "off",

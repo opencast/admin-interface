@@ -3,7 +3,7 @@ import userInfoReducer from '../../src/slices/userInfoSlice'; // your real userI
 
 import { Provider } from 'react-redux';
 import { render } from '@testing-library/react';
-import { BrowserRouter } from 'react-router';
+import { MemoryRouter } from 'react-router';
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import {rootReducer} from "./shared/tableSetupStore";
 
@@ -68,12 +68,24 @@ const defaultPreloadedState = {
   },
   health: {},
   notifications: {notifications: []},
-  tableFilters: {data: []},
+  tableFilters: {
+    status: "uninitialized",
+    error: null,
+    statusStats: "uninitialized",
+    errorStats: null,
+    currentResource: "",
+    data: [],
+    filterProfiles: [],
+    textFilter: [],
+    selectedFilter: "",
+    secondFilter: "",
+    stats: [],
+},
   tableFilterProfiles: {profiles: []},
   table: rootReducer.table(),
 };
 
-export function renderWithStore(ui: React.ReactElement, preloadedState = {}) {
+export function renderWithStore(ui: React.ReactElement, preloadedState = {},  route = '/users/') {
   const testStore = configureStore({
     reducer: userRootReducer,
     preloadedState: {
@@ -84,7 +96,9 @@ export function renderWithStore(ui: React.ReactElement, preloadedState = {}) {
 
   return render(
     <Provider store={testStore}>
-      <BrowserRouter>{ui}</BrowserRouter>
+      <MemoryRouter initialEntries={[route]}>
+        {ui}
+      </MemoryRouter>
     </Provider>
   );
 }

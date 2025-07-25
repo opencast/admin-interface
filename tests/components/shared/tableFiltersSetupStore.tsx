@@ -5,9 +5,9 @@ import { configureStore, EnhancedStore } from "@reduxjs/toolkit";
 import { RenderOptions } from "@testing-library/react";
 
 import tableFilterReducer from "../../../src/slices/tableFilterSlice";
-import tableFilterProfilesReducer from "../../../src/slices/tableFilterProfilesSlice"
+import tableFilterProfilesReducer from "../../../src/slices/tableFilterProfilesSlice";
 
-//root reducer combining actual reducers
+// root reducer combining actual reducers
 export const rootReducer = {
   tableFilters: tableFilterReducer,
   tableFilterProfiles: tableFilterProfilesReducer,
@@ -31,7 +31,7 @@ function renderWithProviders(
   }: {
     storeInstance?: EnhancedStore;
     preloadedState?: any;
-  } & RenderOptions = {}
+  } & RenderOptions = {},
 ) {
 
   const store = storeInstance ?? createTestStore(preloadedState);
