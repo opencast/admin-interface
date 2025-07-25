@@ -103,7 +103,8 @@
 			"SELECTED_COLUMNS": "Valgte kolonner",
 			"FOOTER_TEXT": "Rækkefølge og udvælgelse gemmes automatisk. Tryk på \"{{resetTranslation}}\" for at gendanne standardvisningen.",
 			"ADD_COLUMN": "Add column",
-			"REMOVE_COLUMN": "Remove column"
+			"REMOVE_COLUMN": "Remove column",
+			"DRAG_HANDLE_USAGE_INSTRUCTIONS": "Press space bar to start a drag. When dragging you can use the arrow keys to move the item around and escape to cancel. Some screen readers may require you to be in focus mode or to use your pass through key"
 		}
 	},
 	"CONFIRMATIONS": {
@@ -894,11 +895,7 @@
 						"ADDITIONAL_ACTIONS": "Yderligere handlinger",
 						"ACTION": "Handlinger",
 						"NEW": "Nye politik",
-						"NON_USER_ROLES": "Roles and Groups authorized for the event",
-						"USER": "User",
-						"USERS": "Users who are authorized for the event",
-						"NEW_USER": "New user",
-						"SANITIZATION_NOTE": "User role sanitization is enabled in your Opencast, therefore user roles are displayed alongside other roles. This does not impact role functionality in any way."
+						"DETAILS": "Details"
 					},
 					"ROLES": {
 						"LABEL": "Select or create a role"
@@ -985,7 +982,7 @@
 					"ACTIONS": "Handlinger",
 					"DETAILS": "Oplysninger",
 					"DESCRIPTION": "Beskriveslse",
-					"MORE_INFO": "Mere information",
+					"MORE_INFO": "More Information",
 					"ID": "ID",
 					"TYPE": "Type",
 					"TITLE": "Titel",
@@ -1029,7 +1026,7 @@
 				},
 				"WORKFLOW_OPERATIONS": {
 					"TITLE": "Arbejdsgangshandlinger",
-					"DETAILS_LINK": "Handlinger",
+					"DETAILS_LINK": "Operations",
 					"TABLE_HEADERS": {
 						"TITLE": "Titel",
 						"STATUS": "Status",
@@ -1177,7 +1174,10 @@
 				"TOOLTIP": {
 					"SERIES": "Filtrér begivenheder til denne serie",
 					"DETAILS": "Åbn seriedetaljer",
-					"DELETE": "Slet serie"
+					"DELETE": "Slet serie",
+					"CREATION": "Filter for this creation date",
+					"ORGANIZER": "Filter for this organizer",
+					"CONTRIBUTORS": "Filter for this contributor"
 				}
 			},
 			"DETAILS": {
@@ -1208,10 +1208,7 @@
 						"ADDITIONAL_ACTIONS": "Yderligere handlinger",
 						"ACTION": "Handlinger",
 						"NEW": "Ny politik",
-						"NON_USER_ROLES": "Roles and Groups authorized for the series",
-						"USER": "User",
-						"USERS": "Users who are authorized for the series",
-						"NEW_USER": "New user",
+						"DETAILS": "Details",
 						"REPLACE_EVENT_ACLS": "Opdatér begivenhedsrettigheder",
 						"REPLACE_EVENT_ACLS_HINT": "Sikrer, at alle begivenhederne i denne serie har disse aktive rettighedeer",
 						"LOAD_MORE_LIMIT": "policies shown.",
@@ -1470,11 +1467,8 @@
 						"ADDITIONAL_ACTIONS": "Yderligere handlinger",
 						"ACTION": "Handlinger",
 						"NEW": "Ny politik",
-						"NON_USER_ROLES": "Roles and Groups authorized for the access policy",
-						"DESCRIPTION": "Vælg et præopsat sæt af politikker eller tilføj tilpassede politikker nedenfor",
-						"USER": "User",
-						"USERS": "Users who are authorized for the access policy",
-						"NEW_USER": "New user"
+						"DETAILS": "Details",
+						"DESCRIPTION": "Vælg et præopsat sæt af politikker eller tilføj tilpassede politikker nedenfor"
 					},
 					"ROLES": {
 						"LABEL": "Vælg en rolle",
@@ -1986,6 +1980,8 @@
 	"TABLE_EDIT": "Redigér",
 	"TABLE_NEXT": "Next page",
 	"TABLE_PREVIOUS": "Previous page",
+	"TABLE_CURRENT": "Current page {{pageNumber}}",
+	"TABLE_NUMBERED": "Go to page {{pageNumber}}",
 	"DASHBOARD": {
 		"RUNNING": "Kører",
 		"FINISHED": "Færdig",
@@ -1993,7 +1989,8 @@
 		"FAILED": "Mislykkedes",
 		"FINISHED_WITH_COMMENTS": "At-gøre",
 		"SCHEDULED": "Planlagt",
-		"RECORDING": "Optagelse"
+		"RECORDING": "Optagelse",
+		"BUTTON_TOOLTIP": "Apply filter {{filterName}} to the table"
 	},
 	"HOTKEYS": {
 		"CHEAT_SHEET": {

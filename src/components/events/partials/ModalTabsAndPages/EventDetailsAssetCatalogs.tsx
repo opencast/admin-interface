@@ -1,4 +1,3 @@
-import React from "react";
 import Notifications from "../../../shared/Notifications";
 import {
 	getAssetCatalogs,
@@ -27,7 +26,7 @@ const EventDetailsAssetCatalogs = ({
 
 	const openSubTab = (subTabName: AssetTabHierarchy, catalogId = "") => {
 		if (subTabName === "catalog-details") {
-			dispatch(fetchAssetCatalogDetails({eventId, catalogId})).then();
+			dispatch(fetchAssetCatalogDetails({ eventId, catalogId })).then();
 		}
 		dispatch(setModalAssetsTabHierarchy(subTabName));
 	};
@@ -41,7 +40,7 @@ const EventDetailsAssetCatalogs = ({
 				<header>
 					{
 						t(
-							"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.CAPTION"
+							"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.CAPTION",
 						) /* Catalogs */
 					}
 				</header>
@@ -55,21 +54,21 @@ const EventDetailsAssetCatalogs = ({
 								<th>
 									{
 										t(
-											"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.TYPE"
+											"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.TYPE",
 										) /* Type */
 									}
 								</th>
 								<th>
 									{
 										t(
-											"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.MIMETYPE"
+											"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.MIMETYPE",
 										) /* Mimetype */
 									}
 								</th>
 								<th>
 									{
 										t(
-											"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.TAGS"
+											"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.TAGS",
 										) /* Tags */
 									}
 								</th>
@@ -97,7 +96,7 @@ const EventDetailsAssetCatalogs = ({
 											>
 												{
 													t(
-														"EVENTS.EVENTS.DETAILS.ASSETS.DETAILS"
+														"EVENTS.EVENTS.DETAILS.ASSETS.DETAILS",
 													) /* Details */
 												}
 											</ButtonLikeAnchor>

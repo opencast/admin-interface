@@ -3,7 +3,8 @@ name: Crowdin » Upload keys
 on:
   push:
     branches:
-      - main
+      - develop
+      - r/*
 
 concurrency:
   group: crowdin-${{ github.ref }}

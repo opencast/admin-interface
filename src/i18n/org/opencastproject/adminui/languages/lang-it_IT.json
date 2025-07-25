@@ -3,9 +3,9 @@
 	"NAV_HOME": "Avvio",
 	"NAV_ABOUT": "Informazioni",
 	"BUILD": {
-		"BUILT_ON": "built on",
-		"DATE_DESC": "Date this system's kernel module was built on.",
-		"COMMIT": "Git commit this version of Opencast was built from.",
+		"BUILT_ON": "costruito il",
+		"DATE_DESC": "Data di costruzione del modulo del kernel di questo sistema.",
+		"COMMIT": "Git commit di questa versione di Opencast è stato costruito da.",
 		"VERSION": "Common bundle version of Opencast modules"
 	},
 	"NO": "No",
@@ -24,9 +24,9 @@
 	"LOGOUT": "Disconnettersi",
 	"RESET": "Reset",
 	"SELECT_NO_OPTION_SELECTED": "No option selected",
-	"SELECT_NO_OPTION_SELECTED_DASHED": "-- No option selected --",
+	"SELECT_NO_OPTION_SELECTED_DASHED": "-- Nessuna opzione selezionata --",
 	"SELECT_NO_OPTIONS_AVAILABLE": "No options available",
-	"SELECT_NO_MATCHING_RESULTS": "No matching results.",
+	"SELECT_NO_MATCHING_RESULTS": "Nessun risultato corrispondente.",
 	"YES": "Sì",
 	"COPY": "Copy to clipboard",
 	"LTI": {
@@ -45,7 +45,7 @@
 		"UPLOADING": "Uploading",
 		"EDIT": "Save",
 		"EDIT_TITLE": "Edit event",
-		"NO_OPTION_SELECTED": "No option selected",
+		"NO_OPTION_SELECTED": "Nessuna opzione selezionata",
 		"EDITING": "Saving…",
 		"SELECT_OPTION": "Select option",
 		"JOB_TITLE": "Title",
@@ -56,7 +56,7 @@
 		"EDIT_SUCCESS": "Edit succeeded, beginning republishing.",
 		"EDIT_FAILURE": "Edit failed!",
 		"COPY_SUCCESS": "Copying started…",
-		"COPY_SUCCESS_DESCRIPTION": "Please wait a moment…",
+		"COPY_SUCCESS_DESCRIPTION": "Ti preghiamo di attendere…",
 		"GENERIC_ERROR": "Error: {{message}}",
 		"DELETION_SUCCESS": "Event deletion successful",
 		"DELETION_SUCCESS_DESCRIPTION": "The event will be removed from the list in a few moments…",
@@ -102,8 +102,9 @@
 			"AVAILABLE_COLUMNS": "Colonne disponibili",
 			"SELECTED_COLUMNS": "Colonne selezionate",
 			"FOOTER_TEXT": "L'ordinamento e la selezione verranno salvati automaticamente. Premere \"{{resetTranslation}}\" per ripristinare la visualizzazione predefinita.",
-			"ADD_COLUMN": "Add column",
-			"REMOVE_COLUMN": "Remove column"
+			"ADD_COLUMN": "Aggiungi colonna",
+			"REMOVE_COLUMN": "Rimuovi colonna",
+			"DRAG_HANDLE_USAGE_INSTRUCTIONS": "Press space bar to start a drag. When dragging you can use the arrow keys to move the item around and escape to cancel. Some screen readers may require you to be in focus mode or to use your pass through key"
 		}
 	},
 	"CONFIRMATIONS": {
@@ -422,7 +423,7 @@
 				"INFORMATION_PARAGRAPH_2": "We highly appreciate any feedback, as even some of the data that we gather about the Opencast usage will help us to create better software, have better chances for additional funding and attract more companies to provide services around Opencast."
 			},
 			"FORM_STATE": {
-				"ORGANISATION": "Organization",
+				"ORGANISATION": "Organizzazione",
 				"DEPARTMENT": "Department",
 				"COUNTRY": "Country",
 				"POSTAL_CODE": "Postal code",
@@ -514,7 +515,7 @@
 						"RECORDING_ELEMENTS": "Registrazione elementi",
 						"RECORDING_METADATA": "Registrazione metadati",
 						"SEGMENTABLE": {
-							"SHORT": "Presentation",
+							"SHORT": "Presentazione",
 							"DETAIL": "The file contains a recording of a what is shown to an audience (Keynote, Powerpoint, etc)."
 						},
 						"NON_SEGMENTABLE": {
@@ -530,7 +531,7 @@
 							"DETAIL": "Un insieme di file contenente diverse parti dell'evento."
 						},
 						"SUBTITLES": {
-							"SHORT": "Subtitles",
+							"SHORT": "Sottotitoli",
 							"DETAIL": "A subtitle file in vtt format"
 						}
 					},
@@ -573,7 +574,7 @@
 						"PREVIEW_IMAGE": "Immagine di anteprima",
 						"SMIL": "Catalogo Smil",
 						"TRACK_PARTS": "Traccia parti",
-						"SUBTITLES": "Subtitles"
+						"SUBTITLES": "Sottotitoli"
 					}
 				},
 				"ACCESS": {
@@ -636,7 +637,7 @@
 				"NOCONTENT": "Nessun dato disponibile",
 				"PUBLISHED": "Pubblicato",
 				"WEEKDAY": "Giorno feriale",
-				"ADMINUI_NOTES": "Notes",
+				"ADMINUI_NOTES": "Note",
 				"TOOLTIP": {
 					"ASSETS": "Open asset details",
 					"START": "Filtro per questa data di inizio",
@@ -739,7 +740,7 @@
 						"CAPTION": "Carica",
 						"RECORDING_ELEMENTS": "Registrazione elementi",
 						"SEGMENTABLE": {
-							"SHORT": "Presentation",
+							"SHORT": "Presentazione",
 							"DETAIL": "The file contains a recording of a what is shown to an audience (Keynote, Powerpoint, etc)."
 						},
 						"NON_SEGMENTABLE": {
@@ -894,11 +895,7 @@
 						"ADDITIONAL_ACTIONS": "Azioni aggiuntive",
 						"ACTION": "Azioni",
 						"NEW": "Nuova politica",
-						"NON_USER_ROLES": "Roles and Groups authorized for the event",
-						"USER": "User",
-						"USERS": "Users who are authorized for the event",
-						"NEW_USER": "New user",
-						"SANITIZATION_NOTE": "User role sanitization is enabled in your Opencast, therefore user roles are displayed alongside other roles. This does not impact role functionality in any way."
+						"DETAILS": "Details"
 					},
 					"ROLES": {
 						"LABEL": "Select or create a role"
@@ -933,7 +930,7 @@
 						"WRONG_SERIES_PUBLICATION": "Serie o canale di pubblicazione errati",
 						"WRONG_WORKFLOW": "Flusso di lavoro errato",
 						"PROCESSING_FAILURE": "Elaborazione fallita",
-						"ADMINUI_NOTES": "Notes in Admin UI"
+						"ADMINUI_NOTES": "Note nell'interfaccia utente dell'amministratore"
 					}
 				},
 				"STATISTICS": {
@@ -985,7 +982,7 @@
 					"ACTIONS": "Azioni",
 					"DETAILS": "Dettagli",
 					"DESCRIPTION": "Descrizione",
-					"MORE_INFO": "Maggiori informazioni",
+					"MORE_INFO": "More Information",
 					"ID": "ID",
 					"TYPE": "Tipo",
 					"TITLE": "Titolo",
@@ -1029,7 +1026,7 @@
 				},
 				"WORKFLOW_OPERATIONS": {
 					"TITLE": "Operazioni flusso di lavoro",
-					"DETAILS_LINK": "Operazioni",
+					"DETAILS_LINK": "Operations",
 					"TABLE_HEADERS": {
 						"TITLE": "Titolo",
 						"STATUS": "Stato",
@@ -1177,7 +1174,10 @@
 				"TOOLTIP": {
 					"SERIES": "Filtra eventi per questa serie",
 					"DETAILS": "Apri dettagli serie",
-					"DELETE": "Cancella serie"
+					"DELETE": "Cancella serie",
+					"CREATION": "Filter for this creation date",
+					"ORGANIZER": "Filter for this organizer",
+					"CONTRIBUTORS": "Filter for this contributor"
 				}
 			},
 			"DETAILS": {
@@ -1208,10 +1208,7 @@
 						"ADDITIONAL_ACTIONS": "Azioni aggiuntive",
 						"ACTION": "Azioni",
 						"NEW": "Nuova politica",
-						"NON_USER_ROLES": "Roles and Groups authorized for the series",
-						"USER": "User",
-						"USERS": "Users who are authorized for the series",
-						"NEW_USER": "New user",
+						"DETAILS": "Details",
 						"REPLACE_EVENT_ACLS": "Aggiorna permessi serie",
 						"REPLACE_EVENT_ACLS_HINT": "Assicurarsi che tutti gli eventi di questa serie abbiano questi permessi in vigore",
 						"LOAD_MORE_LIMIT": "policies shown.",
@@ -1373,12 +1370,12 @@
 					"ADD": "Aggiungi ruolo"
 				},
 				"STRENGTH": {
-					"BAD": "Bad password",
-					"VERYWEAK": "Very weak password",
-					"WEAK": "Weak password",
-					"GOOD": "Good password",
-					"STRONG": "Strong password",
-					"VERYSTRONG": "Very strong password"
+					"BAD": "Password inadeguata",
+					"VERYWEAK": "Password molto debole",
+					"WEAK": "Password debole",
+					"GOOD": "Password adeguata",
+					"STRONG": "Password forte",
+					"VERYSTRONG": "Password molto forte"
 				}
 			}
 		},
@@ -1470,11 +1467,8 @@
 						"ADDITIONAL_ACTIONS": "Azioni aggiuntive",
 						"ACTION": "Azioni",
 						"NEW": "Nuova politica",
-						"NON_USER_ROLES": "Roles and Groups authorized for the access policy",
-						"DESCRIPTION": "Scegli un insieme di politiche pre-configurate o aggiungi politiche personalizzate qui sotto",
-						"USER": "User",
-						"USERS": "Users who are authorized for the access policy",
-						"NEW_USER": "New user"
+						"DETAILS": "Dettagli",
+						"DESCRIPTION": "Scegli un insieme di politiche pre-configurate o aggiungi politiche personalizzate qui sotto"
 					},
 					"ROLES": {
 						"LABEL": "Seleziona un ruolo",
@@ -1984,8 +1978,10 @@
 	"TABLE_NO_RESULT": "Nessun risultato trovato",
 	"TABLE_LOADING": "Caricamento…",
 	"TABLE_EDIT": "Modifica",
-	"TABLE_NEXT": "Next page",
-	"TABLE_PREVIOUS": "Previous page",
+	"TABLE_NEXT": "Pagina successiva",
+	"TABLE_PREVIOUS": "Pagina precedente",
+	"TABLE_CURRENT": "Pagina corrente {{pageNumber}}",
+	"TABLE_NUMBERED": "Vai alla pagina {{pageNumber}}",
 	"DASHBOARD": {
 		"RUNNING": "In esecuzione",
 		"FINISHED": "Completato",
@@ -1993,7 +1989,8 @@
 		"FAILED": "Fallito",
 		"FINISHED_WITH_COMMENTS": "Da fare",
 		"SCHEDULED": "Programmato",
-		"RECORDING": "Registrazione"
+		"RECORDING": "Registrazione",
+		"BUTTON_TOOLTIP": "Apply filter {{filterName}} to the table"
 	},
 	"HOTKEYS": {
 		"CHEAT_SHEET": {
@@ -2137,8 +2134,8 @@
 		}
 	},
 	"ABOUT": {
-		"IMPRINT": "Imprint",
-		"PRIVACY": "Privacy statement",
-		"NOCONTENT": "Content not available"
+		"IMPRINT": "Impressum",
+		"PRIVACY": "Informativa sulla privacy",
+		"NOCONTENT": "Contenuto non disponibile"
 	}
 }

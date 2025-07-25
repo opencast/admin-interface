@@ -16,7 +16,7 @@ export type NewResource = "events" | "series" | "user" | "group" | "acl" | "them
 const NewResourceModal = ({
 	handleClose,
 	resource,
-	modalRef
+	modalRef,
 }: {
 	handleClose: () => void,
 	resource: "events" | "series" | "user" | "group" | "acl" | "themes"
@@ -29,7 +29,7 @@ const NewResourceModal = ({
 	};
 
 	const headerText = () => {
-		switch(resource) {
+		switch (resource) {
 			case "events": return t("EVENTS.EVENTS.NEW.CAPTION");
 			case "series": return t("EVENTS.SERIES.NEW.CAPTION");
 			case "themes": return t("CONFIGURATION.THEMES.DETAILS.NEWCAPTION");
@@ -37,7 +37,7 @@ const NewResourceModal = ({
 			case "group": return t("USERS.GROUPS.NEW.CAPTION");
 			case "user": return t("USERS.USERS.DETAILS.NEWCAPTION");
 		}
-	}
+	};
 
 	return (
 		<Modal
@@ -47,7 +47,7 @@ const NewResourceModal = ({
 			ref={modalRef}
 		>
 			{resource === "events" && (
-				//New Event Wizard
+				// New Event Wizard
 				<NewEventWizard close={close} />
 			)}
 			{resource === "series" && (

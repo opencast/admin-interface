@@ -72,10 +72,10 @@ const NewGroupWizard: React.FC<{
 			<Formik
 				initialValues={snapshot}
 				validationSchema={currentValidationSchema}
-				onSubmit={(values) => handleSubmit(values)}
+				onSubmit={values => handleSubmit(values)}
 			>
 				{/* Render wizard pages depending on current value of page variable */}
-				{(formik) => {
+				{formik => {
 					// eslint-disable-next-line react-hooks/rules-of-hooks
 					useEffect(() => {
 						formik.validateForm();
@@ -91,7 +91,7 @@ const NewGroupWizard: React.FC<{
 								setActivePage={setPage}
 								completed={pageCompleted}
 								setCompleted={setPageCompleted}
-								formik={formik}
+								isValid={formik.isValid}
 							/>
 							<div>
 								{steps[page].name === "metadata" && (

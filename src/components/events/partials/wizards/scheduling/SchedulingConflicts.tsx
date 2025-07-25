@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { renderValidDate } from "../../../../../utils/dateUtils";
 
@@ -14,7 +13,7 @@ const SchedulingConflicts = ({
 	const { t } = useTranslation();
 
 	return (
-		/*list of scheduling conflicts*/
+		/* list of scheduling conflicts*/
 		conflicts.length > 0 ? (
 			<table className="main-tbl scheduling-conflict">
 				<tbody>
@@ -36,7 +35,7 @@ const SchedulingConflicts = ({
 				</tbody>
 			</table>
 		) : <></>
-	)
+	);
 };
 
 export default SchedulingConflicts;

@@ -11,9 +11,9 @@ const CustomStepIcon = (props: StepIconProps) => {
 	return (
 		<div style={stepIcon.root}>
 			{completed ? (
-				<FaCircle style={{...stepIcon.circle, ...(active && stepIcon.circleActive),}}/>
+				<FaCircle style={{ ...stepIcon.circle, ...(active && stepIcon.circleActive) }}/>
 			) : (
-				<FaDotCircle style={{...stepIcon.circle, ...(active && stepIcon.circleActive),}} />
+				<FaDotCircle style={{ ...stepIcon.circle, ...(active && stepIcon.circleActive) }} />
 			)}
 		</div>
 	);

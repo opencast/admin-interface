@@ -1,4 +1,3 @@
-import React from "react";
 import WizardNavigationButtons from "../../../shared/wizard/WizardNavigationButtons";
 import { useTranslation } from "react-i18next";
 import Notifications from "../../../shared/Notifications";
@@ -20,7 +19,7 @@ const NewGroupSummaryPage = <T extends typeof initialFormValuesNewGroup>({
 
 	// get values of objects in field that should be shown
 	const getValues = (fields: { name: string }[]) => {
-		let names = [];
+		const names = [];
 		for (const field of fields) {
 			names.push(field.name);
 		}

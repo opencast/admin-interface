@@ -11,18 +11,44 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  detect:
+    if: ${{ github.event.pull_request.head.repo.full_name == 'opencast/opencast-admin-interface' }}
+    runs-on: ubuntu-latest
+    outputs:
+      server: ${{ steps.test-server.outputs.server }}
+      branch: ${{ steps.branch-name.outputs.branch }}
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          ref: ${{github.event.pull_request.head.ref}}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
+
+      - name: Determine the correct test server
+        id: test-server
+        run: echo "server=https://`./.github/get-release-server.sh ${{ github.ref_name }}`" >> $GITHUB_OUTPUT
+
+      - name: Determine branch name
+        id: branch-name
+        run: |
+          #Temp becomes something like r/17.x
+          export TEMP=${{ github.ref_name }}
+          #Strip the r/ prefix, giving us just 17.x.  If this is main/develop this does nothing
+          echo "branch=${TEMP#r\/}" >> $GITHUB_OUTPUT
+
   main:
     runs-on: ubuntu-latest
+    needs: detect
     steps:
       - name: generate build path
-        run: echo "::set-output name=build::${{github.event.number}}/$(date +%Y-%m-%d_%H-%M-%S)/" | sed 's_build::/*_build::_'
+        run: echo "build=${{github.event.number}}/$(date +%Y-%m-%d_%H-%M-%S)/" >> $GITHUB_OUTPUT
         id: build-path
 
       - name: checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{github.event.pull_request.head.ref}}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
 
       - name: get node.js
         uses: actions/setup-node@v4
@@ -32,16 +58,13 @@ jobs:
       - name: download dependencies
         run: npm ci
 
-      - name: determine the correct test server
-        id: vite-url
-        run: echo "VITE_TEST_SERVER_URL=`./.github/get-release-server.sh ${{ github.base_ref }}`" >> GITHUB_ENV
-
       - name: build app
+        run: |
+          npm run build
         env:
-          VITE_TEST_SERVER_URL: ${{ steps.vite-url.outputs.VITE_TEST_SERVER_URL }}
+          VITE_TEST_SERVER_URL: ${{needs.detect.outputs.server}}
           NODE_ENV: development
           VITE_TEST_SERVER_AUTH: "admin:opencast"
-        run: npm run build
 
       - name: prepare git
         run: |
@@ -66,20 +89,24 @@ jobs:
 
       - name: clone repository
         run: |
-          git clone "git@github.com:opencast/opencast-admin-interface-test.git" admin-interface-test
-
-      - name: switch to gh-pages branch
-        working-directory: admin-interface-test
-        run: |
-          git checkout gh-pages
+          git clone -b gh-pages "git@github.com:${{ github.repository_owner }}/opencast-admin-interface-test.git" admin-interface-test
 
       - name: store build
-        working-directory: admin-interface-test
         env:
-          DEPLOY_PATH: ${{ steps.build-path.outputs.build }}
+          DEPLOY_PATH: admin-interface-test/${{ steps.build-path.outputs.build }}
         run: |
           mkdir -p ${DEPLOY_PATH}
-          cp -rv ../build/* ${DEPLOY_PATH}
+          cp -rv build/* ${DEPLOY_PATH}
+
+      - name: Cleanup test repository
+        working-directory: admin-interface-test
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          wget https://raw.githubusercontent.com/${{ github.repository_owner }}/opencast-admin-interface-test/main/.github/scripts/cleanup-deployments.sh
+          bash cleanup-deployments.sh ${{ github.repository_owner }}/opencast-admin-interface
+          rm -f cleanup-deployments.sh
+          git add .
 
       - name: generate index.html
         working-directory: admin-interface-test
@@ -94,12 +121,12 @@ jobs:
         working-directory: admin-interface-test
         run: |
           git add .
-          git commit -m "Build ${{ steps.build-path.outputs.build }}"
+          git commit --amend -m "Build ${{ steps.build-path.outputs.build }}"
 
       - name: push updates
         working-directory: admin-interface-test
         run: |
-          git push origin gh-pages
+          git push origin gh-pages --force
 
       - name: add comment with deployment location
         uses: thollander/actions-comment-pull-request@v3

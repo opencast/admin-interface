@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import TableFilters from "../shared/TableFilters";
 import Table from "../shared/Table";
 import Notifications from "../shared/Notifications";
 import { jobsTemplateMap } from "../../configs/tableConfigs/jobsTableConfig";
 import { getTotalJobs } from "../../selectors/jobSelectors";
-import { fetchFilters, editTextFilter } from "../../slices/tableFilterSlice";
+import { fetchFilters } from "../../slices/tableFilterSlice";
 import {
 	loadJobsIntoTable,
 } from "../../thunks/tableThunks";
@@ -37,9 +37,6 @@ const Jobs = () => {
 
 		dispatch(fetchFilters("jobs"));
 
-		// Reset text filter
-		dispatch(editTextFilter(""));
-
 		// Load jobs on mount
 		const loadJobs = async () => {
 			// Fetching jobs from server
@@ -53,12 +50,12 @@ const Jobs = () => {
 		loadJobs();
 
 		// Fetch jobs every minute
-		let fetchJobInterval = setInterval(() => loadJobs(), 5000);
+		const fetchJobInterval = setInterval(() => loadJobs(), 5000);
 
 		return () => {
 			allowLoadIntoTable = false;
 			clearInterval(fetchJobInterval);
-		}
+		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

@@ -1,24 +1,21 @@
-import React, { useEffect } from "react";
-import Notifications from "../../../shared/Notifications";
+import { useEffect } from "react";
 import {
 	getModalWorkflowId,
 	getWorkflow,
 	getWorkflowErrors,
 	isFetchingWorkflowErrors,
 } from "../../../../selectors/eventDetailsSelectors";
-import EventDetailsTabHierarchyNavigation from "./EventDetailsTabHierarchyNavigation";
 import { useAppDispatch, useAppSelector } from "../../../../store";
 import { removeNotificationWizardForm } from "../../../../slices/notificationSlice";
 import {
 	fetchWorkflowErrorDetails,
 	fetchWorkflowErrors,
-	setModalWorkflowTabHierarchy
+	setModalWorkflowTabHierarchy,
 } from "../../../../slices/eventDetailsSlice";
 import { renderValidDate } from "../../../../utils/dateUtils";
 import { WorkflowTabHierarchy } from "../modals/EventDetails";
 import { useTranslation } from "react-i18next";
 import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
-import ModalContentTable from "../../../shared/modals/ModalContentTable";
 
 /**
  * This component manages the workflow errors for the workflows tab of the event details modal
@@ -50,7 +47,9 @@ const EventDetailsWorkflowErrors = ({
 	};
 
 	useEffect(() => {
-		dispatch(fetchWorkflowErrors({eventId, workflowId})).then();
+		if (workflowId) {
+			dispatch(fetchWorkflowErrors({ eventId, workflowId })).then();
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -58,35 +57,35 @@ const EventDetailsWorkflowErrors = ({
 		dispatch(removeNotificationWizardForm());
 		dispatch(setModalWorkflowTabHierarchy(tabType));
 		if (tabType === "workflow-error-details" && "wiid" in workflow) {
-			dispatch(fetchWorkflowErrorDetails({eventId, workflowId: workflow.wiid, errorId})).then();
+			dispatch(fetchWorkflowErrorDetails({ eventId, workflowId: workflow.wiid, errorId })).then();
 		}
 	};
 
+	{ /* 'Errors & Warnings' table */ }
 	return (
-		<ModalContentTable
-			modalContentChildren={
-				/* Hierarchy navigation */
-				<EventDetailsTabHierarchyNavigation
-					openSubTab={openSubTab}
-					hierarchyDepth={1}
-					translationKey0={"EVENTS.EVENTS.DETAILS.WORKFLOW_DETAILS.TITLE"}
-					subTabArgument0={"workflow-details"}
-					translationKey1={"EVENTS.EVENTS.DETAILS.ERRORS_AND_WARNINGS.TITLE"}
-					subTabArgument1={"errors-and-warnings"}
-				/>
-			}
-			modalBodyChildren={<Notifications context="not_corner" />}
-		>
-		{/* 'Errors & Warnings' table */}
-			<div className="obj tbl-container">
-				<header>
-					{
-						t(
-							"EVENTS.EVENTS.DETAILS.ERRORS_AND_WARNINGS.HEADER"
-						) /* Errors & Warnings */
-					}
-				</header>
+		<div className="obj tbl-container">
+			<header>
+				{t("EVENTS.EVENTS.DETAILS.ERRORS_AND_WARNINGS.HEADER") /* Errors & Warnings */}
+			</header>
 
+			{
+				/* No errors message */
+				errors.entries.length === 0 && (
+					<table className="main-tbl">
+						<tr>
+							<td colSpan={4}>
+								{
+									t(
+										"EVENTS.EVENTS.DETAILS.ERRORS_AND_WARNINGS.EMPTY",
+									) /* No errors found. */
+								}
+							</td>
+						</tr>
+					</table>
+				)
+			}
+
+			{ errors.entries.length !== 0 && (
 				<div className="obj-container">
 					<table className="main-tbl">
 						{isFetching || (
@@ -95,20 +94,10 @@ const EventDetailsWorkflowErrors = ({
 									<tr>
 										<th className="small" />
 										<th>
-											{
-												t(
-													"EVENTS.EVENTS.DETAILS.ERRORS_AND_WARNINGS.DATE"
-												) /* Date */
-											}
-											<i />
+											{t("EVENTS.EVENTS.DETAILS.ERRORS_AND_WARNINGS.DATE") /* Date */}
 										</th>
 										<th>
-											{
-												t(
-													"EVENTS.EVENTS.DETAILS.ERRORS_AND_WARNINGS.TITLE"
-												) /* Errors & Warnings */
-											}
-											<i />
+											{t("EVENTS.EVENTS.DETAILS.ERRORS_AND_WARNINGS.TITLE") /* Errors & Warnings */}
 										</th>
 										<th className="medium" />
 									</tr>
@@ -122,7 +111,7 @@ const EventDetailsWorkflowErrors = ({
 													{!!item.severity && (
 														<div
 															className={`circle ${severityColor(
-																item.severity
+																item.severity,
 															)}`}
 														/>
 													)}
@@ -142,37 +131,19 @@ const EventDetailsWorkflowErrors = ({
 															openSubTab("workflow-error-details", item.id)
 														}
 													>
-														{
-															t(
-																"EVENTS.EVENTS.DETAILS.MEDIA.DETAILS"
-															) /*  Details */
-														}
+														{t("EVENTS.EVENTS.DETAILS.MEDIA.DETAILS") /*  Details */}
 													</ButtonLikeAnchor>
 												</td>
 											</tr>
 										))
-									}
-									{
-										/* No errors message */
-										errors.entries.length === 0 && (
-											<tr>
-												<td colSpan={4}>
-													{
-														t(
-															"EVENTS.EVENTS.DETAILS.ERRORS_AND_WARNINGS.EMPTY"
-														) /* No errors found. */
-													}
-												</td>
-											</tr>
-										)
 									}
 								</tbody>
 							</>
 						)}
 					</table>
 				</div>
-			</div>
-		</ModalContentTable>
+			)}
+		</div>
 	);
 };
 

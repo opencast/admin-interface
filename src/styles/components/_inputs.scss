@@ -2,6 +2,7 @@
 @use "../base/fontawesome/fa-mixins";
 @use "../base/fontawesome/variables" as variables2;
 @use "../base/variables";
+@use "../mixins/button";
 
 /**
  * Licensed to The Apereo Foundation under one or more contributor license
@@ -82,21 +83,6 @@ textarea {
         background-position: 19px center;
     }
 
-    &.search,
-    &#search {
-        appearance: none;
-        vertical-align: top;
-        padding: 0 20px 0 40px !important;
-        height: 40px;
-
-        &.expand {
-            transition: width 0.2s ease-in;
-
-            &:focus {
-                width: 200px;
-            }
-        }
-    }
 
     &.small {
         padding: 15px;
@@ -177,14 +163,83 @@ input[type="radio"].ios {
     width: 100%;
 }
 
+
 .search-container {
-    @include fa-mixins.fa-icon(variables2.$fa-var-search, after, inline, 0, 0, inherit, 13px);
+    width: 100% !important;
+    height: 40px;
     position: relative;
+
+    @include fa-mixins.fa-icon(variables2.$fa-var-search, after, inline, 0, 0, inherit, 13px);
+
+    outline: variables.$thin-border-stroke color.adjust(variables.$main-border-color, $lightness: -2%);
+    border-radius: variables.$main-border-radius;
+
+    input.search {
+        border: 0;
+        border-right-width: 0;
+        float: left;
+        margin: 0;
+
+        appearance: none;
+        vertical-align: top;
+        padding: 0 0px 0 40px !important;
+        height: 40px;
+
+        outline: none;
+
+        width: calc(100% - 46px) !important;
+
+        &.fullwidth {
+            width: 100% !important;
+        }
+    }
+
+
+    &:focus-within {
+        outline: 3px solid #378dd4;
+    }
+
+    &.expand {
+        width: 170px !important;
+        transition: width 0.2s ease-in;
+
+        &:focus-within {
+            width: 240px !important;
+            // width: calc(100% + 46px) !important;
+        }
+    }
+
+    button.clear {
+        height: 40px;
+        width: 46px;
+        float: right;
+        @include button.btn(white);
+        @include fa-mixins.fa-icon(variables2.$fa-var-times, before, block, 0, 0.45em 0.45em 0.55em 0.45em, inherit, 14px);
+        opacity: 1 !important;
+
+        &, &:hover, &:focus, &:active {
+            background: none;
+            background-color: #fff;
+            border: 0;
+            box-shadow: none;
+        }
+
+        &.disabled, &.disabled:hover, &.disabled:focus, &.disabled:active {
+            background-color: #eeeff0,
+        }
+
+        &+input.search {
+            width: calc(100% - 46px) !important;
+        }
+
+
+    }
 
     &:after {
         position: absolute;
         top: 13px;
         left: 10px;
     }
+
 }
 

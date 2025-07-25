@@ -5,7 +5,7 @@ import { Workflow } from "../slices/workflowSlice";
  */
 
 export const formatTimeForDropdown = (times: {index: string, value: string}[]) => {
-	return times.map(({index, value}) => ({ label: value, value: index }));
+	return times.map(({ index, value }) => ({ label: value, value: index }));
 };
 
 export const formatCaptureAgentForDropdown = (captureAgents: Recording[]) => {
@@ -17,5 +17,5 @@ export const formatWorkflowsForDropdown = (workflows: Workflow[]) => {
 };
 
 export const formatAclTemplatesForDropdown = (templates: { id: string, value: string }[]) => {
-	return templates.map(template => ({ label: template.value, value: template.id}));
+	return templates.map(template => ({ label: template.value, value: template.id }));
 };

@@ -16,7 +16,7 @@ const containerPublications = React.createRef<HTMLDivElement>();
  * This component renders the published cells of events in the table view
  */
 const PublishCell = ({
-	row
+	row,
 }: {
 	row: Event
 }) => {
@@ -36,11 +36,11 @@ const PublishCell = ({
 					const resultAction = await dispatch(enrichPublications({ publications: row.publications }));
 					transformedPublications = unwrapResult(resultAction);
 				} catch (rejectedValueOrSerializedError) {
-					console.error(rejectedValueOrSerializedError)
+					console.error(rejectedValueOrSerializedError);
 				}
 				setPublications(transformedPublications);
 			}
-		}
+		};
 
 		// Reset publications. This is to immediately update the table on page switch.
 		setPublications(row.publications);
@@ -73,7 +73,7 @@ const PublishCell = ({
 	const onlyEngage = publications.length === 1
 		&& publications[0].enabled
 		&& !publications[0].hide
-		&& publications[0].id === 'engage-player';
+		&& publications[0].id === "engage-player";
 
 	return (
 		<div className="popover-wrapper">
@@ -114,7 +114,7 @@ const PublishCell = ({
 												<span>{publication.label ? t(publication.label as ParseKeys) : t(publication.name as ParseKeys)}</span>
 											</ButtonLikeAnchor>
 										)
-									) : null
+									) : null,
 								)}
 							</div>
 						</div>

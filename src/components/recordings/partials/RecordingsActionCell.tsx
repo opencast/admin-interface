@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { useAppDispatch } from "../../../store";
 import { Recording, deleteRecording } from "../../../slices/recordingSlice";
 import { fetchRecordingDetails } from "../../../slices/recordingDetailsSlice";
@@ -22,7 +22,7 @@ const RecordingsActionCell = ({
 	const showRecordingDetails = async () => {
 		await dispatch(fetchRecordingDetails(row.name));
 
-		recordingDetailsModalRef.current?.open()
+		recordingDetailsModalRef.current?.open();
 	};
 
 	const deletingRecording = (id: string) => {

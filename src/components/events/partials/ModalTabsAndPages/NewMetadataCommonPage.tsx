@@ -1,4 +1,3 @@
-import React from "react";
 import { FormikProps } from "formik";
 import WizardNavigationButtons from "../../../shared/wizard/WizardNavigationButtons";
 import { MetadataCatalog } from "../../../../slices/eventSlice";
@@ -12,7 +11,7 @@ const NewMetadataCommonPage = <T, >({
 	formik,
 	nextPage,
 	metadataFields,
-	header
+	header,
 }: {
 	formik: FormikProps<T>,
 	nextPage: (values: T) => void,

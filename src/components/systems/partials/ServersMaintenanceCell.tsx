@@ -21,7 +21,7 @@ const ServersMaintenanceCell = ({
 	const dispatch = useAppDispatch();
 
 	const onClickCheckbox = async (e: React.ChangeEvent<HTMLInputElement>) => {
-		await dispatch(setServerMaintenance({host: row.hostname, maintenance: e.target.checked}));
+		await dispatch(setServerMaintenance({ host: row.hostname, maintenance: e.target.checked }));
 		await dispatch(fetchServers());
 		dispatch(loadServersIntoTable());
 	};
@@ -31,7 +31,7 @@ const ServersMaintenanceCell = ({
 			{hasAccess("ROLE_UI_SERVERS_MAINTENANCE_EDIT", user) && (
 				<input
 					type="checkbox"
-					onChange={(e) => onClickCheckbox(e)}
+					onChange={e => onClickCheckbox(e)}
 					name="maintenanceStatus"
 					checked={row.maintenance}
 				/>

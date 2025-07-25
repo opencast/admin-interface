@@ -1,4 +1,3 @@
-import React from "react";
 import { getFilters } from "../../../selectors/tableFilterSelectors";
 import { editFilterValue } from "../../../slices/tableFilterSlice";
 import { loadEventsIntoTable } from "../../../thunks/tableThunks";
@@ -21,9 +20,9 @@ const EventsLocationCell = ({
 
 	// Filter with value of current cell
 	const addFilter = (location: string) => {
-		let filter = filterMap.find(({ name }) => name === "location");
-		if (!!filter) {
-			dispatch(editFilterValue({filterName: filter.name, value: location}));
+		const filter = filterMap.find(({ name }) => name === "location");
+		if (filter) {
+			dispatch(editFilterValue({ filterName: filter.name, value: location, resource: "events" }));
 			dispatch(fetchEvents());
 			dispatch(loadEventsIntoTable());
 		}

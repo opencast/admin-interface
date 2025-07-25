@@ -19,13 +19,13 @@ const Footer: React.FC = () => {
 	const user = useAppSelector(state => getUserInformation(state));
 	const orgProperties = useAppSelector(state => getOrgProperties(state));
 
-	const version = (user?.ocVersion?.version ?? '')
-		.replace(/0\.0\.SNAPSHOT/, 'x')
-		.replace(/\.([0-9]+)\.0/, '.$1');
-	const lastModified = user?.ocVersion?.['last-modified']
-		? new Date(user.ocVersion['last-modified']).toISOString().substring(0, 10)
-		: 'unknown';
-	const aboutEnabled = (orgProperties['org.opencastproject.admin.display_about'] || 'false').toLowerCase() === 'true';
+	const version = (user?.ocVersion?.version ?? "")
+		.replace(/0\.0\.SNAPSHOT/, "x")
+		.replace(/\.([0-9]+)\.0/, ".$1");
+	const lastModified = user?.ocVersion?.["last-modified"]
+		? new Date(user.ocVersion["last-modified"]).toISOString().substring(0, 10)
+		: "unknown";
+	const aboutEnabled = (orgProperties["org.opencastproject.admin.display_about"] || "false").toLowerCase() === "true";
 
 	return (
 		<footer id="main-footer">
@@ -35,14 +35,14 @@ const Footer: React.FC = () => {
 					{user.ocVersion && (
 						<li>
 							{"Opencast "}
-							<Tooltip title={t('BUILD.VERSION')}><span>{version}</span></Tooltip>
+							<Tooltip title={t("BUILD.VERSION")}><span>{version}</span></Tooltip>
 							{user.isAdmin && (
 								<span>
 								{user.ocVersion.buildNumber && (
-									<>{" – "} <Tooltip title={t('BUILD.COMMIT')}><span>{user.ocVersion.buildNumber}</span></Tooltip></>
+									<>{" – "} <Tooltip title={t("BUILD.COMMIT")}><span>{user.ocVersion.buildNumber}</span></Tooltip></>
 								)}
 								{lastModified && (
-									<>{" – "} <Tooltip title={t('BUILD.DATE_DESC')}><span>{t("BUILD.BUILT_ON")} {lastModified}</span></Tooltip></>
+									<>{" – "} <Tooltip title={t("BUILD.DATE_DESC")}><span>{t("BUILD.BUILT_ON")} {lastModified}</span></Tooltip></>
 								)}
 								</span>
 							)}

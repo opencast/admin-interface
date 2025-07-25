@@ -16,7 +16,7 @@ export function dropDownStyle(customCss: {
 	const width = customCss.width ?? 250;
 
 	return {
-		container: (provided, state) => ({
+		container: (provided, _state) => ({
 			...provided,
 			width: width,
 			position: "relative",
@@ -40,7 +40,7 @@ export function dropDownStyle(customCss: {
 				? colorDropDownNormalFocus
 				: colorDropDownMain,
 			boxShadow: customCss.isMetadataStyle
-				? `0 0 0 0px`
+				? "0 0 0 0px"
 				: state.selectProps.menuIsOpen
 				? `0 0 0 1px ${colorDropDownNormalFocus}`
 				: `0 0 0 1px ${colorDropDownMain}`,
@@ -74,11 +74,11 @@ export function dropDownStyle(customCss: {
 				display: "none",
 			},
 		}),
-		indicatorSeparator: (provided, state) => ({
+		indicatorSeparator: (provided, _state) => ({
 			...provided,
 			display: "none",
 		}),
-		input: (provided, state) => ({
+		input: (provided, _state) => ({
 			...provided,
 			position: "relative",
 			zIndex: 1010,
@@ -89,19 +89,19 @@ export function dropDownStyle(customCss: {
 			paddingTop: 0,
 			paddingBottom: 0,
 		}),
-		menu: (provided, state) => ({
+		menu: (provided, _state) => ({
 			...provided,
 			zIndex: 9000,
 			marginTop: 1,
 			border: "none",
 		}),
-		menuList: (provided, state) => ({
+		menuList: (provided, _state) => ({
 			...provided,
 			marginTop: 0,
 			border: `1px solid ${colorDropDownMain}`,
 			borderRadius: 4,
 		}),
-		noOptionsMessage: (provided, state) => ({
+		noOptionsMessage: (provided, _state) => ({
 			...provided,
 			textAlign: "left",
 			paddingTop: 0,
@@ -119,16 +119,16 @@ export function dropDownStyle(customCss: {
 			color: state.isFocused || state.isSelected ? "white" : provided.color,
 			cursor: "pointer",
 			overflowWrap: "normal",
-			lineHeight: customCss.optionLineHeight ?? "inherit", //type === "comment" ? "105%" : "inherit",
+			lineHeight: customCss.optionLineHeight ?? "inherit", // type === "comment" ? "105%" : "inherit",
 		}),
-		singleValue: (provided, state) => ({
+		singleValue: (provided, _state) => ({
 			...provided,
 			marginTop: 0,
 			marginBottom: 0,
 			paddingTop: 0,
 			paddingBottom: 0,
 		}),
-		valueContainer: (provided, state) => ({
+		valueContainer: (provided, _state) => ({
 			...provided,
 			marginTop: 0,
 			marginBottom: 0,

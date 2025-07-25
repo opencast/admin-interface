@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import EventDetails from "./EventDetails";
 import { useAppDispatch, useAppSelector } from "../../../../store";
@@ -31,10 +31,10 @@ const EventDetailsModal = () => {
 	};
 
 	const close = () => {
-		let isUnsavedChanges = false
-		isUnsavedChanges = policyChanged
+		let isUnsavedChanges = false;
+		isUnsavedChanges = policyChanged;
 		if (formikRef.current && formikRef.current.dirty !== undefined && formikRef.current.dirty) {
-			isUnsavedChanges = true
+			isUnsavedChanges = true;
 		}
 
 		if (!isUnsavedChanges || confirmUnsaved()) {
@@ -56,11 +56,11 @@ const EventDetailsModal = () => {
 			<EventDetails
 				eventId={event.id}
 				policyChanged={policyChanged}
-				setPolicyChanged={(value) => setPolicyChanged(value)}
+				setPolicyChanged={value => setPolicyChanged(value)}
 				formikRef={formikRef}
 			/>
 		</Modal>
 	);
-}
+};
 
 export default EventDetailsModal;

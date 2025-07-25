@@ -61,13 +61,13 @@ const ResourceDetailsAccessPolicyTab = ({
 	viewNonUsersAccessRole,
 	policyChanged,
 	setPolicyChanged,
-	withOverrideButton
+	withOverrideButton,
 }: {
 	resourceId: string,
 	header: ParseKeys,
 	policies: TransformedAcl[],
 	policyTemplateId: number,
-	fetchHasActiveTransactions?: AsyncThunk<any, string, any>
+	fetchHasActiveTransactions?: AsyncThunk<{ active: boolean }, string, any>
 	fetchAccessPolicies: AsyncThunk<any, string, any>,
 	saveNewAccessPolicies: AsyncThunk<boolean, { id: string, policies: { acl: Acl }, override?: boolean }, any>
 	descriptionText: ParseKeys,
@@ -102,7 +102,7 @@ const ResourceDetailsAccessPolicyTab = ({
 	const [roles, setRoles] = useState<Role[]>([]);
 
 	// this state is used, because the policies should be read-only, if a transaction is currently being performed on a resource
-	const [transactions, setTransactions] = useState({ read_only: false });
+	const [transactions, setTransactions] = useState({ readOnly: false });
 
 	// this state tracks, whether data is currently being fetched
 	const [loading, setLoading] = useState(false);
@@ -114,18 +114,19 @@ const ResourceDetailsAccessPolicyTab = ({
 		dispatch(removeNotificationWizardForm());
 		async function fetchData() {
 			setLoading(true);
-			const responseTemplates = await fetchAclTemplates();
-			await setAclTemplates(responseTemplates);
-			const responseActions = await fetchAclActions();
+			const [responseTemplates, responseActions] = await Promise.all([
+				fetchAclTemplates(), fetchAclActions(), dispatch(fetchAccessPolicies(resourceId))]);
+			setAclTemplates(responseTemplates);
 			setAclActions(responseActions);
 			setHasActions(responseActions.length > 0);
-			await dispatch(fetchAccessPolicies(resourceId));
-			fetchRolesWithTarget("ACL").then((roles) => setRoles(roles));
+			fetchRolesWithTarget("ACL").then(roles => setRoles(roles));
 			if (fetchHasActiveTransactions) {
-				const fetchTransactionResult = await dispatch(fetchHasActiveTransactions(resourceId)).then(unwrapResult)
-				fetchTransactionResult.active !== undefined
-					? setTransactions({ read_only: fetchTransactionResult.active })
-					: setTransactions({ read_only: true });
+				const fetchTransactionResult = await dispatch(fetchHasActiveTransactions(resourceId)).then(unwrapResult);
+				if (fetchTransactionResult.active !== undefined) {
+					setTransactions({ readOnly: fetchTransactionResult.active });
+				} else {
+					setTransactions({ readOnly: true });
+				}
 				if (
 					fetchTransactionResult.active === undefined ||
 					fetchTransactionResult.active
@@ -142,7 +143,7 @@ const ResourceDetailsAccessPolicyTab = ({
 			setLoading(false);
 		}
 
-		fetchData().then((r) => {});
+		fetchData().then(() => {});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -157,7 +158,7 @@ const ResourceDetailsAccessPolicyTab = ({
 	const saveAccess = (values: { policies: TransformedAcl[] }, override: boolean) => {
 		dispatch(removeNotificationWizardForm());
 		const { roleWithFullRightsExists, allRulesValid } = validatePolicies(
-			values
+			values,
 		);
 		const access = prepareAccessPolicyRulesForPost(values.policies);
 
@@ -166,7 +167,7 @@ const ResourceDetailsAccessPolicyTab = ({
 				type: "warning",
 				key: "INVALID_ACL_RULES",
 				duration: -1,
-				context: NOTIFICATION_CONTEXT
+				context: NOTIFICATION_CONTEXT,
 			}));
 		}
 
@@ -175,12 +176,12 @@ const ResourceDetailsAccessPolicyTab = ({
 				type: "warning",
 				key: "MISSING_ACL_RULES",
 				duration: -1,
-				context: NOTIFICATION_CONTEXT
+				context: NOTIFICATION_CONTEXT,
 			}));
 		}
 
 		if (allRulesValid && roleWithFullRightsExists) {
-			dispatch(saveNewAccessPolicies({id: resourceId, policies: access, override: override})).then((success) => {
+			dispatch(saveNewAccessPolicies({ id: resourceId, policies: access, override: override })).then(success => {
 				// fetch new policies from the backend, if save successful
 				if (success) {
 					setPolicyChanged(false);
@@ -196,7 +197,7 @@ const ResourceDetailsAccessPolicyTab = ({
 		setPolicyChanged(isPolicyChanged(values.policies));
 
 		// each policy needs a role
-		if (values.policies.find((policy) => !policy.role || policy.role === "")) {
+		if (values.policies.find(policy => !policy.role || policy.role === "")) {
 			errors.emptyRole = "Empty role!";
 		}
 
@@ -210,7 +211,7 @@ const ResourceDetailsAccessPolicyTab = ({
 		let roleWithFullRightsExists = false;
 		let allRulesValid = true;
 
-		values.policies.forEach((policy) => {
+		values.policies.forEach(policy => {
 			if ((policy.read && policy.write) || user.isAdmin) {
 				roleWithFullRightsExists = true;
 			}
@@ -280,12 +281,12 @@ const ResourceDetailsAccessPolicyTab = ({
 								aclTemplate: policyTemplateId ? policyTemplateId.toString() : "",
 							}}
 							enableReinitialize
-							validate={(values) => validateFormik(values)}
-							onSubmit={(values) =>
+							validate={values => validateFormik(values)}
+							onSubmit={values =>
 								saveAccess(values, false)
 							}
 						>
-							{(formik) => (
+							{formik => (
 								<div className="obj list-obj">
 									<header>{t(header) /* Access Policy */}</header>
 
@@ -365,7 +366,7 @@ const ResourceDetailsAccessPolicyTab = ({
 									}
 
 									{/* Save and cancel buttons */}
-									{!transactions.read_only && <SaveEditFooter
+									{!transactions.readOnly && <SaveEditFooter
 										active={policyChanged && formik.dirty}
 										reset={() => resetPolicies(formik.resetForm)}
 										submit={() => saveAccess(formik.values, false)}
@@ -373,7 +374,7 @@ const ResourceDetailsAccessPolicyTab = ({
 										additionalButton={withOverrideButton ? {
 											label: "EVENTS.SERIES.DETAILS.ACCESS.ACCESS_POLICY.REPLACE_EVENT_ACLS",
 											hint: "EVENTS.SERIES.DETAILS.ACCESS.ACCESS_POLICY.REPLACE_EVENT_ACLS_HINT",
-											onClick: () => saveAccess(formik.values, true)
+											onClick: () => saveAccess(formik.values, true),
 										} : undefined}
 									/>}
 								</div>
@@ -414,7 +415,7 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 	createLabel: ParseKeys,
 	formik: FormikProps<T>,
 	hasActions: boolean
-	transactions: { read_only: boolean }
+	transactions: { readOnly: boolean }
 	aclActions: { id: string, value: string }[]
 	roles: Role[]
 	editAccessRole: string
@@ -435,9 +436,9 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 	}, []);
 
 	const createPolicy = (role: string, withUser: boolean): TransformedAcl => {
-		let user = withUser ? {username: "", name: "", email: ""} : undefined
+		const user = withUser ? { username: "", name: "", email: "" } : undefined;
 
-		let newRole: TransformedAcl = {
+		const newRole: TransformedAcl = {
 			role: role,
 			read: true,
 			write: false,
@@ -458,7 +459,7 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 				newRole.write = false;
 			}
 			if (aclDefaults["default_actions"]) {
-				newRole.actions = newRole.actions.concat(aclDefaults["default_actions"].split(","))
+				newRole.actions = newRole.actions.concat(aclDefaults["default_actions"].split(","));
 			}
 		}
 
@@ -482,21 +483,21 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 									<th>
 										{
 											t(
-												firstColumnHeader
+												firstColumnHeader,
 											) /* <!-- Role --> */
 										}
 									</th>
 									<th className="fit">
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.READ"
+												"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.READ",
 											) /* <!-- Read --> */
 										}
 									</th>
 									<th className="fit">
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.WRITE"
+												"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.WRITE",
 											) /* <!-- Write --> */
 										}
 									</th>
@@ -504,7 +505,7 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 										<th className="fit">
 											{
 												t(
-													"EVENTS.SERIES.DETAILS.ACCESS.ACCESS_POLICY.ADDITIONAL_ACTIONS"
+													"EVENTS.SERIES.DETAILS.ACCESS.ACCESS_POLICY.ADDITIONAL_ACTIONS",
 												) /* <!-- Additional Actions --> */
 											}
 										</th>
@@ -513,7 +514,7 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 										<th className="fit">
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.ACTION"
+													"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.ACTION",
 												) /* <!-- Action --> */
 											}
 										</th>
@@ -523,8 +524,9 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 
 							<tbody>
 								{/* list of policies */}
-								<FieldArray name={"policies"}>
-									{({ replace, remove, push }) => (
+								<FieldArray
+									name={"policies"}
+									render={arrayHelpers => (
 										<>
 											{formik.values.policies.length > 0 &&
 												policiesFiltered.map(
@@ -532,7 +534,7 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 														<tr key={index}>
 															{/* dropdown for policy.role */}
 															<td className="editable">
-																{!transactions.read_only ? (
+																{!transactions.readOnly ? (
 																	<DropDown
 																		value={policy.role}
 																		text={createPolicyLabel(policy)}
@@ -541,16 +543,21 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 																				? formatAclRolesForDropdown(rolesFilteredbyPolicies)
 																				: []
 																		}
+																		fetchOptions={() =>
+																			roles.length > 0
+																				? formatAclRolesForDropdown(rolesFilteredbyPolicies)
+																				: []
+																		}
 																		required={true}
 																		creatable={true}
-																		handleChange={(element) => {
+																		handleChange={element => {
 																			if (element) {
-																				const matchingRole = roles.find(role => role.name === element.value)
-																				replace(formik.values.policies.findIndex(p => p === policy), {
+																				const matchingRole = roles.find(role => role.name === element.value);
+																				arrayHelpers.replace(formik.values.policies.findIndex(p => p === policy), {
 																					...policy,
 																					role: element.value,
-																					user: matchingRole ? matchingRole.user : undefined
-																				})
+																					user: matchingRole ? matchingRole.user : undefined,
+																				});
 																			}
 																		}}
 																		placeholder={
@@ -559,9 +566,11 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 																		disabled={
 																			!hasAccess(
 																				editAccessRole,
-																				user
+																				user,
 																			)
 																		}
+																		skipTranslate
+																		optionHeight={35}
 																	/>
 																) : (
 																	<p>{policy.role}</p>
@@ -574,20 +583,20 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 																	type="checkbox"
 																	name={`policies.${formik.values.policies.findIndex(p => p === policy)}.read`}
 																	disabled={
-																		transactions.read_only ||
+																		transactions.readOnly ||
 																		!hasAccess(
 																			editAccessRole,
-																			user
+																			user,
 																		) ||
 																		(aclDefaults && aclDefaults["read_readonly"] !== "false")
 																	}
 																	className={`${
-																		transactions.read_only
+																		transactions.readOnly
 																			? "disabled"
 																			: "false"
 																	}`}
 																	onChange={(read: React.ChangeEvent<HTMLInputElement>) =>
-																		replace(formik.values.policies.findIndex(p => p === policy), {
+																		arrayHelpers.replace(formik.values.policies.findIndex(p => p === policy), {
 																			...policy,
 																			read: read.target.checked,
 																		})
@@ -599,22 +608,22 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 																	type="checkbox"
 																	name={`policies.${formik.values.policies.findIndex(p => p === policy)}.write`}
 																	disabled={
-																		transactions.read_only ||
+																		transactions.readOnly ||
 																		!hasAccess(
 																			editAccessRole,
-																			user
+																			user,
 																		) ||
 																		(aclDefaults
 																			&& aclDefaults["write_readonly"]
 																			&& aclDefaults["write_readonly"] === "true")
 																	}
 																	className={`${
-																		transactions.read_only
+																		transactions.readOnly
 																			? "disabled"
 																			: "false"
 																	}`}
 																	onChange={(write: React.ChangeEvent<HTMLInputElement>) =>
-																		replace(formik.values.policies.findIndex(p => p === policy), {
+																		arrayHelpers.replace(formik.values.policies.findIndex(p => p === policy), {
 																			...policy,
 																			write:
 																				write.target.checked,
@@ -626,10 +635,10 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 															{/* Multi value field for policy.actions (additional actions) */}
 															{hasActions && (
 																<td className="fit editable">
-																	{!transactions.read_only &&
+																	{!transactions.readOnly &&
 																		hasAccess(
 																			editAccessRole,
-																			user
+																			user,
 																		) && (
 																			<div>
 																				<Field
@@ -646,20 +655,20 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 																				/>
 																			</div>
 																		)}
-																	{(transactions.read_only ||
+																	{(transactions.readOnly ||
 																		!hasAccess(
 																			editAccessRole,
-																			user
+																			user,
 																		)) &&
 																		policy.actions.map(
 																			(
 																				customAction,
-																				actionKey
+																				actionKey,
 																			) => (
 																				<div key={actionKey}>
 																					{customAction}
 																				</div>
-																			)
+																			),
 																		)}
 																</td>
 															)}
@@ -667,13 +676,13 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 															{/* Remove policy */}
 															{hasAccess(
 																editAccessRole,
-																user
+																user,
 															) && (
 																<td>
-																	{!transactions.read_only && (
+																	{!transactions.readOnly && (
 																		<ButtonLikeAnchor
 																			onClick={() =>
-																				remove(formik.values.policies.findIndex(p => p === policy))
+																				arrayHelpers.remove(formik.values.policies.findIndex(p => p === policy))
 																			}
 																			extraClassName="remove"
 																		/>
@@ -681,17 +690,17 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 																</td>
 															)}
 														</tr>
-													)
+													),
 												)}
 
 											{/* create additional policy */}
-											{!transactions.read_only &&
+											{!transactions.readOnly &&
 												hasAccess(editAccessRole, user) && (
 													<tr>
 														<td colSpan={5}>
 															<ButtonLikeAnchor
 																onClick={() =>
-																	push(createPolicy("", isUserTable))
+																	arrayHelpers.push(createPolicy("", isUserTable))
 																}
 															>
 																+{" "}
@@ -702,7 +711,7 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 												)}
 										</>
 									)}
-								</FieldArray>
+								/>
 							</tbody>
 						</table>
 					</div>
@@ -734,7 +743,7 @@ export const TemplateSelector = <T extends TemplateSelectorProps>({
 	descriptionText: ParseKeys
 	buttonText: ParseKeys
 	emptyText: ParseKeys
-	transactions: { read_only: boolean }
+	transactions: { readOnly: boolean }
 	aclTemplates: AclTemplate[]
 	defaultUser?: UserInfoState
 }) => {
@@ -776,32 +785,32 @@ export const TemplateSelector = <T extends TemplateSelectorProps>({
 					<tbody>
 						<tr>
 							<td className="editable">
-								{!transactions.read_only && aclTemplates.length > 0 && (
+								{!transactions.readOnly && aclTemplates.length > 0 && (
 									/* dropdown for selecting a policy template */
 									<DropDown
 										value={formik.values.aclTemplate}
 										text={getAclTemplateText(
 											aclTemplates,
-											formik.values.aclTemplate
+											formik.values.aclTemplate,
 										)}
-										options={!!aclTemplates ? formatAclTemplatesForDropdown(aclTemplates) : []}
+										options={aclTemplates ? formatAclTemplatesForDropdown(aclTemplates) : []}
 										required={true}
-										handleChange={(element) => {
+										handleChange={element => {
 											if (element) {
 												handleTemplateChange(
 													element.value,
 													formik,
 													dispatch,
 													aclDefaults,
-													defaultUser
-												)
+													defaultUser,
+												);
 											}
 										}}
 										placeholder={t(buttonText)}
 									/>
 								)}
 								{!(aclTemplates.length > 0) &&
-									//Show if no option is available
+									// Show if no option is available
 									<td>
 										<div className="obj-container padded">
 											{t(emptyText)}
@@ -814,8 +823,8 @@ export const TemplateSelector = <T extends TemplateSelectorProps>({
 				</table>
 			</div>
 		</div>
-	)
-}
+	);
+};
 
 export const formatAclRolesForDropdown = (roles: Role[]) => {
 	return roles.map(role => ({ label: createPolicyLabel(role) ?? role.name, value: role.name }));
@@ -824,13 +833,13 @@ export const formatAclRolesForDropdown = (roles: Role[]) => {
 export const createPolicyLabel = (policy: Role | TransformedAcl) => {
 	if (policy.user) {
 		if (policy.user.email !== undefined && policy.user.email !== "" && policy.user.email !== null) {
-			return policy.user.name + " <" + policy.user.email + ">"
+			return policy.user.name + " <" + policy.user.email + ">";
 		}
 		if (policy.user.name) {
-			return policy.user.name
+			return policy.user.name;
 		}
 		if (policy.user.username) {
-			return policy.user.username
+			return policy.user.username;
 		}
 	}
 
@@ -839,4 +848,4 @@ export const createPolicyLabel = (policy: Role | TransformedAcl) => {
 	} else {
 		return policy.role;
 	}
-}
+};

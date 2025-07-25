@@ -14,13 +14,13 @@ import ModalContentTable from "../../../shared/modals/ModalContentTable";
  */
 interface RequiredFormProps {
 	sourceMode: string,
-	[key: string]: any,
+	[key: string]: unknown,
 }
 
 const NewAssetUploadPage = <T extends RequiredFormProps>({
 	formik,
 	nextPage,
-	previousPage
+	previousPage,
 }: {
 	formik: FormikProps<T>,
 	nextPage: (values: T) => void,
@@ -38,7 +38,7 @@ const NewAssetUploadPage = <T extends RequiredFormProps>({
 				formik.setFieldValue(assetId, e.target.files[0]);
 			}
 		} else {
-			console.warn("File event did not contain any files")
+			console.warn("File event did not contain any files");
 		}
 	};
 
@@ -69,18 +69,24 @@ const NewAssetUploadPage = <T extends RequiredFormProps>({
 														id={asset.id}
 														className="blue-btn file-select-btn"
 														accept={asset.accept}
-														onChange={(e) => handleChange(e, asset.id)}
+														onChange={e => handleChange(e, asset.id)}
 														type="file"
 														tabIndex={0}
 													/>
-													{formik.values[asset.id] && (
-														<span className="ui-helper">
-															{formik.values[asset.id].name.substr(0, 50)}
-														</span>
-													)}
+													{(() => {
+														const val = formik.values[asset.id];
+														if (val instanceof File) {
+															return (
+																<span className="ui-helper">
+																	{val.name.substring(0, 50)}
+																</span>
+															);
+														}
+														return null;
+													})()}
 												</div>
 											</td>
-											{/*Button to remove asset*/}
+											{/* Button to remove asset*/}
 											<td className="fit">
 												<ButtonLikeAnchor
 													extraClassName="remove"

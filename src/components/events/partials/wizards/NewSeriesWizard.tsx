@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Formik } from "formik";
 import NewThemePage from "../ModalTabsAndPages/NewThemePage";
 import NewSeriesSummary from "./NewSeriesSummary";
@@ -29,7 +29,7 @@ import { hasAccess } from "../../../../utils/utils";
  * This component manages the pages of the new series wizard and the submission of values
  */
 const NewSeriesWizard = ({
-	close
+	close,
 }: {
 	close: () => void
 }) => {
@@ -48,7 +48,7 @@ const NewSeriesWizard = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const themesEnabled = (orgProperties['admin.themes.enabled'] || 'false').toLowerCase() === 'true';
+	const themesEnabled = (orgProperties["admin.themes.enabled"] || "false").toLowerCase() === "true";
 
 	const initialValues = getInitialValues(metadataFields, extendedMetadata, user);
 
@@ -103,7 +103,7 @@ const NewSeriesWizard = ({
 				hidden: false,
 			},
 		];
-		return steps.filter(step => !step.hidden)
+		return steps.filter(step => !step.hidden);
 	};
 
 	const steps = filterSteps();
@@ -120,7 +120,7 @@ const NewSeriesWizard = ({
 		setSnapshot(values);
 
 		// set page as completely filled out
-		let updatedPageCompleted = pageCompleted;
+		const updatedPageCompleted = pageCompleted;
 		updatedPageCompleted[page] = true;
 		setPageCompleted(updatedPageCompleted);
 
@@ -139,9 +139,9 @@ const NewSeriesWizard = ({
 				[key: string]: any;
 				policies: TransformedAcl[];
 				theme: string;
-			}
+			},
 	) => {
-		const response = dispatch(postNewSeries({values, metadataInfo: metadataFields, extendedMetadata}));
+		const response = dispatch(postNewSeries({ values, metadataInfo: metadataFields, extendedMetadata }));
 		console.info(response);
 		close();
 	};
@@ -152,10 +152,10 @@ const NewSeriesWizard = ({
 			<Formik
 				initialValues={snapshot}
 				validationSchema={currentValidationSchema}
-				onSubmit={(values) => handleSubmit(values)}
+				onSubmit={values => handleSubmit(values)}
 			>
 				{/* Render wizard pages depending on current value of page variable */}
-				{(formik) => {
+				{formik => {
 					// eslint-disable-next-line react-hooks/rules-of-hooks
 					useEffect(() => {
 						formik.validateForm().then();
@@ -171,8 +171,8 @@ const NewSeriesWizard = ({
 								setActivePage={setPage}
 								completed={pageCompleted}
 								setCompleted={setPageCompleted}
-								formik={formik}
-								hasAccessPage
+								acls={formik.values.policies}
+								isValid={formik.isValid}
 							/>
 							<div>
 								{steps[page].name === "metadata" && (
@@ -249,9 +249,9 @@ const getInitialValues = (
 	);
 
 	for (const catalog of extendedMetadata) {
-		metadataInitialValues = {...metadataInitialValues, ...getInitialMetadataFieldValues(
-			catalog
-		)};
+		metadataInitialValues = { ...metadataInitialValues, ...getInitialMetadataFieldValues(
+			catalog,
+		) };
 	}
 
 	initialValues = { ...initialValues, ...metadataInitialValues };

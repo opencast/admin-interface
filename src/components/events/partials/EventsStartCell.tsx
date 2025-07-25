@@ -1,5 +1,4 @@
 import { useTranslation } from "react-i18next";
-import React from "react";
 import { renderValidDate } from "../../../utils/dateUtils";
 import { Event } from "../../../slices/eventSlice";
 
@@ -7,7 +6,7 @@ import { Event } from "../../../slices/eventSlice";
  * This component renders the start cells of events in the table view
  */
 const EventsStartCell = ({
-	row
+	row,
 }: {
 	row: Event
 }) => {

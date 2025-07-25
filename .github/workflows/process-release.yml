@@ -11,6 +11,10 @@ jobs:
     name: Create release from tag
     if: github.repository_owner == 'opencast'
     runs-on: ubuntu-latest
+    outputs:
+      checksum: ${{ steps.tarball.outputs.checksum }}
+      tag: ${{ steps.tarball.outputs.tag }}
+      branch: ${{ steps.tarball.outputs.branch }}
     permissions:
       contents: write #for the release
       pull-requests: write #For the PR in the upstream repo
@@ -33,12 +37,34 @@ jobs:
         run: npm run build
 
       - name: create release tarball
+        id: tarball
         working-directory: build
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           tar -czf "../oc-admin-ui-$(git describe --tags).tar.gz" *
-          echo INTERFACE_CHECKSUM=`sha256sum oc-admin-ui-$(git describe --tags).tar.gz | cut -f 1 -d " "` >> $GITHUB_ENV
-          echo INTERFACE_TAG=$(git describe --tags) >> $GITHUB_ENV
-          echo BASE_BRANCH=$(git describe --tags | cut -c 1-4) >> $GITHUB_ENV
+          echo checksum=`sha256sum ../oc-admin-ui-$(git describe --tags).tar.gz | cut -f 1 -d " "` >> $GITHUB_OUTPUT
+          echo tag=$(git describe --tags) >> $GITHUB_OUTPUT
+          while read branchname
+          do
+            #branchname looks like 'develop' or 'r/17.x', the describe + cut looks like '17.x', so we prefix with r/
+            # NB: branchname == develop *should not match* anything so that we fall back to the if case below
+            if [ "$branchname" != "r/`git describe --tags | cut -f 1 -d -`" ]; then
+              continue
+            fi
+            echo "Base branch is $branchname"
+            BASE_BRANCH="$branchname"
+            echo "branch=$branchname" >> $GITHUB_OUTPUT
+            break
+          done <<< `gh api \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              /repos/${{ github.repository_owner }}/opencast/branches?per_page=100 | \
+            jq -r '. | map(select(.name | match("r/[0-9]*.x|develop"))) | .[].name'`
+          if [ -z "${BASE_BRANCH}" ]; then
+            echo "Base branch is develop"
+            echo "branch=develop" >> $GITHUB_OUTPUT
+          fi
 
       - name: create new release
         uses: softprops/action-gh-release@v2
@@ -47,6 +73,16 @@ jobs:
           fail_on_unmatched_files: true
           generate_release_notes: true
 
+  upstream-pr:
+    name: Create upstream PR to incorporate release
+    if: github.repository_owner == 'opencast'
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: write #for the release
+      pull-requests: write #For the PR in the upstream repo
+
+    steps:
       - name: Prepare git
         run: |
           git config --global user.name "Release Bot"
@@ -54,7 +90,7 @@ jobs:
 
       - name: Prepare GitHub SSH key
         env:
-          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+          DEPLOY_KEY: ${{ secrets.MODULE_PR_DEPLOY_KEY }}
         run: |
           install -dm 700 ~/.ssh/
           echo "${DEPLOY_KEY}" > ~/.ssh/id_ed25519
@@ -63,24 +99,27 @@ jobs:
 
       - name: Clone upstream repository
         run: |
-          #This token is an account wide token which allows creation of PRs and pushes.
-          #echo "GH_TOKEN=${{ secrets.ACCESS_TOKEN }}" >> token.txt
-          #gh auth login --with-token < token.txt
-          git clone -b r/$BASE_BRANCH "git@github.com:opencast/opencast.git" ~/opencast
-          cd ~/opencast
-          git checkout -b t/admin-ui-$INTERFACE_TAG
+          git clone -b ${{ needs.build.outputs.branch }} "git@github.com:${{ github.repository_owner }}/opencast.git" opencast
+          cd opencast
+          git checkout -b t/admin-ui-${{ needs.build.outputs.tag }}
 
       - name: Update the admin ui pom file
-        #env:
-        #  GH_TOKEN: ${{ github.token }}
+        working-directory: opencast
         run: |
-          cd ~/opencast
-          sed -i "s#<interface.sha256>.*</interface.sha256>#<interface.sha256>$INTERFACE_CHECKSUM</interface.sha256>#" modules/admin-ui-interface/pom.xml
-          sed -i "s#<interface.url>.*</interface.url>#<interface.url>https://github.com/opencast/opencast-admin-interface/releases/download/$INTERFACE_TAG/oc-admin-ui-$INTERFACE_TAG.tar.gz</interface.url>#" modules/admin-ui-interface/pom.xml
+          sed -i "s#<interface.sha256>.*</interface.sha256>#<interface.sha256>${{ needs.build.outputs.checksum }}</interface.sha256>#" modules/admin-ui-interface/pom.xml
+          sed -i "s#<interface.url>.*</interface.url>#<interface.url>https://github.com/${{ github.repository_owner }}/opencast-admin-interface/releases/download/${{ needs.build.outputs.tag }}/oc-admin-ui-${{ needs.build.outputs.tag }}.tar.gz</interface.url>#" modules/admin-ui-interface/pom.xml
           git add modules/admin-ui-interface/pom.xml
-          git commit -m "Updating admin ui to $INTERFACE_TAG"
-          git push origin t/admin-ui-$INTERFACE_TAG
+          git commit -m "Updating admin ui to ${{ needs.build.outputs.tag }}"
+          git push origin t/admin-ui-${{ needs.build.outputs.tag }}
           #This token is an account wide token which allows creation of PRs and pushes.
-          echo "${{ secrets.PR_TOKEN }}" > token.txt
+          echo "${{ secrets.MODULE_PR_TOKEN }}" > token.txt
           gh auth login --with-token < token.txt
-          gh pr create --title "Update $BASE_BRANCH Admin UI to $INTERFACE_TAG" --label admin-ui --label maintenance --body "Updating Opencast $BASE_BRANCH Admin UI module to $INTERFACE_TAG" --head=opencast:t/admin-ui-$INTERFACE_TAG --base r/$BASE_BRANCH -R opencast/opencast
+          gh pr create \
+            --title "Update ${{ needs.build.outputs.branch }} Admin UI to ${{ needs.build.outputs.tag }}" \
+            --body "Updating Opencast ${{ needs.build.outputs.branch }} Admin UI module to [${{ needs.build.outputs.tag }}](https://github.com/${{ github.repository_owner }}/opencast-admin-interface/releases/tag/${{ needs.build.outputs.tag }})" \
+            --head=${{ github.repository_owner }}:t/admin-ui-${{ needs.build.outputs.tag }} \
+            --base ${{ needs.build.outputs.branch }} \
+            -R ${{ github.repository_owner }}/opencast
+            #FIXME: fine grained PATs can't apply labels
+            #FIXME: classic PATs don't have the permissions because the PR isn't in an opencastproject (the user) repo
+            #--label admin-ui --label maintenance \

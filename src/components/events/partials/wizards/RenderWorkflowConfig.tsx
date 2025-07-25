@@ -19,7 +19,7 @@ interface RequiredFormProps {
 const RenderWorkflowConfig = <T extends RequiredFormProps>({
 	workflowId,
 	formik,
-	displayDescription
+	displayDescription,
 }: {
 	workflowId: string
 	formik: FormikProps<T>
@@ -29,8 +29,8 @@ const RenderWorkflowConfig = <T extends RequiredFormProps>({
 	const workflowDef = useAppSelector(state => getWorkflowDefById(state, workflowId));
 
 	// Get html for configuration panel
-	const configPanel = !!workflowDef && workflowDef.configuration_panel_json
-		? workflowDef.configuration_panel_json
+	const configPanel = !!workflowDef && workflowDef.configurationPanelJson
+		? workflowDef.configurationPanelJson
 		: [];
 	const description = !!workflowDef && workflowDef.description
 		? workflowDef.description
@@ -74,7 +74,7 @@ const RenderWorkflowConfig = <T extends RequiredFormProps>({
 								)}
 								<ul>
 									{configOption.fieldset?.map((field, keys) =>
-										renderInputByType(field, keys, formik)
+										renderInputByType(field, keys, formik),
 									)}
 								</ul>
 							</fieldset>
@@ -124,11 +124,11 @@ const RenderRadio = <T extends RequiredFormProps>(
 };
 
 const RenderNumber = <T extends RequiredFormProps>(
-	{ field, formik } : { field: any, formik: FormikProps<T> }) => {
+	{ field, formik } : { field: FieldSetField, formik: FormikProps<T> }) => {
 	// validate that value of number is between max and min
 	const validate = (value: string) => {
 		let error;
-		if (parseInt(value) > field.max || parseInt(value) < field.min) {
+		if (field.max && field.min && (parseInt(value) > field.max || parseInt(value) < field.min)) {
 			error = "out of range";
 		}
 		return error;
@@ -139,7 +139,7 @@ const RenderNumber = <T extends RequiredFormProps>(
 
 const RenderText = <T extends RequiredFormProps>({
 	field,
-	formik
+	formik,
 }: {
 	field: FieldSetField,
 	formik: FormikProps<T>,
@@ -150,7 +150,7 @@ const RenderText = <T extends RequiredFormProps>({
 const RenderField = <T extends RequiredFormProps>({
 	field,
 	formik,
-	validate = undefined
+	validate = undefined,
 }: {
 	field: FieldSetField,
 	formik: FormikProps<T>,
@@ -158,10 +158,10 @@ const RenderField = <T extends RequiredFormProps>({
 }) => {
 	// id used for Field and label
 	const uuid = uuidv4();
-	const disabled = !!field.disabled ? field.disabled : false;
+	const disabled = field.disabled ? field.disabled : false;
 
 	const renderField = () => {
-			return(
+			return (
 				<Field
 					id={uuid}
 					defaultValue={field.defaultValue}
@@ -173,8 +173,8 @@ const RenderField = <T extends RequiredFormProps>({
 					min={field.min}
 					max={field.max}
 				/>
-			)
-	}
+			);
+	};
 
 	return (
 		<li>
@@ -189,6 +189,6 @@ const RenderField = <T extends RequiredFormProps>({
 			)}
 		</li>
 	);
-}
+};
 
 export default RenderWorkflowConfig;

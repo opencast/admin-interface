@@ -9,7 +9,7 @@ import { parseISO } from "date-fns";
 import { FieldProps } from "formik";
 import { MetadataField } from "../../../slices/eventSlice";
 import { GroupBase, SelectInstance } from "react-select";
-import TextareaAutosize from 'react-textarea-autosize';
+import TextareaAutosize from "react-textarea-autosize";
 
 /**
  * This component renders an editable field for single values depending on the type of the corresponding metadata
@@ -39,13 +39,21 @@ const RenderField = ({
 		<div
 			onClick={() => {
 				if (editableRef.current) {
-					editableRef.current.focus && editableRef.current.focus()
-					editableRef.current.setFocus && editableRef.current.setFocus() // For DatePicker
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+					if (editableRef.current.focus) {
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+						editableRef.current.focus();
+					}
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+					if (editableRef.current.setFocus) {
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+						editableRef.current.setFocus(); // For DatePicker
+					}
 				}
 			}}
 			onFocus={onFocus}
 			onBlur={onBlur}
-			style={{display: "flex", justifyContent: "space-between"}}
+			style={{ display: "flex", justifyContent: "space-between" }}
 		>
 			{metadataField.type === "time" && (
 				<EditableSingleValueTime
@@ -113,10 +121,11 @@ const RenderField = ({
 					ref={editableRef}
 				/>
 			)}
-			<div style={{display: "flex", justifyContent: "flex-end"}}>
+			<div style={{ display: "flex", justifyContent: "flex-end" }}>
 				{!focused && showCheck && (
 					<i
 						className={cn("saved fa fa-check", {
+							// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 							active: form.initialValues[field.name] !== field.value,
 						})}
 					/>
@@ -142,7 +151,7 @@ const EditableBooleanValue = ({
 			{...field}
 			ref={ref}
 			type="checkbox"
-			checked={field.value}
+			checked={field.value as boolean}
 			autoFocus={isFirstField}
 		/>
 	);
@@ -163,11 +172,11 @@ const EditableDateValue = ({
 	return (
 		// For some reason onclick events are bubbling up from the datepicker which we do not want.
 		// Therefore we wrap it.
-		<div onClick={(e) => { e.stopPropagation() }}>
+		<div onClick={e => { e.stopPropagation(); }}>
 			<DatePicker
 				ref={ref}
-				selected={!isNaN(Date.parse(field.value)) ? new Date(field.value) : null}
-				onChange={(value) => setFieldValue(field.name, value)}
+				selected={!isNaN(Date.parse(field.value as string)) ? new Date(field.value as string) : null}
+				onChange={value => setFieldValue(field.name, value)}
 				showTimeInput
 				showYearDropdown
 				showMonthDropdown
@@ -210,13 +219,13 @@ const EditableSingleSelect = ({
 	return (
 		<DropDown
 			ref={ref}
-			value={field.value}
+			value={field.value as string}
 			text={text}
 			options={metadataField.collection
 				? metadataField.collection.map(item => ({ label: item.label ?? item.name, value: item.value, order: item.order }))
 				: []}
 			required={metadataField.required}
-			handleChange={(element) => element && setFieldValue(field.name, element.value)}
+			handleChange={element => element && setFieldValue(field.name, element.value)}
 			placeholder={focused
 				? `-- ${t("SELECT_NO_OPTION_SELECTED")} --`
 				: `${t("SELECT_NO_OPTION_SELECTED")}`
@@ -268,13 +277,13 @@ const EditableSingleValue = ({
 			className="single-value"
 			autoFocus={isFirstField}
 			type="text"
-			onKeyDown={(event) => {
+			onKeyDown={event => {
 				if (event.key === "Enter") {
 					ref.current?.blur();
 				}
 			}}
 		/>
-	)
+	);
 };
 
 // Renders editable field for time value
@@ -292,11 +301,11 @@ const EditableSingleValueTime = ({
 	return (
 		// For some reason onclick events are bubbling up from the datepicker which we do not want.
 		// Therefore we wrap it.
-		<div onClick={(e) => { e.stopPropagation() }}>
+		<div onClick={e => { e.stopPropagation(); }}>
 			<DatePicker
 				ref={ref}
-				selected={typeof field.value === "string" ? parseISO(field.value) : field.value}
-				onChange={(value) => setFieldValue(field.name, value)}
+				selected={typeof field.value === "string" ? parseISO(field.value) : field.value as Date}
+				onChange={value => setFieldValue(field.name, value)}
 				showTimeSelect
 				showTimeSelectOnly
 				dateFormat="p"

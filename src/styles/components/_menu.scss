@@ -1,6 +1,7 @@
 @use "../base/fontawesome/fa-mixins";
 @use "../base/fontawesome/variables" as variables2;
 @use "../base/variables";
+@use "../mixins/triangle-point";
 
 /**
  * Licensed to The Apereo Foundation under one or more contributor license
@@ -113,4 +114,10 @@
             @include fa-mixins.fa-icon(variables2.$fa-var-cogs, before, block, -3px 0 0 0, 0, inherit, 29px, normal, inherit);
         }
     }
+}
+
+.roll-up-menu-active {
+    $size: 8px;
+    $position-from-left: 4.75px;
+    @include triangle-point.triangle-point-side(left, $size, $size, $position-from-left, variables.$color-gray, 1px, variables.$modal-nav-border-color, -8px);
 }

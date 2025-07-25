@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import cn from "classnames";
 import { Step, StepButton, StepLabel, Stepper } from "@mui/material";
@@ -12,6 +11,7 @@ import { checkAcls } from "../../../slices/aclSlice";
 import { useAppDispatch } from "../../../store";
 import { FormikProps } from "formik/dist/types";
 import { ParseKeys } from "i18next";
+import { TransformedAcl } from "../../../slices/aclDetailsSlice";
 
 export type WizardStep = {
 	translation: ParseKeys,
@@ -25,33 +25,33 @@ const WizardStepper = ({
 	steps,
 	activePageIndex,
 	setActivePage,
-	formik,
 	completed,
 	setCompleted,
-	hasAccessPage = false,
+	acls,
+	isValid = false,
 }: {
 	steps: WizardStep[],
 	activePageIndex: number,
 	setActivePage: (num: number) => void,
-	formik: FormikProps<any>,
 	completed: Record<number, boolean>,
 	setCompleted: (rec: Record<number, boolean>) => void,
-	hasAccessPage?: boolean,
+	acls?: TransformedAcl[], // If there is an acl page
+	isValid: boolean,
 }) => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
 	const handleOnClick = async (key: number) => {
 		if (isSummaryReachable(key, steps, completed)) {
-			if (hasAccessPage) {
-				let check = await dispatch(checkAcls(formik.values.acls));
+			if (acls) {
+				const check = await dispatch(checkAcls(acls));
 				if (!check) {
 					return;
 				}
 			}
 
-			if (formik.isValid) {
-				let updatedCompleted = completed;
+			if (isValid) {
+				const updatedCompleted = completed;
 				updatedCompleted[activePageIndex] = true;
 				setCompleted(updatedCompleted);
 				// If all previous pages have been completed
@@ -63,7 +63,7 @@ const WizardStepper = ({
 				}
 			}
 
-			if (!formik.isValid) {
+			if (!isValid) {
 				if (completed[key]) {
 					setActivePage(key);
 				}
@@ -87,7 +87,7 @@ const WizardStepper = ({
 							{t(label.translation)}
 						</StepLabel>
 					</StepButton>
-				</Step>
+				</Step>,
 			)}
 		</Stepper>
 	);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Role, fetchRolesWithTarget } from "../../../../slices/aclSlice";
 import SelectContainer from "../../../shared/wizard/SelectContainer";
 import { FormikProps } from "formik";
@@ -13,7 +13,7 @@ interface RequiredFormProps {
 }
 
 const UserRolesTab = <T extends RequiredFormProps>({
-	formik
+	formik,
 }: {
 	formik: FormikProps<T>
 }) => {
@@ -46,7 +46,7 @@ const UserRolesTab = <T extends RequiredFormProps>({
 				/>
 			)}
 			<div className="form-container">
-				{/*Select container for roles*/}
+				{/* Select container for roles*/}
 				{!loading && (
 					<SelectContainer
 						resource={{

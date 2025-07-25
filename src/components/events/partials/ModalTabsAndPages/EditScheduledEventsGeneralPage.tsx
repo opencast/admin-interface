@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import cn from "classnames";
 import { getSelectedRows } from "../../../../selectors/tableSelectors";
@@ -84,7 +84,7 @@ const EditScheduledEventsGeneralPage = <T extends RequiredFormProps>({
 												type="checkbox"
 												className="select-all-cbox"
 												checked={allChecked}
-												onChange={(e) => onChangeAllSelected(e)}
+												onChange={e => onChangeAllSelected(e)}
 											/>
 										</th>
 										<th className="full-width">
@@ -105,14 +105,14 @@ const EditScheduledEventsGeneralPage = <T extends RequiredFormProps>({
 											key={key}
 											className={cn(
 												{ error: !isScheduleEditable(event) },
-												{ info: !isAgentAccess(event, user) }
+												{ info: !isAgentAccess(event, user) },
 											)}
 										>
 											<td>
 												<input
 													type="checkbox"
 													name="events"
-													onChange={(e) => onChangeSelected(e, event.id)}
+													onChange={e => onChangeSelected(e, event.id)}
 													checked={event.selected}
 												/>
 											</td>
@@ -137,7 +137,7 @@ const EditScheduledEventsGeneralPage = <T extends RequiredFormProps>({
 				customValidation={
 					!checkValidityUpdateScheduleEventSelection(
 						formik.values,
-						user
+						user,
 					)
 				}
 				isFirst

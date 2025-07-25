@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { setSpecificEventFilter } from "../../../slices/tableFilterSlice";
 import { useNavigate } from "react-router";
@@ -20,7 +19,7 @@ const SeriesTitleCell = ({
 
 	const redirectToEvents = async (seriesId: string) => {
 		// set the series filter value of events to series title
-		await dispatch(setSpecificEventFilter({filter: "series", filterValue: seriesId}));
+		await dispatch(setSpecificEventFilter({ filter: "series", filterValue: seriesId }));
 		navigate("/events/events");
 	};
 

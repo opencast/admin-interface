@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Notifications from "../../../shared/Notifications";
 import {
@@ -37,7 +37,7 @@ const NewAccessPage = <T extends RequiredFormProps>({
 	editAccessRole,
 	viewUsersAccessRole,
 	viewNonUsersAccessRole,
-	initEventAclWithSeriesAcl
+	initEventAclWithSeriesAcl,
 }: {
 	formik: FormikProps<T>,
 	nextPage: (values: T) => void,
@@ -63,11 +63,10 @@ const NewAccessPage = <T extends RequiredFormProps>({
 		// fetch data about roles, acl templates and actions from backend
 		async function fetchData() {
 			setLoading(true);
-			const responseTemplates = await fetchAclTemplates();
+			const [responseTemplates, responseActions, responseRoles] = await Promise.all([
+				fetchAclTemplates(), fetchAclActions(), fetchRolesWithTarget("ACL")]);
 			setAclTemplates(responseTemplates);
-			const responseActions = await fetchAclActions();
 			setAclActions(responseActions);
-			const responseRoles = await fetchRolesWithTarget("ACL");
 			setRoles(responseRoles);
 			setLoading(false);
 		}
@@ -85,7 +84,7 @@ const NewAccessPage = <T extends RequiredFormProps>({
 	// If we have to use series ACL, overwrite existing rules
 	useEffect(() => {
 		if (initEventAclWithSeriesAcl && formik.values.isPartOf && seriesAcl) {
-			formik.setFieldValue("acls", seriesAcl)
+			formik.setFieldValue("acls", seriesAcl);
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [initEventAclWithSeriesAcl, seriesAcl]);
@@ -111,7 +110,7 @@ const NewAccessPage = <T extends RequiredFormProps>({
 									descriptionText={"EVENTS.SERIES.NEW.ACCESS.ACCESS_POLICY.DESCRIPTION"}
 									buttonText={"EVENTS.SERIES.NEW.ACCESS.ACCESS_POLICY.LABEL"}
 									emptyText={"EVENTS.SERIES.NEW.ACCESS.ACCESS_POLICY.EMPTY"}
-									transactions={{read_only: false}}
+									transactions={{ readOnly: false }}
 									aclTemplates={aclTemplates}
 									defaultUser={user}
 								/>
@@ -128,7 +127,7 @@ const NewAccessPage = <T extends RequiredFormProps>({
 												createLabel={"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.NEW_USER"}
 												formik={formik}
 												hasActions={aclActions.length > 0}
-												transactions={{read_only: false}}
+												transactions={{ readOnly: false }}
 												aclActions={aclActions}
 												roles={roles}
 												editAccessRole={editAccessRole}
@@ -145,7 +144,7 @@ const NewAccessPage = <T extends RequiredFormProps>({
 												createLabel={"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.NEW"}
 												formik={formik}
 												hasActions={aclActions.length > 0}
-												transactions={{read_only: false}}
+												transactions={{ readOnly: false }}
 												aclActions={aclActions}
 												roles={roles}
 												editAccessRole={editAccessRole}
@@ -164,7 +163,7 @@ const NewAccessPage = <T extends RequiredFormProps>({
 											createLabel={"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.NEW"}
 											formik={formik}
 											hasActions={aclActions.length > 0}
-											transactions={{read_only: false}}
+											transactions={{ readOnly: false }}
 											aclActions={aclActions}
 											roles={roles}
 											editAccessRole={editAccessRole}

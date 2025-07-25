@@ -19,8 +19,18 @@ jobs:
           git config --global user.name 'Release Bot'
 
       - name: tag and push
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          export TEMP=${{ github.ref_name }}
+          #Translate 'develop' to 18.x or whatever is appropriate
+          if [ "develop" == "${{ github.ref_name }}" ]; then
+            #NB normally we only clone just the head ref, but fetch-depth: 0 above gets *all* the history
+            export TEMP="$((`git branch -a | grep r/ | cut -f 4 -d '/' | cut -f 1 -d '.'` + 1)).x"
+          else
+            export TEMP=${{ github.ref_name }}
+          fi
           export TAG=${TEMP#r\/}-`date +%Y-%m-%d`
           git tag $TAG
           git push origin $TAG
+          sleep 2
+          gh workflow run process-release.yml -r $TAG

@@ -52,5 +52,5 @@ export const ActionCellDelete = <T, >({
 				modalRef={deleteConfirmationModalRef}
 			/>
 		</>
-	)
+	);
 };

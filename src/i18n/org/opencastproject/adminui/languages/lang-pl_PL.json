@@ -103,7 +103,8 @@
 			"SELECTED_COLUMNS": "Wybrane kolumny",
 			"FOOTER_TEXT": "Kolejność i zaznaczenia są zapisane automatycznie. Naciśnij przycisk \"{{resetTranslation}}\", aby przywrócić widok domyślny.",
 			"ADD_COLUMN": "Add column",
-			"REMOVE_COLUMN": "Remove column"
+			"REMOVE_COLUMN": "Remove column",
+			"DRAG_HANDLE_USAGE_INSTRUCTIONS": "Press space bar to start a drag. When dragging you can use the arrow keys to move the item around and escape to cancel. Some screen readers may require you to be in focus mode or to use your pass through key"
 		}
 	},
 	"CONFIRMATIONS": {
@@ -894,11 +895,7 @@
 						"ADDITIONAL_ACTIONS": "Dodatkowe Działania",
 						"ACTION": "Działania",
 						"NEW": "Nowe zasada",
-						"NON_USER_ROLES": "Roles and Groups authorized for the event",
-						"USER": "User",
-						"USERS": "Users who are authorized for the event",
-						"NEW_USER": "New user",
-						"SANITIZATION_NOTE": "User role sanitization is enabled in your Opencast, therefore user roles are displayed alongside other roles. This does not impact role functionality in any way."
+						"DETAILS": "Details"
 					},
 					"ROLES": {
 						"LABEL": "Select or create a role"
@@ -1029,7 +1026,7 @@
 				},
 				"WORKFLOW_OPERATIONS": {
 					"TITLE": "Operacje w przepływie pracy",
-					"DETAILS_LINK": "Operacje",
+					"DETAILS_LINK": "Operations",
 					"TABLE_HEADERS": {
 						"TITLE": "Tytuł",
 						"STATUS": "Status",
@@ -1177,7 +1174,10 @@
 				"TOOLTIP": {
 					"SERIES": "Filtrowanie wydarzeń dla tej serii",
 					"DETAILS": "Pokaż szczegóły serii",
-					"DELETE": "Usuń serie"
+					"DELETE": "Usuń serie",
+					"CREATION": "Filter for this creation date",
+					"ORGANIZER": "Filter for this organizer",
+					"CONTRIBUTORS": "Filter for this contributor"
 				}
 			},
 			"DETAILS": {
@@ -1208,10 +1208,7 @@
 						"ADDITIONAL_ACTIONS": "Dodatkowe Działania",
 						"ACTION": "Działania",
 						"NEW": "Nowe zasada",
-						"NON_USER_ROLES": "Roles and Groups authorized for the series",
-						"USER": "User",
-						"USERS": "Users who are authorized for the series",
-						"NEW_USER": "New user",
+						"DETAILS": "Details",
 						"REPLACE_EVENT_ACLS": "Update series permissions",
 						"REPLACE_EVENT_ACLS_HINT": "Upewnij się, że wszystkie zdarzenia tej serii mają te uprawnienia w mocy",
 						"LOAD_MORE_LIMIT": "policies shown.",
@@ -1470,11 +1467,8 @@
 						"ADDITIONAL_ACTIONS": "Dodatkowe Działania",
 						"ACTION": "Działania",
 						"NEW": "Nowe zasada",
-						"NON_USER_ROLES": "Roles and Groups authorized for the access policy",
-						"DESCRIPTION": "Proszę wybrać zestaw wstępnie skonfigurowanych zasad lub dodać niestandardowe zasady poniżej",
-						"USER": "User",
-						"USERS": "Users who are authorized for the access policy",
-						"NEW_USER": "New user"
+						"DETAILS": "Details",
+						"DESCRIPTION": "Proszę wybrać zestaw wstępnie skonfigurowanych zasad lub dodać niestandardowe zasady poniżej"
 					},
 					"ROLES": {
 						"LABEL": "Wybierz rolę",
@@ -1986,6 +1980,8 @@
 	"TABLE_EDIT": "Edycja",
 	"TABLE_NEXT": "Następna strona",
 	"TABLE_PREVIOUS": "Poprzednia strona",
+	"TABLE_CURRENT": "Current page {{pageNumber}}",
+	"TABLE_NUMBERED": "Go to page {{pageNumber}}",
 	"DASHBOARD": {
 		"RUNNING": "W toku",
 		"FINISHED": "Zakończone",
@@ -1993,7 +1989,8 @@
 		"FAILED": "Zakończone niepowodzeniem",
 		"FINISHED_WITH_COMMENTS": "Do zrobienia",
 		"SCHEDULED": "Zaplanowane",
-		"RECORDING": "Nagrywanie"
+		"RECORDING": "Nagrywanie",
+		"BUTTON_TOOLTIP": "Apply filter {{filterName}} to the table"
 	},
 	"HOTKEYS": {
 		"CHEAT_SHEET": {

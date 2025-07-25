@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { Group, deleteGroup } from "../../../slices/groupSlice";
 import { fetchGroupDetails } from "../../../slices/groupDetailsSlice";
 import { ActionCellDelete } from "../../shared/ActionCellDelete";
@@ -35,14 +35,14 @@ const GroupsActionsCell = ({
 
 	return (
 		<>
-			{/*edit/show group */}
+			{/* edit/show group */}
 			<IconButton
 				callback={() => showGroupDetails()}
 				iconClassname={"more"}
 				editAccessRole={"ROLE_UI_GROUPS_EDIT"}
 				tooltipText={"USERS.GROUPS.TABLE.TOOLTIP.DETAILS"}
 			/>
-			{/*modal displaying details about group*/}
+			{/* modal displaying details about group*/}
 			<GroupDetailsModal
 				close={hideGroupDetails}
 				groupName={row.name}

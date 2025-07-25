@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import TableFilters from "../shared/TableFilters";
 import Table from "../shared/Table";
@@ -8,7 +8,7 @@ import { getTotalUsers } from "../../selectors/userSelectors";
 import {
 	loadUsersIntoTable,
 } from "../../thunks/tableThunks";
-import { fetchFilters, editTextFilter } from "../../slices/tableFilterSlice";
+import { fetchFilters } from "../../slices/tableFilterSlice";
 import Header from "../Header";
 import NavBar from "../NavBar";
 import MainView from "../MainView";
@@ -37,9 +37,6 @@ const Users = () => {
 
 		dispatch(fetchFilters("users"));
 
-		// Reset text filter
-		dispatch(editTextFilter(""));
-
 		// Load users on mount
 		const loadUsers = async () => {
 			// Fetching users from server
@@ -53,12 +50,12 @@ const Users = () => {
 		loadUsers();
 
 		// Fetch users every minute
-		let fetchUsersInterval = setInterval(loadUsers, 5000);
+		const fetchUsersInterval = setInterval(loadUsers, 5000);
 
 		return () => {
 			allowLoadIntoTable = false;
 			clearInterval(fetchUsersInterval);
-		}
+		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

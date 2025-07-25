@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import ResourceDetailsAccessPolicyTab from "../../../shared/modals/ResourceDetailsAccessPolicyTab";
 import { getPolicyTemplateId, getSeriesDetailsAcl } from "../../../../selectors/seriesDetailsSelectors";
 import {

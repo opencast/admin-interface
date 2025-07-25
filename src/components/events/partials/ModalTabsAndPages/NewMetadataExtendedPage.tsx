@@ -1,4 +1,3 @@
-import React from "react";
 import { FormikProps } from "formik";
 import WizardNavigationButtons from "../../../shared/wizard/WizardNavigationButtons";
 import { MetadataCatalog } from "../../../../slices/eventSlice";

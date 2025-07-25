@@ -22,10 +22,10 @@ export const getTableDirectionForResource = (state: RootState, resource: TableSt
 export const getMultiSelect = (state: RootState) => state.table.multiSelect[state.table.resource];
 export const getTable = (state: RootState) => state.table;
 export const getDeactivatedColumns = (state: RootState) =>
-	state.table.columns.filter((column) => column.deactivated);
+	state.table.columns.filter(column => column.deactivated);
 export const getActivatedColumns = (state: RootState) =>
-	state.table.columns.filter((column) => !column.deactivated);
+	state.table.columns.filter(column => !column.deactivated);
 
-export const getSelectedRows = createSelector(getTableRows, (rows) =>
-	rows.filter((row) => row.selected)
+export const getSelectedRows = createSelector(getTableRows, rows =>
+	rows.filter(row => row.selected),
 );

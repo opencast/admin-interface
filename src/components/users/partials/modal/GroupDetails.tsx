@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Formik } from "formik";
 import GroupMetadataPage from "../wizard/GroupMetadataPage";
 import GroupRolesPage from "../wizard/GroupRolesPage";
@@ -63,7 +63,7 @@ const GroupDetails: React.FC<{
 	};
 
 	const handleSubmit = (values: UpdateGroupDetailsState) => {
-		dispatch(updateGroupDetails({values: values, groupId: groupDetails.id}));
+		dispatch(updateGroupDetails({ values: values, groupId: groupDetails.id }));
 		close();
 	};
 
@@ -76,9 +76,9 @@ const GroupDetails: React.FC<{
 			<Formik
 				initialValues={initialValues}
 				validationSchema={EditGroupSchema}
-				onSubmit={(values) => handleSubmit(values)}
+				onSubmit={values => handleSubmit(values)}
 			>
-				{(formik) => (
+				{formik => (
 					<>
 						{page === 0 && <GroupMetadataPage formik={formik} isEdit />}
 						{page === 1 && <GroupRolesPage formik={formik} isEdit />}

@@ -1,4 +1,3 @@
-import React from "react";
 import { getPolicies, getPolicyTemplateId } from "../../../../selectors/eventDetailsSelectors";
 import ResourceDetailsAccessPolicyTab from "../../../shared/modals/ResourceDetailsAccessPolicyTab";
 import { useAppSelector } from "../../../../store";

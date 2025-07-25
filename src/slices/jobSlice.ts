@@ -1,13 +1,21 @@
-import { PayloadAction, SerializedError, createSlice } from '@reduxjs/toolkit'
-import { jobsTableConfig } from '../configs/tableConfigs/jobsTableConfig';
-import axios from 'axios';
-import { getURLParams } from '../utils/resourceUtils';
-import { TableConfig } from '../configs/tableConfigs/aclsTableConfig';
-import { createAppAsyncThunk } from '../createAsyncThunkWithTypes';
+import { PayloadAction, SerializedError, createSlice } from "@reduxjs/toolkit";
+import { jobsTableConfig } from "../configs/tableConfigs/jobsTableConfig";
+import axios from "axios";
+import { getURLParams } from "../utils/resourceUtils";
+import { TableConfig } from "../configs/tableConfigs/aclsTableConfig";
+import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
 
 /**
  * This file contains redux reducer for actions affecting the state of jobs
  */
+type FetchJobs = {
+	total: JobState["total"],
+	count: JobState["count"],
+	limit: JobState["limit"],
+	offset: JobState["offset"],
+	results: JobState["results"],
+};
+
 export type Job = {
 	creator: string,
 	id: number,
@@ -21,7 +29,7 @@ export type Job = {
 }
 
 type JobState = {
-	status: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	status: "uninitialized" | "loading" | "succeeded" | "failed",
 	error: SerializedError | null,
 	results: Job[],
 	columns: TableConfig["columns"],
@@ -32,14 +40,14 @@ type JobState = {
 }
 
 // Fill columns initially with columns defined in jobsTableConfig
-const initialColumns = jobsTableConfig.columns.map((column) => ({
+const initialColumns = jobsTableConfig.columns.map(column => ({
 	...column,
 	deactivated: false,
 }));
 
 // Initial state of jobs in redux store
 const initialState: JobState = {
-	status: 'uninitialized',
+	status: "uninitialized",
 	error: null,
 	results: [],
 	columns: initialColumns,
@@ -49,19 +57,19 @@ const initialState: JobState = {
 	limit: 0,
 };
 
-export const fetchJobs = createAppAsyncThunk('jobs/fetchJobs', async (_, { getState }) => {
+export const fetchJobs = createAppAsyncThunk("jobs/fetchJobs", async (_, { getState }) => {
 	const state = getState();
-	let params = getURLParams(state, "jobs");
+	const params = getURLParams(state, "jobs");
 	// Just make the async request here, and return the response.
 	// This will automatically dispatch a `pending` action first,
 	// and then `fulfilled` or `rejected` actions based on the promise.
 	// /jobs.json?limit=0&offset=0&filter={filter}&sort={sort}
-	const res = await axios.get("/admin-ng/job/jobs.json?", { params: params });
+	const res = await axios.get<FetchJobs>("/admin-ng/job/jobs.json?", { params: params });
 	return res.data;
 });
 
 const jobSlice = createSlice({
-	name: 'jobs',
+	name: "jobs",
 	initialState,
 	reducers: {
 		setJobColumns(state, action: PayloadAction<
@@ -73,17 +81,11 @@ const jobSlice = createSlice({
 	// These are used for thunks
 	extraReducers: builder => {
 		builder
-			.addCase(fetchJobs.pending, (state) => {
-				state.status = 'loading';
+			.addCase(fetchJobs.pending, state => {
+				state.status = "loading";
 			})
-			.addCase(fetchJobs.fulfilled, (state, action: PayloadAction<{
-				total: JobState["total"],
-				count: JobState["count"],
-				limit: JobState["limit"],
-				offset: JobState["offset"],
-				results: JobState["results"],
-			}>) => {
-				state.status = 'succeeded';
+			.addCase(fetchJobs.fulfilled, (state, action: PayloadAction<FetchJobs>) => {
+				state.status = "succeeded";
 				const jobs = action.payload;
 				state.total = jobs.total;
 				state.count = jobs.count;
@@ -92,10 +94,10 @@ const jobSlice = createSlice({
 				state.results = jobs.results;
 			})
 			.addCase(fetchJobs.rejected, (state, action) => {
-				state.status = 'failed';
+				state.status = "failed";
 				state.error = action.error;
 			});
-	}
+	},
 });
 
 export const { setJobColumns } = jobSlice.actions;

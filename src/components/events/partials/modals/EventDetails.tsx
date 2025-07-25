@@ -64,7 +64,7 @@ export enum EventDetailsPage {
 	Statistics,
 }
 
-export type WorkflowTabHierarchy = "entry" | "workflow-details" | "workflow-operations" | "workflow-operation-details" | "errors-and-warnings" | "workflow-error-details"
+export type WorkflowTabHierarchy = "workflows" | "workflow-details" | "workflow-operations" | "workflow-operation-details" | "errors-and-warnings" | "workflow-error-details"
 export type AssetTabHierarchy = "entry" | "add-asset" | "asset-attachments" | "attachment-details" | "asset-catalogs" | "catalog-details" | "asset-media" | "media-details" | "asset-publications" | "publication-details";
 
 /**
@@ -92,8 +92,8 @@ const EventDetails = ({
 		dispatch(fetchEventStatistics(eventId));
 		dispatch(fetchAssetUploadOptions());
 
-		dispatch(fetchHasActiveTransactions(eventId)).then((fetchTransactionResult) => {
-			const result = unwrapResult(fetchTransactionResult)
+		dispatch(fetchHasActiveTransactions(eventId)).then(fetchTransactionResult => {
+			const result = unwrapResult(fetchTransactionResult);
 			if (result.active !== undefined && result.active) {
 				dispatch(
 					addNotification({
@@ -101,17 +101,17 @@ const EventDetails = ({
 						key: "ACTIVE_TRANSACTION",
 						duration: -1,
 						context: NOTIFICATION_CONTEXT,
-						noDuplicates: true
-					})
-				)
+						noDuplicates: true,
+					}),
+				);
 			}
 			if (result.active !== undefined && !result.active) {
 				dispatch(
 					removeNotificationByKey({
 						key: "ACTIVE_TRANSACTION",
-						context: NOTIFICATION_CONTEXT
-					})
-				)
+						context: NOTIFICATION_CONTEXT,
+					}),
+				);
 			}
 		});
 
@@ -219,7 +219,7 @@ const EventDetails = ({
 
 	const openTab = (tabNr: EventDetailsPage) => {
 		dispatch(removeNotificationWizardForm());
-		dispatch(openModalTab(tabNr, "entry", "entry"))
+		dispatch(openModalTab(tabNr, "workflow-details", "entry"));
 	};
 
 	return (
@@ -269,7 +269,7 @@ const EventDetails = ({
 					/>
 				)}
 				{page === EventDetailsPage.Workflow &&
-					((workflowTabHierarchy === "entry" && (
+					((workflowTabHierarchy === "workflows" && (
 						<EventDetailsWorkflowTab
 							eventId={eventId}
 							formikRef={formikRef}
@@ -288,13 +288,10 @@ const EventDetails = ({
 						(workflowTabHierarchy === "workflow-operation-details" && (
 							<EventDetailsWorkflowOperationDetails />
 						)) ||
-						(workflowTabHierarchy === "errors-and-warnings" && (
-							<EventDetailsWorkflowErrors
+						(workflowTabHierarchy === "workflow-error-details" && (
+							<EventDetailsWorkflowErrorDetails
 								eventId={eventId}
 							/>
-						)) ||
-						(workflowTabHierarchy === "workflow-error-details" && (
-							<EventDetailsWorkflowErrorDetails />
 						)))}
 				{page === EventDetailsPage.AccessPolicy && (
 					<EventDetailsAccessPolicyTab

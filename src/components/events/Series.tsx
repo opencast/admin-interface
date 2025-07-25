@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router";
 import TableFilters from "../shared/TableFilters";
@@ -9,7 +9,7 @@ import { seriesTemplateMap } from "../../configs/tableConfigs/seriesTableMap";
 import {
 	loadSeriesIntoTable,
 } from "../../thunks/tableThunks";
-import { fetchFilters, editTextFilter } from "../../slices/tableFilterSlice";
+import { fetchFilters } from "../../slices/tableFilterSlice";
 import { getTotalSeries, isShowActions } from "../../selectors/seriesSeletctor";
 import Header from "../Header";
 import NavBar from "../NavBar";
@@ -39,7 +39,7 @@ const Series = () => {
 	const newSeriesModalRef = useRef<ModalHandle>(null);
 	const deleteModalRef = useRef<ModalHandle>(null);
 
-	let location = useLocation();
+	const location = useLocation();
 
 	const series = useAppSelector(state => getTotalSeries(state));
 	const showActions = useAppSelector(state => isShowActions(state));
@@ -51,10 +51,7 @@ const Series = () => {
 		// Clear table of previous data
 		dispatch(resetTableProperties());
 
-		dispatch(fetchFilters("series"))
-
-		// Reset text filer
-		dispatch(editTextFilter(""));
+		dispatch(fetchFilters("series"));
 
 		// disable actions button
 		dispatch(showActionsSeries(false));
@@ -72,7 +69,7 @@ const Series = () => {
 		loadSeries();
 
 		// Fetch series every minute
-		let fetchSeriesInterval = setInterval(() => loadSeries(), 5000);
+		const fetchSeriesInterval = setInterval(() => loadSeries(), 5000);
 
 		return () => {
 			allowLoadIntoTable = false;
@@ -82,9 +79,11 @@ const Series = () => {
 	}, [location.hash]);
 
 	const onNewSeriesModal = async () => {
-		await dispatch(fetchSeriesMetadata());
-		await dispatch(fetchSeriesThemes());
-		await dispatch(fetchSeriesDetailsTobiraNew("/"));
+		await Promise.all([
+			dispatch(fetchSeriesMetadata()),
+			dispatch(fetchSeriesThemes()),
+			dispatch(fetchSeriesDetailsTobiraNew("/")),
+		]);
 
 		newSeriesModalRef.current?.open();
 	};

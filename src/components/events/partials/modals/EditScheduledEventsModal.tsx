@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Formik } from "formik";
 import { initialFormValuesEditScheduledEvents } from "../../../../configs/modalConfig";
 import WizardStepper, { WizardStep } from "../../../shared/wizard/WizardStepper";
@@ -92,8 +92,8 @@ const EditScheduledEventsModal = ({
 			return checkSchedulingConflicts(
 				values,
 				setConflicts,
-				dispatch
-			).then((result) => {
+				dispatch,
+			).then(result => {
 				if (!result) {
 					errors.editedEvents = "Scheduling conflicts exist!";
 				}
@@ -122,11 +122,11 @@ const EditScheduledEventsModal = ({
 			{/* Initialize overall form */}
 			<Formik
 				initialValues={snapshot}
-				validate={(values) => validateFormik(values)}
-				onSubmit={(values) => handleSubmit(values)}
+				validate={values => validateFormik(values)}
+				onSubmit={values => handleSubmit(values)}
 			>
 				{/* Render wizard pages depending on current value of page variable */}
-				{(formik) => {
+				{formik => {
 					// eslint-disable-next-line react-hooks/rules-of-hooks
 					useEffect(() => {
 						formik.validateForm().then();
@@ -142,7 +142,7 @@ const EditScheduledEventsModal = ({
 								setActivePage={setPage}
 								completed={pageCompleted}
 								setCompleted={setPageCompleted}
-								formik={formik}
+								isValid={formik.isValid}
 							/>
 							<div>
 								{steps[page].name === "general" && (

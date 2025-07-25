@@ -11,7 +11,7 @@ export const stepperStyle = {
 export const stepLabelStyle = {
 	root: {
 		alignSelf: "flex-start",
-	}
+	},
 };
 
 // Style of icons used in Stepper
@@ -26,7 +26,7 @@ export const stepIcon = {
 		height: "20px",
 	},
 	circleActive: {
-		transform: "scale(1.3)"
+		transform: "scale(1.3)",
 	},
 };
 

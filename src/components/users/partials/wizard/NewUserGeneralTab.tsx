@@ -1,4 +1,3 @@
-import React from "react";
 import { Field } from "../../../shared/Field";
 import { FormikProps } from "formik";
 import Notifications from "../../../shared/Notifications";
@@ -19,7 +18,7 @@ interface RequiredFormProps {
 }
 
 const NewUserGeneralTab = <T extends RequiredFormProps>({
-	formik
+	formik,
 }: {
 	formik: FormikProps<T>
 }) => {
@@ -114,7 +113,7 @@ const NewUserGeneralTab = <T extends RequiredFormProps>({
 };
 
 const PasswordStrengthIndicator = ({
-	password
+	password,
 }: {
 	password: string
 }) => {
@@ -122,7 +121,7 @@ const PasswordStrengthIndicator = ({
 
 	// bad passwords from https://en.wikipedia.org/wiki/List_of_the_most_common_passwords
 	// plus Opencast"s default password
-	const bad_passwords = ["0", "111111", "1111111", "123", "123123", "123321",
+	const badPasswords = ["0", "111111", "1111111", "123", "123123", "123321",
 		"1234", "12345", "123456", "1234567", "12345678", "123456789", "1234567890",
 		"12345679", "123qwe", "18atcskd2w", "1q2w3e", "1q2w3e4r", "1q2w3e4r5t",
 		"3rjs1la7qe", "555555", "654321", "666666", "7777777", "888888",
@@ -136,44 +135,44 @@ const PasswordStrengthIndicator = ({
 	}
 
 	const calcStrength = (password: string) => {
-		if (bad_passwords.indexOf(password) > -1) {
+		if (badPasswords.indexOf(password) > -1) {
 			return 0;
 		}
 
-		const rules = [/[A-Z]/, /[a-z]/, /\d/, /\W/, /^.{8,}$/]
+		const rules = [/[A-Z]/, /[a-z]/, /\d/, /\W/, /^.{8,}$/];
 
 		const ruleScore: number = rules.reduce((acc, rule) => acc + Number(testPassword(rule)), 0);
 
 		const usedRules = (ruleScore - rules.length) * rules.length;
 
 		const uniqueChars = new Set(password).size * 2;
-		const password_length = password.length * 4;
+		const passwordLength = password.length * 4;
 		const lowerCase = (password.length - password.replace(/[a-z]/g, "").length) * 2;
 		const upperCase = (password.length - password.replace(/[A-Z]/g, "").length) * 2;
 		const number = (password.length - password.replace(/[0-9]/g, "").length) * 4;
 		const symbol = (password.length - password.replace(/\W/g, "").length) * 6;
 
-		const strength = Math.max(1, usedRules + uniqueChars + password_length + lowerCase + upperCase + number + symbol);
+		const strength = Math.max(1, usedRules + uniqueChars + passwordLength + lowerCase + upperCase + number + symbol);
 		return Math.round(strength);
-	}
+	};
 
 	const setProgBar = (strength: number): [string | undefined, ParseKeys | undefined] => {
 		if (strength >= 90) {
-			return ["green", "USERS.USERS.DETAILS.STRENGTH.VERYSTRONG"]
+			return ["green", "USERS.USERS.DETAILS.STRENGTH.VERYSTRONG"];
 		} else if (strength >= 70) {
-			return ["#388ed6", "USERS.USERS.DETAILS.STRENGTH.STRONG"]
+			return ["#388ed6", "USERS.USERS.DETAILS.STRENGTH.STRONG"];
 		} else if (strength >= 50) {
-			return ["gold", "USERS.USERS.DETAILS.STRENGTH.GOOD"]
+			return ["gold", "USERS.USERS.DETAILS.STRENGTH.GOOD"];
 		} else if (strength >= 30) {
-			return ["darkorange", "USERS.USERS.DETAILS.STRENGTH.WEAK"]
+			return ["darkorange", "USERS.USERS.DETAILS.STRENGTH.WEAK"];
 		} else if (strength > 1) {
-			return ["red", "USERS.USERS.DETAILS.STRENGTH.VERYWEAK"]
+			return ["red", "USERS.USERS.DETAILS.STRENGTH.VERYWEAK"];
 		} else if (strength <= 1) {
-			return ["white", "USERS.USERS.DETAILS.STRENGTH.BAD"]
+			return ["white", "USERS.USERS.DETAILS.STRENGTH.BAD"];
 		}
 
 		return [undefined, undefined];
-	}
+	};
 
 	const strength = calcStrength(password);
 	const [barColor, barText] = setProgBar(strength);
@@ -181,16 +180,16 @@ const PasswordStrengthIndicator = ({
 	const progressBarStyle = {
 		background: barColor,
 		width: strength + "%",
-	}
+	};
 
 	return (
 		<div>
 			<div className="progress pw-strength">
 				<div id="bar" className="progress-bar" style={progressBarStyle}></div>
 			</div>
-			<label id="pw" style={{textAlign: "left"}}>{barText ? t(barText) : undefined}</label>
+			<label id="pw" style={{ textAlign: "left" }}>{barText ? t(barText) : undefined}</label>
 		</div>
 	);
-}
+};
 
 export default NewUserGeneralTab;

@@ -50,7 +50,7 @@ const FileUpload = <T extends RequiredFormProps>({
 	// values). Therefore, this useEffect gets manually triggered, causing an
 	// additional rerender which then triggers formik validation.
 	useEffect(() => {
-		formik.validateForm()
+		formik.validateForm();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [formik.values.fileId, formik.values.fileName, loaded]);
 
@@ -71,26 +71,26 @@ const FileUpload = <T extends RequiredFormProps>({
 				headers: {
 					"Content-Type": "multipart/form-data",
 				},
-				onUploadProgress: (ProgressEvent) => {
+				onUploadProgress: ProgressEvent => {
 					// update loaded with current progress
 					setLoaded(ProgressEvent.total ? (ProgressEvent.loaded / ProgressEvent.total) * 100 : 0);
 				},
 			})
-			.then((res) => {
+			.then(res => {
 				if (res.status === 201) {
 					// set information about file later needed for POST request and summary
 					formik.setFieldValue(fileId, res.data);
-					formik.setFieldValue(fileName, file.name)
+					formik.setFieldValue(fileName, file.name);
 					// Purely for triggering useEffect. The state change does not matter.
-					setLoaded(1337)
+					setLoaded(1337);
 				}
 			})
-			.catch((res) => {
+			.catch(() => {
 				dispatch(addNotification({
 					type: "error",
 					key: "NOTIFICATIONS.BUMPER_UPLOAD_ERROR",
 					duration: -1,
-					context: NOTIFICATION_CONTEXT
+					context: NOTIFICATION_CONTEXT,
 				}));
 			});
 	};
@@ -149,7 +149,7 @@ const FileUpload = <T extends RequiredFormProps>({
 									style={{ display: "none" }}
 									accept={acceptableTypes}
 									ref={hiddenFileInput}
-									onChange={(e) => {
+									onChange={e => {
 										handleChange(e);
 									}}
 								/>

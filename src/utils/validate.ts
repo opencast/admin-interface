@@ -1,3 +1,4 @@
+import { UploadAssetsTrack } from "./../slices/eventSlice";
 import * as Yup from "yup";
 import { MetadataCatalog } from "../slices/eventSlice";
 
@@ -9,7 +10,7 @@ import { MetadataCatalog } from "../slices/eventSlice";
  * Dynamically create a schema for a required metadata field
  */
 export function createMetadataSchema(
-	schema: { [key: string]: any; },
+	schema: { [key: string]: unknown; },
 	config: { id: string; required: boolean; type: string; },
 ) {
 	const { id, required, type } = config;
@@ -24,16 +25,16 @@ export function createMetadataSchema(
 	}[] = [
 		{
 			type: "required",
-			params: ["this field is required"]
+			params: ["this field is required"],
 		},
-	]
+	];
 
 	if (type === "mixed_text") {
 		validationType = "array";
 		validations.push({
 			type: "min",
-			params: [1, "there should be atleast one entry"]
-		})
+			params: [1, "there should be atleast one entry"],
+		});
 	}
 
 	if (type === "date" || type === "start_date") {
@@ -51,6 +52,7 @@ export function createMetadataSchema(
 			return;
 		}
 		// @ts-expect-error: Yup needs to fix their typing?
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
 		validator = validator[type](...params);
 	});
 	schema[id] = validator;
@@ -64,12 +66,12 @@ export const MetadataSchema = (catalog: MetadataCatalog) => {
 	const schema = catalog.fields.reduce(createMetadataSchema, {});
 	const schemaKeyReplace: { [key: string]: any} = {};
 	for (const [key, value] of Object.entries(schema)) {
-		schemaKeyReplace[catalog.flavor + "_" + key] = value
+		schemaKeyReplace[catalog.flavor + "_" + key] = value;
 	}
 	const validateSchema = Yup.object().shape(schemaKeyReplace);
 
 	return validateSchema;
-}
+};
 
 
 // Validation Schema used in new event wizard (each step has its own yup validation object)
@@ -84,9 +86,9 @@ export const NewEventSchema = {
 			then: () => Yup.array().test(
 				"at-least-one-uploaded",
 				"at least one uploaded",
-				(uploadAssetsTrack) => {
-					return uploadAssetsTrack && uploadAssetsTrack.some((asset) => !!asset.file);
-				}
+				(uploadAssetsTrack: UploadAssetsTrack[] | undefined) => {
+					return uploadAssetsTrack && uploadAssetsTrack.some(asset => !!asset.file);
+				},
 			),
 		}),
 		scheduleStartDate: Yup.date().when("sourceMode", {

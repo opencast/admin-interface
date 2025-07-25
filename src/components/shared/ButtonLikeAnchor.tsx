@@ -2,7 +2,7 @@ import React, { JSX } from "react";
 import { useTranslation } from "react-i18next";
 import { getUserInformation } from "../../selectors/userInfoSelectors";
 import { useAppSelector } from "../../store";
-import { hasAccess } from "../../utils/utils"
+import { hasAccess } from "../../utils/utils";
 import { Tooltip } from "./Tooltip";
 import cn from "classnames";
 import { ParseKeys } from "i18next";

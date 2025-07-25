@@ -61,15 +61,15 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 		const fetchEventInfos =
 			formik.values.editedEvents.length !== formik.values.events.length ||
 			formik.values.events.some(
-				(event) =>
-					!formik.values.editedEvents.find((e) => e.eventId === event.id)
+				event =>
+					!formik.values.editedEvents.find(e => e.eventId === event.id),
 			);
 
 		// Fetch data about series and schedule info of chosen events from backend
 		dispatch(fetchScheduling({
 			events: formik.values.events,
 			fetchNewScheduling: fetchEventInfos,
-			setFormikValue: formik.setFieldValue
+			setFormikValue: formik.setFieldValue,
 	}));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [formik.values.events]);
@@ -84,7 +84,7 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 			reducedEvents.push(reduceGroupedEvent(value));
 		});
 		return reducedEvents;
-	}
+	};
 
 	/**
 	 * For a given array of events, returns an event where each property of the event is empty,
@@ -97,21 +97,21 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 				// TODO: This relies on the fact that the EditedEvent type only contains 'string' and 'string[]'. Improve on that.
 				if (typeof value === "string") {
 					// @ts-expect-error TS(7006):
-					prev[key as keyof EditedEvents] = prev[key as keyof EditedEvents] === curr[key as keyof EditedEvents] ? curr[key as keyof EditedEvents] : ""
+					prev[key as keyof EditedEvents] = prev[key as keyof EditedEvents] === curr[key as keyof EditedEvents] ? curr[key as keyof EditedEvents] : "";
 				} else {
 					// @ts-expect-error TS(7006):
-					prev[key as keyof EditedEvents] = prev[key as keyof EditedEvents] === curr[key as keyof EditedEvents] ? curr[key as keyof EditedEvents] : []
+					prev[key as keyof EditedEvents] = prev[key as keyof EditedEvents] === curr[key as keyof EditedEvents] ? curr[key as keyof EditedEvents] : [];
 				}
 			}
 			return prev;
 		}, lodash.cloneDeep(groupedEvents[0]));
 		return result;
-	}
+	};
 
 	const findSeriesName = (seriesOptions: { name: string, value: string }[], editedEvents: EditedEvents[]) => {
-		const series = seriesOptions.find((e) => e.value === reduceGroupedEvent(editedEvents).changedSeries)
-		return series ? series.name : ""
-	}
+		const series = seriesOptions.find(e => e.value === reduceGroupedEvent(editedEvents).changedSeries);
+		return series ? series.name : "";
+	};
 
 	return (
 		<>
@@ -125,18 +125,18 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 							<tr>
 								<th>
 									{t(
-										"BULK_ACTIONS.EDIT_EVENTS.GENERAL.CONFLICT_FIRST_EVENT"
+										"BULK_ACTIONS.EDIT_EVENTS.GENERAL.CONFLICT_FIRST_EVENT",
 									)}
 								</th>
 								<th>
 									{t(
-										"BULK_ACTIONS.EDIT_EVENTS.GENERAL.CONFLICT_SECOND_EVENT"
+										"BULK_ACTIONS.EDIT_EVENTS.GENERAL.CONFLICT_SECOND_EVENT",
 									)}
 								</th>
 								<th>{t("EVENTS.EVENTS.TABLE.START")}</th>
 								<th>{t("EVENTS.EVENTS.TABLE.END")}</th>
 							</tr>
-							{conflicts.map((conflict) =>
+							{conflicts.map(conflict =>
 								conflict.conflicts.map((c, key) => (
 									<tr key={key}>
 										<td>{conflict.eventId}</td>
@@ -144,7 +144,7 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 										<td>{c.start}</td>
 										<td>{c.end}</td>
 									</tr>
-								))
+								)),
 							)}
 						</table>
 					</div>
@@ -156,12 +156,13 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 
 				{/* Repeat table for each selected event */}
 				{!loading && (
-					<FieldArray name="editedEvents">
-						{({ insert, remove, push }) => (
+					<FieldArray
+						name="editedEvents"
+						render={arrayHelpers => (
 							<>
 							{hasAccess(
 								"ROLE_UI_EVENTS_DETAILS_METADATA_EDIT",
-								user
+								user,
 							) && (
 								<div className="obj tbl-details">
 									<header>{t("BULK_ACTIONS.EDIT_EVENTS_METADATA.EDIT.TABLE.FIELDS")}</header>
@@ -172,7 +173,7 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 													<td>
 														<span>
 															{t(
-																"EVENTS.EVENTS.DETAILS.METADATA.TITLE"
+																"EVENTS.EVENTS.DETAILS.METADATA.TITLE",
 															)}
 														</span>
 													</td>
@@ -184,11 +185,11 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 														*/}
 														<input
 															type={"text"}
-															onChange={(element) => {
+															onChange={element => {
 																formik.values.editedEvents.forEach((_, i) => {
 																	formik.setFieldValue(
 																		`editedEvents.${i}.changedTitle`,
-																		element.target.value
+																		element.target.value,
 																	);
 																});
 															}}
@@ -200,7 +201,7 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 													<td>
 														<span>
 															{t(
-																"EVENTS.EVENTS.DETAILS.METADATA.SERIES"
+																"EVENTS.EVENTS.DETAILS.METADATA.SERIES",
 															)}
 														</span>
 													</td>
@@ -217,14 +218,14 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 															text={
 																formik.values.editedEvents.length > 0 ? findSeriesName(seriesOptions, formik.values.editedEvents) : ""
 															}
-															options={seriesOptions.map((option) => ({ label: option.name, value: option.value }))}
+															options={seriesOptions.map(option => ({ label: option.name, value: option.value }))}
 															required={false}
-															handleChange={(element) => {
+															handleChange={element => {
 																if (element) {
 																	formik.values.editedEvents.forEach((_, i) => {
 																		formik.setFieldValue(
 																			`editedEvents.${i}.changedSeries`,
-																			element.value
+																			element.value,
 																		);
 																	});
 																}
@@ -254,13 +255,13 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 													<tbody>
 														{hasAccess(
 															"ROLE_UI_EVENTS_DETAILS_SCHEDULING_EDIT",
-															user
+															user,
 														) && (
 															<>
 																<tr>
 																	<td>
 																		{t(
-																			"EVENTS.EVENTS.DETAILS.SOURCE.DATE_TIME.TIMEZONE"
+																			"EVENTS.EVENTS.DETAILS.SOURCE.DATE_TIME.TIMEZONE",
 																		)}
 																	</td>
 																	<td>{"UTC" + getTimezoneOffset()}</td>
@@ -277,8 +278,8 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 																			if (entry.weekday === groupedEvent.weekday) {
 																				formik.setFieldValue(
 																					`editedEvents.${i}.changedStartTimeHour`,
-																					value
-																				)
+																					value,
+																				);
 																			}
 																		}
 																	}}
@@ -287,8 +288,8 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 																			if (entry.weekday === groupedEvent.weekday) {
 																				formik.setFieldValue(
 																					`editedEvents.${i}.changedStartTimeMinutes`,
-																					value
-																				)
+																					value,
+																				);
 																			}
 																		}
 																	}}
@@ -305,8 +306,8 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 																			if (entry.weekday === groupedEvent.weekday) {
 																				formik.setFieldValue(
 																					`editedEvents.${i}.changedEndTimeHour`,
-																					value
-																				)
+																					value,
+																				);
 																			}
 																		}
 																	}}
@@ -315,8 +316,8 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 																			if (entry.weekday === groupedEvent.weekday) {
 																				formik.setFieldValue(
 																					`editedEvents.${i}.changedEndTimeMinutes`,
-																					value
-																				)
+																					value,
+																				);
 																			}
 																		}
 																	}}
@@ -334,12 +335,12 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 																			if (entry.weekday === groupedEvent.weekday) {
 																				formik.setFieldValue(
 																					`editedEvents.${i}.changedLocation`,
-																					value
-																				)
+																					value,
+																				);
 																				formik.setFieldValue(
 																					`editedEvents.${i}.changedDeviceInputs`,
-																					value
-																				)
+																					value,
+																				);
 																			}
 																		}
 																	}}
@@ -350,7 +351,7 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 																<tr>
 																	<td>
 																		{t(
-																			"EVENTS.EVENTS.NEW.SOURCE.SCHEDULE_MULTIPLE.WEEKDAY"
+																			"EVENTS.EVENTS.NEW.SOURCE.SCHEDULE_MULTIPLE.WEEKDAY",
 																		)}
 																	</td>
 																	<td className="weekdays">
@@ -361,13 +362,13 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 																					tabIndex={key * 14 + 8 + index}
 																					type="radio"
 																					name={groupedEvent.weekday}
-																					onChange={(element) => {
+																					onChange={element => {
 																						for (const [i, value] of formik.values.editedEvents.entries()) {
 																							if (value.weekday === groupedEvent.weekday) {
 																								formik.setFieldValue(
 																									`editedEvents.${i}.changedWeekday`,
-																									element.target.value
-																								)
+																									element.target.value,
+																								);
 																							}
 																						}
 																					}}
@@ -390,7 +391,7 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 								}
 							</>
 						)}
-					</FieldArray>
+					/>
 				)}
 			</ModalContentTable>
 
@@ -404,7 +405,7 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 							await checkSchedulingConflicts(
 								formik.values,
 								setConflicts,
-								dispatch
+								dispatch,
 							)
 						) {
 							nextPage(formik.values);

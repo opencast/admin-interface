@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Formik } from "formik";
 import AclAccessPage from "../wizard/AclAccessPage";
 import AclMetadataPage from "../wizard/AclMetadataPage";
@@ -58,9 +58,9 @@ const AclDetails = ({
 		values: {
 			name: string,
 			policies: TransformedAcl[],
-		}
+		},
 	) => {
-		dispatch(updateAclDetails({values: values, aclId: aclDetails.id}));
+		dispatch(updateAclDetails({ values: values, aclId: aclDetails.id }));
 		close();
 	};
 
@@ -73,9 +73,9 @@ const AclDetails = ({
 			<Formik
 				initialValues={initialValues}
 				validationSchema={NewAclSchema["metadata"]}
-				onSubmit={(values) => handleSubmit(values)}
+				onSubmit={values => handleSubmit(values)}
 			>
-				{(formik) => (
+				{formik => (
 					<>
 						{page === 0 && <AclMetadataPage formik={formik} isEdit />}
 						{page === 1 && (

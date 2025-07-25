@@ -1,4 +1,4 @@
-import ModalContent from "./ModalContent"
+import ModalContent from "./ModalContent";
 
 /**
  * This component
@@ -7,7 +7,7 @@ const ModalContentTable = ({
 	modalContentChildren,
 	modalContentClassName,
 	modalBodyChildren,
-	children
+	children,
 }: {
 	modalContentChildren?: React.ReactNode
 	modalContentClassName?: string

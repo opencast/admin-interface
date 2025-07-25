@@ -10,7 +10,7 @@ import ModalContentTable from "../../../shared/modals/ModalContentTable";
 const GeneralDetailsTab: React.FC<{
 	agent: RecordingDetails
 }> = ({
-	agent
+	agent,
 }) => {
 	const { t } = useTranslation();
 

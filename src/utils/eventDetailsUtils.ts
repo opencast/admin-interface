@@ -5,30 +5,30 @@ import { Event } from "../slices/eventSlice";
  * This file contains functions and constants that are needed in the event details modal
  */
 
-export const style_nav = {
+export const styleNav = {
 	borderBottom: "1px solid #d6d6d6",
 	lineHeight: "35px",
 };
 
-export const style_nav_hierarchy_inactive = {
+export const styleNavHierarchyInactive = {
 	marginLeft: "30px",
 	color: "#92a0ab",
 };
 
-export const style_nav_hierarchy = {
+export const styleNavHierarchy = {
 	marginLeft: "30px",
 	marginRight: "30px",
 	fontWeight: "600",
 	color: "#5d7589",
 };
 
-export const style_button_spacing = {
+export const styleButtonSpacing = {
 	marginTop: "13px",
 	marginLeft: "15px",
 	marginRight: "15px",
 };
 
-export const error_detail_style = {
+export const errorDetailStyle = {
 	overflow: "auto",
 	width: "750px",
 };
@@ -66,5 +66,5 @@ export const humanReadableBytesFilter = (bytesValue: string | number) => {
 
 export const hasScheduledStatus = (event: Event) => {
 	return event.event_status.toUpperCase().indexOf("SCHEDULED") > -1 ||
-		event.event_status.toUpperCase().indexOf("RECORDING") > -1
+		event.event_status.toUpperCase().indexOf("RECORDING") > -1;
 };

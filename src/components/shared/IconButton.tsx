@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { getUserInformation } from "../../selectors/userInfoSelectors";
 import { useAppSelector } from "../../store";
-import { hasAccess } from "../../utils/utils"
+import { hasAccess } from "../../utils/utils";
 import { Tooltip } from "./Tooltip";
 import React from "react";
 import { ParseKeys } from "i18next";
@@ -37,4 +37,4 @@ export const IconButton = ({
 			</button>
 		</Tooltip>
 	);
-}
+};

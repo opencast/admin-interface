@@ -1,12 +1,14 @@
-const bc = new BroadcastChannel('auth_channel');
+const bc = new BroadcastChannel("auth_channel");
+
+type MessageType = { type: "LOGOUT" };
 
 export const broadcastLogout = () => {
-    bc.postMessage({ type: 'LOGOUT' });
+    bc.postMessage({ type: "LOGOUT" });
 };
 
 export const subscribeToAuthEvents = () => {
-    bc.onmessage = (event) => {
-        if (event.data?.type === 'LOGOUT') {
+    bc.onmessage = (event: MessageEvent<MessageType>) => {
+        if (event.data?.type === "LOGOUT") {
             performOnLogoutActions();
         }
     };
@@ -18,4 +20,4 @@ const performOnLogoutActions = () => {
         window.location.href = "/login.html";
         clearInterval(intvl);
     }, 750);
-}
+};

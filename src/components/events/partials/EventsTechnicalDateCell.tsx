@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { getFilters } from "../../../selectors/tableFilterSelectors";
 import { editFilterValue } from "../../../slices/tableFilterSlice";
@@ -24,9 +23,9 @@ const EventsTechnicalDateCell = ({
 
 	// Filter with value of current cell
 	const addFilter = async (date: string) => {
-		let filter = filterMap.find(({ name }) => name === "technicalStart");
-		if (!!filter) {
-			await dispatch(editFilterValue({filterName: filter.name, value: date + "/" + date}));
+		const filter = filterMap.find(({ name }) => name === "technicalStart");
+		if (filter) {
+			dispatch(editFilterValue({ filterName: filter.name, value: date + "/" + date, resource: "events" }));
 			await dispatch(fetchEvents());
 			dispatch(loadEventsIntoTable());
 		}

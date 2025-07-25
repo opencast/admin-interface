@@ -15,7 +15,7 @@ import { sl } from "date-fns/locale/sl";
 import { sv } from "date-fns/locale/sv";
 import { tr } from "date-fns/locale/tr";
 import { zhCN } from "date-fns/locale/zh-CN";
-import {zhTW} from "date-fns/locale/zh-TW";
+import { zhTW } from "date-fns/locale/zh-TW";
 
 /*
  * JSON object that contains all available languages and the following information:

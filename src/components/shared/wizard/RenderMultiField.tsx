@@ -25,11 +25,11 @@ const RenderMultiField = ({
 	showCheck?: boolean,
 }) => {
 	// Indicator if currently edit mode is activated
-	const {editMode, setEditMode} = useClickOutsideField(childRef);
+	const { editMode, setEditMode } = useClickOutsideField(childRef);
 	// Temporary storage for value user currently types in
 	const [inputValue, setInputValue] = useState("");
 
-	let fieldValue = [...field.value];
+	const fieldValue = [...field.value as string[]];
 
 	// Handle change of value user currently types in
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,9 +48,9 @@ const RenderMultiField = ({
 
 	const submitValue = (alternativeInput?: string) => {
 
-		let newInputValue = inputValue
+		let newInputValue = inputValue;
 		if (alternativeInput) {
-			newInputValue = alternativeInput
+			newInputValue = alternativeInput;
 		}
 
 		if (newInputValue !== "") {
@@ -66,15 +66,15 @@ const RenderMultiField = ({
 				if (onlyCollectionValues) {
 					// add input to formik field value if not already added and input in collection of possible values
 					if (
-						!fieldValue.find((e) => e === newInput) &&
-						fieldInfo.collection?.find((e) => e.value === newInput)
+						!fieldValue.find(e => e === newInput) &&
+						fieldInfo.collection?.find(e => e.value === newInput)
 					) {
 						fieldValue[fieldValue.length] = newInput;
 						form.setFieldValue(field.name, fieldValue);
 					}
 				} else {
 					// add input to formik field value if not already added
-					if (!fieldValue.find((e) => e === newInput)) {
+					if (!fieldValue.find(e => e === newInput)) {
 						fieldValue[fieldValue.length] = newInput;
 						form.setFieldValue(field.name, fieldValue);
 					}
@@ -84,7 +84,7 @@ const RenderMultiField = ({
 			// reset inputValue
 			setInputValue("");
 		}
-	}
+	};
 
 	// Remove item/value from inserted field values
 	const removeItem = (key: number) => {
@@ -148,11 +148,11 @@ const EditMultiSelect = ({
 	const textRef = useRef(inputValue);
 	React.useEffect(() => {
 		textRef.current = inputValue;
-	}, [inputValue])
+	}, [inputValue]);
 	React.useEffect(() => {
-		return () => handleBlur(textRef.current)
+		return () => handleBlur(textRef.current);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	}, []);
 
 	return (
 		<>
@@ -162,8 +162,8 @@ const EditMultiSelect = ({
 						type="text"
 						name={field.name}
 						value={inputValue}
-						onKeyDown={(e) => handleKeyDown(e)}
-						onChange={(e) => handleChange(e)}
+						onKeyDown={e => handleKeyDown(e)}
+						onChange={e => handleChange(e)}
 						placeholder={t("EDITABLE.MULTI.PLACEHOLDER")}
 						list="data-list"
 						autoFocus={true}
@@ -221,6 +221,7 @@ const ShowValue = ({
 				{showCheck && (
 					<i
 						className={cn("saved fa fa-check", {
+							// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 							active: JSON.stringify(initialValues[field.name] ?? []) !== JSON.stringify(field.value ?? []),
 						})}
 					/>

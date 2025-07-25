@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import cn from "classnames";
 import { Field } from "../../../shared/Field";
@@ -19,7 +18,7 @@ interface RequiredFormProps {
 }
 
 const EditUserGeneralTab = <T extends RequiredFormProps>({
-	formik
+	formik,
 }: {
 	formik: FormikProps<T>
 }) => {

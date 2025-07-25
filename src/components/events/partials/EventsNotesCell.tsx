@@ -15,7 +15,7 @@ const EventsNotesCell = ({
 }: {
 	row: Event
 }) => {
-	const notesCommentReason = 'EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.ADMINUI_NOTES';
+	const notesCommentReason = "EVENTS.EVENTS.DETAILS.COMMENTS.REASONS.ADMINUI_NOTES";
 
 	const dispatch = useAppDispatch();
 
@@ -24,36 +24,36 @@ const EventsNotesCell = ({
 		return <></>;
 	}
 
-	const comments = row.comments.filter((comment) => comment.reason === notesCommentReason)
+	const comments = row.comments.filter(comment => comment.reason === notesCommentReason);
 
 	const createComment = (event: React.FocusEvent<HTMLTextAreaElement>) => {
 		if (!event.target.value || !row.id) {
 			return;
 		}
-		dispatch(saveNewComment({eventId: row.id, commentText: event.target.value, commentReason: notesCommentReason}))
+		dispatch(saveNewComment({ eventId: row.id, commentText: event.target.value, commentReason: notesCommentReason }))
 		.then(() => {
 			dispatch(updatePages());
 		});
-	 }
+	 };
 
 	const updateComment = (event: React.ChangeEvent<HTMLTextAreaElement>, commentId: number) => {
 		if (!event.target.value || !row.id || !commentId) {
 			return;
 		}
-		dispatch(updateNewComment({eventId: row.id, commentId, commentText: event.target.value, commentReason: notesCommentReason}))
-	}
+		dispatch(updateNewComment({ eventId: row.id, commentId, commentText: event.target.value, commentReason: notesCommentReason }));
+	};
 
 	const deleteComment = (event: React.FocusEvent<HTMLTextAreaElement>, commentId: number) => {
 		if (!row.id || !commentId) {
 			return;
 		}
 		if (event.target.value === "") {
-			dispatch(deleteOneComment({eventId: row.id, commentId}))
+			dispatch(deleteOneComment({ eventId: row.id, commentId }))
 			.then(() => {
 				dispatch(updatePages());
 			});
 		}
-	}
+	};
 
 	return (
 		<div className="comment-container" key={row.id}>

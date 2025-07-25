@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { HashRouter, Navigate, Route, Routes } from "react-router";
 import "./App.scss";
 import Events from "./components/events/Events";
@@ -29,7 +29,7 @@ function App() {
 		subscribeToAuthEvents();
 
 		// Add event listener for back button to check if we are still logged in
-		window.addEventListener("popstate", function (event) {
+		window.addEventListener("popstate", function () {
 			dispatch(fetchUserInfo());
 		});
 
@@ -39,8 +39,6 @@ function App() {
 	return (
 		<HashRouter>
 			<Routes>
-				<Route path={"/"} element={<Events />} />
-
 				<Route path={"/events/events"} element={<Events />} />
 
 				<Route path={"/events/series"} element={<Series />} />

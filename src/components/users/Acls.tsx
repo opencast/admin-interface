@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import TableFilters from "../shared/TableFilters";
 import Table from "../shared/Table";
 import Notifications from "../shared/Notifications";
 import { aclsTemplateMap } from "../../configs/tableConfigs/aclsTableMap";
-import { fetchFilters, editTextFilter } from "../../slices/tableFilterSlice";
+import { fetchFilters } from "../../slices/tableFilterSlice";
 import {
 	loadAclsIntoTable,
 } from "../../thunks/tableThunks";
@@ -37,9 +37,6 @@ const Acls = () => {
 
 		dispatch(fetchFilters("acls"));
 
-		// Reset text filter
-		dispatch(editTextFilter(""));
-
 		// Load acls on mount
 		const loadAcls = async () => {
 			// Fetching acls from server
@@ -53,12 +50,12 @@ const Acls = () => {
 		loadAcls();
 
 		// Fetch Acls every minute
-		let fetchAclInterval = setInterval(loadAcls, 5000);
+		const fetchAclInterval = setInterval(loadAcls, 5000);
 
 		return () => {
 			allowLoadIntoTable = false;
 			clearInterval(fetchAclInterval);
-		}
+		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

@@ -38,7 +38,7 @@ const Statistics: React.FC = () => {
 
 	// fetch user information for organization id, then fetch statistics
 	useEffect(() => {
-		dispatch(fetchUserInfo())
+		dispatch(fetchUserInfo());
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	useEffect(() => {
@@ -70,8 +70,8 @@ const Statistics: React.FC = () => {
 						{
 							path: "/statistics/organization",
 							accessRole: "ROLE_UI_STATISTICS_ORGANIZATION_VIEW",
-							text: "STATISTICS.NAVIGATION.ORGANIZATION"
-						}
+							text: "STATISTICS.NAVIGATION.ORGANIZATION",
+						},
 					]}
 			/>
 

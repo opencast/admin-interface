@@ -9,7 +9,7 @@ import ModalContentTable from "../../../shared/modals/ModalContentTable";
 const ConfigurationDetailsTab: React.FC<{
 	agent: RecordingDetails
 }> = ({
-	agent
+	agent,
 }) => {
 	const { t } = useTranslation();
 
@@ -41,7 +41,7 @@ const ConfigurationDetailsTab: React.FC<{
 				<div>
 					<p>
 						{t(
-							"RECORDINGS.RECORDINGS.DETAILS.CONFIGURATION.NO_CONFIGURATION"
+							"RECORDINGS.RECORDINGS.DETAILS.CONFIGURATION.NO_CONFIGURATION",
 						)}
 					</p>
 				</div>

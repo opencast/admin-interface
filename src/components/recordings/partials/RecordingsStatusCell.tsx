@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { Recording } from "../../../slices/recordingSlice";
 import { ParseKeys } from "i18next";
@@ -7,7 +6,7 @@ import { ParseKeys } from "i18next";
  * This component renders the status cells of recordings in the table view
  */
 const RecordingsStatusCell = ({
-	row
+	row,
 }: {
 	row: Recording
 }) => {

@@ -105,7 +105,8 @@
 			"SELECTED_COLUMNS": "Selected columns",
 			"FOOTER_TEXT": "The order and selection will be saved automatically. Press \"{{resetTranslation}}\" to restore the default view.",
 			"ADD_COLUMN": "Add column",
-			"REMOVE_COLUMN": "Remove column"
+			"REMOVE_COLUMN": "Remove column",
+			"DRAG_HANDLE_USAGE_INSTRUCTIONS": "Press space bar to start a drag. When dragging you can use the arrow keys to move the item around and escape to cancel. Some screen readers may require you to be in focus mode or to use your pass through key"
 		}
 	},
 	"CONFIRMATIONS": {
@@ -210,6 +211,8 @@
 		"SERIES_THEME_REPROCESS_EXISTING_EVENTS": "The existing events in this series will need to be reprocessed",
 		"SERIES_ACL_LOCKED": "Editing Access Policies is not allowed when operations are running on an event that is part of the series",
 		"EVENT_ACL_MISSING_READWRITE_ROLE": "The Access Policy requires at least one role with Read and Write permissions.",
+		"METADATA_SAVED": "The metadata has been saved.",
+		"METADATA_NOT_SAVED": "The metadata has NOT been saved!",
 		"THEME_NAME_EMPTY": "The name cannot be empty",
 		"BUMPER_UPLOAD_ERROR": "Error while uploading media",
 		"THEME_CREATED": "The theme has been created",
@@ -988,7 +991,6 @@
 					"ACTIONS": "Actions",
 					"DETAILS": "Details",
 					"DESCRIPTION": "Description",
-					"MORE_INFO": "More Information",
 					"ID": "ID",
 					"TYPE": "Type",
 					"TITLE": "Title",
@@ -1028,11 +1030,13 @@
 				},
 				"WORKFLOW_DETAILS": {
 					"TITLE": "Workflow details",
-					"CONFIGURATION": "Workflow configuration"
+					"CONFIGURATION": "Workflow configuration",
+					"OPERATIONS": "Operations",
+					"CURRENT_OPERATION": "Current workflow operation"
 				},
 				"WORKFLOW_OPERATIONS": {
 					"TITLE": "Workflow operations",
-					"DETAILS_LINK": "Operations",
+					"DETAILS_LINK": "All operations",
 					"TABLE_HEADERS": {
 						"TITLE": "Title",
 						"STATUS": "Status",
@@ -1092,7 +1096,8 @@
 						"DATE": "Date",
 						"HOST": "Processing host",
 						"TYPE": "Service type",
-						"TECHNICAL_DETAILS": "Technical details"
+						"TECHNICAL_DETAILS": "Technical details",
+						"OPERATION": "Operation the error occured in"
 					}
 				}
 			}
@@ -1180,7 +1185,10 @@
 				"TOOLTIP": {
 					"SERIES": "Filter events for this series",
 					"DETAILS": "Open series details",
-					"DELETE": "Delete series"
+					"DELETE": "Delete series",
+					"CREATION": "Filter for this creation date",
+					"ORGANIZER": "Filter for this organizer",
+					"CONTRIBUTORS": "Filter for this contributor"
 				}
 			},
 			"DETAILS": {
@@ -1989,6 +1997,8 @@
 	"TABLE_EDIT": "Edit",
 	"TABLE_NEXT": "Next page",
 	"TABLE_PREVIOUS": "Previous page",
+	"TABLE_CURRENT": "Current page {{pageNumber}}",
+	"TABLE_NUMBERED": "Go to page {{pageNumber}}",
 	"DASHBOARD": {
 		"RUNNING": "Running",
 		"FINISHED": "Finished",
@@ -1996,7 +2006,8 @@
 		"FAILED": "Failed",
 		"FINISHED_WITH_COMMENTS": "Todo",
 		"SCHEDULED": "Scheduled",
-		"RECORDING": "Recording"
+		"RECORDING": "Recording",
+		"BUTTON_TOOLTIP": "Apply filter {{filterName}} to the table"
 	},
 	"HOTKEYS": {
 		"CHEAT_SHEET": {

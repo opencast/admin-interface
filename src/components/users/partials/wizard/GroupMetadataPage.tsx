@@ -1,4 +1,3 @@
-import React from "react";
 import WizardNavigationButtons from "../../../shared/wizard/WizardNavigationButtons";
 import { useTranslation } from "react-i18next";
 import { FormikProps } from "formik";
@@ -11,7 +10,7 @@ import ModalContent from "../../../shared/modals/ModalContent";
 const GroupMetadataPage = <T, >({
 	formik,
 	nextPage,
-	isEdit
+	isEdit,
 }: {
 	formik: FormikProps<T>,
 	nextPage?: (values: T) => void,
@@ -50,7 +49,7 @@ const GroupMetadataPage = <T, >({
 			</ModalContent>
 
 			{!isEdit && (
-				//{/* Button for navigation to next page */}
+				// {/* Button for navigation to next page */}
 				<WizardNavigationButtons isFirst formik={formik} nextPage={nextPage} />
 			)}
 		</>

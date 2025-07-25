@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit'
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import {
 	NOTIFICATION_CONTEXT,
 	NOTIFICATION_CONTEXT_ACCESS,
@@ -10,9 +10,9 @@ import {
 	ADMIN_NOTIFICATION_DURATION_SUCCESS,
 	ADMIN_NOTIFICATION_DURATION_WARNING,
 } from "../configs/generalConfig";
-import { getLastAddedNotification } from '../selectors/notificationSelector';
-import { createAppAsyncThunk } from '../createAsyncThunkWithTypes';
-import { ParseKeys } from 'i18next';
+import { getLastAddedNotification } from "../selectors/notificationSelector";
+import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
+import { ParseKeys } from "i18next";
 
 /**
  * This file contains redux reducer for actions affecting the state of table
@@ -44,7 +44,7 @@ const initialState: NotificationState = {
 // Counter for id of notifications
 let nextNotificationId = 0;
 
-export const addNotification = createAppAsyncThunk('notifications/addNotification', async (params: {
+export const addNotification = createAppAsyncThunk("notifications/addNotification", async (params: {
 	type: OurNotification["type"],
 	key: OurNotification["key"],
 	duration?: OurNotification["duration"],
@@ -52,14 +52,15 @@ export const addNotification = createAppAsyncThunk('notifications/addNotificatio
 	context?: OurNotification["context"],
 	id?: OurNotification["id"]
 	noDuplicates?: boolean,   // Do not add this notification if one with the same key already exists (in the same context)
-}, {dispatch, getState}) => {
-	let { type, key, duration, parameter, context, id, noDuplicates } = params
+}, { dispatch, getState }) => {
+	let { duration, parameter, context } = params;
+	const { type, key, id, noDuplicates } = params;
 
 	if (noDuplicates) {
 		const state = getState();
 		for (const notif of state.notifications.notifications) {
 			if (notif.key === key && notif.context === context) {
-				console.log("Did not add notification with key " + key + " because a notification with that key already exists.")
+				console.log("Did not add notification with key " + key + " because a notification with that key already exists.");
 				return;
 			}
 		}
@@ -108,13 +109,13 @@ export const addNotification = createAppAsyncThunk('notifications/addNotificatio
 	};
 	let dispatchedNotification;
 	if (!id) {
-		dispatchedNotification = dispatch(createNotification({notification: notification, id: nextNotificationId++}));
+		dispatchedNotification = dispatch(createNotification({ notification: notification, id: nextNotificationId++ }));
 	} else {
-		dispatchedNotification = dispatch(createNotification({notification: notification, id: id}));
+		dispatchedNotification = dispatch(createNotification({ notification: notification, id: id }));
 	}
 
 	// Get newly created notification and its id
-	let latestNotification = getLastAddedNotification(getState());
+	const latestNotification = getLastAddedNotification(getState());
 
 	// Fade out notification if it is not -1 -> -1 means 'stay forever'
 	// Start timeout for fading out after time in duration is over
@@ -124,7 +125,7 @@ export const addNotification = createAppAsyncThunk('notifications/addNotificatio
 	) {
 		setTimeout(
 			() => dispatch(removeNotification(latestNotification.id)),
-			latestNotification.duration
+			latestNotification.duration,
 		);
 	}
 
@@ -133,7 +134,7 @@ export const addNotification = createAppAsyncThunk('notifications/addNotificatio
 
 // Reducer for notifications
 const notificationSlice = createSlice({
-	name: 'notifications',
+	name: "notifications",
 	initialState,
 	reducers: {
 		createNotification(state, action: PayloadAction<{
@@ -142,8 +143,8 @@ const notificationSlice = createSlice({
 		}>) {
 			const { notification, id } = action.payload;
 			if (state.notifications.filter(e => e.id === id).length > 0) {
-				console.log("Notification with id: " + id + " already exists.")
-				state.notifications = state.notifications.map((oldNotification) => {
+				console.log("Notification with id: " + id + " already exists.");
+				state.notifications = state.notifications.map(oldNotification => {
 					if (oldNotification.id === id) {
 						return {
 							...notification,
@@ -151,7 +152,7 @@ const notificationSlice = createSlice({
 						};
 					}
 					return oldNotification;
-				})
+				});
 			} else {
 				state.notifications = [
 					...state.notifications,
@@ -165,7 +166,7 @@ const notificationSlice = createSlice({
 						parameter: notification.parameter,
 						context: notification.context,
 					},
-				]
+				];
 			}
 		},
 		removeNotification(state, action: PayloadAction<
@@ -173,8 +174,8 @@ const notificationSlice = createSlice({
 		>) {
 			const idToRemove = action.payload;
 			state.notifications = state.notifications.filter(
-				(notification) => notification.id !== idToRemove
-			)
+				notification => notification.id !== idToRemove,
+			);
 		},
 		removeNotificationByKey(state, action: PayloadAction<{
 			key: OurNotification["key"],
@@ -182,30 +183,30 @@ const notificationSlice = createSlice({
 		}>) {
 			const { key, context } = action.payload;
 			state.notifications = state.notifications.filter(
-				(notification) => notification.key !== key || notification.context !== context
-			)
+				notification => notification.key !== key || notification.context !== context,
+			);
 		},
 		removeNotificationWizardForm(state) {
 			state.notifications = state.notifications.filter(
-				(notification) => notification.context !== NOTIFICATION_CONTEXT
-			)
+				notification => notification.context !== NOTIFICATION_CONTEXT,
+			);
 		},
 		removeNotificationWizardAccess(state) {
 			state.notifications = state.notifications.filter(
-				(notification) => notification.context !== NOTIFICATION_CONTEXT_ACCESS
-			)
+				notification => notification.context !== NOTIFICATION_CONTEXT_ACCESS,
+			);
 		},
 		removeNotificationWizardTobira(state) {
 			state.notifications = state.notifications.filter(
-				(notification) => notification.context !== NOTIFICATION_CONTEXT_TOBIRA
-			)
+				notification => notification.context !== NOTIFICATION_CONTEXT_TOBIRA,
+			);
 		},
 		setHidden(state, action: PayloadAction<{
 			id: OurNotification["id"],
 			isHidden: OurNotification["hidden"],
 		}>) {
 			const { id: idToUpdate, isHidden } = action.payload;
-			state.notifications = state.notifications.map((notification) => {
+			state.notifications = state.notifications.map(notification => {
 				if (notification.id === idToUpdate) {
 					return {
 						...notification,
@@ -213,7 +214,7 @@ const notificationSlice = createSlice({
 					};
 				}
 				return notification;
-			})
+			});
 		},
 	},
 });

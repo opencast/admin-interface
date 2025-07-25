@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import cn from "classnames";
 import { FormikProps } from "formik";
@@ -23,7 +22,7 @@ const WatermarkPage = <T extends RequiredFormProps>({
 	formik,
 	nextPage,
 	previousPage,
-	isEdit
+	isEdit,
 }: {
 	formik: FormikProps<T>,
 	nextPage?: (values: T) => void,
@@ -87,7 +86,7 @@ const WatermarkPage = <T extends RequiredFormProps>({
 							</div>
 						</div>
 
-						{/*if file uploaded, then render buttons for choice of position*/}
+						{/* if file uploaded, then render buttons for choice of position*/}
 						{formik.values.watermarkFile && (
 							<div className="obj">
 								<header>
@@ -104,12 +103,12 @@ const WatermarkPage = <T extends RequiredFormProps>({
 															active:
 																formik.values.watermarkPosition ===
 																"topLeft",
-														}
+														},
 													)}
 													onClick={() => handleButtonClick("topLeft")}
 												>
 													{t(
-														"CONFIGURATION.THEMES.DETAILS.WATERMARK.TOP_LEFT"
+														"CONFIGURATION.THEMES.DETAILS.WATERMARK.TOP_LEFT",
 													)}
 												</button>
 												<button
@@ -119,12 +118,12 @@ const WatermarkPage = <T extends RequiredFormProps>({
 															active:
 																formik.values.watermarkPosition ===
 																"topRight",
-														}
+														},
 													)}
 													onClick={() => handleButtonClick("topRight")}
 												>
 													{t(
-														"CONFIGURATION.THEMES.DETAILS.WATERMARK.TOP_RIGHT"
+														"CONFIGURATION.THEMES.DETAILS.WATERMARK.TOP_RIGHT",
 													)}
 												</button>
 												<button
@@ -134,12 +133,12 @@ const WatermarkPage = <T extends RequiredFormProps>({
 															active:
 																formik.values.watermarkPosition ===
 																"bottomLeft",
-														}
+														},
 													)}
 													onClick={() => handleButtonClick("bottomLeft")}
 												>
 													{t(
-														"CONFIGURATION.THEMES.DETAILS.WATERMARK.BOTTOM_LEFT"
+														"CONFIGURATION.THEMES.DETAILS.WATERMARK.BOTTOM_LEFT",
 													)}
 												</button>
 												<button
@@ -149,12 +148,12 @@ const WatermarkPage = <T extends RequiredFormProps>({
 															active:
 																formik.values.watermarkPosition ===
 																"bottomRight",
-														}
+														},
 													)}
 													onClick={() => handleButtonClick("bottomRight")}
 												>
 													{t(
-														"CONFIGURATION.THEMES.DETAILS.WATERMARK.BOTTOM_RIGHT"
+														"CONFIGURATION.THEMES.DETAILS.WATERMARK.BOTTOM_RIGHT",
 													)}
 												</button>
 											</div>
@@ -168,7 +167,7 @@ const WatermarkPage = <T extends RequiredFormProps>({
 			</ModalContentTable>
 			{/* Show navigation buttons only if page is used for a new theme*/}
 			{!isEdit && (
-				//Button for navigation to next page
+				// Button for navigation to next page
 				<WizardNavigationButtons
 					formik={formik}
 					previousPage={previousPage}

@@ -1,4 +1,3 @@
-import React from "react";
 import Notifications from "../../../shared/Notifications";
 import {
 	getAssetAttachments,
@@ -27,7 +26,7 @@ const EventDetailsAssetAttachments = ({
 
 	const openSubTab = (subTabName: AssetTabHierarchy, attachmentId = "") => {
 		if (subTabName === "attachment-details") {
-			dispatch(fetchAssetAttachmentDetails({eventId, attachmentId})).then();
+			dispatch(fetchAssetAttachmentDetails({ eventId, attachmentId })).then();
 		}
 		dispatch(setModalAssetsTabHierarchy(subTabName));
 	};
@@ -41,7 +40,7 @@ const EventDetailsAssetAttachments = ({
 				<header>
 					{
 						t(
-							"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.CAPTION"
+							"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.CAPTION",
 						) /* Attachments */
 					}
 				</header>
@@ -52,28 +51,28 @@ const EventDetailsAssetAttachments = ({
 								<th>
 									{
 										t(
-											"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.ID"
+											"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.ID",
 										) /* ID */
 									}
 								</th>
 								<th>
 									{
 										t(
-											"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.TYPE"
+											"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.TYPE",
 										) /* Type */
 									}
 								</th>
 								<th>
 									{
 										t(
-											"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.MIMETYPE"
+											"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.MIMETYPE",
 										) /* Mimetype */
 									}
 								</th>
 								<th>
 									{
 										t(
-											"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.TAGS"
+											"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.TAGS",
 										) /* Tags */
 									}
 								</th>
@@ -101,7 +100,7 @@ const EventDetailsAssetAttachments = ({
 											>
 												{
 													t(
-														"EVENTS.EVENTS.DETAILS.ASSETS.DETAILS"
+														"EVENTS.EVENTS.DETAILS.ASSETS.DETAILS",
 													) /* Details */
 												}
 											</ButtonLikeAnchor>

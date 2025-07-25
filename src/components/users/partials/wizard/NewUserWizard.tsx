@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Formik } from "formik";
 import { useTranslation } from "react-i18next";
 import cn from "classnames";
@@ -52,7 +52,7 @@ const NewUserWizard = ({
 			email: values.email,
 			password: values.password,
 			roles: values.assignedRoles,
-		}
+		};
 		const response = dispatch(postNewUser(newValues));
 		console.info(response);
 		close();
@@ -60,7 +60,7 @@ const NewUserWizard = ({
 
 	return (
 		<>
-			{/*Head navigation*/}
+			{/* Head navigation*/}
 			<nav className="modal-nav" id="modal-nav" style={navStyle}>
 				<ButtonLikeAnchor
 					extraClassName={cn("wider", { active: tab === 0 })}
@@ -81,10 +81,10 @@ const NewUserWizard = ({
 			<Formik
 				initialValues={initialFormValuesNewUser}
 				validationSchema={NewUserSchema(usernames)}
-				onSubmit={(values) => handleSubmit(values)}
+				onSubmit={values => handleSubmit(values)}
 			>
 				{/* Render wizard tabs depending on current value of tab variable */}
-				{(formik) => {
+				{formik => {
 					// eslint-disable-next-line react-hooks/rules-of-hooks
 					useEffect(() => {
 						formik.validateForm();

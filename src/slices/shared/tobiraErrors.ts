@@ -1,29 +1,14 @@
+import { AxiosError } from "axios";
 import { NOTIFICATION_CONTEXT_TOBIRA } from "../../configs/modalConfig";
 import { AppDispatch } from "../../store";
 import { addNotification } from "../notificationSlice";
 
-type AxiosErrorResponse = {
-    stack: string;
-    message: string;
-    name: string;
-    code: string;
-    config: Record<string, any>;
-    request: XMLHttpRequest;
-    response: {
-        data?: any;
-        status: number;
-        statusText: string;
-        headers: Record<string, string>;
-        config: Record<string, any>;
-        request: XMLHttpRequest;
-    };
-};
 
 // All Tobira fetch endpoints are using the same return codes which are handled in the same way.
 // So this should be fine to reuse. In the case of `503` I decided not to log the complete error,
 // as it isn't really helpful and might not even be considered as one (see TODO comment below).
-export const handleTobiraError = (response: AxiosErrorResponse, dispatch: AppDispatch) => {
-    const data = response.response;
+export const handleTobiraError = (response: AxiosError, dispatch: AppDispatch) => {
+    const data = response;
 
     if (data.status === 503) {
         // TODO: figure out what to do:

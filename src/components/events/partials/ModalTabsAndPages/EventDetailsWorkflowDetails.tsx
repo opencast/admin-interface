@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import Notifications from "../../../shared/Notifications";
 import {
+	getLatestWorkflowOperation,
 	getModalWorkflowId,
 	getWorkflow,
 	isFetchingWorkflowDetails,
@@ -11,6 +12,10 @@ import { getUserInformation } from "../../../../selectors/userInfoSelectors";
 import { useAppDispatch, useAppSelector } from "../../../../store";
 import {
 	fetchWorkflowDetails,
+	fetchWorkflowOperationDetails,
+	fetchWorkflowOperations,
+	fetchWorkflows,
+	setModalWorkflowId,
 	setModalWorkflowTabHierarchy,
 } from "../../../../slices/eventDetailsSlice";
 import { removeNotificationWizardForm } from "../../../../slices/notificationSlice";
@@ -20,6 +25,8 @@ import { useTranslation } from "react-i18next";
 import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
 import { ParseKeys } from "i18next";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
+import EventDetailsWorkflowErrors from "./EventDetailsWorkflowErrors";
+import { Operation, WorfklowOperationsTableBody } from "./EventDetailsWorkflowOperations";
 
 /**
  * This component manages the workflow details for the workflows tab of the event details modal
@@ -38,8 +45,19 @@ const EventDetailsWorkflowDetails = ({
 	const isFetching = useAppSelector(state => isFetchingWorkflowDetails(state));
 
 	useEffect(() => {
-		dispatch(fetchWorkflowDetails({eventId, workflowId}));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// Get latest workflow. Ideally we would have an endpoint that gives us the latest workflow straight up.
+		if (!workflowId) {
+			dispatch(fetchWorkflows(eventId)).unwrap()
+				.then(workflows => {
+					const currentWorkflow = workflows.entries[workflows.entries.length - 1];
+					dispatch(fetchWorkflowDetails({ eventId, workflowId: currentWorkflow.id }));
+					dispatch(setModalWorkflowId(currentWorkflow.id));
+				},
+			);
+		} else {
+			dispatch(fetchWorkflowDetails({ eventId, workflowId }));
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const openSubTab = (tabType: WorkflowTabHierarchy) => {
@@ -58,14 +76,20 @@ const EventDetailsWorkflowDetails = ({
 				/* Hierarchy navigation */
 			<EventDetailsTabHierarchyNavigation
 				openSubTab={openSubTab}
-				hierarchyDepth={0}
-				translationKey0={"EVENTS.EVENTS.DETAILS.WORKFLOW_DETAILS.TITLE"}
-				subTabArgument0={"workflow-details"}
+				hierarchyDepth={1}
+				translationKey0={"EVENTS.EVENTS.DETAILS.WORKFLOW_INSTANCES.TITLE"}
+				subTabArgument0={"workflows"}
+				translationKey1={"EVENTS.EVENTS.DETAILS.WORKFLOW_DETAILS.TITLE"}
+				subTabArgument1={"workflow-details"}
 			/>
 			}
 		>
 					{/* Notifications */}
 					<Notifications context="not_corner" />
+
+					<OperationsPreview eventId={eventId} openSubTab={openSubTab}/>
+
+					<EventDetailsWorkflowErrors eventId={eventId} />
 
 					{/* the contained view is only displayed, if the data has been fetched */}
 					{isFetching || (
@@ -75,7 +99,7 @@ const EventDetailsWorkflowDetails = ({
 								<header>
 									{
 										t(
-											"EVENTS.EVENTS.DETAILS.WORKFLOW_DETAILS.TITLE"
+											"EVENTS.EVENTS.DETAILS.WORKFLOW_DETAILS.TITLE",
 										) /* Workflow Details */
 									}
 								</header>
@@ -86,7 +110,7 @@ const EventDetailsWorkflowDetails = ({
 												<td>
 													{
 														t(
-															"EVENTS.EVENTS.DETAILS.WORKFLOWS.TITLE"
+															"EVENTS.EVENTS.DETAILS.WORKFLOWS.TITLE",
 														) /* Title */
 													}
 												</td>
@@ -97,7 +121,7 @@ const EventDetailsWorkflowDetails = ({
 													<td>
 														{
 															t(
-																"EVENTS.EVENTS.DETAILS.WORKFLOWS.DESCRIPTION"
+																"EVENTS.EVENTS.DETAILS.WORKFLOWS.DESCRIPTION",
 															) /* Description */
 														}
 													</td>
@@ -108,7 +132,7 @@ const EventDetailsWorkflowDetails = ({
 												<td>
 													{
 														t(
-															"EVENTS.EVENTS.DETAILS.WORKFLOWS.SUBMITTER"
+															"EVENTS.EVENTS.DETAILS.WORKFLOWS.SUBMITTER",
 														) /* Submitter*/
 													}
 												</td>
@@ -120,7 +144,7 @@ const EventDetailsWorkflowDetails = ({
 												<td>
 													{
 														t(
-															"EVENTS.EVENTS.DETAILS.WORKFLOWS.SUBMITTED"
+															"EVENTS.EVENTS.DETAILS.WORKFLOWS.SUBMITTED",
 														) /* Submitted */
 													}
 												</td>
@@ -134,7 +158,7 @@ const EventDetailsWorkflowDetails = ({
 												<td>
 													{
 														t(
-															"EVENTS.EVENTS.DETAILS.WORKFLOWS.STATUS"
+															"EVENTS.EVENTS.DETAILS.WORKFLOWS.STATUS",
 														) /* Status */
 													}
 												</td>
@@ -146,7 +170,7 @@ const EventDetailsWorkflowDetails = ({
 													<td>
 														{
 															t(
-																"EVENTS.EVENTS.DETAILS.WORKFLOWS.EXECUTION_TIME"
+																"EVENTS.EVENTS.DETAILS.WORKFLOWS.EXECUTION_TIME",
 															) /* Execution time */
 														}
 													</td>
@@ -165,7 +189,7 @@ const EventDetailsWorkflowDetails = ({
 														<td>
 															{
 																t(
-																	"EVENTS.EVENTS.DETAILS.WORKFLOWS.WDID"
+																	"EVENTS.EVENTS.DETAILS.WORKFLOWS.WDID",
 																) /* Workflow definition */
 															}
 														</td>
@@ -184,7 +208,7 @@ const EventDetailsWorkflowDetails = ({
 									<header>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.WORKFLOW_DETAILS.CONFIGURATION"
+												"EVENTS.EVENTS.DETAILS.WORKFLOW_DETAILS.CONFIGURATION",
 											) /* Workflow configuration */
 										}
 									</header>
@@ -198,7 +222,7 @@ const EventDetailsWorkflowDetails = ({
 															<td>{confKey}</td>
 															<td>{confValue as string}</td>
 														</tr>
-													)
+													),
 												)}
 											</tbody>
 										</table>
@@ -206,72 +230,49 @@ const EventDetailsWorkflowDetails = ({
 								</div>
 							)}
 
-							{/* 'More Information' table */}
-							<div className="obj tbl-container more-info-actions">
-								<header>
-									{
-										t(
-											"EVENTS.EVENTS.DETAILS.WORKFLOWS.MORE_INFO"
-										) /* More Information */
-									}
-								</header>
-
-								{/* links to 'Operations' or 'Errors & Warnings' sub-Tabs */}
-								<div className="obj-container">
-									<ul>
-										<li>
-											<span>
-												{
-													t(
-														"EVENTS.EVENTS.DETAILS.WORKFLOW_OPERATIONS.DETAILS_LINK"
-													) /* Operations */
-												}
-											</span>
-											<ButtonLikeAnchor
-												extraClassName="details-link"
-												onClick={() => openSubTab("workflow-operations")}
-											>
-												{
-													t(
-														"EVENTS.EVENTS.DETAILS.WORKFLOWS.DETAILS"
-													) /* Details */
-												}
-											</ButtonLikeAnchor>
-										</li>
-										<li>
-											<span>
-												{
-													t(
-														"EVENTS.EVENTS.DETAILS.ERRORS_AND_WARNINGS.TITLE"
-													) /* Errors & Warnings */
-												}
-											</span>
-											<ButtonLikeAnchor
-												extraClassName="details-link"
-												onClick={() => openSubTab("errors-and-warnings")}
-											>
-												{
-													t(
-														"EVENTS.EVENTS.DETAILS.WORKFLOWS.DETAILS"
-													) /* Details */
-												}
-											</ButtonLikeAnchor>
-										</li>
-									</ul>
-								</div>
-							</div>
 						</>
 					)}
 
 					{/* empty view for displaying, while the data is being fetched */}
 					{isFetching && (
 						<>
+							{/* 'Workflow Operation table */}
+							<div className="obj tbl-container more-info-actions">
+								<header>
+									{t("EVENTS.EVENTS.DETAILS.WORKFLOW_DETAILS.OPERATIONS")}
+								</header>
+
+								<table className="main-tbl">
+									<tbody>
+										<tr />
+									</tbody>
+								</table>
+							</div>
+
+							{/* 'Workflow Errors' table */}
+							<div className="obj tbl-details">
+								<header>
+									{
+										t(
+											"EVENTS.EVENTS.DETAILS.ERRORS_AND_WARNINGS.HEADER",
+										) /* Errors & Warnings */
+									}
+								</header>
+								<div className="obj-container">
+									<table className="main-tbl vertical-headers">
+										<tbody>
+											<tr />
+										</tbody>
+									</table>
+								</div>
+							</div>
+
 							{/* 'Workflow Details' table */}
 							<div className="obj tbl-details">
 								<header>
 									{
 										t(
-											"EVENTS.EVENTS.DETAILS.WORKFLOW_DETAILS.TITLE"
+											"EVENTS.EVENTS.DETAILS.WORKFLOW_DETAILS.TITLE",
 										) /* Workflow Details */
 									}
 								</header>
@@ -290,7 +291,7 @@ const EventDetailsWorkflowDetails = ({
 									<header>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.WORKFLOW_DETAILS.CONFIGURATION"
+												"EVENTS.EVENTS.DETAILS.WORKFLOW_DETAILS.CONFIGURATION",
 											) /* Workflow configuration */
 										}
 									</header>
@@ -303,56 +304,97 @@ const EventDetailsWorkflowDetails = ({
 									</div>
 								</div>
 							)}
-
-							{/* 'More Information' table */}
-							<div className="obj tbl-container more-info-actions">
-								<header>
-									{
-										t(
-											"EVENTS.EVENTS.DETAILS.WORKFLOWS.MORE_INFO"
-										) /* More Information */
-									}
-								</header>
-								<div className="obj-container">
-									<ul>
-										<li>
-											<span>
-												{
-													t(
-														"EVENTS.EVENTS.DETAILS.WORKFLOW_OPERATIONS.DETAILS_LINK"
-													) /* Operations */
-												}
-											</span>
-											<ButtonLikeAnchor extraClassName="details-link">
-												{
-													t(
-														"EVENTS.EVENTS.DETAILS.WORKFLOWS.DETAILS"
-													) /* Details */
-												}
-											</ButtonLikeAnchor>
-										</li>
-										<li>
-											<span>
-												{
-													t(
-														"EVENTS.EVENTS.DETAILS.ERRORS_AND_WARNINGS.TITLE"
-													) /* Errors & Warnings */
-												}
-											</span>
-											<ButtonLikeAnchor extraClassName="details-link">
-												{
-													t(
-														"EVENTS.EVENTS.DETAILS.WORKFLOWS.DETAILS"
-													) /* Details */
-												}
-											</ButtonLikeAnchor>
-										</li>
-									</ul>
-								</div>
-							</div>
 						</>
 					)}
 		</ModalContentTable>
+	);
+};
+
+const OperationsPreview = ({
+	eventId,
+	openSubTab,
+}: {
+	eventId: string,
+	openSubTab: (tab: WorkflowTabHierarchy) => void,
+}) => {
+	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
+
+	const workflowId = useAppSelector(state => getModalWorkflowId(state));
+	const operationsEntry = useAppSelector(state => getLatestWorkflowOperation(state));
+	const workflow = useAppSelector(state => getWorkflow(state));
+
+	// Parse translation key to state
+	let workflowDone = false;
+	if ("status" in workflow) {
+		const workflowStatus = workflow.status.split(".").pop();
+		workflowDone = !(workflowStatus === "SUCCEEDED" || workflowStatus === "FAILED" || workflowStatus === "STOPPED");
+	}
+
+	const loadWorkflowOperations = async () => {
+		// Fetching workflow operations from server
+		if (workflowId) {
+			dispatch(fetchWorkflowOperations({ eventId, workflowId }));
+		}
+	};
+
+	useEffect(() => {
+		// Fetch workflow operations initially
+		loadWorkflowOperations().then();
+
+		// Fetch workflow operations every 5 seconds
+		const fetchWorkflowOperationsInterval = setInterval(loadWorkflowOperations, 5000);
+
+		// Unmount interval
+		return () => clearInterval(fetchWorkflowOperationsInterval);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const openDetailsSubTab = (tabType: WorkflowTabHierarchy, operationId: number | undefined = undefined) => {
+		dispatch(removeNotificationWizardForm());
+		dispatch(setModalWorkflowTabHierarchy(tabType));
+		if (tabType === "workflow-operation-details") {
+			dispatch(fetchWorkflowOperationDetails({ eventId, workflowId, operationId })).then();
+		}
+	};
+
+	return (
+		<div className="obj tbl-container more-info-actions">
+			<header>
+				{ workflowDone
+					? t("EVENTS.EVENTS.DETAILS.WORKFLOW_DETAILS.CURRENT_OPERATION")
+					: t("EVENTS.EVENTS.DETAILS.WORKFLOW_DETAILS.OPERATIONS")
+				}
+			</header>
+
+			{ workflowDone && <>
+				<WorfklowOperationsTableBody
+					operations={operationsEntry
+						? [{ operation: operationsEntry.operation, operationId: operationsEntry.index }]
+						: []
+					}
+					openSubTab={openDetailsSubTab}
+				/>
+				<hr style={{ height: "1px", border: 0, borderTop: "1px solid #ccc", margin: "0", padding: "0" }} />
+			</>}
+
+			{/* links to 'Operations' or 'Errors & Warnings' sub-Tabs */}
+			<div className="obj-container">
+				<ul>
+					<li>
+						<span>
+							{t("EVENTS.EVENTS.DETAILS.WORKFLOW_OPERATIONS.DETAILS_LINK") /* Operations */}
+						</span>
+						<ButtonLikeAnchor
+							extraClassName="details-link"
+							onClick={() => openSubTab("workflow-operations")}
+						>
+							{t("EVENTS.EVENTS.DETAILS.WORKFLOWS.DETAILS") /* Details */}
+						</ButtonLikeAnchor>
+					</li>
+				</ul>
+			</div>
+		</div>
 	);
 };
 

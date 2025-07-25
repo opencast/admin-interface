@@ -60,18 +60,18 @@ const Header = () => {
 	};
 
 	const showRegistrationModal = () => {
-		registrationModalRef.current?.open()
+		registrationModalRef.current?.open();
 	};
 
 	const showHotKeyCheatSheet = () => {
-		hotKeyCheatSheetModalRef.current?.open()
+		hotKeyCheatSheetModalRef.current?.open();
 	};
 
 	const toggleHotKeyCheatSheet = () => {
 		if (hotKeyCheatSheetModalRef.current?.isOpen?.()) {
-			hotKeyCheatSheetModalRef.current?.close?.()
+			hotKeyCheatSheetModalRef.current?.close?.();
 		} else {
-			hotKeyCheatSheetModalRef.current?.open()
+			hotKeyCheatSheetModalRef.current?.open();
 		}
 	};
 
@@ -86,9 +86,9 @@ const Header = () => {
     availableHotkeys.general.HOTKEY_CHEATSHEET.sequence,
     () => toggleHotKeyCheatSheet(),
 		{
-			description: t(availableHotkeys.general.HOTKEY_CHEATSHEET.description) ?? undefined
+			description: t(availableHotkeys.general.HOTKEY_CHEATSHEET.description) ?? undefined,
 		},
-    [toggleHotKeyCheatSheet]
+    [toggleHotKeyCheatSheet],
   );
 
 	useEffect(() => {
@@ -115,7 +115,7 @@ const Header = () => {
 		};
 
 		// Fetching health status information at mount
-		loadHealthStatus().then((r) => console.info(r));
+		loadHealthStatus().then(r => console.info(r));
 		// Fetch health status every minute
 		const interval = setInterval(() => dispatch(fetchHealthStatus()), 5000);
 
@@ -145,7 +145,7 @@ const Header = () => {
 					<div className="nav-dd lang-dd" id="lang-dd" ref={containerLang}>
 						<Tooltip active={!displayMenuLang} title={t("LANGUAGE")}>
 							<button className="lang" onClick={() => setMenuLang(!displayMenuLang)}>
-								<IconContext.Provider value={{ style: {fontSize: "20px"} }}>
+								<IconContext.Provider value={{ style: { fontSize: "20px" } }}>
 									<HiTranslate />
 								</IconContext.Provider>
 							</button>
@@ -419,7 +419,7 @@ const MenuUser = () => {
 		// Here we broadcast logout, in order to redirect other tabs to login page!
 		broadcastLogout();
 		window.location.href = "/j_spring_security_logout";
-	}
+	};
 	return (
 		<ul className="dropdown-ul">
 			<li>

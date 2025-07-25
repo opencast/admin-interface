@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import EmbeddingCodeModal from "./modals/EmbeddingCodeModal";
 import { getUserInformation } from "../../../selectors/userInfoSelectors";
@@ -39,10 +39,6 @@ const EventActionCell = ({
 		dispatch(deleteEvent(id));
 	};
 
-	const hideEmbeddingCodeModal = () => {
-		embeddingCodeModalRef.current?.close?.();
-	};
-
 	const showEmbeddingCodeModal = () => {
 		embeddingCodeModalRef.current?.open();
 	};
@@ -52,11 +48,13 @@ const EventActionCell = ({
 	};
 
 	const onClickSeriesDetails = async () => {
-		if (!!row.series) {
-			await dispatch(fetchSeriesDetailsMetadata(row.series.id));
-			await dispatch(fetchSeriesDetailsAcls(row.series.id));
-			await dispatch(fetchSeriesDetailsTheme(row.series.id));
-			await dispatch(fetchSeriesDetailsThemeNames());
+		if (row.series) {
+			await Promise.all([
+				dispatch(fetchSeriesDetailsMetadata(row.series.id)),
+				dispatch(fetchSeriesDetailsAcls(row.series.id)),
+				dispatch(fetchSeriesDetailsTheme(row.series.id)),
+				dispatch(fetchSeriesDetailsThemeNames()),
+			]);
 
 			showSeriesDetailsModal();
 		}
@@ -153,7 +151,7 @@ const EventActionCell = ({
 				/>
 			)}
 
-			{/*If the event is in in a paused workflow state then a warning icon is shown and workflow tab of event
+			{/* If the event is in in a paused workflow state then a warning icon is shown and workflow tab of event
 				details can be opened directly */}
 			{row.workflow_state === "PAUSED" &&
 				<IconButton
@@ -187,7 +185,7 @@ const EventActionCell = ({
 				ref={embeddingCodeModalRef}
 			>
 				{/* component that manages tabs of theme details modal*/}
-				<EmbeddingCodeModal close={hideEmbeddingCodeModal} eventId={row.id} />
+				<EmbeddingCodeModal eventId={row.id} />
 			</Modal>
 		</>
 	);

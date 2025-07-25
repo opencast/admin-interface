@@ -5,4 +5,4 @@ export const hasStatistics = (state: RootState) => state.statistics.statistics.l
 export const getStatistics = (state: RootState) => state.statistics.statistics;
 export const hasStatisticsError = (state: RootState) => state.statistics.hasStatisticsError;
 export const isFetchingStatistics = (state: RootState) =>
-	state.statistics.status === 'loading';
+	state.statistics.status === "loading";

@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { Field } from "../../../shared/Field";
 import RenderField from "../../../shared/wizard/RenderField";
@@ -13,7 +12,7 @@ import ModalContentTable from "../../../shared/modals/ModalContentTable";
  */
 const NewMetadataPage = ({
 	metadataCatalogs,
-	header
+	header,
 }: {
 	metadataCatalogs: MetadataCatalog [],
 	header?: ParseKeys
@@ -23,7 +22,7 @@ const NewMetadataPage = ({
 	return (
 		<ModalContentTable>
 			{
-				//iterate through metadata catalogs
+				// iterate through metadata catalogs
 				!!metadataCatalogs &&
 				metadataCatalogs.length > 0 &&
 				metadataCatalogs.map((catalog, index) => (
@@ -48,7 +47,7 @@ const NewMetadataPage = ({
 												</td>
 												{field.readOnly ? (
 													// non-editable field if readOnly is set or user doesn't have edit access rights
-													!!field.collection ? (
+													field.collection ? (
 														<td>{getMetadataCollectionFieldName(field, field, t)}</td>
 													) : (
 														<td>{field.value}</td>

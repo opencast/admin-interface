@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import {
 	fetchThemeDetails,
 	fetchUsage,
@@ -29,8 +29,10 @@ const ThemesActionsCell = ({
 	};
 
 	const showThemeDetails = async () => {
-		await dispatch(fetchThemeDetails(row.id));
-		await dispatch(fetchUsage(row.id));
+		await Promise.all([
+			dispatch(fetchThemeDetails(row.id)),
+			dispatch(fetchUsage(row.id)),
+		]);
 
 		detailsModalRef.current?.open();
 	};

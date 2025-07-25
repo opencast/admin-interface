@@ -75,31 +75,6 @@
         display: block;
         float: left;
         vertical-align: top;
-
-        .search-container {
-            width: 100% !important;
-            margin-top: 10px;
-        }
-
-        input.search {
-            border-radius: variables.$main-border-radius 0 0 variables.$main-border-radius;
-            border-right-width: 0;
-            float: left;
-            margin: 0;
-        }
-
-        button.clear {
-            height: inherit;
-            float: right;
-            @include button.btn(white);
-            @include fa-mixins.fa-icon(variables2.$fa-var-times, before, block, 0, 0.45em 0.45em 0.55em 0.45em, inherit, 14px);
-
-            border-radius: 0 variables.$main-border-radius variables.$main-border-radius 0;
-
-            &+input.search {
-                width: calc(100% - 46px) !important;
-            }
-        }
     }
 }
 

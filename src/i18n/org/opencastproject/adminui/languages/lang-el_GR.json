@@ -103,7 +103,8 @@
 			"SELECTED_COLUMNS": "Επιλεγμένες στήλες",
 			"FOOTER_TEXT": "H σειρά και η επιλογή θα αποθηκευτούν αυτόματα. Πιέστε το πλήκτρο \"{{resetTranslation}}\" για να επαναφέρετε την προεπιλεγμένη προβολή.",
 			"ADD_COLUMN": "Προσθέστε στήλη",
-			"REMOVE_COLUMN": "Αφαίρεση στήλης"
+			"REMOVE_COLUMN": "Αφαίρεση στήλης",
+			"DRAG_HANDLE_USAGE_INSTRUCTIONS": "Press space bar to start a drag. When dragging you can use the arrow keys to move the item around and escape to cancel. Some screen readers may require you to be in focus mode or to use your pass through key"
 		}
 	},
 	"CONFIRMATIONS": {
@@ -894,11 +895,7 @@
 						"ADDITIONAL_ACTIONS": "Πρόσθετες ενέργειες",
 						"ACTION": "Ενέργειες",
 						"NEW": "Νέα πολιτική",
-						"NON_USER_ROLES": "Roles and Groups authorized for the event",
-						"USER": "User",
-						"USERS": "Users who are authorized for the event",
-						"NEW_USER": "New user",
-						"SANITIZATION_NOTE": "User role sanitization is enabled in your Opencast, therefore user roles are displayed alongside other roles. This does not impact role functionality in any way."
+						"DETAILS": "Details"
 					},
 					"ROLES": {
 						"LABEL": "Select or create a role"
@@ -985,7 +982,7 @@
 					"ACTIONS": "Ενέργειες",
 					"DETAILS": "Λεπτομέρειες",
 					"DESCRIPTION": "Περιγραφή",
-					"MORE_INFO": "Περισσότερες πληροφορίες",
+					"MORE_INFO": "More Information",
 					"ID": "Αναγνωριστικό",
 					"TYPE": "Τύπος",
 					"TITLE": "Τίτλος",
@@ -1029,7 +1026,7 @@
 				},
 				"WORKFLOW_OPERATIONS": {
 					"TITLE": "Λειτουργίες ροής εργασίας",
-					"DETAILS_LINK": "Λειτουργίες",
+					"DETAILS_LINK": "Operations",
 					"TABLE_HEADERS": {
 						"TITLE": "Τίτλος",
 						"STATUS": "Κατάσταση",
@@ -1177,7 +1174,10 @@
 				"TOOLTIP": {
 					"SERIES": "Φίλτρο για τις εκδηλώσεις αυτής της σειράς",
 					"DETAILS": "Άνοιγμα λεπτομερειών σειράς",
-					"DELETE": "Διαγραφή σειράς"
+					"DELETE": "Διαγραφή σειράς",
+					"CREATION": "Filter for this creation date",
+					"ORGANIZER": "Filter for this organizer",
+					"CONTRIBUTORS": "Filter for this contributor"
 				}
 			},
 			"DETAILS": {
@@ -1208,10 +1208,7 @@
 						"ADDITIONAL_ACTIONS": "Πρόσθετες ενέργειες",
 						"ACTION": "Ενέργειες",
 						"NEW": "Νέα πολιτική",
-						"NON_USER_ROLES": "Roles and Groups authorized for the series",
-						"USER": "User",
-						"USERS": "Users who are authorized for the series",
-						"NEW_USER": "New user",
+						"DETAILS": "Details",
 						"REPLACE_EVENT_ACLS": "Ενημέρωση δικαιωμάτων εκδήλωσης",
 						"REPLACE_EVENT_ACLS_HINT": "Επιβεβαίωση ότι όλες οι εκδηλώσεις σε αυτή την σειρά έχουν τα ίδια δικαιώματα σε ισχύ",
 						"LOAD_MORE_LIMIT": "Εμφάνιση πολιτικών.",
@@ -1470,11 +1467,8 @@
 						"ADDITIONAL_ACTIONS": "Πρόσθετες ενέργειες",
 						"ACTION": "Ενέργειες",
 						"NEW": "Νέα πολιτική",
-						"NON_USER_ROLES": "Roles and Groups authorized for the access policy",
-						"DESCRIPTION": "Παρακαλώ επιλέξτε ένα σύνολο προ-διαμορφωμένων πολιτικών ή να προσθέσετε τις ακόλουθες προσαρμοσμένες πολιτικές",
-						"USER": "User",
-						"USERS": "Users who are authorized for the access policy",
-						"NEW_USER": "New user"
+						"DETAILS": "Details",
+						"DESCRIPTION": "Παρακαλώ επιλέξτε ένα σύνολο προ-διαμορφωμένων πολιτικών ή να προσθέσετε τις ακόλουθες προσαρμοσμένες πολιτικές"
 					},
 					"ROLES": {
 						"LABEL": "Επιλέξτε ένα ρόλο",
@@ -1986,6 +1980,8 @@
 	"TABLE_EDIT": "Επεξεργασία",
 	"TABLE_NEXT": "Επόμενη σελίδα",
 	"TABLE_PREVIOUS": "Προηγούμενη σελίδα",
+	"TABLE_CURRENT": "Current page {{pageNumber}}",
+	"TABLE_NUMBERED": "Go to page {{pageNumber}}",
 	"DASHBOARD": {
 		"RUNNING": "Εκτελείται",
 		"FINISHED": "Ολοκληρώθηκε",
@@ -1993,7 +1989,8 @@
 		"FAILED": "Απέτυχε",
 		"FINISHED_WITH_COMMENTS": "Να γίνουν",
 		"SCHEDULED": "Προγραμματισμένη",
-		"RECORDING": "Εγγραφή"
+		"RECORDING": "Εγγραφή",
+		"BUTTON_TOOLTIP": "Apply filter {{filterName}} to the table"
 	},
 	"HOTKEYS": {
 		"CHEAT_SHEET": {

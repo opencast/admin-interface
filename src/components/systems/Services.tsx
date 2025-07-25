@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import TableFilters from "../shared/TableFilters";
 import Table from "../shared/Table";
 import Notifications from "../shared/Notifications";
 import { servicesTemplateMap } from "../../configs/tableConfigs/servicesTableMap";
-import { fetchFilters, editTextFilter } from "../../slices/tableFilterSlice";
+import { fetchFilters } from "../../slices/tableFilterSlice";
 import {
 	loadServicesIntoTable,
 } from "../../thunks/tableThunks";
@@ -37,9 +37,6 @@ const Services = () => {
 
 		dispatch(fetchFilters("services"));
 
-		// Reset text filter
-		dispatch(editTextFilter(""));
-
 		// Load services on mount
 		const loadServices = async () => {
 			// Fetching services from server
@@ -53,12 +50,12 @@ const Services = () => {
 		loadServices();
 
 		// Fetch services every minute
-		let fetchServicesInterval = setInterval(() => loadServices(), 5000);
+		const fetchServicesInterval = setInterval(() => loadServices(), 5000);
 
 		return () => {
 			allowLoadIntoTable = false;
 			clearInterval(fetchServicesInterval);
-		}
+		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

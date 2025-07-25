@@ -35,18 +35,18 @@ import autoMergeLevel2 from "redux-persist/lib/stateReconciler/autoMergeLevel2";
  */
 
 // Configuration for persisting states in store
-const tableFilterProfilesPersistConfig = { key: "tableFilterProfiles", storage, whitelist: ["profiles"] }
-const eventsPersistConfig = { key: "events", storage, whitelist: ["columns"] }
-const seriesPersistConfig = { key: "series", storage, whitelist: ["columns"] }
-const tablePersistConfig = { key: "table", storage, whitelist: ["pagination"] }
-const recordingsPersistConfig = { key: "recordings", storage, whitelist: ["columns"] }
-const jobsPersistConfig = { key: "jobs", storage, whitelist: ["columns"] }
-const serversPersistConfig = { key: "servers", storage, whitelist: ["columns"] }
-const servicesPersistConfig = { key: "services", storage, whitelist: ["columns"] }
-const usersPersistConfig = { key: "users", storage, whitelist: ["columns"] }
-const groupsPersistConfig = { key: "groups", storage, whitelist: ["columns"] }
-const aclsPersistConfig = { key: "acls", storage, whitelist: ["columns"] }
-const themesPersistConfig = { key: "themes", storage, whitelist: ["columns"] }
+const tableFilterProfilesPersistConfig = { key: "tableFilterProfiles", storage, whitelist: ["profiles"] };
+const eventsPersistConfig = { key: "events", storage, whitelist: ["columns"] };
+const seriesPersistConfig = { key: "series", storage, whitelist: ["columns"] };
+const tablePersistConfig = { key: "table", storage, whitelist: ["pagination", "sortBy", "reverse"] };
+const recordingsPersistConfig = { key: "recordings", storage, whitelist: ["columns"] };
+const jobsPersistConfig = { key: "jobs", storage, whitelist: ["columns"] };
+const serversPersistConfig = { key: "servers", storage, whitelist: ["columns"] };
+const servicesPersistConfig = { key: "services", storage, whitelist: ["columns"] };
+const usersPersistConfig = { key: "users", storage, whitelist: ["columns"] };
+const groupsPersistConfig = { key: "groups", storage, whitelist: ["columns"] };
+const aclsPersistConfig = { key: "acls", storage, whitelist: ["columns"] };
+const themesPersistConfig = { key: "themes", storage, whitelist: ["columns"] };
 
 // form reducer and all other reducers used in this app
 const reducers = combineReducers({
@@ -89,7 +89,7 @@ const persistedReducer = persistReducer<ReturnType<typeof reducers>>(persistConf
 
 const store = configureStore({
   reducer: persistedReducer,
-  middleware: (getDefaultMiddleware) =>
+  middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],

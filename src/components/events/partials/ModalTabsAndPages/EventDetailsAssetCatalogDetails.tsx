@@ -1,4 +1,3 @@
-import React from "react";
 import Notifications from "../../../shared/Notifications";
 import {
 	getAssetCatalogDetails,
@@ -27,7 +26,7 @@ const EventDetailsAssetCatalogDetails = () => {
 				<header>
 					{
 						t(
-							"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.DETAILS.CAPTION"
+							"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.DETAILS.CAPTION",
 						) /* Catalog Details */
 					}
 				</header>
@@ -39,7 +38,7 @@ const EventDetailsAssetCatalogDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.DETAILS.ID"
+												"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.DETAILS.ID",
 											) /* Id */
 										}
 									</td>
@@ -49,7 +48,7 @@ const EventDetailsAssetCatalogDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.DETAILS.TYPE"
+												"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.DETAILS.TYPE",
 											) /* Type */
 										}
 									</td>
@@ -59,7 +58,7 @@ const EventDetailsAssetCatalogDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.DETAILS.MIMETYPE"
+												"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.DETAILS.MIMETYPE",
 											) /* Mimetype */
 										}
 									</td>
@@ -70,7 +69,7 @@ const EventDetailsAssetCatalogDetails = () => {
 										<td>
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.DETAILS.SIZE"
+													"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.DETAILS.SIZE",
 												) /* Size */
 											}
 										</td>
@@ -81,7 +80,7 @@ const EventDetailsAssetCatalogDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.DETAILS.CHECKSUM"
+												"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.DETAILS.CHECKSUM",
 											) /* Checksum */
 										}
 									</td>
@@ -91,7 +90,7 @@ const EventDetailsAssetCatalogDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.DETAILS.REFERENCE"
+												"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.DETAILS.REFERENCE",
 											) /* Reference */
 										}
 									</td>
@@ -101,7 +100,7 @@ const EventDetailsAssetCatalogDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.DETAILS.TAGS"
+												"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.DETAILS.TAGS",
 											) /* Tags */
 										}
 									</td>
@@ -115,7 +114,7 @@ const EventDetailsAssetCatalogDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.DETAILS.URL"
+												"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.DETAILS.URL",
 											) /* Link */
 										}
 									</td>

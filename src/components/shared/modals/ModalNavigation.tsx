@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import cn from "classnames";
 import ButtonLikeAnchor from "../ButtonLikeAnchor";
@@ -32,7 +31,7 @@ const ModalNavigation = ({
 						editAccessRole={tab.accessRole}
 					>
 						{t(tab.tabTranslation)}
-					</ButtonLikeAnchor>
+					</ButtonLikeAnchor>,
 			)}
 		</nav>
 	);

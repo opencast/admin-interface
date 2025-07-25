@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import cn from "classnames";
 import {
@@ -28,6 +28,7 @@ import DetailsTobiraTab from "../ModalTabsAndPages/DetailsTobiraTab";
 import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
 import { removeNotificationWizardTobira } from "../../../../slices/notificationSlice";
 import { ParseKeys } from "i18next";
+import { FormikProps } from "formik";
 
 /**
  * This component manages the tabs of the series details modal
@@ -36,10 +37,12 @@ const SeriesDetails = ({
 	seriesId,
 	policyChanged,
 	setPolicyChanged,
+	formikRef,
 }: {
 	seriesId: string
 	policyChanged: boolean
 	setPolicyChanged: (policyChanged: boolean) => void
+	formikRef: React.RefObject<FormikProps<any> | null>
 }) => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
@@ -64,7 +67,7 @@ const SeriesDetails = ({
 
 	const user = useAppSelector(state => getUserInformation(state));
 	const orgProperties = useAppSelector(state => getOrgProperties(state));
-	const themesEnabled = (orgProperties['admin.themes.enabled'] || 'false').toLowerCase() === 'true';
+	const themesEnabled = (orgProperties["admin.themes.enabled"] || "false").toLowerCase() === "true";
 
 	// information about each tab
 	const tabs: {
@@ -93,7 +96,7 @@ const SeriesDetails = ({
 			tabNameTranslation: "EVENTS.SERIES.DETAILS.TABS.THEME",
 			accessRole: "ROLE_UI_SERIES_DETAILS_THEMES_VIEW",
 			name: "theme",
-			hidden: !theme && !themesEnabled
+			hidden: !theme && !themesEnabled,
 		},
 		{
 			tabNameTranslation: "EVENTS.SERIES.DETAILS.TABS.TOBIRA",
@@ -137,6 +140,7 @@ const SeriesDetails = ({
 						updateResource={updateSeriesMetadata}
 						editAccessRole="ROLE_UI_SERIES_DETAILS_METADATA_EDIT"
 						header={tabs[page].tabNameTranslation}
+						formikRef={formikRef}
 					/>
 				)}
 				{page === 1 && (
@@ -145,6 +149,7 @@ const SeriesDetails = ({
 						metadata={extendedMetadata}
 						updateResource={updateExtendedSeriesMetadata}
 						editAccessRole="ROLE_UI_SERIES_DETAILS_METADATA_EDIT"
+						formikRef={formikRef}
 					/>
 				)}
 				{page === 2 && (

@@ -1,14 +1,22 @@
-import { PayloadAction, SerializedError, createSlice } from '@reduxjs/toolkit'
+import { PayloadAction, SerializedError, createSlice } from "@reduxjs/toolkit";
 import { themesTableConfig } from "../configs/tableConfigs/themesTableConfig";
-import axios from 'axios';
-import { buildThemeBody, getURLParams } from '../utils/resourceUtils';
-import { addNotification } from './notificationSlice';
-import { TableConfig } from '../configs/tableConfigs/aclsTableConfig';
-import { createAppAsyncThunk } from '../createAsyncThunkWithTypes';
+import axios from "axios";
+import { buildThemeBody, getURLParams } from "../utils/resourceUtils";
+import { addNotification } from "./notificationSlice";
+import { TableConfig } from "../configs/tableConfigs/aclsTableConfig";
+import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
 
 /**
  * This file contains redux reducer for actions affecting the state of themes
  */
+type FetchThemes = {
+	total: ThemeState["total"],
+	count: ThemeState["count"],
+	limit: ThemeState["limit"],
+	offset: ThemeState["offset"],
+	results: ThemeState["results"],
+};
+
 export type ThemeDetailsType = {
 	bumperActive: boolean,
 	bumperFile: string,
@@ -34,7 +42,7 @@ export type ThemeDetailsType = {
 export type ThemeDetailsInitialValues = ThemeDetailsType & { titleSlideMode: string }
 
 type ThemeState = {
-	status: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	status: "uninitialized" | "loading" | "succeeded" | "failed",
 	error: SerializedError | null,
 	results: ThemeDetailsType[],
 	columns: TableConfig["columns"],
@@ -45,14 +53,14 @@ type ThemeState = {
 };
 
 // Fill columns initially with columns defined in themesTableConfig
-const initialColumns = themesTableConfig.columns.map((column) => ({
+const initialColumns = themesTableConfig.columns.map(column => ({
 	...column,
 	deactivated: false,
 }));
 
 // Initial state of themes in redux store
 const initialState: ThemeState = {
-	status: 'uninitialized',
+	status: "uninitialized",
 	error: null,
 	results: [],
 	columns: initialColumns,
@@ -63,19 +71,19 @@ const initialState: ThemeState = {
 };
 
 // fetch themes from server
-export const fetchThemes = createAppAsyncThunk('theme/fetchThemes', async (_, { getState }) => {
+export const fetchThemes = createAppAsyncThunk("theme/fetchThemes", async (_, { getState }) => {
 	const state = getState();
-	let params = getURLParams(state, "themes");
+	const params = getURLParams(state, "themes");
 	// Just make the async request here, and return the response.
 	// This will automatically dispatch a `pending` action first,
 	// and then `fulfilled` or `rejected` actions based on the promise.
   // /themes.json?limit=0&offset=0&filter={filter}&sort={sort}
-	const res = await axios.get("/admin-ng/themes/themes.json", { params: params });
+	const res = await axios.get<FetchThemes>("/admin-ng/themes/themes.json", { params: params });
 	return res.data;
 });
 
 // post new theme to backend
-export const postNewTheme = createAppAsyncThunk('theme/postNewTheme', async (values: ThemeDetailsInitialValues
+export const postNewTheme = createAppAsyncThunk("theme/postNewTheme", async (values: ThemeDetailsInitialValues
 	// All params that would be accepted by the endpoint
 	// {
 	// default: boolean,
@@ -95,9 +103,9 @@ export const postNewTheme = createAppAsyncThunk('theme/postNewTheme', async (val
 	// licenseSlideDescription: string,
 	// watermarkPosition: string,
 // }
-, {dispatch}) => {
+, { dispatch }) => {
 	// get URL params used for post request
-	let data = buildThemeBody(values);
+	const data = buildThemeBody(values);
 
 	axios
 		.post("/admin-ng/themes", data, {
@@ -108,34 +116,34 @@ export const postNewTheme = createAppAsyncThunk('theme/postNewTheme', async (val
 		// Usually we would extraReducers for responses, but reducers are not allowed to dispatch
 		// (they need to be free of side effects)
 		// Since we want to dispatch, we have to handle responses in our thunk
-		.then((response) => {
+		.then(response => {
 			console.info(response);
-			dispatch(addNotification({type: "success", key: "THEME_CREATED"}));
+			dispatch(addNotification({ type: "success", key: "THEME_CREATED" }));
 		})
-		.catch((response) => {
+		.catch(response => {
 			console.error(response);
-			dispatch(addNotification({type: "error", key: "THEME_NOT_CREATED"}));
+			dispatch(addNotification({ type: "error", key: "THEME_NOT_CREATED" }));
 		});
 });
 
 // delete theme with provided id
-export const deleteTheme = createAppAsyncThunk('theme/deleteTheme', async (id: ThemeDetailsType["id"], {dispatch}) => {
+export const deleteTheme = createAppAsyncThunk("theme/deleteTheme", async (id: ThemeDetailsType["id"], { dispatch }) => {
 	axios
 		.delete(`/admin-ng/themes/${id}`)
-		.then((res) => {
+		.then(res => {
 			console.info(res);
 			// add success notification
-			dispatch(addNotification({type: "success", key: "THEME_DELETED"}));
+			dispatch(addNotification({ type: "success", key: "THEME_DELETED" }));
 		})
-		.catch((res) => {
+		.catch(res => {
 			console.error(res);
 			// add error notification
-			dispatch(addNotification({type: "error", key: "THEME_NOT_DELETED"}));
+			dispatch(addNotification({ type: "error", key: "THEME_NOT_DELETED" }));
 		});
 });
 
 const themeSlice = createSlice({
-	name: 'theme',
+	name: "theme",
 	initialState,
 	reducers: {
 		setThemeColumns(state, action: PayloadAction<
@@ -147,17 +155,11 @@ const themeSlice = createSlice({
 	// These are used for thunks
 	extraReducers: builder => {
 		builder
-			.addCase(fetchThemes.pending, (state) => {
-				state.status = 'loading';
+			.addCase(fetchThemes.pending, state => {
+				state.status = "loading";
 			})
-			.addCase(fetchThemes.fulfilled, (state, action: PayloadAction<{
-				total: ThemeState["total"],
-				count: ThemeState["count"],
-				limit: ThemeState["limit"],
-				offset: ThemeState["offset"],
-				results: ThemeState["results"],
-			}>) => {
-				state.status = 'succeeded';
+			.addCase(fetchThemes.fulfilled, (state, action: PayloadAction<FetchThemes>) => {
+				state.status = "succeeded";
 				const acls = action.payload;
 				state.total = acls.total;
 				state.count = acls.count;
@@ -166,10 +168,10 @@ const themeSlice = createSlice({
 				state.results = acls.results;
 			})
 			.addCase(fetchThemes.rejected, (state, action) => {
-				state.status = 'failed';
+				state.status = "failed";
 				state.error = action.error;
 			});
-	}
+	},
 });
 
 export const { setThemeColumns } = themeSlice.actions;

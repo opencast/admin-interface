@@ -1,4 +1,3 @@
-import React from "react";
 import Notifications from "../../../shared/Notifications";
 import { useTranslation } from "react-i18next";
 import WizardNavigationButtons from "../../../shared/wizard/WizardNavigationButtons";
@@ -54,7 +53,7 @@ const NewAclSummaryPage = <T extends RequiredFormProps>({
 								</th>
 								<th className="fit">
 									{t(
-										"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.ADDITIONAL_ACTIONS"
+										"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.ADDITIONAL_ACTIONS",
 									)}
 								</th>
 							</tr>

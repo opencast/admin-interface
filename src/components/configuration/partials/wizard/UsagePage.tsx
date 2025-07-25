@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { Usage } from "../../../../slices/themeDetailsSlice";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
@@ -7,7 +6,7 @@ import ModalContentTable from "../../../shared/modals/ModalContentTable";
  * This component renders the usage of a theme in the theme details modal
  */
 const UsagePage = ({
-	themeUsage
+	themeUsage,
 }: {
 	themeUsage: Usage
 }) => {

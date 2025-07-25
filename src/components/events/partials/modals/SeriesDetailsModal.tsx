@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import SeriesDetails from "./SeriesDetails";
 import { removeNotificationWizardForm } from "../../../../slices/notificationSlice";
 import { useAppDispatch } from "../../../../store";
 import { Modal, ModalHandle } from "../../../shared/modals/Modal";
+import { FormikProps } from "formik";
 
 /**
  * This component renders the modal for displaying series details
@@ -22,13 +23,20 @@ const SeriesDetailsModal = ({
 
 	// tracks, whether the policies are different to the initial value
 	const [policyChanged, setPolicyChanged] = useState(false);
+	const formikRef = useRef<FormikProps<any>>(null);
 
 	const confirmUnsaved = () => {
 		return window.confirm(t("CONFIRMATIONS.WARNINGS.UNSAVED_CHANGES"));
 	};
 
 	const close = () => {
-		if (!policyChanged || confirmUnsaved()) {
+		let isUnsavedChanges = false;
+		isUnsavedChanges = policyChanged;
+		if (formikRef.current && formikRef.current.dirty !== undefined && formikRef.current.dirty) {
+			isUnsavedChanges = true;
+		}
+
+		if (!isUnsavedChanges || confirmUnsaved()) {
 			setPolicyChanged(false);
 			dispatch(removeNotificationWizardForm());
 			return true;
@@ -46,7 +54,8 @@ const SeriesDetailsModal = ({
 			<SeriesDetails
 				seriesId={seriesId}
 				policyChanged={policyChanged}
-				setPolicyChanged={(value) => setPolicyChanged(value)}
+				setPolicyChanged={value => setPolicyChanged(value)}
+				formikRef={formikRef}
 			/>
 		</Modal>
 	);

@@ -2,7 +2,7 @@ import moment from "moment";
 import "moment/min/locales.min";
 import { getCurrentLanguageInformation } from "./utils";
 import { DataResolution, TimeMode } from "../slices/statisticsSlice";
-import type { ChartOptions, TooltipItem } from 'chart.js';
+import type { ChartOptions, TooltipItem } from "chart.js";
 
 /**
  * This file contains functions that are needed for thunks for statistics
@@ -37,6 +37,7 @@ function createXAxisTickCallback(
 
 	return function (tickValue: number | string) {
 		// @ts-expect-error: Typescript does not like "this", but the chart.js documentation insists we should do it this way
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
 		return moment(this.getLabelForValue(tickValue)).locale(language).format(formatString);
 	};
 };
@@ -45,7 +46,7 @@ function createXAxisTickCallback(
 const createTooltipCallback = (
 	timeMode: TimeMode,
 	dataResolution: DataResolution,
-	language: string
+	language: string,
 ) => {
 	let formatString;
 	if (timeMode === "year") {
@@ -86,13 +87,13 @@ const createTooltipCallback = (
 /* creates options for statistics chart */
 export const createChartOptions = (
 	timeMode: TimeMode,
-	dataResolution: DataResolution
-): ChartOptions<'bar'> => {
+	dataResolution: DataResolution,
+): ChartOptions<"bar"> => {
 	// Get info about the current language and its date locale
 	const currentLanguageInfo = getCurrentLanguageInformation();
 	let currentLanguage = "";
 	if (currentLanguageInfo) {
-		currentLanguage = currentLanguageInfo.dateLocale.code
+		currentLanguage = currentLanguageInfo.dateLocale.code;
 	}
 
 	return {
@@ -141,7 +142,7 @@ export const createDownloadUrl = (
 	providerId: string,
 	from: Date | string,
 	to: Date | string,
-	dataResolution: string
+	dataResolution: string,
 ) => {
 	const csvUrlSearchParams = new URLSearchParams({
 		dataResolution: dataResolution,

@@ -1,6 +1,7 @@
-import { PayloadAction, SerializedError, createSlice } from '@reduxjs/toolkit'
-import axios from 'axios';
-import { createAppAsyncThunk } from '../createAsyncThunkWithTypes';
+import camelcaseKeys from "camelcase-keys";
+import { PayloadAction, SerializedError, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
 
 /**
  * This file contains redux reducer for actions affecting the state of workflows
@@ -12,6 +13,8 @@ export type FieldSetField = {
 	checked: boolean,
 	fieldset?: FieldSetField[]
 	defaultValue?: unknown
+	max?: number // number field
+	min?: number // number field
 	[key: string]: unknown
 }
 
@@ -24,8 +27,8 @@ type ConfigurationPanelField = {
 }
 
 export type Workflow = {
-	configuration_panel: string,  //XML
-	configuration_panel_json: string | ConfigurationPanelField[],  // 'string' will always be the empty string
+	configurationPanel: string,  // XML
+	configurationPanelJson: string | ConfigurationPanelField[],  // 'string' will always be the empty string
 	description: string,
 	displayOrder: number,
 	id: string,
@@ -34,7 +37,7 @@ export type Workflow = {
 }
 
 type WorkflowState = {
-	status: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	status: "uninitialized" | "loading" | "succeeded" | "failed",
 	error: SerializedError | null,
 	defaultWorkflowId: string,
 	workflows: Workflow[],
@@ -42,14 +45,18 @@ type WorkflowState = {
 
 // Initial state of workflows in redux store
 const initialState: WorkflowState = {
-	status: 'uninitialized',
+	status: "uninitialized",
 	error: null,
 	defaultWorkflowId: "",
 	workflows: [],
 };
 
 // fetch workflow definitions from server
-export const fetchWorkflowDef = createAppAsyncThunk('workflow/fetchWorkflowDef', async (type: string) => {
+export const fetchWorkflowDef = createAppAsyncThunk("workflow/fetchWorkflowDef", async (type: string) => {
+	type NewProcessing = {
+		default_workflow_id: string,
+		workflows: Workflow[],
+	}
 	let urlParams;
 
 	switch (type) {
@@ -80,15 +87,18 @@ export const fetchWorkflowDef = createAppAsyncThunk('workflow/fetchWorkflowDef',
 	// Just make the async request here, and return the response.
 	// This will automatically dispatch a `pending` action first,
 	// and then `fulfilled` or `rejected` actions based on the promise.
-	const res = await axios.get("/admin-ng/event/new/processing?", { params: urlParams });
-	let workflows = res.data.workflows;
+	const res = await axios.get<NewProcessing>("/admin-ng/event/new/processing?", { params: urlParams });
+
+	let workflows = camelcaseKeys(res.data.workflows);
 
 	workflows = workflows.map((workflow: Workflow) => {
-		if (workflow.configuration_panel_json.length > 0) {
+		if (workflow.configurationPanelJson.length > 0) {
 			return {
 				...workflow,
-				configuration_panel_json: JSON.parse(
-					workflow.configuration_panel_json as string
+				// TODO: Handle JSON parsing errors
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+				configurationPanelJson: JSON.parse(
+					workflow.configurationPanelJson as string,
 				),
 			};
 		} else {
@@ -105,14 +115,14 @@ export const fetchWorkflowDef = createAppAsyncThunk('workflow/fetchWorkflowDef',
 });
 
 const workflowSlice = createSlice({
-	name: 'workflow',
+	name: "workflow",
 	initialState,
 	reducers: {},
 	// These are used for thunks
 	extraReducers: builder => {
 		builder
-			.addCase(fetchWorkflowDef.pending, (state) => {
-				state.status = 'loading';
+			.addCase(fetchWorkflowDef.pending, state => {
+				state.status = "loading";
 			})
 			// Pass the generated action creators to `.addCase()`
 			.addCase(fetchWorkflowDef.fulfilled, (state, action: PayloadAction<{
@@ -120,16 +130,16 @@ const workflowSlice = createSlice({
 				workflows: WorkflowState["workflows"],
 			}>) => {
 				// Same "mutating" update syntax thanks to Immer
-				state.status = 'succeeded';
+				state.status = "succeeded";
 				const acls = action.payload;
 				state.defaultWorkflowId = acls.defaultWorkflowId;
 				state.workflows = acls.workflows;
 			})
 			.addCase(fetchWorkflowDef.rejected, (state, action) => {
-				state.status = 'failed';
+				state.status = "failed";
 				state.error = action.error;
 			});
-	}
+	},
 });
 
 // export const {} = workflowSlice.actions;

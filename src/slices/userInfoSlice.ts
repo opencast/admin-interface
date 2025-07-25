@@ -1,7 +1,7 @@
-import { PayloadAction, SerializedError, createSlice } from '@reduxjs/toolkit'
-import axios from 'axios';
-import { addNotification } from './notificationSlice';
-import { createAppAsyncThunk } from '../createAsyncThunkWithTypes';
+import { PayloadAction, SerializedError, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+import { addNotification } from "./notificationSlice";
+import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
 
 /**
  * This file contains redux reducer for actions affecting the state of information about current user
@@ -9,7 +9,7 @@ import { createAppAsyncThunk } from '../createAsyncThunkWithTypes';
 type OcVersion = {
 	buildNumber: string | undefined,
 	consistent: boolean | undefined,
-	'last-modified': number | undefined,
+	"last-modified": number | undefined,
 	version: string | undefined,
 }
 
@@ -22,16 +22,16 @@ type UserInfoOrganization = {
 }
 
 type UserInfoUser = {
-	email: string,
+	email?: string,
 	name: string,
 	provider: string,
 	username: string,
 }
 
 export type UserInfoState = {
-	status: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	status: "uninitialized" | "loading" | "succeeded" | "failed",
 	error: SerializedError | null,
-	statusOcVersion: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusOcVersion: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorOcVersion: SerializedError | null,
 	isAdmin: boolean,
 	isOrgAdmin: boolean,
@@ -44,9 +44,9 @@ export type UserInfoState = {
 
 // Initial state of userInfo in redux store
 const initialState: UserInfoState = {
-	status: 'uninitialized',
+	status: "uninitialized",
 	error: null,
-	statusOcVersion: 'uninitialized',
+	statusOcVersion: "uninitialized",
 	errorOcVersion: null,
 	isAdmin: false,
 	isOrgAdmin: false,
@@ -55,7 +55,7 @@ const initialState: UserInfoState = {
 		anonymousRole: "",
 		id: "",
 		name: "",
-		properties: {}
+		properties: {},
 	},
 	roles: [],
 	userRole: "",
@@ -73,42 +73,50 @@ const initialState: UserInfoState = {
 	},
 };
 
-export const fetchUserInfo = createAppAsyncThunk('UserInfo/fetchUserInfo', async (_, { dispatch }) => {
+export const fetchUserInfo = createAppAsyncThunk("UserInfo/fetchUserInfo", async (_, { dispatch }) => {
 	// Just make the async request here, and return the response.
 	// This will automatically dispatch a `pending` action first,
 	// and then `fulfilled` or `rejected` actions based on the promise.
-	const res = await axios.get("/info/me.json")
-		.then((response) => {
+	type FetchUserInfo = {
+		org: UserInfoOrganization
+		roles: string[]
+		userRole: string
+		user: UserInfoUser
+	}
+
+	const res = await axios.get<FetchUserInfo>("/info/me.json")
+		.then(response => {
 			return response.data;
 		})
-		.catch((response) => {
-			console.error(response);
-			dispatch(addNotification({type: "error", key: "USER_NOT_SAVED"}));
+		.catch(error => {
+			console.error(error);
+			dispatch(addNotification({ type: "error", key: "USER_NOT_SAVED" }));
+			throw error;
 		});
 
 	// Redirect to login if not in ROLE_ADMIN_UI
-	if (!(res.roles.includes('ROLE_ADMIN') || res.roles.includes('ROLE_ADMIN_UI'))) {
+	if (!(res.roles.includes("ROLE_ADMIN") || res.roles.includes("ROLE_ADMIN_UI"))) {
 		window.location.href = "/login.html";
 	}
 
 	return res;
 });
 
-export const fetchOcVersion = createAppAsyncThunk('UserInfo/fetchOcVersion', async () => {
-	const res = await axios.get("/sysinfo/bundles/version?prefix=opencast");
+export const fetchOcVersion = createAppAsyncThunk("UserInfo/fetchOcVersion", async () => {
+	const res = await axios.get<OcVersion>("/sysinfo/bundles/version?prefix=opencast");
 	return res.data;
 });
 
 
 const userInfoSlice = createSlice({
-	name: 'userInfo',
+	name: "userInfo",
 	initialState,
 	reducers: {},
 	// These are used for thunks
 	extraReducers: builder => {
 		builder
-			.addCase(fetchUserInfo.pending, (state) => {
-				state.status = 'loading';
+			.addCase(fetchUserInfo.pending, state => {
+				state.status = "loading";
 			})
 			.addCase(fetchUserInfo.fulfilled, (state, action: PayloadAction<{
 				org: UserInfoState["org"],
@@ -116,7 +124,7 @@ const userInfoSlice = createSlice({
 				userRole: UserInfoState["userRole"],
 				user: UserInfoState["user"],
 			}>) => {
-				state.status = 'succeeded';
+				state.status = "succeeded";
 				const userInfo = action.payload;
 				state.isAdmin = userInfo.roles.includes("ROLE_ADMIN");
 				state.isOrgAdmin = userInfo.roles.includes(userInfo.org.adminRole);
@@ -126,13 +134,13 @@ const userInfoSlice = createSlice({
 				state.user = userInfo.user;
 			})
 			.addCase(fetchUserInfo.rejected, (state, action) => {
-				state.status = 'failed';
+				state.status = "failed";
 				state.org = {
 					adminRole: "",
 					anonymousRole: "",
 					id: "",
 					name: "",
-					properties: {}
+					properties: {},
 				};
 				state.roles = [];
 				state.userRole = "";
@@ -144,21 +152,21 @@ const userInfoSlice = createSlice({
 				};
 				state.error = action.error;
 			})
-			.addCase(fetchOcVersion.pending, (state) => {
-				state.statusOcVersion = 'loading';
+			.addCase(fetchOcVersion.pending, state => {
+				state.statusOcVersion = "loading";
 			})
 			.addCase(fetchOcVersion.fulfilled, (state, action: PayloadAction<
-        OcVersion
+				OcVersion
 			>) => {
-				state.statusOcVersion = 'succeeded';
+				state.statusOcVersion = "succeeded";
 				const ocVersion = action.payload;
 				state.ocVersion = ocVersion;
 			})
 			.addCase(fetchOcVersion.rejected, (state, action) => {
-				state.statusOcVersion = 'failed';
+				state.statusOcVersion = "failed";
 				state.errorOcVersion = action.error;
 			});
-	}
+	},
 });
 
 

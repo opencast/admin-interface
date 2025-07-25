@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import ConfirmModal from "../../shared/ConfirmModal";
 import SeriesDetailsModal from "./modals/SeriesDetailsModal";
 import {
@@ -53,11 +53,13 @@ const SeriesActionsCell = ({
 	};
 
 	const showSeriesDetailsModal = async () => {
-		await dispatch(fetchSeriesDetailsMetadata(row.id));
-		await dispatch(fetchSeriesDetailsAcls(row.id));
-		await dispatch(fetchSeriesDetailsTheme(row.id));
-		await dispatch(fetchSeriesDetailsThemeNames());
-		await dispatch(fetchSeriesDetailsTobira(row.id));
+		await Promise.all([
+			dispatch(fetchSeriesDetailsMetadata(row.id)),
+			dispatch(fetchSeriesDetailsAcls(row.id)),
+			dispatch(fetchSeriesDetailsTheme(row.id)),
+			dispatch(fetchSeriesDetailsThemeNames()),
+			dispatch(fetchSeriesDetailsTobira(row.id)),
+		]);
 
 		detailsModalRef.current?.open();
 	};

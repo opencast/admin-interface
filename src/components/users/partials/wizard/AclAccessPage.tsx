@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FormikProps } from "formik";
 import Notifications from "../../../shared/Notifications";
@@ -49,11 +49,10 @@ const AclAccessPage = <T extends RequiredFormProps>({
 		// fetch data about roles, acl templates and actions from backend
 		async function fetchData() {
 			setLoading(true);
-			const responseTemplates = await fetchAclTemplates();
+			const [responseTemplates, responseActions, responseRoles] = await Promise.all([
+				fetchAclTemplates(), fetchAclActions(), fetchRolesWithTarget("ACL")]);
 			setAclTemplates(responseTemplates);
-			const responseActions = await fetchAclActions();
 			setAclActions(responseActions);
-			const responseRoles = await fetchRolesWithTarget("ACL");
 			setRoles(responseRoles);
 			setLoading(false);
 		}
@@ -80,7 +79,7 @@ const AclAccessPage = <T extends RequiredFormProps>({
 									descriptionText={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.DESCRIPTION"}
 									buttonText={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.LABEL"}
 									emptyText={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.EMPTY"}
-									transactions={{read_only: false}}
+									transactions={{ readOnly: false }}
 									aclTemplates={aclTemplates}
 								/>
 
@@ -95,7 +94,7 @@ const AclAccessPage = <T extends RequiredFormProps>({
 											createLabel={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.NEW_USER"}
 											formik={formik}
 											hasActions={aclActions.length > 0}
-											transactions={{read_only: false}}
+											transactions={{ readOnly: false }}
 											aclActions={aclActions}
 											roles={roles}
 											editAccessRole={editAccessRole}
@@ -110,7 +109,7 @@ const AclAccessPage = <T extends RequiredFormProps>({
 											createLabel={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.NEW"}
 											formik={formik}
 											hasActions={aclActions.length > 0}
-											transactions={{read_only: false}}
+											transactions={{ readOnly: false }}
 											aclActions={aclActions}
 											roles={roles}
 											editAccessRole={editAccessRole}
@@ -128,7 +127,7 @@ const AclAccessPage = <T extends RequiredFormProps>({
 											createLabel={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.NEW"}
 											formik={formik}
 											hasActions={aclActions.length > 0}
-											transactions={{read_only: false}}
+											transactions={{ readOnly: false }}
 											aclActions={aclActions}
 											roles={roles}
 											editAccessRole={editAccessRole}

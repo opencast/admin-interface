@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "./Header";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router";
-import axios from 'axios';
+import axios from "axios";
 import i18n from "../i18n/i18n";
 import DOMPurify from "dompurify";
 
@@ -20,17 +20,18 @@ const About = () => {
 			return `/ui/config/admin-ui/${location.pathname.split("/").pop()}.${language}.html`;
 		};
 
-		axios.get(getURL(i18n.language))
+		// We should be getting HTML from the endpoint
+		axios.get<string>(getURL(i18n.language))
 			.then(response => {
 				setAboutContent(response.data);
 			})
-			.catch(error => {
-				axios.get(getURL(typeof i18n.options.fallbackLng === 'string' ? i18n.options.fallbackLng : 'en-US'))
+			.catch(() => {
+				axios.get<string>(getURL(typeof i18n.options.fallbackLng === "string" ? i18n.options.fallbackLng : "en-US"))
 					.then(response => {
 						setAboutContent(response.data);
 					})
 					.catch(error => {
-						console.error('Error while fetching data:', error);
+						console.error("Error while fetching data:", error);
 						setAboutContent(t("ABOUT.NOCONTENT").toString());
 					});
 			});
@@ -47,12 +48,12 @@ const About = () => {
 					{
 						path: "/about/imprint",
 						accessRole: "ROLE_UI_USERS_VIEW",
-						text: "ABOUT.IMPRINT"
+						text: "ABOUT.IMPRINT",
 					},
 					{
 						path: "/about/privacy",
 						accessRole: "ROLE_UI_GROUPS_VIEW",
-						text: "ABOUT.PRIVACY"
+						text: "ABOUT.PRIVACY",
 					},
 				]}
 			>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import Notifications from "../../../shared/Notifications";
 import {
 	getAssetMediaDetails,
@@ -21,7 +21,7 @@ const EventDetailsAssetMediaDetails = () => {
 	const media = useAppSelector(state => getAssetMediaDetails(state));
 	const isFetching = useAppSelector(state => isFetchingAssetMediaDetails(state));
 
-	const PlayerType = media.has_video ? 'video' : 'audio';
+	const PlayerType = media.hasVideo ? "video" : "audio";
 
 	const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -40,7 +40,7 @@ const EventDetailsAssetMediaDetails = () => {
 				<header>
 					{
 						t(
-							"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.TITLE"
+							"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.TITLE",
 						) /* Media Details */
 					}
 				</header>
@@ -52,7 +52,7 @@ const EventDetailsAssetMediaDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.ID"
+												"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.ID",
 											) /* Id */
 										}
 									</td>
@@ -62,7 +62,7 @@ const EventDetailsAssetMediaDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.TYPE"
+												"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.TYPE",
 											) /* Type */
 										}
 									</td>
@@ -72,7 +72,7 @@ const EventDetailsAssetMediaDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.MIMETYPE"
+												"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.MIMETYPE",
 											) /* Mimetype */
 										}
 									</td>
@@ -82,7 +82,7 @@ const EventDetailsAssetMediaDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.TAGS"
+												"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.TAGS",
 											) /* Tags */
 										}
 									</td>
@@ -96,12 +96,12 @@ const EventDetailsAssetMediaDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.DURATION"
+												"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.DURATION",
 											) /* Duration */
 										}
 									</td>
 									<td>
-										{!!media.duration
+										{media.duration
 											? formatDuration(media.duration)
 											: null}
 									</td>
@@ -111,7 +111,7 @@ const EventDetailsAssetMediaDetails = () => {
 										<td>
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.SIZE"
+													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.SIZE",
 												) /* Size */
 											}
 										</td>
@@ -122,7 +122,7 @@ const EventDetailsAssetMediaDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.URL"
+												"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.URL",
 											) /* Link */
 										}
 									</td>
@@ -148,7 +148,7 @@ const EventDetailsAssetMediaDetails = () => {
 							<header>
 								{
 									t(
-										"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.STREAM_AUDIO"
+										"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.STREAM_AUDIO",
 									) /* Audio streams */
 								}
 							</header>
@@ -158,70 +158,70 @@ const EventDetailsAssetMediaDetails = () => {
 										<th>
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.ID"
+													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.ID",
 												) /* ID */
 											}
 										</th>
 										<th>
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.TYPE"
+													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.TYPE",
 												) /* Type */
 											}
 										</th>
 										<th>
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.CHANNELS"
+													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.CHANNELS",
 												) /* Channels */
 											}
 										</th>
 										<th>
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.BITRATE"
+													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.BITRATE",
 												) /* Bitrate */
 											}
 										</th>
 										<th>
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.BITDEPTH"
+													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.BITDEPTH",
 												) /* Bitdepth */
 											}
 										</th>
 										<th>
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.SAMPLINGRATE"
+													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.SAMPLINGRATE",
 												) /* Samplingrate */
 											}
 										</th>
 										<th>
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.FRAMECOUNT"
+													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.FRAMECOUNT",
 												) /* Framecount */
 											}
 										</th>
 										<th>
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.PEAKLEVELDB"
+													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.PEAKLEVELDB",
 												) /* Peak level DB */
 											}
 										</th>
 										<th>
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.RMSLEVELDB"
+													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.RMSLEVELDB",
 												) /* RMS level DB */
 											}
 										</th>
 										<th>
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.RMSPEAKDB"
+													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.RMSPEAKDB",
 												) /* RMS speak DB */
 											}
 										</th>
@@ -252,7 +252,7 @@ const EventDetailsAssetMediaDetails = () => {
 							<header>
 								{
 									t(
-										"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.STREAM_VIDEO"
+										"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.STREAM_VIDEO",
 									) /* Video streams */
 								}
 							</header>
@@ -262,56 +262,56 @@ const EventDetailsAssetMediaDetails = () => {
 										<th>
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.ID"
+													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.ID",
 												) /* ID */
 											}
 										</th>
 										<th>
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.TYPE"
+													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.TYPE",
 												) /* Type */
 											}
 										</th>
 										<th>
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.FRAMERATE"
+													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.FRAMERATE",
 												) /* Framerate */
 											}
 										</th>
 										<th>
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.BITRATE"
+													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.BITRATE",
 												) /* Bitrate */
 											}
 										</th>
 										<th>
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.RESOLUTION"
+													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.RESOLUTION",
 												) /* Resolution */
 											}
 										</th>
 										<th>
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.FRAMECOUNT"
+													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.FRAMECOUNT",
 												) /* Framecount */
 											}
 										</th>
 										<th>
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.SCANTYPE"
+													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.SCANTYPE",
 												) /* Scantype */
 											}
 										</th>
 										<th>
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.SCANORDER"
+													"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.DETAILS.SCANORDER",
 												) /* Scanorder */
 											}
 										</th>
@@ -360,7 +360,7 @@ const EventDetailsAssetMediaDetails = () => {
 			</div>
 
 			{/* preview video/audio player (only if we actually have video/audio) */}
-			{(media.has_video || media.has_audio) && (
+			{(media.hasVideo || media.hasAudio) && (
 				<div className="obj tbl-container media-stream-details">
 					<header>
 						{t("EVENTS.EVENTS.DETAILS.ASSETS.PREVIEW") /* Preview */}

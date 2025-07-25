@@ -1,4 +1,4 @@
-import { useTranslation } from "react-i18next"
+import { useTranslation } from "react-i18next";
 import { Tooltip } from "./Tooltip";
 import { ParseKeys } from "i18next";
 
@@ -19,7 +19,7 @@ export const SaveEditFooter: React.FC<SaveEditFooterProps> = ({
     reset,
     submit,
     isValid,
-    additionalButton
+    additionalButton,
 }) => {
     const { t } = useTranslation();
 
@@ -39,6 +39,7 @@ export const SaveEditFooter: React.FC<SaveEditFooterProps> = ({
                     <button
                         onClick={additionalButton.onClick}
                         disabled={!isValid || !active}
+                        aria-disabled={!isValid || !active}
                         className={`save green ${
                             !isValid || !active ? "disabled" : ""
                         }`}
@@ -49,6 +50,7 @@ export const SaveEditFooter: React.FC<SaveEditFooterProps> = ({
         <div className="pull-right">
             <button
                 onClick={submit}
+                aria-disabled={!isValid || !active}
                 disabled={!isValid || !active}
                 className={`save green ${
                     !isValid || !active ? "disabled" : ""
@@ -56,4 +58,4 @@ export const SaveEditFooter: React.FC<SaveEditFooterProps> = ({
             >{t("SAVE")}</button>
         </div>
     </footer>;
-}
+};

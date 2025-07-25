@@ -19,7 +19,7 @@ export const seriesTableConfig: TableConfig = {
 			sortable: true,
 		},
 		{
-			template: "SeriesCreatorsCell",
+			template: "SeriesOrganizersCell",
 			name: "organizers",
 			label: "EVENTS.SERIES.TABLE.ORGANIZERS",
 			sortable: true,

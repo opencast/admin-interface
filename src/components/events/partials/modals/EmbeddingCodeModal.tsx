@@ -7,10 +7,8 @@ import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
  * This component renders the embedding code modal
  */
 const EmbeddingCodeModal = ({
-	close,
 	eventId,
 }: {
-	close: () => void
 	eventId: string
 }) => {
 	const { t } = useTranslation();
@@ -23,7 +21,7 @@ const EmbeddingCodeModal = ({
 	useEffect(() => {
 		const fetchData = async () => {
 			// get source url
-			let sourceURL = await getSourceURL();
+			const sourceURL = await getSourceURL();
 
 			setSourceURL(sourceURL);
 		};
@@ -31,7 +29,7 @@ const EmbeddingCodeModal = ({
 	}, []);
 
 	const copy = () => {
-		let copyText = document.getElementById("social_embed-textarea") as HTMLTextAreaElement;
+		const copyText = document.getElementById("social_embed-textarea") as HTMLTextAreaElement;
 		if (copyText) {
 			copyText.select();
 			document.execCommand("copy");
@@ -42,14 +40,14 @@ const EmbeddingCodeModal = ({
 
 	const updateTextArea = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
 		// chosen frame size
-		let frameSize = e.currentTarget.textContent;
+		const frameSize = e.currentTarget.textContent;
 
 		if (!frameSize) {
 			return;
 		}
 
 		// buttons containing possible frame sizes
-		let embedSizeButtons = document.getElementsByClassName("embedSizeButton");
+		const embedSizeButtons = document.getElementsByClassName("embedSizeButton");
 
 		// iterate through embedSizeButtons and mark the chosen size
 		if (frameSize) {
@@ -62,15 +60,15 @@ const EmbeddingCodeModal = ({
 			}
 		}
 		// split frameSize to be used in iFrameString
-		let size = frameSize.split("x");
+		const size = frameSize.split("x");
 
 		// build whole url
-		let url = sourceURL + "/play/" + eventId;
+		const url = sourceURL + "/play/" + eventId;
 		// code displayed in text area containing the iFrame to copy
-		let iFrameString = `<iframe allowfullscreen src="${url}"
+		const iFrameString = `<iframe allowfullscreen src="${url}"
 			style="border: 0; margin 0;" name="Player" scrolling="no"
 			width="${size[0]}" height="${size[1]}"></iframe>`
-			.replace(/\s\s+/g, ' ');
+			.replace(/\s\s+/g, " ");
 
 		// set state with new inputs
 		setTextAreaContent(iFrameString);
@@ -85,35 +83,35 @@ const EmbeddingCodeModal = ({
 				<ButtonLikeAnchor
 					id="620x349"
 					extraClassName="embedSizeButton size_620x349"
-					onClick={(e) => updateTextArea(e)}
+					onClick={e => updateTextArea(e)}
 				>
 					<span className="span-embedded-code">620x349</span>
 				</ButtonLikeAnchor>
 				<ButtonLikeAnchor
 					id="540x304"
 					extraClassName="embedSizeButton size_540x304"
-					onClick={(e) => updateTextArea(e)}
+					onClick={e => updateTextArea(e)}
 				>
 					<span className="span-embedded-code">540x304</span>
 				</ButtonLikeAnchor>
 				<ButtonLikeAnchor
 					id="460x259"
 					extraClassName="embedSizeButton size_460x259"
-					onClick={(e) => updateTextArea(e)}
+					onClick={e => updateTextArea(e)}
 				>
 					<span className="span-embedded-code">460x259</span>
 				</ButtonLikeAnchor>
 				<ButtonLikeAnchor
 					id="380x214"
 					extraClassName="embedSizeButton size_380x214"
-					onClick={(e) => updateTextArea(e)}
+					onClick={e => updateTextArea(e)}
 				>
 					<span className="span-embedded-code">380x214</span>
 				</ButtonLikeAnchor>
 				<ButtonLikeAnchor
 					id="300x169"
 					extraClassName="embedSizeButton size_300x169"
-					onClick={(e) => updateTextArea(e)}
+					onClick={e => updateTextArea(e)}
 				>
 					<span className="span-embedded-code">300x169</span>
 				</ButtonLikeAnchor>
@@ -138,7 +136,7 @@ const EmbeddingCodeModal = ({
 			{showCopySuccess && (
 				<div className="copyConfirm" role="alert">
 					<span id="copy_confirm_pre">
-						{t("CONFIRMATIONS.EMBEDDING_CODE", {size: currentSize})}
+						{t("CONFIRMATIONS.EMBEDDING_CODE", { size: currentSize })}
 					</span>
 				</div>
 			)}

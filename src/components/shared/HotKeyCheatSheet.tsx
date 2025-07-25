@@ -28,7 +28,7 @@ const HotKeyCheatSheet = ({
 		}
 
 		return false;
-	}
+	};
 
 	return (
 		<Modal
@@ -49,7 +49,7 @@ const HotKeyCheatSheet = ({
 								{/* Repeat row for each hotkey in group*/}
 								{Object.keys(availableHotkeys[hotkeyGroup]).map(
 									(hotkey, key) => (
-										<tr key={key} style={{ opacity: !(hotkeys && checkHotkeys(hotkeys, availableHotkeys[hotkeyGroup][hotkey].sequence)) ? "50%" : "100%"}}>
+										<tr key={key} style={{ opacity: !(hotkeys && checkHotkeys(hotkeys, availableHotkeys[hotkeyGroup][hotkey].sequence)) ? "50%" : "100%" }}>
 											<td className="hotkey">
 												<p className="combo">
 													<span className="chord">
@@ -63,7 +63,7 @@ const HotKeyCheatSheet = ({
 																		{t(
 																			"HOTKEYS.KEYS." +
 																				comboKey.toUpperCase(),
-																			comboKey
+																			comboKey,
 																		)}
 																	</span>
 																</span>
@@ -83,11 +83,11 @@ const HotKeyCheatSheet = ({
 											<td>
 												{t(
 													availableHotkeys[hotkeyGroup][hotkey]
-														.description
+														.description,
 												)}
 											</td>
 										</tr>
-									)
+									),
 								)}
 							</tbody>
 						</table>

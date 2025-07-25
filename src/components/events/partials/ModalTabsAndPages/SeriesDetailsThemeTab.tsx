@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { Formik, FormikProps } from "formik";
 import _ from "lodash";
@@ -31,7 +30,7 @@ const SeriesDetailsThemeTab = ({
 	const user = useAppSelector(state => getUserInformation(state));
 
 	const handleSubmit = (values: { theme: SeriesTheme | null }) => {
-		dispatch(updateSeriesTheme({id: seriesId, values: values}));
+		dispatch(updateSeriesTheme({ id: seriesId, values: values }));
 	};
 
 	const checkValidity = (formik: FormikProps<{theme: SeriesTheme | null }>) => {
@@ -47,9 +46,9 @@ const SeriesDetailsThemeTab = ({
 		<Formik
 			enableReinitialize
 			initialValues={{ theme: theme }}
-			onSubmit={(values) => handleSubmit(values)}
+			onSubmit={values => handleSubmit(values)}
 		>
-			{(formik) => (
+			{formik => (
 				<>
 					<ModalContentTable>
 						{/* Notifications */}
@@ -64,19 +63,19 @@ const SeriesDetailsThemeTab = ({
 											<div className="editable">
 												<DropDown
 													value={formik.values.theme?.id}
-													text={formik.values.theme?.value || ''}
+													text={formik.values.theme?.value || ""}
 													options={themeNames.map(names => ({ label: names.value, value: names.id }))}
 													required={false}
-													handleChange={(element) => {
+													handleChange={element => {
 														if (element) {
-															formik.setFieldValue("theme", {id: element.value, value: element.label})
+															formik.setFieldValue("theme", { id: element.value, value: element.label });
 														}
 													}}
 													placeholder={t("EVENTS.SERIES.NEW.THEME.LABEL")}
 													disabled={
 														!hasAccess(
 															"ROLE_UI_SERIES_DETAILS_THEMES_EDIT",
-															user
+															user,
 														)
 													}
 													customCSS={{ width: "100%" }}

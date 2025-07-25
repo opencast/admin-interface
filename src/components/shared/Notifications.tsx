@@ -1,4 +1,3 @@
-import React from "react";
 import {
 	getNotifications,
 	getGlobalPositions,
@@ -30,7 +29,7 @@ const Notifications = ({
 	const globalPosition = useAppSelector(state => getGlobalPositions(state));
 
 	const closeNotification = (id: number) => {
-		dispatch(setHidden({ id: id, isHidden: true}));
+		dispatch(setHidden({ id: id, isHidden: true }));
 	};
 
 	const renderNotification = (notification: OurNotification, key: number) => (
@@ -64,7 +63,7 @@ const Notifications = ({
 						!notification.hidden &&
 						notification.context === "global" &&
 						notification.type === "error" &&
-						renderNotification(notification, key)
+						renderNotification(notification, key),
 				)}
 			</ul>
 		) : (
@@ -85,7 +84,7 @@ const Notifications = ({
 					(notification, key) =>
 						!notification.hidden &&
 						notification.context === "global" &&
-						renderNotification(notification, key)
+						renderNotification(notification, key),
 				)}
 			</ul>
 		)
@@ -101,7 +100,7 @@ export const NotificationComponent = ({
 }) => {
 	const { t } = useTranslation();
 
-	return(
+	return (
 		<div className={cn(notification.type, "alert sticky")}>
 			{closeNotification &&
 				<ButtonLikeAnchor
@@ -112,6 +111,6 @@ export const NotificationComponent = ({
 			<p>{t(notification.message, notification.parameter)}</p>
 		</div>
 	);
-}
+};
 
 export default Notifications;
