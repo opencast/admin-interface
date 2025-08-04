@@ -25,13 +25,13 @@ describe("NavBar", () => {
         org: { id: "org1", properties: {} },
       },
       events: {
-      uploadSourceOptions: [],
-      uploadAssetOptions: [],
-      isFetchingAssetUploadOptions: false,
-      metadata: { title: "event", flavor: "someFlavor", fields: [] },
-      extendedMetadata: [],
-      total: 0,
-  },
+        uploadSourceOptions: [],
+        uploadAssetOptions: [],
+        isFetchingAssetUploadOptions: false,
+        metadata: { title: "event", flavor: "someFlavor", fields: [] },
+        extendedMetadata: [],
+        total: 0,
+      },
     };
 
     const { getByRole } = renderWithStore(
@@ -48,7 +48,7 @@ describe("NavBar", () => {
           isDisplay: true,
         }}
       />,
-      preloadedState,
+      preloadedState
     );
 
     const user = userEvent.setup();

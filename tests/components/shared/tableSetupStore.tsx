@@ -33,19 +33,21 @@ export const store = configureStore({
   reducer: rootReducer,
 });
 
-
 function renderWithProviders(
   ui: ReactElement,
   {
     storeInstance = store,
     ...renderOptions
-  }: { storeInstance?: EnhancedStore } & RenderOptions = {},
+  }: { storeInstance?: EnhancedStore } & RenderOptions = {}
 ) {
   function Wrapper({ children }: { children: ReactNode }) {
-  return <Provider store={storeInstance}>{children}</Provider>;
+    return <Provider store={storeInstance}>{children}</Provider>;
   }
 
-  return { store: storeInstance, ...render(ui, { wrapper: Wrapper, ...renderOptions }) };
+  return {
+    store: storeInstance,
+    ...render(ui, { wrapper: Wrapper, ...renderOptions }),
+  };
 }
 
 export default renderWithProviders;

@@ -1,11 +1,11 @@
-import userReducer from '../../src/slices/userSlice';
-import userInfoReducer from '../../src/slices/userInfoSlice'; // your real userInfo reducer
+import userReducer from "../../src/slices/userSlice";
+import userInfoReducer from "../../src/slices/userInfoSlice"; // your real userInfo reducer
 
-import { Provider } from 'react-redux';
-import { render } from '@testing-library/react';
-import { MemoryRouter } from 'react-router';
-import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import {rootReducer} from "./shared/tableSetupStore";
+import { Provider } from "react-redux";
+import { render } from "@testing-library/react";
+import { MemoryRouter } from "react-router";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import { rootReducer } from "./shared/tableSetupStore";
 
 const userRootReducer = combineReducers({
   users: (state = {}) => state,
@@ -29,7 +29,7 @@ const defaultPreloadedState = {
         roles: [{ name: "ROLE_USER", type: "INTERNAL" }],
       },
     ],
-    status: 'succeeded' as const,
+    status: "succeeded" as const,
     error: null,
     columns: [],
     total: 1,
@@ -38,9 +38,9 @@ const defaultPreloadedState = {
     count: 1,
   },
   userInfo: {
-    status: 'succeeded' as const,
+    status: "succeeded" as const,
     error: null,
-    statusOcVersion: 'succeeded' as const,
+    statusOcVersion: "succeeded" as const,
     errorOcVersion: null,
     isAdmin: true,
     isOrgAdmin: true,
@@ -67,7 +67,7 @@ const defaultPreloadedState = {
     },
   },
   health: {},
-  notifications: {notifications: []},
+  notifications: { notifications: [] },
   tableFilters: {
     status: "uninitialized",
     error: null,
@@ -80,12 +80,16 @@ const defaultPreloadedState = {
     selectedFilter: "",
     secondFilter: "",
     stats: [],
-},
-  tableFilterProfiles: {profiles: []},
+  },
+  tableFilterProfiles: { profiles: [] },
   table: rootReducer.table(),
 };
 
-export function renderWithStore(ui: React.ReactElement, preloadedState = {},  route = '/users/') {
+export function renderWithStore(
+  ui: React.ReactElement,
+  preloadedState = {},
+  route = "/users/"
+) {
   const testStore = configureStore({
     reducer: userRootReducer,
     preloadedState: {
@@ -96,9 +100,7 @@ export function renderWithStore(ui: React.ReactElement, preloadedState = {},  ro
 
   return render(
     <Provider store={testStore}>
-      <MemoryRouter initialEntries={[route]}>
-        {ui}
-      </MemoryRouter>
+      <MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>
     </Provider>
   );
 }

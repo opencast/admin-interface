@@ -1,12 +1,12 @@
-import {render, screen} from '@testing-library/react';
-import Users from '../../src/components/users/Users';
-import {createServer} from '../server';
-import {renderWithStore} from './usersSetupStore';
+import { render, screen } from "@testing-library/react";
+import Users from "../../src/components/users/Users";
+import { createServer } from "../server";
+import { renderWithStore } from "./usersSetupStore";
 
 createServer([
   {
-    path: '/admin-ng/users/users.json',
-    method: 'get',
+    path: "/admin-ng/users/users.json",
+    method: "get",
     res: (_, res, ctx) => {
       return res(
         ctx.status(200),
@@ -22,30 +22,36 @@ createServer([
               name: "Test User",
               username: "testuser",
               email: "testuser@example.com",
-              roles: [
-                { name: "ROLE_USER", type: "INTERNAL" }
-              ],
+              roles: [{ name: "ROLE_USER", type: "INTERNAL" }],
             },
           ],
         })
       );
-    }
-  }
+    },
+  },
+  {
+    path: "/services/health.json",
+    method: "get",
+    res: (_, res, ctx) => res(ctx.json({ healthy: true })),
+  },
+
+  {
+    path: "/admin-ng/resources/users/filters.json",
+    method: "get",
+    res: (_, res, ctx) => res(ctx.json([])),
+  },
 ]);
 
-describe('username', () => {
+describe("username", () => {
+  it("shows same name in table and header", async () => {
+    renderWithStore(<Users />, {}, "/users/");
 
-it('shows same name in table and header', async () => {
-  renderWithStore(<Users />, {}, '/users/');
+    const tableCell = await screen.findByText("Test User");
+    const headerButton = await screen.findByRole("button", {
+      name: /Test User/i,
+    });
 
-  const tableCell = await screen.findByText('Test User');
-  const headerButton = await screen.findByRole('button', {
-    name: /Test User/i,
+    expect(tableCell).toBeInTheDocument();
+    expect(headerButton).toBeInTheDocument();
   });
-
-  expect(tableCell).toBeInTheDocument();
-  expect(headerButton).toBeInTheDocument();
 });
-
-}
-)

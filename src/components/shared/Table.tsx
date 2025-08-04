@@ -166,7 +166,6 @@ const Table = ({
 
 		return "";
 	};
-
 	return (
 		<>
 			<Notifications context="above_table" />

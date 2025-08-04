@@ -36,7 +36,6 @@ const NewEventWizard = ({
 	const dispatch = useAppDispatch();
 
 	const uploadSourceOptions = useAppSelector(state => {
-	console.log(state)
       return getSourceUploadOptions(state)
 	});
 	const assetUploadOptions = useAppSelector(state => getAssetUploadOptions(state));

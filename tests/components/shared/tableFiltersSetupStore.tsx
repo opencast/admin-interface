@@ -13,14 +13,12 @@ export const rootReducer = {
   tableFilterProfiles: tableFilterProfilesReducer,
 };
 
-
 export function createTestStore(preloadedState = {}) {
   return configureStore({
     reducer: rootReducer,
     preloadedState,
   });
 }
-
 
 function renderWithProviders(
   ui: ReactElement,
@@ -31,9 +29,8 @@ function renderWithProviders(
   }: {
     storeInstance?: EnhancedStore;
     preloadedState?: any;
-  } & RenderOptions = {},
+  } & RenderOptions = {}
 ) {
-
   const store = storeInstance ?? createTestStore(preloadedState);
 
   function Wrapper({ children }: { children: ReactNode }) {
