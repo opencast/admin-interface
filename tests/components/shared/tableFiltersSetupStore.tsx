@@ -6,6 +6,8 @@ import { RenderOptions } from "@testing-library/react";
 
 import tableFilterReducer from "../../../src/slices/tableFilterSlice";
 import tableFilterProfilesReducer from "../../../src/slices/tableFilterProfilesSlice";
+import { RootState } from "../../../src/store";
+import { DeepPartial } from "../../utils/setUpStore";
 
 // root reducer combining actual reducers
 export const rootReducer = {
@@ -27,9 +29,9 @@ function renderWithProviders(
     preloadedState,
     ...renderOptions
   }: {
-    storeInstance?: EnhancedStore;
-    preloadedState?: any;
-  } & RenderOptions = {}
+    storeInstance?: EnhancedStore<RootState>;
+    preloadedState?: DeepPartial<RootState>;
+  } & RenderOptions = {},
 ) {
   const store = storeInstance ?? createTestStore(preloadedState);
 

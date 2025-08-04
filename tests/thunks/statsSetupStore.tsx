@@ -5,20 +5,18 @@ import { configureStore, EnhancedStore } from "@reduxjs/toolkit";
 import { ReactElement, ReactNode } from "react";
 import { render, RenderOptions } from "@testing-library/react";
 import { Provider } from "react-redux";
-
+import { RootState } from "../../src/store";
 
 const statsRootReducer = combineReducers({
- tableFilters: tableFilterReducer,
- eventReducer: (state = {}) => state,
-
-}
-)
-
-
-export const createTestStore = (preloadedState = {}) => configureStore({
-  reducer: statsRootReducer,
-  preloadedState,
+  tableFilters: tableFilterReducer,
+  eventReducer: (state = {}) => state,
 });
+
+export const createTestStore = (preloadedState = {}) =>
+  configureStore({
+    reducer: statsRootReducer,
+    preloadedState,
+  });
 
 function renderWithProviders(
   ui: ReactElement,
@@ -28,10 +26,9 @@ function renderWithProviders(
     ...renderOptions
   }: {
     storeInstance?: EnhancedStore;
-    preloadedState?: any;
+    preloadedState?: Partial<RootState>;
   } & RenderOptions = {}
 ) {
-
   const store = storeInstance ?? createTestStore(preloadedState);
 
   function Wrapper({ children }: { children: ReactNode }) {

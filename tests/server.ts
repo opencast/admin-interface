@@ -18,7 +18,7 @@ export function createServer(handlerConfig: HandlerConfig[]) {
   const handlers: RestHandler[] = handlerConfig.map((config) => {
     const method = config.method || 'get';
     return rest[method](config.path, (req, res, ctx) => {
-      return res(ctx.json(config.res(req, res, ctx)));
+      return config.res(req, res, ctx);
     });
   });
 
