@@ -1,4 +1,3 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Formik } from "formik";
@@ -21,7 +20,7 @@ const mockMetadata = {
 
 it("next button is disable when input empty, enabled when typing", async () => {
   render(
-    <Formik initialValues={{ dublincore_title: "" }} onSubmit={() => {}}>
+    <Formik initialValues={{ dublincoreTitle: "" }} onSubmit={() => {}}>
       {(formikProps) => (
         <NewMetadataCommonPage
           formik={formikProps}
@@ -30,7 +29,7 @@ it("next button is disable when input empty, enabled when typing", async () => {
           header="NAV_HOME"
         />
       )}
-    </Formik>
+    </Formik>,
   );
 
   const input = screen.getByRole("textbox");
