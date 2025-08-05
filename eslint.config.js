@@ -16,6 +16,7 @@ export default [
       globals: {},
     },
     rules: {
+      "arrow-parens": "off",
       // TODO: We want to turn these on eventually
       indent: "off",
       "max-len": "off",

@@ -21,7 +21,7 @@ createServer([
             description: "EVENTS.STATUS.COMPLETED",
             order: 2,
           }),
-        })
+        }),
       ),
   },
   {
@@ -32,7 +32,7 @@ createServer([
         ctx.json({
           total: 42,
           events: [],
-        })
+        }),
       ),
   },
 ]);

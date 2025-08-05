@@ -1,8 +1,13 @@
-import { setupServer } from 'msw/node';
-import { rest, RestHandler, RestRequest, ResponseComposition, RestContext } from 'msw';
-import type { ResponseResolver } from 'msw';
+import { setupServer } from "msw/node";
+import {
+  rest,
+  RestHandler,
+  RestRequest,
+  ResponseComposition,
+  RestContext,
+} from "msw";
 
-type HttpMethod = 'get' | 'post' | 'put' | 'delete';
+type HttpMethod = "get" | "post" | "put" | "delete";
 
 interface HandlerConfig {
   method?: HttpMethod;
@@ -10,13 +15,13 @@ interface HandlerConfig {
   res: (
     req: RestRequest,
     res: ResponseComposition,
-    ctx: RestContext
+    ctx: RestContext,
   ) => ReturnType<ResponseComposition>;
 }
 
 export function createServer(handlerConfig: HandlerConfig[]) {
   const handlers: RestHandler[] = handlerConfig.map((config) => {
-    const method = config.method || 'get';
+    const method = config.method || "get";
     return rest[method](config.path, (req, res, ctx) => {
       return config.res(req, res, ctx);
     });
@@ -25,7 +30,7 @@ export function createServer(handlerConfig: HandlerConfig[]) {
   const server = setupServer(...handlers);
 
   beforeAll(() => {
-    server.listen({ onUnhandledRequest: 'bypass' });
+    server.listen({ onUnhandledRequest: "bypass" });
   });
 
   afterEach(() => {
