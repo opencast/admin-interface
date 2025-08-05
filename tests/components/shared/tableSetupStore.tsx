@@ -1,53 +1,46 @@
-import React, { ReactNode, ReactElement } from "react";
-import { render } from "@testing-library/react";
-import { Provider } from "react-redux";
-import { configureStore, EnhancedStore } from "@reduxjs/toolkit";
-import { RenderOptions } from "@testing-library/react";
+import tableReducer from "../../../src/slices/tableSlice";
+import notificationsReducer from "../../../src/slices/notificationSlice";
 
 export const rootReducer = {
-  table: () => ({
-    rows: [],
-    columns: [],
-    pagination: {
-      offset: 0,
-      limit: 10,
-      totalItems: 20,
-      directAccessibleNo: 5,
-    },
-    pages: [
-      { number: 0, label: "1", active: true },
-      { number: 1, label: "2", active: false },
-    ],
-    resource: "default",
-    sortBy: {},
-    reverse: {},
-    multiSelect: {},
-    status: "idle",
-  }),
-  notifications: () => ({
-    notifications: [],
-  }),
+  table: tableReducer,
+  notifications: notificationsReducer,
 };
 
-export const store = configureStore({
-  reducer: rootReducer,
-});
+export const dummyResourceState = {
+  events: "",
+  series: "",
+  recordings: "",
+  jobs: "",
+  servers: "",
+  services: "",
+  users: "",
+  groups: "",
+  acls: "",
+  themes: "",
+};
 
-function renderWithProviders(
-  ui: ReactElement,
-  {
-    storeInstance = store,
-    ...renderOptions
-  }: { storeInstance?: EnhancedStore } & RenderOptions = {}
-) {
-  function Wrapper({ children }: { children: ReactNode }) {
-    return <Provider store={storeInstance}>{children}</Provider>;
-  }
+export const dummyReverseState = {
+  events: "ASC" as const,
+  series: "ASC" as const,
+  recordings: "ASC" as const,
+  jobs: "ASC" as const,
+  servers: "ASC" as const,
+  services: "ASC" as const,
+  users: "ASC" as const,
+  groups: "ASC" as const,
+  acls: "ASC" as const,
+  themes: "ASC" as const,
+};
 
-  return {
-    store: storeInstance,
-    ...render(ui, { wrapper: Wrapper, ...renderOptions }),
-  };
-}
-
-export default renderWithProviders;
+export const dummyMultiSelect = {
+  events: false,
+  series: false,
+  recordings: false,
+  jobs: false,
+  servers: false,
+  services: false,
+  users: false,
+  groups: false,
+  acls: false,
+  themes: false,
+};

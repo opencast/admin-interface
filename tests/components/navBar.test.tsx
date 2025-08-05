@@ -1,7 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import userEvent from "@testing-library/user-event";
 import NavBar from "../../src/components/NavBar";
-import renderWithStore from "./navBarSetupStore";
+import { renderWithProviders } from "../utils/setUpStore";
+import { rootReducer } from "./navBarSetupStore";
 
 vi.mock("../../src/components/shared/MainNav", () => ({
   default: () => <div />,
@@ -34,7 +35,7 @@ describe("NavBar", () => {
       },
     };
 
-    const { getByRole } = renderWithStore(
+    const { getByRole } = renderWithProviders(
       <NavBar
         displayNavigation={true}
         setNavigation={() => {}}
@@ -48,7 +49,7 @@ describe("NavBar", () => {
           isDisplay: true,
         }}
       />,
-      preloadedState
+      { preloadedState, reducers: rootReducer, useRouter: true },
     );
 
     const user = userEvent.setup();

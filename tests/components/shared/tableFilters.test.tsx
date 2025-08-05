@@ -1,11 +1,12 @@
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import renderWithProviders from "./tableFiltersSetupStore";
 import TableFilters from "../../../src/components/shared/TableFilters";
 import { createAsyncThunk, Dispatch } from "@reduxjs/toolkit";
+import { rootReducer, TestRootState } from "./tableFiltersSetupStore";
+import { DeepPartial, renderWithProviders } from "../../utils/setUpStore";
 
 const mockLoadResource = createAsyncThunk("resource/load", async () =>
-  Promise.resolve()
+  Promise.resolve(),
 );
 const mockLoadResourceIntoTable = () => (dispatch: Dispatch) => {}; // dummy thunk does nothing
 const mockResource = "events";
@@ -27,7 +28,7 @@ describe("TableFilterText", () => {
       tableFilterProfiles: {
         profiles: [],
       },
-    };
+    } as DeepPartial<TestRootState>;
 
     const { store } = renderWithProviders(
       <TableFilters
@@ -35,7 +36,10 @@ describe("TableFilterText", () => {
         loadResourceIntoTable={mockLoadResourceIntoTable}
         resource={mockResource}
       />,
-      { preloadedState }
+      {
+        reducers: rootReducer,
+        preloadedState,
+      },
     );
 
     const input = screen.getByPlaceholderText(/Search/i);
@@ -48,7 +52,7 @@ describe("TableFilterText", () => {
     expect(store.getState().tableFilters.textFilter).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ resource: mockResource, text: "hello" }),
-      ])
+      ]),
     );
   });
 });

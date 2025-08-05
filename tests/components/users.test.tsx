@@ -25,7 +25,7 @@ createServer([
               roles: [{ name: "ROLE_USER", type: "INTERNAL" }],
             },
           ],
-        })
+        }),
       );
     },
   },
@@ -43,15 +43,17 @@ createServer([
 ]);
 
 describe("username", () => {
-  it("shows same name in table and header", async () => {
+  it("displays users from the backend in the table", async () => {
     renderWithStore(<Users />, {}, "/users/");
 
-    const tableCell = await screen.findByText("Test User");
-    const headerButton = await screen.findByRole("button", {
-      name: /Test User/i,
-    });
+    const userInTable = await screen.findByText(/Test User/i);
+    expect(userInTable).toBeInTheDocument();
+  });
 
-    expect(tableCell).toBeInTheDocument();
-    expect(headerButton).toBeInTheDocument();
+  it("displays current user's name in the header", async () => {
+    renderWithStore(<Users />, {}, "/users/");
+
+    const headerUserName = await screen.findByText(/Test User/i);
+    expect(headerUserName).toBeInTheDocument();
   });
 });

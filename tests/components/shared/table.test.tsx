@@ -1,11 +1,56 @@
 import "@testing-library/jest-dom";
 import Table from "../../../src/components/shared/Table";
-import renderWithProviders, { store, rootReducer } from "./tableSetupStore";
-import { combineReducers } from "@reduxjs/toolkit";
+import {
+  rootReducer,
+  dummyResourceState,
+  dummyReverseState,
+  dummyMultiSelect,
+} from "./tableSetupStore";
+import { renderWithProviders } from "../../utils/setUpStore";
+import type { TableState } from "../../../src/slices/tableSlice";
 
 describe("Pagination in Table Component", () => {
+  const firstPageState: { table: TableState } = {
+    table: {
+      rows: [],
+      columns: [],
+      pagination: {
+        offset: 0,
+        limit: 10,
+        totalItems: 20,
+        directAccessibleNo: 5,
+      },
+      pages: [
+        { number: 0, label: "1", active: true },
+        { number: 1, label: "2", active: false },
+      ],
+      resource: "events",
+      sortBy: dummyResourceState,
+      reverse: dummyReverseState,
+      multiSelect: dummyMultiSelect,
+      status: "loading",
+      error: null,
+      predicate: "",
+      maxLabel: "",
+    },
+  };
+
+  const secondPageState = {
+    table: {
+      ...firstPageState.table,
+      pagination: { ...firstPageState.table.pagination, offset: 1 },
+      pages: [
+        { number: 0, label: "1", active: false },
+        { number: 1, label: "2", active: true },
+      ],
+    },
+  };
+
   it("Previous button is disabled on first page", () => {
-    const { container } = renderWithProviders(<Table templateMap={{}} />);
+    const { container } = renderWithProviders(<Table templateMap={{}} />, {
+      reducers: rootReducer,
+      preloadedState: firstPageState,
+    });
 
     const prevButton = container.querySelector(".prev");
     const nextButton = container.querySelector(".next");
@@ -15,25 +60,9 @@ describe("Pagination in Table Component", () => {
   });
 
   it("Next button is disabled on last page", () => {
-    store.replaceReducer(
-      combineReducers({
-        ...rootReducer,
-        table: () => ({
-          ...rootReducer.table(),
-          pagination: {
-            ...rootReducer.table().pagination,
-            offset: 1,
-          },
-          pages: [
-            { number: 0, label: "1", active: false },
-            { number: 1, label: "2", active: true },
-          ],
-        }),
-      })
-    );
-
     const { container } = renderWithProviders(<Table templateMap={{}} />, {
-      storeInstance: store,
+      reducers: rootReducer,
+      preloadedState: secondPageState,
     });
     const prevButton = container.querySelector(".prev");
     const nextButton = container.querySelector(".next");
