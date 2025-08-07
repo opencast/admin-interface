@@ -1051,7 +1051,7 @@
 						"DESCRIPTION": "Description",
 						"EXECUTION_HOST": "Execution Host",
 						"JOB": "Job",
-						"TIME_IN_QUEUE": "Time in Queue",
+						"TIME_IN_QUEUE": "Total subjobs time in queue",
 						"STARTED": "Started",
 						"FINISHED": "Finished",
 						"RETRY_STRATEGY": "Retry Strategy",
