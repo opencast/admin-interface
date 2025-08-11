@@ -366,6 +366,56 @@ const Schedule = <T extends {
 }) => {
 	const { t } = useTranslation();
 	const currentLanguage = getCurrentLanguageInformation();
+	const getEndDateForSchedulingTime = () => {
+  	const {
+    scheduleStartDate,
+    scheduleStartHour,
+    scheduleStartMinute,
+    scheduleEndDate,
+    scheduleEndHour,
+    scheduleEndMinute,
+    sourceMode,
+	scheduleDurationHours,
+  	} = formik.values;
+
+	// Parse hours as numbers (fallback to 0)
+  	const durationHours = Number(scheduleDurationHours) || 0;
+
+ 	// If duration is zero, do not show "+1 day" or end date
+  	if (durationHours === 0) {
+   	return undefined;
+  	}
+
+  	const startDateTime = new Date(scheduleStartDate);
+  	startDateTime.setHours(parseInt(scheduleStartHour, 10), parseInt(scheduleStartMinute, 10), 0, 0);
+
+  	if (sourceMode === "SCHEDULE_MULTIPLE") {
+	// For SCHEDULE_SINGLE or others, use the original logic:
+ 	if (!scheduleEndDate) {
+    return undefined;
+  	}
+
+    const nextDay = new Date(startDateTime);
+    nextDay.setDate(nextDay.getDate() + 1);
+    nextDay.setHours(parseInt(scheduleEndHour, 10), parseInt(scheduleEndMinute, 10), 0, 0);
+
+    return "+1 day";
+  	}
+
+  	const endDateTime = new Date(scheduleEndDate);
+  	endDateTime.setHours(parseInt(scheduleEndHour, 10), parseInt(scheduleEndMinute, 10), 0, 0);
+
+  	// For single schedule, show end date only if different from start date
+  	if (
+    endDateTime.getDate() !== startDateTime.getDate() ||
+    endDateTime.getMonth() !== startDateTime.getMonth() ||
+    endDateTime.getFullYear() !== startDateTime.getFullYear()
+  	) {
+     return `${endDateTime.getFullYear()}.${String(endDateTime.getMonth() + 1).padStart(2, "0")}.${String(endDateTime.getDate()).padStart(2, "0")}`;
+  	}
+  	return undefined;
+	};
+
 
 	const renderInputDeviceOptions = () => {
 		if (formik.values.location) {
@@ -603,13 +653,7 @@ const Schedule = <T extends {
 									);
 								}
 							}}
-							date={
-								formik.values.sourceMode === "SCHEDULE_SINGLE" &&
-								(new Date(formik.values.scheduleEndDate).getDate() !==
-								new Date(formik.values.scheduleStartDate).getDate())
-								? formik.values.scheduleEndDate
-								: undefined
-							}
+							date={getEndDateForSchedulingTime()}
 						/>
 
 						<SchedulingLocation

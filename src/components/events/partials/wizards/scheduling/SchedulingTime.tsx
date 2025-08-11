@@ -24,7 +24,7 @@ const SchedulingTime = ({
 	minutePlaceholder: ParseKeys
 	callbackHour: (value: string) => void
 	callbackMinute: (value: string) => void
-	date?: string | Date
+	date?: string | Date,
 }) => {
 	const { t } = useTranslation();
 	// Get info about the current language and its date locale
@@ -69,16 +69,20 @@ const SchedulingTime = ({
 					disabled={disabled}
 					customCSS={{ width: 70 }}
 				/>
-
 				{/* Displays given date. Can be used to signify which date the
 				  scheduling time belong to*/}
-				{date &&
-					<span style={{ marginLeft: "10px" }}>
-						{new Date(date).toLocaleDateString(
-							currentLanguage ? currentLanguage.dateLocale.code : undefined,
-						)}
-					</span>
-				}
+				{date && (
+				  <span style={{ marginLeft: "10px" }}>
+				    {typeof date === "string"
+				      ? date // show the string as it is
+				      : date instanceof Date && !isNaN(date.getDate())
+				      ? new Date(date).toLocaleDateString(
+				          currentLanguage ? currentLanguage.dateLocale.code : undefined,
+				        )
+				      : null
+				    }
+				  </span>
+				)}
 			</td>
 		</tr>
 	);

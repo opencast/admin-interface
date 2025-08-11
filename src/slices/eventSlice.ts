@@ -30,6 +30,7 @@ import { Publication } from "./eventDetailsSlice";
 import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
 import { FormikErrors } from "formik";
 
+
 /**
  * This file contains redux reducer for actions affecting the state of events
  */
@@ -911,6 +912,20 @@ export const checkConflicts = (values: {
 		values.sourceMode === "SCHEDULE_SINGLE" ||
 		values.sourceMode === "SCHEDULE_MULTIPLE"
 	) {
+    	if (values.sourceMode === "SCHEDULE_MULTIPLE") {
+      	const isRepeatOnValid = validateRepeatOnInRange(values);
+      	if (!isRepeatOnValid) {
+        	dispatch(
+          	addNotification({
+            type: "error",
+            key: "CONFLICT_RANGE_DAYS",
+            duration: -1,
+            context: NOTIFICATION_CONTEXT,
+          	}),
+        	);
+        return false; // Exit early if repeatOn is invalid
+      }
+    }
 		// Get timezone offset; Checks should be performed on UTC times
 		// let offset = getTimezoneOffset();
 
@@ -940,6 +955,20 @@ export const checkConflicts = (values: {
 		const endDate = new Date(values.scheduleEndDate);
 		// NOTE: if time zone issues still occur during further testing, try to set times to UTC (-offset)
 		endDate.setHours(parseInt(values.scheduleEndHour), parseInt(values.scheduleEndMinute), 0, 0);
+
+		// If end date of event is smaller than today --> Event is in past
+		// but  multiple event can be started in the past yet!!
+		if (values.sourceMode === "SCHEDULE_MULTIPLE" && endDate < new Date()) {
+			dispatch(
+				addNotification({
+					type: "error",
+					key: "CONFLICT_ALREADY_ENDED",
+					duration: -1,
+					context: NOTIFICATION_CONTEXT,
+				}),
+			);
+			check = false;
+		}
 
 		// if start date is higher than end date --> end date is before start date
 		if (startDate > endDate) {
@@ -1106,6 +1135,42 @@ export const checkForSchedulingConflicts = (events: EditedEvents[]) => (dispatch
 		});
 
 	return data;
+};
+
+export const validateRepeatOnInRange = (values: {
+  repeatOn: string[],           // e.g. ["MO", "TU"]
+  scheduleStartDate: string,    // e.g. "2025-08-11"
+  scheduleEndDate: string       // e.g. "2025-08-13"
+}) => {
+  if (!values.repeatOn || values.repeatOn.length === 0) {
+    return true;
+  }
+
+  const start = new Date(values.scheduleStartDate);
+  const end = new Date(values.scheduleEndDate);
+
+  // Map day codes to numbers: Sunday=0, Monday=1, ..., Saturday=6
+  const dayMap: Record<string, number> = {
+    SU: 0,
+    MO: 1,
+    TU: 2,
+    WE: 3,
+    TH: 4,
+    FR: 5,
+    SA: 6,
+  };
+  const repeatDays = values.repeatOn.map(day => dayMap[day]);
+  // Check if **at least one** date in the [start..end] range matches repeatOn days
+   const current = new Date(start);
+  while (current <= end) {
+    if (repeatDays.includes(current.getDay())) {
+      return true;  // Valid because this repeat day is in range
+    }
+    current.setDate(current.getDate() + 1); // next day
+  }
+
+  // If no repeat days fall within the range, return false
+  return false;
 };
 
 const eventSlice = createSlice({
