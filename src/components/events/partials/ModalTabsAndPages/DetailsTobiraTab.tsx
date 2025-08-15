@@ -60,7 +60,7 @@ const DetailsTobiraTab = ({ kind, id }: DetailsTobiraTabProps) => {
 
 	const i18nKey = kind === "series" ? "SERIES" : "EVENTS";
 	const prefix = kind === "series" ? "s" : "v";
-	const directTobiraLink = tobiraData.baseURL + `/!${prefix}/` + (tobiraData.id.length > 2 ? tobiraData.id.substring(2) : `:${id}`);
+	const directTobiraLink = tobiraData.baseURL + `/!${prefix}/` + (tobiraData.id?.length > 2 ? tobiraData.id.substring(2) : `:${id}`);
 
 	const getBreadcrumbs = (currentPage: TobiraPage) => {
 		const homepage = {
@@ -226,7 +226,7 @@ const TobiraTable = ({ tobiraData, i18nKey, openSubTab, handleDelete }: TobiraTa
 				{tobiraData.hostPages.map(hostPage => <tr key={hostPage.path}>
 					<td>
 						<a href={tobiraData.baseURL + hostPage.path +
-							(tobiraData.id.length > 2 ? `/${prefix}/${tobiraData.id.substring(2)}` : "")}>
+							(tobiraData.id?.length > 2 ? `/${prefix}/${tobiraData.id.substring(2)}` : "")}>
 							{hostPage.path !== "/" && <>
 								<span className="tobira-page-separator">/</span>
 								{hostPage.ancestors.map((ancestor, key) => (
