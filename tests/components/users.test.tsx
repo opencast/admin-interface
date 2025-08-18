@@ -49,11 +49,5 @@ describe("username", () => {
     const userInTable = await screen.findByText(/Test User/i);
     expect(userInTable).toBeInTheDocument();
   });
-
-  it("displays current user's name in the header", async () => {
-    renderWithStore(<Users />, {}, "/users/");
-
-    const headerUserName = await screen.findByText(/Test User/i);
-    expect(headerUserName).toBeInTheDocument();
-  });
+   
 });

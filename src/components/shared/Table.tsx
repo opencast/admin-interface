@@ -42,7 +42,7 @@ import { ParseKeys } from "i18next";
 
 const containerPageSize = React.createRef<HTMLDivElement>();
 
-type TemplateMap = {
+export type TemplateMap = {
 	[key: string]: ({ row }: { row: any }) => JSX.Element | JSX.Element[]
 }
 

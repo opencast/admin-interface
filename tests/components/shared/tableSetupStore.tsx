@@ -1,9 +1,13 @@
 import tableReducer from "../../../src/slices/tableSlice";
 import notificationsReducer from "../../../src/slices/notificationSlice";
+import usersReducer from "../../../src/slices/userSlice";
+import { combineReducers } from "redux";
+
 
 export const rootReducer = {
   table: tableReducer,
   notifications: notificationsReducer,
+  users: usersReducer,
 };
 
 export const dummyResourceState = {
@@ -44,3 +48,11 @@ export const dummyMultiSelect = {
   acls: false,
   themes: false,
 };
+
+// Combined reducer function
+export const combinedReducer = combineReducers(rootReducer);
+
+// Type of the root state for tests
+export type TestRootState = ReturnType<typeof combinedReducer>;
+
+export default rootReducer;

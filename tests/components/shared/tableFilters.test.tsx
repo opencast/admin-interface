@@ -21,16 +21,11 @@ describe("TableFilterText", () => {
         data: [],
         stats: [],
         textFilter: [],
-        selectedFilter: "",
-        secondFilter: "",
         currentResource: mockResource,
       },
-      tableFilterProfiles: {
-        profiles: [],
-      },
-    } as DeepPartial<TestRootState>;
+    };
 
-    const { store } = renderWithProviders(
+    const { store } = renderWithProviders<TestRootState>(
       <TableFilters
         loadResource={mockLoadResource}
         loadResourceIntoTable={mockLoadResourceIntoTable}
