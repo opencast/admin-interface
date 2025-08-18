@@ -307,7 +307,6 @@ const getInitialValues = (
   user: UserInfoState,
 ) => {
   let initialValues = initialFormValuesNewEvents;
-  console.log(metadataFields);
   // Transform metadata fields provided by backend (saved in redux)
   initialValues = {
     ...initialValues,
