@@ -49,5 +49,4 @@ describe("username", () => {
     const userInTable = await screen.findByText(/Test User/i);
     expect(userInTable).toBeInTheDocument();
   });
-   
 });
