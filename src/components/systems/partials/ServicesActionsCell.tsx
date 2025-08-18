@@ -1,7 +1,8 @@
 import { loadServicesIntoTable } from "../../../thunks/tableThunks";
 import { useAppDispatch } from "../../../store";
 import { Service, fetchServices, restartService } from "../../../slices/serviceSlice";
-import { IconButton } from "../../shared/IconButton";
+import ButtonLikeAnchor from "../../shared/ButtonLikeAnchor";
+import { LuRotateCcw } from "react-icons/lu";
 
 /**
  * This component renders the action cells of services in the table view
@@ -14,19 +15,21 @@ const ServicesActionCell = ({
 	const dispatch = useAppDispatch();
 
 	const onClickRestart = async () => {
-		await dispatch(restartService({ host: row.hostname, serviceType: row.name }));
+		restartService({ host: row.hostname, serviceType: row.name });
 		await dispatch(fetchServices());
 		dispatch(loadServicesIntoTable());
 	};
 
 	return (
 		row.status !== "SYSTEMS.SERVICES.STATUS.NORMAL" ? (
-			<IconButton
-				callback={() => onClickRestart()}
-				iconClassname={"sanitize fa fa-undo"}
+			<ButtonLikeAnchor
+				onClick={() => onClickRestart()}
+				className={"action-cell-button"}
 				editAccessRole={"ROLE_UI_SERVICES_STATUS_EDIT"}
 				tooltipText={"SYSTEMS.SERVICES.TABLE.SANITIZE"}
-			/>
+			>
+				<LuRotateCcw style={{ fontSize: "18px", color: "#444" }}/>
+			</ButtonLikeAnchor>
 		) : <></>
 	);
 };

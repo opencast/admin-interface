@@ -17,6 +17,7 @@ import { Event } from "../../../../slices/eventSlice";
 import WizardNavigationButtons from "../../../shared/wizard/WizardNavigationButtons";
 import { ParseKeys } from "i18next";
 import ModalContent from "../../../shared/modals/ModalContent";
+import { LuTriangleAlert } from "react-icons/lu";
 
 /**
  * This component renders the table overview of selected events in edit scheduled events bulk action
@@ -60,6 +61,7 @@ const EditScheduledEventsGeneralPage = <T extends RequiredFormProps>({
 					{/* Show only if non-scheduled event is selected*/}
 					{!isAllScheduleEditable(selectedEvents) && (
 						<div className="alert sticky warning">
+							<LuTriangleAlert className="warning-symbol-warning"/>
 							<p>{t("BULK_ACTIONS.EDIT_EVENTS.GENERAL.CANNOTSTART")}</p>
 						</div>
 					)}

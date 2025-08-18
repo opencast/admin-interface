@@ -29,7 +29,7 @@ const UserEffectiveRolesTab = <T extends RequiredFormProps>({
 		setItems(defaultItems);
 	};
 
-	const handleChangeSearch = async (input: string) => {
+	const handleChangeSearch = (input: string) => {
 		const filtered = defaultItems.filter(item => {
 			return item.name.toLowerCase().includes(input.toLowerCase());
 		});

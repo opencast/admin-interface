@@ -68,7 +68,7 @@ export const fetchServers = createAppAsyncThunk("servers/fetchServers", async (_
 });
 
 // change maintenance status of a server/host
-export const setServerMaintenance = createAppAsyncThunk("servers/setServerMaintenance", async (params: {
+export const setServerMaintenance = (params: {
 	host: Server["hostname"],
 	maintenance: Server["maintenance"]
 }) => {
@@ -85,7 +85,7 @@ export const setServerMaintenance = createAppAsyncThunk("servers/setServerMainte
 		.catch(response => {
 			console.error(response);
 		});
-});
+};
 
 const serverSlice = createSlice({
 	name: "servers",

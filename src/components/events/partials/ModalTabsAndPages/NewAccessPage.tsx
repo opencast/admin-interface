@@ -184,8 +184,8 @@ const NewAccessPage = <T extends RequiredFormProps>({
 			{/* Button for navigation to next page and previous page */}
 			<WizardNavigationButtons
 				formik={formik}
-				nextPage={async () => {
-					if (await dispatch(checkAcls(formik.values.policies))) {
+				nextPage={() => {
+					if (dispatch(checkAcls(formik.values.policies))) {
 						nextPage(formik.values);
 					}
 				}}

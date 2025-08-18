@@ -1,13 +1,12 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { editFilterValue } from "../../slices/tableFilterSlice";
 import { getFilters } from "../../selectors/tableFilterSelectors";
 import { AppThunk, useAppDispatch, useAppSelector } from "../../store";
 import { renderValidDate } from "../../utils/dateUtils";
-import { IconButton } from "../shared/IconButton";
 import { ParseKeys } from "i18next";
 import { AsyncThunk } from "@reduxjs/toolkit";
 import { Resource } from "../../slices/tableSlice";
+import ButtonLikeAnchor from "./ButtonLikeAnchor";
 
 /**
  * This component renders the start date cells of events in the table view
@@ -53,13 +52,13 @@ const DateTimeCell = ({
 
 	return (
 		// Link template for start date of event
-		<IconButton
-			callback={() => addFilter(date)}
-			iconClassname={"crosslink"}
+		<ButtonLikeAnchor
+			onClick={() => addFilter(date)}
+			className={"crosslink"}
 			tooltipText={tooltipText}
 		>
 			{t("dateFormats.date.short", { date: renderValidDate(date) })}
-		</IconButton>
+		</ButtonLikeAnchor>
 	);
 };
 

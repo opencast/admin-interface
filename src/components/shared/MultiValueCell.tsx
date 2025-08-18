@@ -1,11 +1,10 @@
-import React from "react";
 import { getFilters } from "../../selectors/tableFilterSelectors";
 import { editFilterValue } from "../../slices/tableFilterSlice";
 import { AppThunk, useAppDispatch, useAppSelector } from "../../store";
-import { IconButton } from "../shared/IconButton";
 import { AsyncThunk } from "@reduxjs/toolkit";
 import { ParseKeys } from "i18next";
 import { Resource } from "../../slices/tableSlice";
+import ButtonLikeAnchor from "./ButtonLikeAnchor";
 
 /**
  * This component renders the presenters cells of events in the table view
@@ -44,14 +43,14 @@ const MultiValueCell = ({
 	return (
 		// Link template for each value
 		values.map((value, key) => (
-			<IconButton
+			<ButtonLikeAnchor
 				key={key}
-				callback={() => addFilter(value)}
-				iconClassname={"metadata-entry"}
+				onClick={() => addFilter(value)}
+				className={"metadata-entry"}
 				tooltipText={tooltipText}
 			>
 				{value}
-			</IconButton>
+			</ButtonLikeAnchor>
 		))
 	);
 };

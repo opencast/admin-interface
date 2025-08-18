@@ -21,6 +21,7 @@ import { isEvent } from "../../../../slices/tableSlice";
 import WizardNavigationButtons from "../../../shared/wizard/WizardNavigationButtons";
 import { ParseKeys } from "i18next";
 import ModalContent from "../../../shared/modals/ModalContent";
+import { LuLoaderCircle } from "react-icons/lu";
 
 /**
  * This component manges the edit metadata bulk action
@@ -145,7 +146,7 @@ const EditMetadataEventsModal = ({
 			{loading && (
 				<ModalContent>
 					<div className="loading">
-						<i className="fa fa-spinner fa-spin fa-2x fa-fw" />
+						<LuLoaderCircle className="fa-spin" style={{ fontSize: "30px" }}/>
 					</div>
 				</ModalContent>
 			)}

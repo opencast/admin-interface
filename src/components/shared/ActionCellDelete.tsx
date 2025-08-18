@@ -1,8 +1,9 @@
 import ConfirmModal, { ResourceType } from "./ConfirmModal";
 import { useRef } from "react";
-import { IconButton } from "./IconButton";
 import { ModalHandle } from "./modals/Modal";
 import { ParseKeys } from "i18next";
+import ButtonLikeAnchor from "./ButtonLikeAnchor";
+import { LuCircleX } from "react-icons/lu";
 
 export const ActionCellDelete = <T, >({
 	editAccessRole,
@@ -32,12 +33,14 @@ export const ActionCellDelete = <T, >({
 	return (
 		<>
 			{/* delete button */}
-			<IconButton
-				callback={() => deleteConfirmationModalRef.current?.open()}
-				iconClassname={"remove"}
+			<ButtonLikeAnchor
+				onClick={() => deleteConfirmationModalRef.current?.open()}
+				className={"action-cell-button remove"}
 				editAccessRole={editAccessRole}
 				tooltipText={tooltipText}
-			/>
+			>
+				<LuCircleX />
+			</ButtonLikeAnchor>
 
 			{/* Confirmation modal for deleting */}
 			<ConfirmModal

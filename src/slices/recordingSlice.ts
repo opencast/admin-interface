@@ -5,6 +5,7 @@ import { getURLParams } from "../utils/resourceUtils";
 import { addNotification } from "./notificationSlice";
 import { TableConfig } from "../configs/tableConfigs/aclsTableConfig";
 import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
+import { AppThunk } from "../store";
 
 /**
  * This file contains redux reducer for actions affecting the state of recordings
@@ -106,7 +107,7 @@ export const fetchRecordings = createAppAsyncThunk("recordings/fetchRecordings",
 });
 
 // delete location with provided id
-export const deleteRecording = createAppAsyncThunk("recordings/deleteRecording", async (id: Recording["id"], { dispatch }) => {
+export const deleteRecording = (id: Recording["id"]): AppThunk => dispatch => {
 	// API call for deleting a location
 	axios
 		.delete(`/admin-ng/capture-agents/${id}`)
@@ -126,7 +127,7 @@ export const deleteRecording = createAppAsyncThunk("recordings/deleteRecording",
 				dispatch(addNotification({ type: "error", key: "LOCATION_NOT_DELETED" }));
 			}
 		});
-});
+};
 
 const recordingSlice = createSlice({
 	name: "recordings",

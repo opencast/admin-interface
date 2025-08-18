@@ -1,6 +1,4 @@
 @use "sass:color";
-@use "../base/fontawesome/fa-mixins";
-@use "../base/fontawesome/variables" as variables2;
 @use "../base/variables";
 @use "../mixins/button";
 
@@ -65,24 +63,6 @@ textarea {
         border: variables.$thin-border-stroke variables.$alt-red;
         color: variables.$red;
     }
-
-    // Input icons
-    // ----------------------------------------
-
-    &#email {
-       background-image: url("#{variables.$img-path}/user-input-icon.png");
-       background-size: 23px 20px;
-       background-repeat: no-repeat;
-       background-position: 14px center;
-    }
-
-    &#password {
-        background-image: url("#{variables.$img-path}/key-icon.png");
-        background-size: 16px 20px;
-        background-repeat: no-repeat;
-        background-position: 19px center;
-    }
-
 
     &.small {
         padding: 15px;
@@ -158,18 +138,10 @@ input[type="radio"].ios {
     }
 }
 
-// Select chosen
-.chosen-results {
-    width: 100%;
-}
-
-
 .search-container {
     width: 100% !important;
     height: 40px;
     position: relative;
-
-    @include fa-mixins.fa-icon(variables2.$fa-var-search, after, inline, 0, 0, inherit, 13px);
 
     outline: variables.$thin-border-stroke color.adjust(variables.$main-border-color, $lightness: -2%);
     border-radius: variables.$main-border-radius;
@@ -214,7 +186,6 @@ input[type="radio"].ios {
         width: 46px;
         float: right;
         @include button.btn(white);
-        @include fa-mixins.fa-icon(variables2.$fa-var-times, before, block, 0, 0.45em 0.45em 0.55em 0.45em, inherit, 14px);
         opacity: 1 !important;
 
         &, &:hover, &:focus, &:active {
@@ -235,10 +206,14 @@ input[type="radio"].ios {
 
     }
 
-    &:after {
+    .search-icon {
+        color: inherit;
+        font-size: 13px;
+
         position: absolute;
         top: 13px;
         left: 10px;
+        z-index: 1;
     }
 
 }

@@ -209,6 +209,8 @@
 		"SERIES_THEME_REPROCESS_EXISTING_EVENTS": "Οι υπάρχουσες εκδηλώσεις σε αυτή τη σειρά θα πρέπει να επεξεργαστών ξάνα",
 		"SERIES_ACL_LOCKED": "Η επεξεργασία την πολιτικών πρόσβαησς δεν επιτρέπεται όταν εκτελούνται εργασίες σε μία εκδήλωση που αποτελεί μέρος της σειράς",
 		"EVENT_ACL_MISSING_READWRITE_ROLE": "Η πολιτική πρόσβασης απαιτεί τουλάχιστον ένα ρόλο με δικαιώματα ανάγνωσης και εγγραφής.",
+		"METADATA_SAVED": "The metadata has been saved.",
+		"METADATA_NOT_SAVED": "The metadata has NOT been saved!",
 		"THEME_NAME_EMPTY": "Το όνομα δεν είναι δυνατό να είναι κενό",
 		"BUMPER_UPLOAD_ERROR": "Παρουσιάστηκε σφάλμα κατά την μεταφόρτωση των αρχείων πολυμέσων",
 		"THEME_CREATED": "Το θέμα έχει δημιουργηθεί",
@@ -895,7 +897,11 @@
 						"ADDITIONAL_ACTIONS": "Πρόσθετες ενέργειες",
 						"ACTION": "Ενέργειες",
 						"NEW": "Νέα πολιτική",
-						"DETAILS": "Details"
+						"NON_USER_ROLES": "Roles and Groups authorized for the event",
+						"USER": "User",
+						"USERS": "Users who are authorized for the event",
+						"NEW_USER": "New user",
+						"SANITIZATION_NOTE": "User role sanitization is enabled in your Opencast, therefore user roles are displayed alongside other roles. This does not impact role functionality in any way."
 					},
 					"ROLES": {
 						"LABEL": "Select or create a role"
@@ -982,7 +988,6 @@
 					"ACTIONS": "Ενέργειες",
 					"DETAILS": "Λεπτομέρειες",
 					"DESCRIPTION": "Περιγραφή",
-					"MORE_INFO": "More Information",
 					"ID": "Αναγνωριστικό",
 					"TYPE": "Τύπος",
 					"TITLE": "Τίτλος",
@@ -1022,11 +1027,13 @@
 				},
 				"WORKFLOW_DETAILS": {
 					"TITLE": "Λεπτομέρειες ροής εργασίας",
-					"CONFIGURATION": "Ρύθμισεις παραμέτρων ροής εργασίας"
+					"CONFIGURATION": "Ρύθμισεις παραμέτρων ροής εργασίας",
+					"OPERATIONS": "Operations",
+					"CURRENT_OPERATION": "Current workflow operation"
 				},
 				"WORKFLOW_OPERATIONS": {
 					"TITLE": "Λειτουργίες ροής εργασίας",
-					"DETAILS_LINK": "Operations",
+					"DETAILS_LINK": "All operations",
 					"TABLE_HEADERS": {
 						"TITLE": "Τίτλος",
 						"STATUS": "Κατάσταση",
@@ -1086,7 +1093,8 @@
 						"DATE": "Ημερομηνία",
 						"HOST": "Επεξεργασία διακομιστή",
 						"TYPE": "Τύπος υπηρεσίας",
-						"TECHNICAL_DETAILS": "Τεχνικές λεπτομέρειες"
+						"TECHNICAL_DETAILS": "Τεχνικές λεπτομέρειες",
+						"OPERATION": "Operation the error occured in"
 					}
 				}
 			}
@@ -1208,7 +1216,10 @@
 						"ADDITIONAL_ACTIONS": "Πρόσθετες ενέργειες",
 						"ACTION": "Ενέργειες",
 						"NEW": "Νέα πολιτική",
-						"DETAILS": "Details",
+						"NON_USER_ROLES": "Roles and Groups authorized for the series",
+						"USER": "User",
+						"USERS": "Users who are authorized for the series",
+						"NEW_USER": "New user",
 						"REPLACE_EVENT_ACLS": "Ενημέρωση δικαιωμάτων εκδήλωσης",
 						"REPLACE_EVENT_ACLS_HINT": "Επιβεβαίωση ότι όλες οι εκδηλώσεις σε αυτή την σειρά έχουν τα ίδια δικαιώματα σε ισχύ",
 						"LOAD_MORE_LIMIT": "Εμφάνιση πολιτικών.",
@@ -1467,8 +1478,11 @@
 						"ADDITIONAL_ACTIONS": "Πρόσθετες ενέργειες",
 						"ACTION": "Ενέργειες",
 						"NEW": "Νέα πολιτική",
-						"DETAILS": "Details",
-						"DESCRIPTION": "Παρακαλώ επιλέξτε ένα σύνολο προ-διαμορφωμένων πολιτικών ή να προσθέσετε τις ακόλουθες προσαρμοσμένες πολιτικές"
+						"NON_USER_ROLES": "Roles and Groups authorized for the access policy",
+						"DESCRIPTION": "Παρακαλώ επιλέξτε ένα σύνολο προ-διαμορφωμένων πολιτικών ή να προσθέσετε τις ακόλουθες προσαρμοσμένες πολιτικές",
+						"USER": "User",
+						"USERS": "Users who are authorized for the access policy",
+						"NEW_USER": "New user"
 					},
 					"ROLES": {
 						"LABEL": "Επιλέξτε ένα ρόλο",

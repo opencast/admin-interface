@@ -39,7 +39,7 @@ const EventDetailsTabHierarchyNavigation = <T, >({
 	return (
 		<nav className="scope" style={styleNav}>
 			<ButtonLikeAnchor
-				extraClassName="breadcrumb-link scope"
+				className="breadcrumb-link scope"
 				style={
 					hierarchyDepth === 0
 						? styleNavHierarchy
@@ -54,7 +54,7 @@ const EventDetailsTabHierarchyNavigation = <T, >({
 			</ButtonLikeAnchor>
 			{hierarchyDepth > 0 && subTabArgument1 && (
 				<ButtonLikeAnchor
-					extraClassName="breadcrumb-link scope"
+					className="breadcrumb-link scope"
 					style={
 						hierarchyDepth === 1
 							? styleNavHierarchy
@@ -70,7 +70,7 @@ const EventDetailsTabHierarchyNavigation = <T, >({
 			)}
 			{hierarchyDepth > 1 && subTabArgument2 && (
 				<ButtonLikeAnchor
-					extraClassName="breadcrumb-link scope"
+					className="breadcrumb-link scope"
 					style={
 						hierarchyDepth === 2
 							? styleNavHierarchy
@@ -83,7 +83,7 @@ const EventDetailsTabHierarchyNavigation = <T, >({
 			)}
 			{hierarchyDepth > 2 && subTabArgument3 && (
 				<ButtonLikeAnchor
-					extraClassName="breadcrumb-link scope"
+					className="breadcrumb-link scope"
 					style={styleNavHierarchy}
 					onClick={() => openSubTab(subTabArgument3)}
 				>

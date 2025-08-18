@@ -64,7 +64,7 @@ export const checkValidityUpdateScheduleEventSelection = (
 };
 
 // check changed events in formik for scheduling conflicts
-export const checkSchedulingConflicts = async (
+export const checkSchedulingConflicts = (
 	formikValues: {
 		editedEvents: EditedEvents[]
 	},
@@ -101,7 +101,7 @@ export const checkSchedulingConflicts = async (
 	}
 
 	// Use backend for check for conflicts with other events
-	const response = await dispatch(checkForSchedulingConflicts(formikValues.editedEvents));
+	const response = dispatch(checkForSchedulingConflicts(formikValues.editedEvents));
 
 	if (response.length > 0) {
 		setConflicts(response);

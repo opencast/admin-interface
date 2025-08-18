@@ -4,7 +4,7 @@ import { loadEventsIntoTable } from "../../../thunks/tableThunks";
 import { useAppDispatch, useAppSelector } from "../../../store";
 import { fetchEvents } from "../../../slices/eventSlice";
 import { Event } from "../../../slices/eventSlice";
-import { IconButton } from "../../shared/IconButton";
+import ButtonLikeAnchor from "../../shared/ButtonLikeAnchor";
 
 /**
  * This component renders the location cells of events in the table view
@@ -30,13 +30,13 @@ const EventsLocationCell = ({
 
 	return (
 		// Link template for location of event
-		<IconButton
-			callback={() => addFilter(row.location)}
-			iconClassname={"crosslink"}
+		<ButtonLikeAnchor
+			onClick={() => addFilter(row.location)}
+			className={"crosslink"}
 			tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.LOCATION"}
 		>
 			{row.location}
-		</IconButton>
+		</ButtonLikeAnchor>
 	);
 };
 

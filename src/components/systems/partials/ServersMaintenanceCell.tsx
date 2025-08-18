@@ -21,7 +21,7 @@ const ServersMaintenanceCell = ({
 	const dispatch = useAppDispatch();
 
 	const onClickCheckbox = async (e: React.ChangeEvent<HTMLInputElement>) => {
-		await dispatch(setServerMaintenance({ host: row.hostname, maintenance: e.target.checked }));
+		setServerMaintenance({ host: row.hostname, maintenance: e.target.checked });
 		await dispatch(fetchServers());
 		dispatch(loadServersIntoTable());
 	};

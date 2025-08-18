@@ -30,6 +30,7 @@ import { ParseKeys } from "i18next";
 import ButtonLikeAnchor from "../ButtonLikeAnchor";
 import { formatAclTemplatesForDropdown } from "../../../utils/dropDownUtils";
 import ModalContentTable from "./ModalContentTable";
+import { LuCircleX } from "react-icons/lu";
 
 
 /**
@@ -571,6 +572,7 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 																		}
 																		skipTranslate
 																		optionHeight={35}
+																		customCSS={{ width: "100%", optionPaddingTop: 5 }}
 																	/>
 																) : (
 																	<p>{policy.role}</p>
@@ -684,8 +686,10 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 																			onClick={() =>
 																				arrayHelpers.remove(formik.values.policies.findIndex(p => p === policy))
 																			}
-																			extraClassName="remove"
-																		/>
+																			className="action-cell-button remove"
+																		>
+																			<LuCircleX />
+																		</ButtonLikeAnchor>
 																	)}
 																</td>
 															)}

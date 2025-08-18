@@ -1,7 +1,5 @@
 @use "sass:color";
 @use "../mixins/mixins-bourbon";
-@use "../base/fontawesome/fa-mixins";
-@use "../base/fontawesome/variables" as variables2;
 @use "../base/variables";
 
 /**
@@ -179,14 +177,6 @@ body {
 
                 > i {
                     font-size: 10px;
-                }
-
-                &.prev {
-                    @include fa-mixins.fa-icon(variables2.$fa-var-chevron-left, before, inline-block, 0 5px 0 0, 0, inherit, 10px);
-                }
-
-                &.next {
-                    @include fa-mixins.fa-icon(variables2.$fa-var-chevron-right, after, inline-block, 0 0 0 5px, 0, inherit, 10px);
                 }
             }
 

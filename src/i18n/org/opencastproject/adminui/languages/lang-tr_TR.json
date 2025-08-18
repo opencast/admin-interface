@@ -209,6 +209,8 @@
 		"SERIES_THEME_REPROCESS_EXISTING_EVENTS": "Dizideki mevcut etkinliklerin yeniden işlenmesi gerekecek",
 		"SERIES_ACL_LOCKED": "Dizideki etkinlikler üzerinde işlem yapılırken Erişim İlkelerinin düzenlenmesine izin verilmez",
 		"EVENT_ACL_MISSING_READWRITE_ROLE": "Erişim İlkesi en az bir Okuma ve Yazma yetkisi gerektirir.",
+		"METADATA_SAVED": "The metadata has been saved.",
+		"METADATA_NOT_SAVED": "The metadata has NOT been saved!",
 		"THEME_NAME_EMPTY": "İsim boş bırakılamaz",
 		"BUMPER_UPLOAD_ERROR": "Medyayı yüklerken bir hata oluştu",
 		"THEME_CREATED": "Tema oluşturuldu",
@@ -895,7 +897,11 @@
 						"ADDITIONAL_ACTIONS": "Ek Eylemler",
 						"ACTION": "Eylemler",
 						"NEW": "Yeni sözleşme",
-						"DETAILS": "Details"
+						"NON_USER_ROLES": "Roles and Groups authorized for the event",
+						"USER": "User",
+						"USERS": "Users who are authorized for the event",
+						"NEW_USER": "New user",
+						"SANITIZATION_NOTE": "User role sanitization is enabled in your Opencast, therefore user roles are displayed alongside other roles. This does not impact role functionality in any way."
 					},
 					"ROLES": {
 						"LABEL": "Select or create a role"
@@ -982,7 +988,6 @@
 					"ACTIONS": "Hareketler",
 					"DETAILS": "Ayrıntılar",
 					"DESCRIPTION": "Açıklama",
-					"MORE_INFO": "More Information",
 					"ID": "KİMLİK",
 					"TYPE": "Tür",
 					"TITLE": "Başlık",
@@ -1022,11 +1027,13 @@
 				},
 				"WORKFLOW_DETAILS": {
 					"TITLE": "İş akışı detayları",
-					"CONFIGURATION": "İş akışı yapılandırılması"
+					"CONFIGURATION": "İş akışı yapılandırılması",
+					"OPERATIONS": "Operations",
+					"CURRENT_OPERATION": "Current workflow operation"
 				},
 				"WORKFLOW_OPERATIONS": {
 					"TITLE": "İş akışı operasyonları",
-					"DETAILS_LINK": "Operations",
+					"DETAILS_LINK": "All operations",
 					"TABLE_HEADERS": {
 						"TITLE": "Başlık",
 						"STATUS": "Durum",
@@ -1086,7 +1093,8 @@
 						"DATE": "Tarih",
 						"HOST": "Sunucu işletme",
 						"TYPE": "Hizmet Türü",
-						"TECHNICAL_DETAILS": "Teknik Ayrıntılar"
+						"TECHNICAL_DETAILS": "Teknik Ayrıntılar",
+						"OPERATION": "Operation the error occured in"
 					}
 				}
 			}
@@ -1208,7 +1216,10 @@
 						"ADDITIONAL_ACTIONS": "Ek eylemler",
 						"ACTION": "Eylemler",
 						"NEW": "Yeni sözleşme",
-						"DETAILS": "Details",
+						"NON_USER_ROLES": "Roles and Groups authorized for the series",
+						"USER": "User",
+						"USERS": "Users who are authorized for the series",
+						"NEW_USER": "New user",
 						"REPLACE_EVENT_ACLS": "Etkinlik izinlerini güncelle",
 						"REPLACE_EVENT_ACLS_HINT": "Bu dizinin tüm etkinliklerinin geçerli izinlere sahip olduğundan emin olun",
 						"LOAD_MORE_LIMIT": "policies shown.",
@@ -1467,8 +1478,11 @@
 						"ADDITIONAL_ACTIONS": "Ek Eylemler",
 						"ACTION": "Eylemler",
 						"NEW": "Yeni sözleşme",
-						"DETAILS": "Details",
-						"DESCRIPTION": "Lütfen önceden yapılandırılmış bir ilkeler kümesi seçim veya aşağıdaki özel ilkelerden ekleyin"
+						"NON_USER_ROLES": "Roles and Groups authorized for the access policy",
+						"DESCRIPTION": "Lütfen önceden yapılandırılmış bir ilkeler kümesi seçim veya aşağıdaki özel ilkelerden ekleyin",
+						"USER": "User",
+						"USERS": "Users who are authorized for the access policy",
+						"NEW_USER": "New user"
 					},
 					"ROLES": {
 						"LABEL": "Bir rol seç",

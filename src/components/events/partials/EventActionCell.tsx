@@ -16,8 +16,9 @@ import { Event, deleteEvent } from "../../../slices/eventSlice";
 import { Tooltip } from "../../shared/Tooltip";
 import { openModal } from "../../../slices/eventDetailsSlice";
 import { ActionCellDelete } from "../../shared/ActionCellDelete";
-import { IconButton } from "../../shared/IconButton";
 import { Modal, ModalHandle } from "../../shared/modals/Modal";
+import ButtonLikeAnchor from "../../shared/ButtonLikeAnchor";
+import { LuFileSymlink, LuFileText, LuFolderOpen, LuLink, LuMessageCircle, LuScissors, LuTriangleAlert } from "react-icons/lu";
 
 /**
  * This component renders the action cells of events in the table view
@@ -87,21 +88,25 @@ const EventActionCell = ({
 			)}
 
 			{/* Open event details */}
-			<IconButton
-				callback={onClickEventDetails}
-				iconClassname={"more"}
+			<ButtonLikeAnchor
+				onClick={onClickEventDetails}
+				className={"action-cell-button"}
 				editAccessRole={"ROLE_UI_EVENTS_DETAILS_VIEW"}
 				tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.DETAILS"}
-			/>
+			>
+				<LuFileText />
+			</ButtonLikeAnchor>
 
 			{/* If event belongs to a series then the corresponding series details can be opened */}
 			{!!row.series && (
-				<IconButton
-					callback={onClickSeriesDetails}
-					iconClassname={"more-series"}
+				<ButtonLikeAnchor
+					onClick={onClickSeriesDetails}
+					className={"action-cell-button more-series"}
 					editAccessRole={"ROLE_UI_SERIES_DETAILS_VIEW"}
 					tooltipText={"EVENTS.SERIES.TABLE.TOOLTIP.DETAILS"}
-				/>
+				>
+					<LuFileSymlink />
+				</ButtonLikeAnchor>
 			)}
 
 			{/* Delete an event */}
@@ -125,9 +130,10 @@ const EventActionCell = ({
 				>
 					<a
 						href={`/editor-ui/index.html?id=${row.id}`}
-						className="cut"
+						className="action-cell-button cut"
 						target="_blank" rel="noreferrer"
 					>
+						<LuScissors />
 						{row.needs_cutting && <span id="badge" className="badge" />}
 					</a>
 				</Tooltip>
@@ -135,48 +141,68 @@ const EventActionCell = ({
 
 			{/* If the event has comments and no open comments then the comment tab of event details can be opened directly */}
 			{row.has_comments && !row.has_open_comments && (
-				<IconButton
-					callback={() => onClickComments()}
-					iconClassname={"comments"}
+				<ButtonLikeAnchor
+					onClick={() => onClickComments()}
 					tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.COMMENTS"}
-				/>
+					className={"action-cell-button"}
+				>
+					<LuMessageCircle style={{
+						color: "#1d5888",
+					}}/>
+				</ButtonLikeAnchor>
 			)}
 
 			{/* If the event has comments and open comments then the comment tab of event details can be opened directly */}
 			{row.has_comments && row.has_open_comments && (
-				<IconButton
-					callback={() => onClickComments()}
-					iconClassname={"comments-open"}
+				<ButtonLikeAnchor
+					onClick={() => onClickComments()}
 					tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.COMMENTS"}
-				/>
+					className={"action-cell-button"}
+				>
+					<LuMessageCircle style={{
+						color: "#1d5888",
+					}}/>
+				</ButtonLikeAnchor>
 			)}
 
 			{/* If the event is in in a paused workflow state then a warning icon is shown and workflow tab of event
 				details can be opened directly */}
 			{row.workflow_state === "PAUSED" &&
-				<IconButton
-					callback={() => onClickWorkflow()}
-					iconClassname={"fa fa-warning"}
+				<ButtonLikeAnchor
+					onClick={() => onClickWorkflow()}
 					editAccessRole={"ROLE_UI_EVENTS_DETAILS_WORKFLOWS_EDIT"}
 					tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.PAUSED_WORKFLOW"}
-				/>
+					className={"action-cell-button"}
+				>
+					<LuTriangleAlert style={{
+						color: "#444",
+					}}/>
+				</ButtonLikeAnchor>
 			}
 
 			{/* Open assets tab of event details directly*/}
-			<IconButton
-				callback={() => onClickAssets()}
-				iconClassname={"fa fa-folder-open"}
+			<ButtonLikeAnchor
+				onClick={() => onClickAssets()}
 				editAccessRole={"ROLE_UI_EVENTS_DETAILS_ASSETS_VIEW"}
 				tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.ASSETS"}
-			/>
+				className={"action-cell-button"}
+				>
+					<LuFolderOpen style={{
+						color: "#444",
+					}}/>
+				</ButtonLikeAnchor>
 
 			{/* Open dialog for embedded code*/}
-			<IconButton
-				callback={() => showEmbeddingCodeModal()}
-				iconClassname={"fa fa-link"}
+			<ButtonLikeAnchor
+				onClick={() => showEmbeddingCodeModal()}
 				editAccessRole={"ROLE_UI_EVENTS_EMBEDDING_CODE_VIEW"}
 				tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.EMBEDDING_CODE"}
-			/>
+				className={"action-cell-button"}
+				>
+					<LuLink style={{
+						color: "#444",
+					}}/>
+				</ButtonLikeAnchor>
 
 			{/* Embedding Code Modal */}
 			<Modal

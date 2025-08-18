@@ -46,8 +46,6 @@ $disable-warnings: true !default; // disables deprecation warnings
 
 // Extensions
 @use "extensions/extensions-config";
-@use "base/fontawesome/fa-mixins";
-@use "base/fontawesome/variables" as variables2;
 @use "base/variables";
 @use "components/alerts";
 @use "mixins/button";
@@ -577,16 +575,6 @@ main.main-view {
       button:hover:not(.active) {
         background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fefefe), to(#f0f0f0));
         background: -moz-linear-gradient(0% 0% 270deg, #fefefe, #f0f0f0);
-      }
-
-      &.prev {
-        //override right margin with 0
-        @include fa-mixins.fa-icon(variables2.$fa-var-chevron-left, before, inline-block, 0 0 0 0, 0, inherit, 10px);
-      }
-
-      &.next {
-        //override left margin with 0
-        @include fa-mixins.fa-icon(variables2.$fa-var-chevron-right, after, inline-block, 0 0 0 0, 0, inherit, 10px);
       }
 
       .active {

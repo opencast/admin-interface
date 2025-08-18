@@ -1,8 +1,7 @@
 @use "sass:color";
-@use "../base/fontawesome/fa-mixins";
-@use "../base/fontawesome/variables" as variables2;
 @use "../base/variables";
 @use "../mixins/mixins-config";
+@use "../mixins/button";
 
 /**
  * Licensed to The Apereo Foundation under one or more contributor license
@@ -98,22 +97,6 @@
         font-weight: 600;
         color: variables.$medium-prim-color;
         text-shadow: 0px 1px 0px #fff;
-
-
-        // Sort icon
-        span .sort {
-            float: right;
-            margin: 12px 0 0 5px;
-            @include mixins-config.build-icon(auto, auto, tbl-sort, 8px, 13px);
-
-            &.asc  {
-                @include mixins-config.build-icon(auto, auto, tbl-sort-up, 8px, 13px);
-            }
-
-            &.desc {
-                @include mixins-config.build-icon(auto, auto, tbl-sort-down, 8px, 13px);
-            }
-        }
 
         > .info {
             padding-left: 5px;
@@ -229,60 +212,40 @@
             color: #1d5888;
             padding: unset;
 
-            &.remove {
-                @include mixins-config.build-icon(auto, auto, remove-icon, 17px, 17px);
-            }
+            &.action-cell-button {
+                width: 17px;
+                height: 17px;
 
-            &.play {
-                color: variables.$color-silver;
-                @include fa-mixins.fa-icon(variables2.$fa-var-play-circle-o, before, inline-block, 0, 0, variables.$color-silver, 17px, normal, inherit);
-
-                &.on {
-                    color: variables.$primary-color-green;
-                    @include fa-mixins.fa-icon(variables2.$fa-var-play-circle-o, before, inline-block, 0, 0, variables.$primary-color-green, 17px, normal, inherit);
+                > svg {
+                    width: 100%;
+                    height: 100%;
                 }
             }
 
-            &.stop {
-                @include mixins-config.build-icon(auto, auto, stop-icon, 17px, 17px);
-            }
-
-            &.audio {
-                @include mixins-config.build-icon(auto, auto, audio-icon, 18px, 16px);
-                margin-right: 9px;
-            }
-
-            &.more {
-                @include mixins-config.build-icon(auto, auto, more-icon, 19px, 15px);
+            &.remove {
+                color: variables.$red;
             }
 
             &.more-series {
-                @include mixins-config.build-icon(auto, auto, more-series-icon, 19px, 15px);
-            }
-
-            &.comments {
-                @include fa-mixins.fa-icon(variables2.$fa-var-comment-o, before, block, -3px 0 0 0, 0, inherit, 20px, normal,
-                                 inherit);
-            }
-
-            &.comments-open {
-                @include fa-mixins.fa-icon(variables2.$fa-var-comment, before, block, -3px 0 0 0, 0, inherit, 20px, normal, inherit);
+                color: variables.$green;
             }
 
             &.cut {
-                @include fa-mixins.fa-icon(variables2.$fa-var-scissors, before, inline-block, 2px 0 0 0, 0, inherit, 18px, normal, inherit);
-
                 .badge {
                   position: relative;
                   margin-right: -9px;
-                  left: -8px;
-                  bottom: 8px;
+                  left: -7px;
+                  bottom: 10px;
                   width: 6px;
                   height: 6px;
                   display: inline-block;
                   border-radius:100%;
                   background-color: variables.$red;
                 }
+            }
+
+            &.stop {
+                color: variables.$grey;
             }
 
             &.edit {
@@ -442,22 +405,6 @@
 
         > .ios {
             margin: 5px 0 0 20px;
-        }
-
-        &.js-has-check {
-            @include fa-mixins.fa-icon(variables2.$fa-var-check, after, inline-block, 3px 0 0 0, 0, variables.$green, 18px);
-
-            &:after {
-                opacity: 0;
-                visibility: hidden;
-                float: right;
-                transition: all .2s;
-            }
-
-            &.js-active:after {
-                opacity: 1;
-                visibility: visible;
-            }
         }
     }
 

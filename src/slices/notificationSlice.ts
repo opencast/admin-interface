@@ -11,8 +11,8 @@ import {
 	ADMIN_NOTIFICATION_DURATION_WARNING,
 } from "../configs/generalConfig";
 import { getLastAddedNotification } from "../selectors/notificationSelector";
-import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
 import { ParseKeys } from "i18next";
+import { AppThunk } from "../store";
 
 /**
  * This file contains redux reducer for actions affecting the state of table
@@ -44,7 +44,7 @@ const initialState: NotificationState = {
 // Counter for id of notifications
 let nextNotificationId = 0;
 
-export const addNotification = createAppAsyncThunk("notifications/addNotification", async (params: {
+export const addNotification = (params: {
 	type: OurNotification["type"],
 	key: OurNotification["key"],
 	duration?: OurNotification["duration"],
@@ -52,7 +52,7 @@ export const addNotification = createAppAsyncThunk("notifications/addNotificatio
 	context?: OurNotification["context"],
 	id?: OurNotification["id"]
 	noDuplicates?: boolean,   // Do not add this notification if one with the same key already exists (in the same context)
-}, { dispatch, getState }) => {
+}): AppThunk => (dispatch, getState) => {
 	let { duration, parameter, context } = params;
 	const { type, key, id, noDuplicates } = params;
 
@@ -130,7 +130,7 @@ export const addNotification = createAppAsyncThunk("notifications/addNotificatio
 	}
 
 	return dispatchedNotification.payload.id;
-});
+};
 
 // Reducer for notifications
 const notificationSlice = createSlice({

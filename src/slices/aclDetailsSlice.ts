@@ -4,6 +4,7 @@ import { prepareAccessPolicyRulesForPost } from "../utils/resourceUtils";
 import { addNotification } from "./notificationSlice";
 import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
 import { Acl } from "./aclSlice";
+import { AppThunk } from "../store";
 
 /**
  * This file contains redux reducer for actions affecting the state of details of an ACL
@@ -132,13 +133,13 @@ export const fetchAclDetails = createAppAsyncThunk("aclDetails/fetchAclDetails",
 });
 
 // update details of a certain acl
-export const updateAclDetails = createAppAsyncThunk("aclDetails/updateAclDetails", async (params: {
+export const updateAclDetails = (params: {
 	values: {
 		name: string,
 		policies: TransformedAcl[],
 	},
 	aclId: number,
-}, { dispatch }) => {
+}): AppThunk => dispatch => {
 	const { values, aclId } = params;
 	// transform ACLs back to structure used by backend
 	const acls = prepareAccessPolicyRulesForPost(values.policies);
@@ -159,7 +160,7 @@ export const updateAclDetails = createAppAsyncThunk("aclDetails/updateAclDetails
 			console.error(response);
 			dispatch(addNotification({ type: "error", key: "ACL_NOT_SAVED" }));
 		});
-});
+};
 
 const aclDetailsSlice = createSlice({
 	name: "aclDetails",

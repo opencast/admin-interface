@@ -4,6 +4,7 @@ import { buildThemeBody } from "../utils/resourceUtils";
 import { addNotification } from "./notificationSlice";
 import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
 import { ThemeDetailsInitialValues, ThemeDetailsType } from "./themeSlice";
+import { AppThunk } from "../store";
 
 /**
  * This file contains redux reducer for actions affecting the state of a theme
@@ -67,10 +68,10 @@ export const fetchUsage = createAppAsyncThunk("themeDetails/fetchUsage", async (
 });
 
 // update a certain theme
-export const updateThemeDetails = createAppAsyncThunk("themeDetails/updateThemeDetails", async (params: {
+export const updateThemeDetails = (params: {
 	id: ThemeDetailsState["details"]["id"],
 	values: ThemeDetailsInitialValues
-}, { dispatch }) => {
+}): AppThunk => dispatch => {
 	const { values, id } = params;
 	const data = buildThemeBody(values);
 
@@ -89,7 +90,7 @@ export const updateThemeDetails = createAppAsyncThunk("themeDetails/updateThemeD
 			console.error(response);
 			dispatch(addNotification({ type: "error", key: "THEME_NOT_CREATED" }));
 		});
-});
+};
 
 const themeDetailsSlice = createSlice({
 	name: "themeDetails",

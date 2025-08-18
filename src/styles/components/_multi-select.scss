@@ -1,6 +1,4 @@
 @use "../mixins/mixins-bourbon";
-@use "../base/fontawesome/fa-mixins";
-@use "../base/fontawesome/variables" as variables2;
 @use "../base/variables";
 @use "../mixins/button";
 
@@ -84,17 +82,13 @@
 }
 
 // Used to indicate the correlation between multiple select columns
-.exchange-icon:after {
-    width: 10%;
+.exchange-icon {
+    width: 6%;
     display: block;
     float: left;
     position: relative;
-    top: 60px;
-    content: "\f0ec";
-    font-family: FontAwesome;
     font-size: 18px;
     color: variables.$medium-prim-color;
-    text-align: center;
 }
 
 // Extra Input Offset
@@ -107,7 +101,7 @@
     &.offset-col-1,
     &.offset-col-2 {
 
-        .exchange-icon:after {
+        .exchange-icon {
             top: $icon-top-margin;
         }
     }

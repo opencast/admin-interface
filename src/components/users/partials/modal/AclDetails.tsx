@@ -90,8 +90,8 @@ const AclDetails = ({
 							formik={formik}
 							previousPage={close}
 							submitPage={
-								async () => {
-									if (await dispatch(checkAcls(formik.values.policies))) {
+								() => {
+									if (dispatch(checkAcls(formik.values.policies))) {
 										formik.handleSubmit();
 									}
 								}

@@ -1,9 +1,8 @@
-import { useTranslation } from "react-i18next";
 import { setSpecificEventFilter } from "../../../slices/tableFilterSlice";
 import { useNavigate } from "react-router";
 import { useAppDispatch } from "../../../store";
-import { Tooltip } from "../../shared/Tooltip";
 import { Series } from "../../../slices/seriesSlice";
+import BaseButton from "../../shared/BaseButton";
 
 /**
  * This component renders the title cells of series in the table view
@@ -13,7 +12,6 @@ const SeriesTitleCell = ({
 }: {
 	row: Series
 }) => {
-	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 
@@ -24,14 +22,13 @@ const SeriesTitleCell = ({
 	};
 
 	return (
-		<Tooltip title={t("EVENTS.SERIES.TABLE.TOOLTIP.SERIES")}>
-			<button
-				className="button-like-anchor crosslink"
-				onClick={() => redirectToEvents(row.id)}
-			>
-				{row.title}
-			</button>
-		</Tooltip>
+		<BaseButton
+			className="button-like-anchor crosslink"
+			tooltipText={"EVENTS.SERIES.TABLE.TOOLTIP.SERIES"}
+			onClick={() => redirectToEvents(row.id)}
+		>
+			{row.title}
+		</BaseButton>
 	);
 };
 

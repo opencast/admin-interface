@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Modal, ModalHandle } from "./modals/Modal";
 import { NotificationComponent } from "./Notifications";
 import { ParseKeys } from "i18next";
+import BaseButton from "./BaseButton";
 
 export type ResourceType = "EVENT" | "SERIES" | "LOCATION" | "USER" | "GROUP" | "ACL" | "THEME" | "TOBIRA_PATH";
 
@@ -72,18 +73,18 @@ const ConfirmModal = <T, >({
 					<p>{t("CONFIRMATIONS.CONTINUE_ACTION")}</p>
 
 					<div className="btn-container">
-						<button
+						<BaseButton
 							className="cancel-btn close-modal"
 							onClick={() => handleClose()}
 						>
 							<i>{t("CANCEL")}</i>
-						</button>
-						<button
+						</BaseButton>
+						<BaseButton
 							className="danger-btn"
 							onClick={() => handleConfirmation()}
 						>
 							<i>{t("CONFIRM")}</i>
-						</button>
+						</BaseButton>
 					</div>
 				</div>
 			) : (
@@ -98,12 +99,12 @@ const ConfirmModal = <T, >({
 						/>
 					)}
 					<div className="btn-container">
-						<button
+						<BaseButton
 							className="cancel-btn close-modal"
 							onClick={() => handleClose()}
 						>
 							<i>{t("CANCEL")}</i>
-						</button>
+						</BaseButton>
 					</div>
 				</div>
 			)}

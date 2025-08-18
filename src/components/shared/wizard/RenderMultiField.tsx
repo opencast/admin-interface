@@ -5,6 +5,7 @@ import { useClickOutsideField } from "../../../hooks/wizardHooks";
 import { FieldInputProps, FieldProps } from "formik";
 import { MetadataField } from "../../../slices/eventSlice";
 import ButtonLikeAnchor from "../ButtonLikeAnchor";
+import { LuCheck, LuSquarePen, LuX } from "react-icons/lu";
 
 const childRef = React.createRef<HTMLDivElement>();
 
@@ -181,8 +182,10 @@ const EditMultiSelect = ({
 					fieldValue.map((item, key) => (
 						<span className="ng-multi-value" key={key}>
 							{item}
-							<ButtonLikeAnchor onClick={() => removeItem(key)}>
-								<i className="fa fa-times" />
+							<ButtonLikeAnchor
+								onClick={() => removeItem(key)}
+							>
+								<LuX style={{ verticalAlign: "middle" }}/>
 							</ButtonLikeAnchor>
 						</span>
 					))}
@@ -217,13 +220,14 @@ const ShowValue = ({
 				<span className="editable preserve-newlines">{""}</span>
 			)}
 			<div>
-				<i className="edit fa fa-pencil-square" />
+				<LuSquarePen style={{ float: "right", cursor: "pointer", margin: "5px", fontSize: "14px" }}/>
 				{showCheck && (
-					<i
-						className={cn("saved fa fa-check", {
+					<LuCheck
+						className={cn("fa-check", {
 							// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 							active: JSON.stringify(initialValues[field.name] ?? []) !== JSON.stringify(field.value ?? []),
 						})}
+						style={{ float: "right", cursor: "pointer" }}
 					/>
 				)}
 			</div>

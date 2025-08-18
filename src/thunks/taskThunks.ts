@@ -9,7 +9,7 @@ export const postTasks = (
 		configuration: { [key: string] : string }
 		workflow: string
 	},
-) => async (dispatch: AppDispatch) => {
+) => (dispatch: AppDispatch) => {
 	const configuration: { [key: string] : string } = {};
 	Object.keys(values.configuration).forEach(config => {
 		configuration[config] = String(values.configuration[config]);

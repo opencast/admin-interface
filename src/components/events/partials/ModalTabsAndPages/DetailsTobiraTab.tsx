@@ -15,6 +15,8 @@ import ConfirmModal from "../../../shared/ConfirmModal";
 import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
 import { ModalHandle } from "../../../shared/modals/Modal";
 import { fetchEventDetailsTobira } from "../../../../slices/eventDetailsSlice";
+import BaseButton from "../../../shared/BaseButton";
+import { LuCircleX, LuCopy, LuSquarePen } from "react-icons/lu";
 
 
 export type TobiraTabHierarchy = "main" | "edit-path";
@@ -147,17 +149,17 @@ const DetailsTobiraTab = ({ kind, id }: DetailsTobiraTabProps) => {
 						<a href={directTobiraLink}>
 							{t(`EVENTS.${i18nKey}.DETAILS.TOBIRA.DIRECT_LINK`)}
 						</a>
-						<button
+						<BaseButton
 							className="tobira-copy-direct-link"
 							onClick={() => copyTobiraDirectLink()}
 							aria-label={t(`EVENTS.${i18nKey}.DETAILS.TOBIRA.COPY_DIRECT_LINK`)}
 						>
 							<i
 								aria-hidden="true"
-								className="fa fa-copy"
 								title={t(`EVENTS.${i18nKey}.DETAILS.TOBIRA.COPY_DIRECT_LINK`)}
 							/>
-						</button>
+							<LuCopy />
+						</BaseButton>
 					</div>
 					{kind === "series" && <p className="tab-description">
 						{t("EVENTS.SERIES.DETAILS.TOBIRA.DESCRIPTION")}
@@ -213,10 +215,12 @@ const TobiraTable = ({ tobiraData, i18nKey, openSubTab, handleDelete }: TobiraTa
 						{t(`EVENTS.${i18nKey}.DETAILS.TOBIRA.NOT_MOUNTED`)}
 						{i18nKey === "SERIES" && <ButtonLikeAnchor
 							style={{ margin: 5 }}
-							extraClassName="edit fa fa-pencil-square pull-right"
+							className="edit pull-right"
 							onClick={() => openSubTab("edit-path")}
 							tooltipText="EVENTS.SERIES.DETAILS.TOBIRA.MOUNT_SERIES"
-						/>}
+						>
+							<LuSquarePen style={{ float: "right", cursor: "pointer", margin: "5px", fontSize: "14px" }} />
+						</ButtonLikeAnchor>}
 					</td>
 				</tr>}
 				{tobiraData.hostPages.map(hostPage => <tr key={hostPage.path}>
@@ -245,15 +249,19 @@ const TobiraTable = ({ tobiraData, i18nKey, openSubTab, handleDelete }: TobiraTa
 							<ButtonLikeAnchor
 								style={{ margin: 5 }}
 								onClick={() => deleteConfirmationModalRef.current?.open()}
-								extraClassName="remove pull-right"
+								className="action-cell-button remove pull-right"
 								tooltipText="EVENTS.SERIES.DETAILS.TOBIRA.REMOVE_PATH"
-							/>
+							>
+								<LuCircleX />
+							</ButtonLikeAnchor>
 							<ButtonLikeAnchor
 								style={{ margin: 5 }}
-								extraClassName="edit fa fa-pencil-square pull-right"
+								className="edit pull-right"
 								onClick={() => openSubTab("edit-path", hostPage)}
 								tooltipText="EVENTS.SERIES.DETAILS.TOBIRA.EDIT_PATH"
-							/>
+							>
+								<LuSquarePen style={{ float: "right", cursor: "pointer", margin: "5px", fontSize: "14px" }} />
+							</ButtonLikeAnchor>
 							<ConfirmModal
 								close={() => deleteConfirmationModalRef.current?.close?.()}
 								resourceName={hostPage.path}

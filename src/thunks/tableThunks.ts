@@ -41,7 +41,7 @@ import { AppDispatch, AppThunk, RootState } from "../store";
  * */
 
 // Method to load events into the table
-export const loadEventsIntoTable = (): AppThunk => async (dispatch, getState) => {
+export const loadEventsIntoTable = (): AppThunk => (dispatch, getState) => {
 	const { events, table } = getState();
 	const total = events.total;
 

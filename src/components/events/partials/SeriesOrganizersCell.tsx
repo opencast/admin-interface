@@ -1,4 +1,3 @@
-import React from "react";
 import { fetchSeries, Series } from "../../../slices/seriesSlice";
 import { loadSeriesIntoTable } from "../../../thunks/tableThunks";
 import MultiValueCell from "../../shared/MultiValueCell";

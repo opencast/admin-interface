@@ -5,6 +5,7 @@ import { buildThemeBody, getURLParams } from "../utils/resourceUtils";
 import { addNotification } from "./notificationSlice";
 import { TableConfig } from "../configs/tableConfigs/aclsTableConfig";
 import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
+import { AppThunk } from "../store";
 
 /**
  * This file contains redux reducer for actions affecting the state of themes
@@ -83,7 +84,7 @@ export const fetchThemes = createAppAsyncThunk("theme/fetchThemes", async (_, { 
 });
 
 // post new theme to backend
-export const postNewTheme = createAppAsyncThunk("theme/postNewTheme", async (values: ThemeDetailsInitialValues
+export const postNewTheme = (values: ThemeDetailsInitialValues,
 	// All params that would be accepted by the endpoint
 	// {
 	// default: boolean,
@@ -103,7 +104,7 @@ export const postNewTheme = createAppAsyncThunk("theme/postNewTheme", async (val
 	// licenseSlideDescription: string,
 	// watermarkPosition: string,
 // }
-, { dispatch }) => {
+): AppThunk => dispatch => {
 	// get URL params used for post request
 	const data = buildThemeBody(values);
 
@@ -124,10 +125,10 @@ export const postNewTheme = createAppAsyncThunk("theme/postNewTheme", async (val
 			console.error(response);
 			dispatch(addNotification({ type: "error", key: "THEME_NOT_CREATED" }));
 		});
-});
+};
 
 // delete theme with provided id
-export const deleteTheme = createAppAsyncThunk("theme/deleteTheme", async (id: ThemeDetailsType["id"], { dispatch }) => {
+export const deleteTheme = (id: ThemeDetailsType["id"]): AppThunk => dispatch => {
 	axios
 		.delete(`/admin-ng/themes/${id}`)
 		.then(res => {
@@ -140,7 +141,7 @@ export const deleteTheme = createAppAsyncThunk("theme/deleteTheme", async (id: T
 			// add error notification
 			dispatch(addNotification({ type: "error", key: "THEME_NOT_DELETED" }));
 		});
-});
+};
 
 const themeSlice = createSlice({
 	name: "theme",

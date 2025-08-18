@@ -7,6 +7,7 @@ import { useAppSelector } from "../../../../store";
 import { FormikProps } from "formik";
 import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
+import { LuCircleX } from "react-icons/lu";
 
 /**
  * This component renders the asset upload page of the new event wizard
@@ -89,12 +90,14 @@ const NewAssetUploadPage = <T extends RequiredFormProps>({
 											{/* Button to remove asset*/}
 											<td className="fit">
 												<ButtonLikeAnchor
-													extraClassName="remove"
+													className="action-cell-button remove"
 													onClick={() => {
 														formik.setFieldValue(asset.id, null);
 														(document.getElementById(asset.id) as HTMLInputElement).value = "";
 													}}
-												/>
+												>
+													<LuCircleX />
+												</ButtonLikeAnchor>
 											</td>
 										</tr>
 									))

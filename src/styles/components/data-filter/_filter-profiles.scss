@@ -1,6 +1,4 @@
 @use "sass:color";
-@use "../../base/fontawesome/fa-mixins";
-@use "../../base/fontawesome/variables" as variables2;
 @use "../../base/variables";
 @use "../../mixins/button";
 
@@ -59,7 +57,8 @@
             float: right;
             padding-right: 5px;
             padding-top: 5px;
-            @include fa-mixins.fa-icon(variables2.$fa-var-close, before, inline-block, 0, 0, variables.$medium-prim-color, 17px);
+            color: variables.$medium-prim-color;
+            font-size: 17px;
         }
     } // header
     .footer-btn {
@@ -85,39 +84,6 @@
     color: black 40%;
     text-shadow: 0px 1px 0px #fff;
 
-    .df-profile-button {
-        display: block;
-        position: absolute;
-        top: 11px;
-        right: 8px;
-        cursor: pointer;
-        pointer-events: auto;
-        @include fa-mixins.fa-icon(variables2.$fa-var-cogs, before, inline-block, 0, 0, variables.$medium-prim-color, 10px);
-        font-family: "Open Sans", sans-serif;
-        color: #555;
-
-        transition-property: visibility, opacity;
-        transition-duration: 300ms;
-        transition-timing-function: ease-in-out;
-        transition-delay: 160ms;
-
-        &:before {
-            transition: color 250ms ease-in-out;
-        }
-
-        &:hover {
-            @include fa-mixins.fa-icon-color(before, variables.$alt-red);
-        }
-    }
-
-    &.disabled .df-profile-button {
-        @include fa-mixins.fa-icon-color(before, variables.$light-prim-color);
-
-        &:hover {
-            @include fa-mixins.fa-icon-color(before, variables.$light-prim-color);
-        }
-    }
-
     .filters-list {
         @include filter-dd-mixin();
 
@@ -134,13 +100,15 @@
             padding: 7px 10px;
 
             .remove {
-                @include fa-mixins.fa-icon(variables2.$fa-var-close, before, inline-block, 0, 0, variables.$medium-prim-color, 17px);
+                color: variables.$medium-prim-color;
+                font-size: 17px;
+                vertical-align: middle;
             }
 
             .edit {
-                @include fa-mixins.fa-icon(variables2.$fa-var-cog, before, inline-block, 0, 0, variables.$medium-prim-color, 17px);
-                padding-left: 5px;
-                padding-right: 5px;
+                color: variables.$medium-prim-color;
+                font-size: 17px;
+                vertical-align: middle;
             }
 
             > button {

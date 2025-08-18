@@ -209,6 +209,8 @@
 		"SERIES_THEME_REPROCESS_EXISTING_EVENTS": "Gli eventi esistenti di questa serie dovranno essere rielaborati",
 		"SERIES_ACL_LOCKED": "La modifica delle Policy di Accesso non è consentita quando le operazioni sono in esecuzione su un evento che fa parte della serie",
 		"EVENT_ACL_MISSING_READWRITE_ROLE": "La Policy di Accesso richiede almeno un ruolo con i permessi di Lettura e Scrittura.",
+		"METADATA_SAVED": "The metadata has been saved.",
+		"METADATA_NOT_SAVED": "The metadata has NOT been saved!",
 		"THEME_NAME_EMPTY": "Il nome non può essere vuoto",
 		"BUMPER_UPLOAD_ERROR": "Errore durante il caricamento dei media",
 		"THEME_CREATED": "Il tema è stato creato",
@@ -235,12 +237,12 @@
 		"PROBLEM_ON_START": "An error occurred on start up. Please contact your Opencast admin",
 		"TOBIRA_OVERRIDE_NAME": "The title of the selected page will be overridden with the title of the series.",
 		"TOBIRA_NO_PATH_SEGMENT": "Page needs a path segment.",
-		"TOBIRA_NOT_MOUNTED": "Series could not be mounted in Tobira.",
+		"TOBIRA_NOT_MOUNTED": "La serie non può essere montata su Tobira.",
 		"TOBIRA_PATH_SEGMENT_INVALID": "Path segment is invalid. A valid path segment is at least 2 characters long, does not contain any whitespace or control characters, none of the characters '<>\"[\\]^`{|}#%\/?]', and doesn't start with any of the characters '-+~@_!$&;:.,=*'()'.",
 		"TOBIRA_PATH_SEGMENT_UNIQUE": "The path segment of a page must be unique among all its sibling pages.",
 		"TOBIRA_PAGE_NOT_FOUND": "The page you tried to navigate to does not or no longer exist. Maybe try starting from the beginning.",
 		"TOBIRA_SERVER_ERROR": " Error talking to Tobira. Contact your system administrator and\/or try again later.",
-		"TOBIRA_COPIED_DIRECT_LINK": "Copied link to clipboard.",
+		"TOBIRA_COPIED_DIRECT_LINK": "Link copiato negli appunti.",
 		"TOBIRA_FAILED_COPYING_DIRECT_LINK": "Couldn't copy link to clipboard.",
 		"TOBIRA_NOT_FOUND": "Tobira doesn't know about this series or event (yet). Try again in a few minutes or contact your system administrator.",
 		"TOBIRA_NOT_CONFIGURED": "Tobira is not configured (correctly)."
@@ -406,16 +408,16 @@
 			"SKIP": "Not now",
 			"CONTINUE": "Continue",
 			"BACK": "Back",
-			"SUBMIT": "Submit",
-			"CONFIRM": "Confirm",
+			"SUBMIT": "Invia",
+			"CONFIRM": "Conferma",
 			"LEGAL_INFO_STATE": {
 				"HEADER": "Terms of Service and Privacy Policy"
 			},
 			"SUMMARY_STATE": {
 				"HEADER": "This is a JSON summary of exactly what would be sent to Opencast's servers",
 				"GENERAL_HEADER": "Adopter Information",
-				"STATS_HEADER": "Statistical Information",
-				"NO_STATS_HEADER": "No statistics data will be shared"
+				"STATS_HEADER": "Dati statistici",
+				"NO_STATS_HEADER": "Nessun dato statistico sarà condiviso"
 			},
 			"INFORMATION_STATE": {
 				"HEADER": "Thank you for using Opencast!",
@@ -441,11 +443,11 @@
 				"CONTACT_ME": "Contact me for updates and secruity issues",
 				"SYSTEM_TYPE_HEADLINE": "For what purpose do you use this system?",
 				"SYSTEM_TYPE": "System Type",
-				"SYSTEM_TYPE_PRODUCTION": "Production System",
-				"SYSTEM_TYPE_TEST": "Test System",
+				"SYSTEM_TYPE_PRODUCTION": "Sistema di produzione",
+				"SYSTEM_TYPE_TEST": "Sistema di prova",
 				"WHICH_DATA_TO_SHARE": "Which data do you want to share?",
 				"POLICY_HEADLINE": "Privacy policy and terms of use",
-				"USAGE_STATISTICS": "Usage statistics",
+				"USAGE_STATISTICS": "Statistiche d'uso",
 				"ERROR_REPORTS": "Error reports",
 				"READ_TERMS_OF_USE_BEFORE": "I have read and agree to the",
 				"READ_TERMS_OF_USE_LINK": "privacy policy and terms of use",
@@ -654,8 +656,8 @@
 					"PLAYER": "Open player",
 					"PRESENTER": "Filtra per questo presentatore"
 				},
-				"SELECT_ALL": "Select all events",
-				"SELECT_EVENT": "Select event \"{{title}}\""
+				"SELECT_ALL": "Seleziona tutti gli eventi",
+				"SELECT_EVENT": "Seleziona evento \"{{title}}\""
 			},
 			"STATUS": {
 				"SCHEDULED": "Programmato",
@@ -895,10 +897,14 @@
 						"ADDITIONAL_ACTIONS": "Azioni aggiuntive",
 						"ACTION": "Azioni",
 						"NEW": "Nuova politica",
-						"DETAILS": "Details"
+						"NON_USER_ROLES": "Roles and Groups authorized for the event",
+						"USER": "User",
+						"USERS": "Users who are authorized for the event",
+						"NEW_USER": "New user",
+						"SANITIZATION_NOTE": "User role sanitization is enabled in your Opencast, therefore user roles are displayed alongside other roles. This does not impact role functionality in any way."
 					},
 					"ROLES": {
-						"LABEL": "Select or create a role"
+						"LABEL": "Seleziona o crea un ruolo"
 					}
 				},
 				"COMMENTS": {
@@ -916,7 +922,7 @@
 						"REVIEW": "Revisione necessaria",
 						"ASYNC": "A\/V tracce asincrone",
 						"AUDIO_ISSUE": "Traccia audio mancante o difettosa",
-						"CANCELLED": "Canceled event",
+						"CANCELLED": "Evento annullato",
 						"CONFLICTING_METADATA": "Metadati in conflitto",
 						"IMPROPER_POINT": "Punto di ingresso o di uscita improprio",
 						"MISSING_AGREEMENT": "Contratto mancante",
@@ -967,10 +973,10 @@
 				},
 				"TOBIRA": {
 					"HOMEPAGE": "(Homepage)",
-					"DIRECT_LINK": "Direct link to event",
-					"COPY_DIRECT_LINK": "Copy to clipboard",
-					"NOT_MOUNTED": "This event is currently not included the page structure, and can only be reached using the direct link above.",
-					"PAGES": "Pages in Tobira that contain this event"
+					"DIRECT_LINK": "Link diretto all'evento",
+					"COPY_DIRECT_LINK": "Copia negli appunti",
+					"NOT_MOUNTED": "Questo evento al momento non è incluso nella struttura della pagina, e può essere raggiunto solo utilizzando il link diretto soprastante.",
+					"PAGES": "Pagine in Tobira che contengono questo evento"
 				},
 				"SCHEDULING": {
 					"CAPTION": "Participation status",
@@ -982,7 +988,6 @@
 					"ACTIONS": "Azioni",
 					"DETAILS": "Dettagli",
 					"DESCRIPTION": "Descrizione",
-					"MORE_INFO": "More Information",
 					"ID": "ID",
 					"TYPE": "Tipo",
 					"TITLE": "Titolo",
@@ -1022,11 +1027,13 @@
 				},
 				"WORKFLOW_DETAILS": {
 					"TITLE": "Dettagli flusso di lavoro",
-					"CONFIGURATION": "Configurazione flusso di lavoro"
+					"CONFIGURATION": "Configurazione flusso di lavoro",
+					"OPERATIONS": "Operations",
+					"CURRENT_OPERATION": "Current workflow operation"
 				},
 				"WORKFLOW_OPERATIONS": {
 					"TITLE": "Operazioni flusso di lavoro",
-					"DETAILS_LINK": "Operations",
+					"DETAILS_LINK": "All operations",
 					"TABLE_HEADERS": {
 						"TITLE": "Titolo",
 						"STATUS": "Stato",
@@ -1086,7 +1093,8 @@
 						"DATE": "Data",
 						"HOST": "Host di elaborazione",
 						"TYPE": "Tipo di servizio",
-						"TECHNICAL_DETAILS": "Dettagli tecnici"
+						"TECHNICAL_DETAILS": "Dettagli tecnici",
+						"OPERATION": "Operation the error occured in"
 					}
 				}
 			}
@@ -1208,7 +1216,10 @@
 						"ADDITIONAL_ACTIONS": "Azioni aggiuntive",
 						"ACTION": "Azioni",
 						"NEW": "Nuova politica",
-						"DETAILS": "Details",
+						"NON_USER_ROLES": "Roles and Groups authorized for the series",
+						"USER": "User",
+						"USERS": "Users who are authorized for the series",
+						"NEW_USER": "New user",
 						"REPLACE_EVENT_ACLS": "Aggiorna permessi serie",
 						"REPLACE_EVENT_ACLS_HINT": "Assicurarsi che tutti gli eventi di questa serie abbiano questi permessi in vigore",
 						"LOAD_MORE_LIMIT": "policies shown.",
@@ -1237,15 +1248,15 @@
 					"REPLACE_SERIES_THEME": "Update series theme"
 				},
 				"TOBIRA": {
-					"HOMEPAGE": "(Homepage)",
+					"HOMEPAGE": "(Pagina principale)",
 					"DIRECT_LINK": "Direct link to series",
 					"COPY_DIRECT_LINK": "Copy to clipboard",
 					"NOT_MOUNTED": "This series is currently not included the page structure, and can only be reached using the direct link above.",
 					"PAGES": "Pages in Tobira that contain this series",
-					"DISCARD": "Discard",
-					"EDIT_PATH": "Edit path",
-					"REMOVE_PATH": "Remove path",
-					"MOUNT_SERIES": "Mount series",
+					"DISCARD": "Scarta",
+					"EDIT_PATH": "Modifica percorso",
+					"REMOVE_PATH": "Rimuovi percorso",
+					"MOUNT_SERIES": "Monta serie",
 					"DESCRIPTION": "You may edit the path of pages containing this series if the page has no other content."
 				},
 				"EVENTS": {
@@ -1287,7 +1298,7 @@
 				}
 			},
 			"DETAILS": {
-				"HEADER": "Location details - {{name}}",
+				"HEADER": "Dettagli posizione - {{name}}",
 				"TAB": {
 					"GENERAL": "Generale",
 					"CONFIGURATION": "Configurazione",
@@ -1344,7 +1355,7 @@
 			},
 			"DETAILS": {
 				"NEWCAPTION": "Crea utente",
-				"EDITCAPTION": "User details - {{name}}",
+				"EDITCAPTION": "Dettagli utente - {{name}}",
 				"TABS": {
 					"USER": "Utente",
 					"ROLES": "Ruoli",
@@ -1467,8 +1478,11 @@
 						"ADDITIONAL_ACTIONS": "Azioni aggiuntive",
 						"ACTION": "Azioni",
 						"NEW": "Nuova politica",
-						"DETAILS": "Dettagli",
-						"DESCRIPTION": "Scegli un insieme di politiche pre-configurate o aggiungi politiche personalizzate qui sotto"
+						"NON_USER_ROLES": "Roles and Groups authorized for the access policy",
+						"DESCRIPTION": "Scegli un insieme di politiche pre-configurate o aggiungi politiche personalizzate qui sotto",
+						"USER": "User",
+						"USERS": "Users who are authorized for the access policy",
+						"NEW_USER": "New user"
 					},
 					"ROLES": {
 						"LABEL": "Seleziona un ruolo",
@@ -1757,7 +1771,7 @@
 			"NAME_PLACEHOLDER": "Nome…",
 			"DESCRIPTION": "Descrizione",
 			"DESCRIPTION_PLACEHOLDER": "Descrizione…",
-			"ADD": "Add"
+			"ADD": "Aggiungi"
 		}
 	},
 	"FILTERS": {

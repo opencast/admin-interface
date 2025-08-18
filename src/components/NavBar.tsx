@@ -10,6 +10,8 @@ import NewResourceModal, { NewResource } from "./shared/NewResourceModal";
 import { useHotkeys } from "react-hotkeys-hook";
 import { ModalHandle } from "./shared/modals/Modal";
 import { ParseKeys } from "i18next";
+import BaseButton from "./shared/BaseButton";
+import { LuPlus } from "react-icons/lu";
 
 /**
  * Component that renders the nav bar
@@ -109,13 +111,14 @@ const NavBar = ({
 			{create &&
 				<div className="btn-group">
 					{hasAccess(create.accessRole, user) && (
-						<button
+						<BaseButton
 							className="add"
 							onClick={showNewResourceModal}
+							style={{ display: "flex", alignItems: "center" }}
 						>
-							<i className="fa fa-plus" />
+							<LuPlus className="btn-group-icon"/>
 							<span>{t(create.text)}</span>
-						</button>
+						</BaseButton>
 					)}
 				</div>
 			}

@@ -34,6 +34,7 @@ import EventDetailsAssetPublicationDetails from "./EventDetailsAssetPublicationD
 import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
 import { ParseKeys } from "i18next";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
+import { LuChevronRight } from "react-icons/lu";
 
 /**
  * This component manages the main assets tab of event details modal
@@ -168,12 +169,13 @@ const EventDetailsAssetsTab = ({
 														user,
 													) && (
 														<ButtonLikeAnchor
-															extraClassName="details-link"
+															className="details-link"
 															onClick={() =>
 																openSubTab("add-asset")
 															}
 														>
 															{t("EVENTS.EVENTS.NEW.UPLOAD_ASSET.ADD")}
+															<LuChevronRight className="details-link-icon"/>
 														</ButtonLikeAnchor>
 													)}
 											</th>
@@ -192,7 +194,7 @@ const EventDetailsAssetsTab = ({
 											<td>
 												{assets.attachments > 0 && (
 													<ButtonLikeAnchor
-														extraClassName="details-link"
+														className="details-link"
 														onClick={() =>
 															openSubTab("asset-attachments")
 														}
@@ -202,6 +204,7 @@ const EventDetailsAssetsTab = ({
 																"EVENTS.EVENTS.DETAILS.ASSETS.DETAILS",
 															) /* Details */
 														}
+														<LuChevronRight className="details-link-icon"/>
 													</ButtonLikeAnchor>
 												)}
 											</td>
@@ -218,7 +221,7 @@ const EventDetailsAssetsTab = ({
 											<td>
 												{assets.catalogs > 0 && (
 													<ButtonLikeAnchor
-														extraClassName="details-link"
+														className="details-link"
 														onClick={() =>
 															openSubTab("asset-catalogs")
 														}
@@ -228,6 +231,7 @@ const EventDetailsAssetsTab = ({
 																"EVENTS.EVENTS.DETAILS.ASSETS.DETAILS",
 															) /* Details */
 														}
+														<LuChevronRight className="details-link-icon"/>
 													</ButtonLikeAnchor>
 												)}
 											</td>
@@ -244,7 +248,7 @@ const EventDetailsAssetsTab = ({
 											<td>
 												{assets.media > 0 && (
 													<ButtonLikeAnchor
-														extraClassName="details-link"
+														className="details-link"
 														onClick={() => openSubTab("asset-media")}
 													>
 														{
@@ -252,6 +256,7 @@ const EventDetailsAssetsTab = ({
 																"EVENTS.EVENTS.DETAILS.ASSETS.DETAILS",
 															) /* Details */
 														}
+														<LuChevronRight className="details-link-icon"/>
 													</ButtonLikeAnchor>
 												)}
 											</td>
@@ -268,7 +273,7 @@ const EventDetailsAssetsTab = ({
 											<td>
 												{assets.publications > 0 && (
 													<ButtonLikeAnchor
-														extraClassName="details-link"
+														className="details-link"
 														onClick={() =>
 															openSubTab("asset-publications")
 														}
@@ -278,6 +283,7 @@ const EventDetailsAssetsTab = ({
 																"EVENTS.EVENTS.DETAILS.ASSETS.DETAILS",
 															) /* Details */
 														}
+														<LuChevronRight className="details-link-icon"/>
 													</ButtonLikeAnchor>
 												)}
 											</td>

@@ -4,6 +4,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { availableHotkeys } from "../../../configs/hotkeysConfig";
 import ButtonLikeAnchor from "../ButtonLikeAnchor";
 import { ParseKeys } from "i18next";
+import { LuX } from "react-icons/lu";
 
 /**
  * This component renders the modal for displaying series details
@@ -37,9 +38,11 @@ const DetailsModal = ({
 			<section className="modal wizard modal-animation" id="details-modal">
 				<header>
 					<ButtonLikeAnchor
-						extraClassName="fa fa-times close-modal"
+						className="close-modal"
 						onClick={() => close()}
-					/>
+					>
+						<LuX />
+					</ButtonLikeAnchor>
 					<h2>
 						{t(prefix, { name: title })}
 					</h2>

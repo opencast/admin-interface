@@ -16,6 +16,7 @@ import { TransformedAcl } from "./aclDetailsSlice";
 import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
 import { MetadataCatalog } from "./eventSlice";
 import { handleTobiraError } from "./shared/tobiraErrors";
+import { AppThunk } from "../store";
 
 /**
  * This file contains redux reducer for actions affecting the state of series
@@ -181,7 +182,7 @@ export const fetchSeriesThemes = createAppAsyncThunk("series/fetchSeriesThemes",
 });
 
 // post new series to backend
-export const postNewSeries = createAppAsyncThunk("series/postNewSeries", async (params: {
+export const postNewSeries = (params: {
 	values: {
 		[key: string]: any;
 		policies: TransformedAcl[],
@@ -200,7 +201,7 @@ export const postNewSeries = createAppAsyncThunk("series/postNewSeries", async (
 	},
 	metadataInfo: MetadataCatalog,
 	extendedMetadata: MetadataCatalog[]
-}, { dispatch }) => {
+}): AppThunk => dispatch => {
 	const { values, metadataInfo, extendedMetadata } = params;
 
 	// prepare metadata provided by user
@@ -282,7 +283,7 @@ export const postNewSeries = createAppAsyncThunk("series/postNewSeries", async (
 			console.error(response);
 			dispatch(addNotification({ type: "error", key: "SERIES_NOT_SAVED" }));
 		});
-});
+};
 
 // check for events of the series and if deleting the series if it has events is allowed
 export const checkForEventsDeleteSeriesModal = createAppAsyncThunk("series/checkForEventsDeleteSeriesModal", async (id: Series["id"], { dispatch }) => {
@@ -304,8 +305,8 @@ export const checkForEventsDeleteSeriesModal = createAppAsyncThunk("series/check
 	);
 });
 
-// delete series with provided id
-export const deleteSeries = createAppAsyncThunk("series/deleteSeries", async (id: Series["id"], { dispatch }) => {
+// delete series with provided
+export const deleteSeries = (id: Series["id"]): AppThunk => dispatch => {
 	// API call for deleting a series
 	axios
 		.delete(`/admin-ng/series/${id}`)
@@ -319,10 +320,10 @@ export const deleteSeries = createAppAsyncThunk("series/deleteSeries", async (id
 			// add error notification
 			dispatch(addNotification({ type: "error", key: "SERIES_NOT_DELETED" }));
 		});
-});
+};
 
 // delete series with provided ids
-export const deleteMultipleSeries = createAppAsyncThunk("series/deleteMultipleSeries", async (
+export const deleteMultipleSeries = (
 	series: {
 		contributors: string[],
 		createdBy: string,
@@ -333,7 +334,7 @@ export const deleteMultipleSeries = createAppAsyncThunk("series/deleteMultipleSe
 		selected: boolean,
 		title: string,
 	}[],
-{ dispatch }) => {
+): AppThunk => dispatch => {
 	const data = [];
 
 	for (let i = 0; i < series.length; i++) {
@@ -354,7 +355,7 @@ export const deleteMultipleSeries = createAppAsyncThunk("series/deleteMultipleSe
 			// add error notification
 			dispatch(addNotification({ type: "error", key: "SERIES_NOT_DELETED" }));
 		});
-});
+};
 
 // fetch metadata of certain series from server
 export const fetchSeriesDetailsTobiraNew = createAppAsyncThunk("seriesDetails/fetchSeriesDetailsTobiraNew", async (path: TobiraPage["path"], { dispatch }) => {

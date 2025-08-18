@@ -9,7 +9,6 @@ import {
 import CustomStepIcon from "./CustomStepIcon";
 import { checkAcls } from "../../../slices/aclSlice";
 import { useAppDispatch } from "../../../store";
-import { FormikProps } from "formik/dist/types";
 import { ParseKeys } from "i18next";
 import { TransformedAcl } from "../../../slices/aclDetailsSlice";
 
@@ -41,10 +40,10 @@ const WizardStepper = ({
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
-	const handleOnClick = async (key: number) => {
+	const handleOnClick = (key: number) => {
 		if (isSummaryReachable(key, steps, completed)) {
 			if (acls) {
-				const check = await dispatch(checkAcls(acls));
+				const check = dispatch(checkAcls(acls));
 				if (!check) {
 					return;
 				}

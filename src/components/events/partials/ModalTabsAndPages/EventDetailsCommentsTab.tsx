@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
 	getComments,
 	getCommentReasons,
@@ -24,6 +24,8 @@ import { useTranslation } from "react-i18next";
 import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
 import { ParseKeys } from "i18next";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
+import BaseButton from "../../../shared/BaseButton";
+import { LuCircleX, LuClock9 } from "react-icons/lu";
 
 /**
  * This component manages the comment tab of the event details modal
@@ -133,6 +135,7 @@ const EventDetailsCommentsTab = ({
 
 									{/* details about the comment */}
 									<div className="date">
+										<LuClock9 className="dateIcon"/>
 										{t("dateFormats.dateTime.short", {
 											dateTime: renderValidDate(comment.creationDate),
 										}) || ""}
@@ -155,7 +158,7 @@ const EventDetailsCommentsTab = ({
 									) && (
 										<ButtonLikeAnchor
 											onClick={() => deleteComment(comment)}
-											extraClassName="delete"
+											className="delete"
 										>
 											{t("EVENTS.EVENTS.DETAILS.COMMENTS.DELETE")}
 										</ButtonLikeAnchor>
@@ -168,7 +171,7 @@ const EventDetailsCommentsTab = ({
 											onClick={
 												() => replyTo(comment, key) /* enters reply mode */
 											}
-											extraClassName="reply"
+											className="reply"
 										>
 											{t("EVENTS.EVENTS.DETAILS.COMMENTS.REPLY")}
 										</ButtonLikeAnchor>
@@ -211,9 +214,9 @@ const EventDetailsCommentsTab = ({
 														onClick={() =>
 															deleteReply(comment, reply)
 														}
-														extraClassName="delete"
+														className="delete"
 													>
-														<i className="fa fa-times-circle" />
+														<LuCircleX />
 														{t("EVENTS.EVENTS.DETAILS.COMMENTS.DELETE")}
 													</ButtonLikeAnchor>
 												)}
@@ -262,7 +265,7 @@ const EventDetailsCommentsTab = ({
 								</div>
 
 								{/* submit button for comment (only active, if text has been written and a reason has been selected) */}
-								<button
+								<BaseButton
 									disabled={
 										!!(
 											!newCommentText.length ||
@@ -293,7 +296,7 @@ const EventDetailsCommentsTab = ({
 									onClick={() => saveComment(newCommentText, commentReason)}
 								>
 									{t("SUBMIT") /* Submit */}
-								</button>
+								</BaseButton>
 							</form>
 						))
 				}
@@ -342,16 +345,16 @@ const EventDetailsCommentsTab = ({
 							)}
 
 							{/* cancel button (exits reply mode) */}
-							<button className="cancel" onClick={() => exitReplyMode()}>
+							<BaseButton className="cancel" onClick={() => exitReplyMode()}>
 								{
 									t(
 										"EVENTS.EVENTS.DETAILS.COMMENTS.CANCEL_REPLY",
 									) /* Cancel */
 								}
-							</button>
+							</BaseButton>
 
 							{/* submit button for comment reply (only active, if text has been written) */}
-							<button
+							<BaseButton
 								disabled={
 									!!(
 										!commentReplyText.length ||
@@ -377,7 +380,7 @@ const EventDetailsCommentsTab = ({
 								}}
 							>
 								{t("EVENTS.EVENTS.DETAILS.COMMENTS.REPLY") /* Reply */}
-							</button>
+							</BaseButton>
 						</form>
 					)
 				}

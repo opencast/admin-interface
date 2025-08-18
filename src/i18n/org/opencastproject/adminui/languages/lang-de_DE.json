@@ -209,6 +209,8 @@
 		"SERIES_THEME_REPROCESS_EXISTING_EVENTS": "Die vorhandenen Videos in dieser Serie müssen neu verarbeitet werden",
 		"SERIES_ACL_LOCKED": "Das Editieren von Zugriffsrichtlinien ist nicht erlaubt, solange Videos verarbeitet werden, die Teil der Serie sind",
 		"EVENT_ACL_MISSING_READWRITE_ROLE": "Der Zugriffsrichtlinie erfordert mindestens eine Rolle mit Lese- und Schreibberechtigungen.",
+		"METADATA_SAVED": "The metadata has been saved.",
+		"METADATA_NOT_SAVED": "The metadata has NOT been saved!",
 		"THEME_NAME_EMPTY": "Der Name darf nicht leer sein",
 		"BUMPER_UPLOAD_ERROR": "Fehler beim Hochladen von Medien",
 		"THEME_CREATED": "Das Branding wurde erstellt",
@@ -895,7 +897,11 @@
 						"ADDITIONAL_ACTIONS": "Weitere Aktionen",
 						"ACTION": "Aktionen",
 						"NEW": "Neue Richtlinie",
-						"DETAILS": "Details"
+						"NON_USER_ROLES": "Roles and Groups authorized for the event",
+						"USER": "User",
+						"USERS": "Users who are authorized for the event",
+						"NEW_USER": "New user",
+						"SANITIZATION_NOTE": "User role sanitization is enabled in your Opencast, therefore user roles are displayed alongside other roles. This does not impact role functionality in any way."
 					},
 					"ROLES": {
 						"LABEL": "Rolle auswählen oder erstellen"
@@ -982,7 +988,6 @@
 					"ACTIONS": "Aktionen",
 					"DETAILS": "Details",
 					"DESCRIPTION": "Beschreibung",
-					"MORE_INFO": "More Information",
 					"ID": "ID",
 					"TYPE": "Typ",
 					"TITLE": "Titel",
@@ -1022,11 +1027,13 @@
 				},
 				"WORKFLOW_DETAILS": {
 					"TITLE": "Workflow-Details",
-					"CONFIGURATION": "Workflow Konfiguration"
+					"CONFIGURATION": "Workflow Konfiguration",
+					"OPERATIONS": "Operations",
+					"CURRENT_OPERATION": "Current workflow operation"
 				},
 				"WORKFLOW_OPERATIONS": {
 					"TITLE": "Workflow-Operationen",
-					"DETAILS_LINK": "Operations",
+					"DETAILS_LINK": "All operations",
 					"TABLE_HEADERS": {
 						"TITLE": "Titel",
 						"STATUS": "Status",
@@ -1086,7 +1093,8 @@
 						"DATE": "Datum",
 						"HOST": "Verarbeitender Server",
 						"TYPE": "Dienst-Typ",
-						"TECHNICAL_DETAILS": "Technische Details"
+						"TECHNICAL_DETAILS": "Technische Details",
+						"OPERATION": "Operation the error occured in"
 					}
 				}
 			}
@@ -1208,7 +1216,10 @@
 						"ADDITIONAL_ACTIONS": "Weitere Aktionen",
 						"ACTION": "Aktionen",
 						"NEW": "Neue Richtlinie",
-						"DETAILS": "Details",
+						"NON_USER_ROLES": "Roles and Groups authorized for the series",
+						"USER": "User",
+						"USERS": "Users who are authorized for the series",
+						"NEW_USER": "New user",
 						"REPLACE_EVENT_ACLS": "Zugriffsrechte der Serie aktualisieren",
 						"REPLACE_EVENT_ACLS_HINT": "Sicherstellen, dass alle Videos dieser Serie genau diese Zugriffsrechte haben",
 						"LOAD_MORE_LIMIT": "angezeigte Richtlinien.",
@@ -1467,8 +1478,11 @@
 						"ADDITIONAL_ACTIONS": "Weitere Aktionen",
 						"ACTION": "Aktionen",
 						"NEW": "Neue Richtlinie",
-						"DETAILS": "Details",
-						"DESCRIPTION": "Bitte wählen Sie eine vordefinierten Richtlinie aus oder fügen Sie eine neue Richtlinie hinzu"
+						"NON_USER_ROLES": "Roles and Groups authorized for the access policy",
+						"DESCRIPTION": "Bitte wählen Sie eine vordefinierten Richtlinie aus oder fügen Sie eine neue Richtlinie hinzu",
+						"USER": "User",
+						"USERS": "Users who are authorized for the access policy",
+						"NEW_USER": "New user"
 					},
 					"ROLES": {
 						"LABEL": "Rolle auswählen",
@@ -1981,7 +1995,7 @@
 	"TABLE_NEXT": "Nächste Seite",
 	"TABLE_PREVIOUS": "Vorherige Seite",
 	"TABLE_CURRENT": "Current page {{pageNumber}}",
-	"TABLE_NUMBERED": "Go to page {{pageNumber}}",
+	"TABLE_NUMBERED": "Gehe zu Seite {{pageNumber}}",
 	"DASHBOARD": {
 		"RUNNING": "In Verarbeitung",
 		"FINISHED": "Verarbeitet",

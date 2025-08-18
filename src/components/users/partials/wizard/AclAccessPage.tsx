@@ -151,8 +151,8 @@ const AclAccessPage = <T extends RequiredFormProps>({
 					<WizardNavigationButtons
 						formik={formik}
 						nextPage={
-							async () => {
-								if (await dispatch(checkAcls(formik.values.policies))) {
+							() => {
+								if (dispatch(checkAcls(formik.values.policies))) {
 									nextPage(formik.values);
 								}
 							}

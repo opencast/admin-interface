@@ -19,6 +19,7 @@ import { AsyncThunk } from "@reduxjs/toolkit";
 import ButtonLikeAnchor from "./ButtonLikeAnchor";
 import { ParseKeys } from "i18next";
 import { Resource } from "../../slices/tableSlice";
+import { LuSettings, LuX } from "react-icons/lu";
 
 /**
  * This component renders the table filter profiles in the upper right corner when clicked on settings icon of the
@@ -152,9 +153,11 @@ const TableFiltersProfiles = ({
 						<div className="filters-list">
 							<header>
 								<ButtonLikeAnchor
-									extraClassName="icon close"
+									className="icon close"
 									onClick={closeFilterSetting}
-								/>
+								>
+									<LuX className="icon close"/>
+								</ButtonLikeAnchor>
 								<h4>{t("TABLE_FILTERS.PROFILES.FILTERS_HEADER")}</h4>
 							</header>
 							<ul>
@@ -174,15 +177,17 @@ const TableFiltersProfiles = ({
 											{/* Settings icon to edit profile */}
 											<ButtonLikeAnchor
 												onClick={() => editFilterProfile(profile)}
-												extraClassName="icon edit"
 												tooltipText="TABLE_FILTERS.PROFILES.EDIT"
-											/>
+											>
+												<LuSettings className="icon edit"/>
+											</ButtonLikeAnchor>
 											{/* Remove icon to remove profile */}
 											<ButtonLikeAnchor
 												onClick={() => dispatch(removeFilterProfile(profile))}
-												extraClassName="icon remove"
 												tooltipText="TABLE_FILTERS.PROFILES.REMOVE"
-											/>
+											>
+												<LuX className="icon remove"/>
+											</ButtonLikeAnchor>
 										</li>
 									))
 								)}
@@ -193,7 +198,7 @@ const TableFiltersProfiles = ({
 							<div className="input-container">
 								<div className="btn-container">
 									<ButtonLikeAnchor
-										extraClassName="save"
+										className="save"
 										onClick={() => setSettingsMode(!settingsMode)}
 									>
 										{t("TABLE_FILTERS.PROFILES.ADD").substr(0, 70)}
@@ -206,9 +211,10 @@ const TableFiltersProfiles = ({
 						<div className="filter-details">
 							<header>
 								<ButtonLikeAnchor
-									extraClassName="icon close"
 									onClick={closeFilterSetting}
-								/>
+								>
+									<LuX className="icon close"/>
+								</ButtonLikeAnchor>
 								<h4>{t("TABLE_FILTERS.PROFILES.FILTER_HEADER")}</h4>
 							</header>
 							{/* Input form for save/editing profile*/}
@@ -242,13 +248,12 @@ const TableFiltersProfiles = ({
 							<div className="input-container">
 								{/* Buttons for saving and canceling editing */}
 								<div className="btn-container">
-									{/* <button className="cancel">J</button> */}
-									<ButtonLikeAnchor onClick={cancelEditProfile} extraClassName="cancel">
+									<ButtonLikeAnchor onClick={cancelEditProfile} className="cancel">
 										{t("CANCEL")}
 									</ButtonLikeAnchor>
 									<ButtonLikeAnchor
 										onClick={saveProfile}
-										extraClassName={cn("save", { disabled: !validName })}
+										className={cn("save", { disabled: !validName })}
 										aria-disabled={!validName}
 									>
 										{t("SAVE")}

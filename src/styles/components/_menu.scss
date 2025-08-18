@@ -1,5 +1,3 @@
-@use "../base/fontawesome/fa-mixins";
-@use "../base/fontawesome/variables" as variables2;
 @use "../base/variables";
 @use "../mixins/triangle-point";
 
@@ -75,7 +73,6 @@
         &:hover > i,
         &:active > i {
             color: #24425c;
-            @include fa-mixins.fa-icon-color(before, "#24425c");
         }
 
         @keyframes fadeIn {
@@ -88,30 +85,6 @@
             100% {
                 opacity: 0.9;
             }
-        }
-
-        .events {
-            @include fa-mixins.fa-icon(variables2.$fa-var-calendar-check-o, before, block, -3px 0 0 0, 0, inherit, 29px, normal, inherit);
-        }
-
-        .systems {
-            @include fa-mixins.fa-icon(variables2.$fa-var-server, before, block, -3px 0 0 0, 0, inherit, 29px, normal, inherit);
-        }
-
-        .recordings {
-            @include fa-mixins.fa-icon(variables2.$fa-var-video-camera, before, block, -3px 0 0 0, 0, inherit, 29px, normal, inherit);
-        }
-
-        .users {
-            @include fa-mixins.fa-icon(variables2.$fa-var-user, before, block, -3px 0 0 0, 0, inherit, 29px, normal, inherit);
-        }
-
-        .statistics {
-            @include fa-mixins.fa-icon(variables2.$fa-var-signal, before, block, -3px 0 0 0, 0, inherit, 29px, normal, inherit);
-        }
-
-        .configuration {
-            @include fa-mixins.fa-icon(variables2.$fa-var-cogs, before, block, -3px 0 0 0, 0, inherit, 29px, normal, inherit);
         }
     }
 }

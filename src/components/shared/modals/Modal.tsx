@@ -5,6 +5,7 @@ import { availableHotkeys } from "../../../configs/hotkeysConfig";
 import { useTranslation } from "react-i18next";
 import ButtonLikeAnchor from "../ButtonLikeAnchor";
 import { FocusTrap } from "focus-trap-react";
+import { LuX } from "react-icons/lu";
 
 export type ModalProps = {
 	open?: boolean
@@ -68,10 +69,12 @@ export const Modal = forwardRef<ModalHandle, PropsWithChildren<ModalProps>>(({
 					>
 						<header>
 							<ButtonLikeAnchor
-								extraClassName="fa fa-times close-modal"
+								className="close-modal"
 								onClick={close}
 								tabIndex={0}
-							/>
+							>
+								<LuX />
+							</ButtonLikeAnchor>
 							<h2>
 								{header}
 							</h2>

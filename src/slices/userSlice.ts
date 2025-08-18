@@ -6,6 +6,7 @@ import { buildUserBody, getURLParams } from "../utils/resourceUtils";
 import { addNotification } from "./notificationSlice";
 import { TableConfig } from "../configs/tableConfigs/aclsTableConfig";
 import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
+import { AppThunk } from "../store";
 
 /**
  * This file contains redux reducer for actions affecting the state of users
@@ -87,7 +88,7 @@ export const fetchUsersForTemplate = async (roles: string[]) => {
 };
 
 // new user to backend
-export const postNewUser = createAppAsyncThunk("users/postNewUser", async (values: NewUser, { dispatch }) => {
+export const postNewUser = (values: NewUser): AppThunk => dispatch => {
 	// get URL params used for post request
 	const data = buildUserBody(values);
 
@@ -108,10 +109,10 @@ export const postNewUser = createAppAsyncThunk("users/postNewUser", async (value
 			console.error(response);
 			dispatch(addNotification({ type: "error", key: "USER_NOT_SAVED" }));
 		});
-});
+};
 
 // delete user with provided id
-export const deleteUser = createAppAsyncThunk("users/deleteUser", async (id: string, { dispatch }) => {
+export const deleteUser = (id: string): AppThunk => dispatch => {
 	// API call for deleting an user
 	axios
 		.delete(`/admin-ng/users/${id}.json`)
@@ -125,7 +126,7 @@ export const deleteUser = createAppAsyncThunk("users/deleteUser", async (id: str
 			// add error notification
 			dispatch(addNotification({ type: "error", key: "USER_NOT_DELETED" }));
 		});
-});
+};
 
 // get users and their user names
 export const fetchUsersAndUsernames = async () => {

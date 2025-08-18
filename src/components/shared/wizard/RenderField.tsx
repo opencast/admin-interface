@@ -10,6 +10,7 @@ import { FieldProps } from "formik";
 import { MetadataField } from "../../../slices/eventSlice";
 import { GroupBase, SelectInstance } from "react-select";
 import TextareaAutosize from "react-textarea-autosize";
+import { LuCheck, LuSquarePen } from "react-icons/lu";
 
 /**
  * This component renders an editable field for single values depending on the type of the corresponding metadata
@@ -123,14 +124,15 @@ const RenderField = ({
 			)}
 			<div style={{ display: "flex", justifyContent: "flex-end" }}>
 				{!focused && showCheck && (
-					<i
-						className={cn("saved fa fa-check", {
+					<LuCheck
+						className={cn("fa-check", {
 							// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 							active: form.initialValues[field.name] !== field.value,
 						})}
+						style={{ float: "right", cursor: "pointer" }}
 					/>
 				)}
-				{!focused && <i className="edit fa fa-pencil-square" />}
+				{!focused && <LuSquarePen style={{ float: "right", cursor: "pointer", margin: "5px", fontSize: "14px" }}/>}
 			</div>
 		</div>
 	);

@@ -1,6 +1,4 @@
 @use "sass:color";
-@use "../base/fontawesome/fa-mixins";
-@use "../base/fontawesome/variables" as variables2;
 @use "../base/variables";
 @use "../mixins/button";
 
@@ -74,14 +72,6 @@
     .navigation {
 
       @include button.btn(variables.$white);
-
-      &.prev {
-        @include fa-mixins.fa-icon(variables2.$fa-var-chevron-left, before, inline-block, 0 0 0 0, 0, inherit, 10px);
-      }
-
-      &.next {
-        @include fa-mixins.fa-icon(variables2.$fa-var-chevron-right, after, inline-block, 0 0 0 0, 0, inherit, 10px);
-      }
     }
 
     > div {
@@ -106,7 +96,7 @@
     margin-left: -100%;
 
     .download-icon {
-        @include fa-mixins.fa-icon(variables2.$fa-var-download, before, inline-block, 0 0 0 0, 0, inherit, 30px);
+        font-size: 30px;
     }
   }
 

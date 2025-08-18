@@ -26,7 +26,8 @@ import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
 import { ParseKeys } from "i18next";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
 import EventDetailsWorkflowErrors from "./EventDetailsWorkflowErrors";
-import { Operation, WorfklowOperationsTableBody } from "./EventDetailsWorkflowOperations";
+import { WorfklowOperationsTableBody } from "./EventDetailsWorkflowOperations";
+import { LuChevronRight } from "react-icons/lu";
 
 /**
  * This component manages the workflow details for the workflows tab of the event details modal
@@ -331,7 +332,7 @@ const OperationsPreview = ({
 		workflowDone = !(workflowStatus === "SUCCEEDED" || workflowStatus === "FAILED" || workflowStatus === "STOPPED");
 	}
 
-	const loadWorkflowOperations = async () => {
+	const loadWorkflowOperations = () => {
 		// Fetching workflow operations from server
 		if (workflowId) {
 			dispatch(fetchWorkflowOperations({ eventId, workflowId }));
@@ -340,7 +341,7 @@ const OperationsPreview = ({
 
 	useEffect(() => {
 		// Fetch workflow operations initially
-		loadWorkflowOperations().then();
+		loadWorkflowOperations();
 
 		// Fetch workflow operations every 5 seconds
 		const fetchWorkflowOperationsInterval = setInterval(loadWorkflowOperations, 5000);
@@ -386,10 +387,11 @@ const OperationsPreview = ({
 							{t("EVENTS.EVENTS.DETAILS.WORKFLOW_OPERATIONS.DETAILS_LINK") /* Operations */}
 						</span>
 						<ButtonLikeAnchor
-							extraClassName="details-link"
+							className="details-link"
 							onClick={() => openSubTab("workflow-operations")}
 						>
 							{t("EVENTS.EVENTS.DETAILS.WORKFLOWS.DETAILS") /* Details */}
+							<LuChevronRight className="details-link-icon"/>
 						</ButtonLikeAnchor>
 					</li>
 				</ul>

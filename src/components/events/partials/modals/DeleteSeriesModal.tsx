@@ -14,6 +14,7 @@ import { isSeries } from "../../../../slices/tableSlice";
 import ModalContent from "../../../shared/modals/ModalContent";
 import NavigationButtons from "../../../shared/NavigationButtons";
 import { NotificationComponent } from "../../../shared/Notifications";
+import { LuCheck } from "react-icons/lu";
 
 /**
  * This component manges the delete series bulk action
@@ -200,7 +201,7 @@ const DeleteSeriesModal = ({
 											</td>
 											{/* Only show check if row has events, else empty cell*/}
 											<td>
-												{series.hasEvents && <i className="fa fa-check" />}
+												{series.hasEvents && <LuCheck className={cn("fa-check", { active: true })} />}
 											</td>
 										</tr>
 									))}

@@ -1,5 +1,4 @@
 @use "sass:color";
-@use "../base/fontawesome/fa-variables";
 @use "../base/variables";
 
 /**
@@ -41,19 +40,6 @@
 
         &:hover {
             color: $text-color;
-        }
-    }
-}
-
-// Warning Symbol Mixin
-@mixin warning-symbol($alert-type) {
-    p, a, h1, h2, h3, h4, h5, h6 {
-        &:first-of-type:before {
-            content: fa-variables.$fa-icon-warning-sign;
-            font-family: FontAwesome;
-            font-size: variables.$modal-alert-fa-size;
-            color: '$state-${$alert-type}-text';
-            margin-right: 5px;
         }
     }
 }
@@ -147,6 +133,8 @@
     font-weight: 600;
     padding: 0 15px;
     overflow: hidden;
+    display: flex;
+    align-items: center;
 
     &.sticky {
         margin: 10px 0 20px;
@@ -183,7 +171,6 @@
 
     &.warning {
         @include alert-variant(variables.$state-warning-bg, variables.$state-warning-border, variables.$state-warning-text);
-        @include warning-symbol(warning);
     }
 
     &.success {
@@ -192,7 +179,18 @@
 
     &.error {
         @include alert-variant(variables.$state-danger-bg, variables.$state-danger-border, variables.$state-danger-text);
-        @include warning-symbol(danger);
+    }
+
+    .warning-symbol-warning {
+        color: variables.$state-warning-text;
+        margin-right: 5px;
+        font-size: 17px;
+    }
+
+    .warning-symbol-error {
+        color: variables.$state-danger-text;
+        margin-right: 5px;
+        font-size: 17px;
     }
 }
 

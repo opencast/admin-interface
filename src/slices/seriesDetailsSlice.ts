@@ -21,6 +21,7 @@ import { Series, TobiraPage } from "./seriesSlice";
 import { TobiraTabHierarchy } from "../components/events/partials/ModalTabsAndPages/DetailsTobiraTab";
 import { TobiraFormProps } from "../components/events/partials/ModalTabsAndPages/NewTobiraPage";
 import { handleTobiraError } from "./shared/tobiraErrors";
+import { AppThunk } from "../store";
 
 
 /**
@@ -286,10 +287,10 @@ export const updateSeriesAccess = createAppAsyncThunk("seriesDetails/updateSerie
 		});
 });
 
-export const updateSeriesTheme = createAppAsyncThunk("seriesDetails/updateSeriesTheme", async (params: {
+export const updateSeriesTheme = (params: {
 	id: string,
 	values: { theme: SeriesDetailsState["theme"] },
-}, { dispatch }) => {
+}): AppThunk => dispatch => {
 	const { id, values } = params;
 
 	const themeId = values.theme?.id;
@@ -336,7 +337,7 @@ export const updateSeriesTheme = createAppAsyncThunk("seriesDetails/updateSeries
 				console.error(response);
 			});
 	}
-});
+};
 
 // fetch Tobira data of certain series from server
 export const fetchSeriesDetailsTobira = createAppAsyncThunk("seriesDetails/fetchSeriesDetailsTobira", async (

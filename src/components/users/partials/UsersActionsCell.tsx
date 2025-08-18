@@ -6,7 +6,8 @@ import { fetchUserDetails } from "../../../slices/userDetailsSlice";
 import { Modal, ModalHandle } from "../../shared/modals/Modal";
 import UserDetails from "./modal/UserDetails";
 import { ActionCellDelete } from "../../shared/ActionCellDelete";
-import { IconButton } from "../../shared/IconButton";
+import ButtonLikeAnchor from "../../shared/ButtonLikeAnchor";
+import { LuFileText } from "react-icons/lu";
 
 /**
  * This component renders the action cells of users in the table view
@@ -38,12 +39,14 @@ const UsersActionCell = ({
 	return (
 		<>
 			{/* edit/show user details */}
-			<IconButton
-				callback={() => showUserDetails()}
-				iconClassname={"more"}
+			<ButtonLikeAnchor
+				onClick={() => showUserDetails()}
+				className={"action-cell-button"}
 				editAccessRole={"ROLE_UI_USERS_EDIT"}
 				tooltipText={"USERS.USERS.TABLE.TOOLTIP.DETAILS"}
-			/>
+			>
+				<LuFileText />
+			</ButtonLikeAnchor>
 
 			{/* user details modal */}
 			<Modal

@@ -71,7 +71,6 @@ $footer-background-color: color.adjust(variables.$body-background, $lightness: -
             }
 
             &:before {
-                font-family: 'FontAwesome';
                 content: "\f086";
                 margin-right: 6px;
             }

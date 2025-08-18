@@ -20,9 +20,6 @@
  */
 
 
-@use "simple-box";
-@use "cal";
-@use "ui";
 @use "dropdowns";
 @use "menu-dropdown";
 @use "form";
@@ -37,14 +34,12 @@
 @use "inputs";
 @use "stats";
 @use "popover";
-@use "collapsible-box";
 @use "about";
 @use "tooltips";
 
 // Integrated From Extensions
 @use "labels";
 @use "progress-bar";
-@use "toggle-buttons";
 @use "statistics-graph";
 
 // Large Components

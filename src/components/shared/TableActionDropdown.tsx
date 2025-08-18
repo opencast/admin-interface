@@ -6,6 +6,7 @@ import { useAppSelector } from "../../store";
 import { getUserInformation } from "../../selectors/userInfoSelectors";
 import { ParseKeys } from "i18next";
 import ButtonLikeAnchor from "./ButtonLikeAnchor";
+import { LuChevronDown } from "react-icons/lu";
 
 // References for detecting a click outside of the container of the dropdown menu
 const containerAction = React.createRef<HTMLDivElement>();
@@ -57,6 +58,7 @@ const TableActionDropdown = ({
 			ref={containerAction}
 		>
 			<span>{t("BULK_ACTIONS.CAPTION")}</span>
+			<LuChevronDown className="chevron-down"/>
 			{/* show dropdown if actions is clicked*/}
 			{displayActionMenu && (
 				<ul className="dropdown-ul">

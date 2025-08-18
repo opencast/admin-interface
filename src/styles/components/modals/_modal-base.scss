@@ -1,6 +1,4 @@
 @use "sass:color";
-@use "../../base/fontawesome/fa-mixins";
-@use "../../base/fontawesome/variables" as variables2;
 @use "../../base/variables";
 @use "../../mixins/button";
 @use "../../mixins/mixins-config";
@@ -290,12 +288,7 @@
                 }
 
                 a.external-link {
-                    @include fa-mixins.fa-icon(variables2.$fa-var-external-link-square, before, inline-block, 4px, 0, inherit, 14px);
                     float: right;
-
-                    &:hover {
-                        @include fa-mixins.fa-icon-color(before, variables.$l-blue);
-                    }
                 }
 
                 .circle {

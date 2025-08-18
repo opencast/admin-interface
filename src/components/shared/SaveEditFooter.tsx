@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Tooltip } from "./Tooltip";
 import { ParseKeys } from "i18next";
+import BaseButton from "./BaseButton";
 
 type SaveEditFooterProps = {
     active: boolean;
@@ -26,36 +27,36 @@ export const SaveEditFooter: React.FC<SaveEditFooterProps> = ({
     return <footer style={{ padding: "0 15px" }}>
         {active && isValid && (
             <div className="pull-left">
-                <button
+                <BaseButton
                     type="reset"
                     onClick={reset}
                     className="cancel"
-                >{t("CANCEL")}</button>
+                >{t("CANCEL")}</BaseButton>
             </div>
         )}
         {additionalButton && (
             <div className="pull-right" style={{ marginLeft: 5 }}>
                 <Tooltip title={t(additionalButton.hint)}>
-                    <button
+                    <BaseButton
                         onClick={additionalButton.onClick}
                         disabled={!isValid || !active}
                         aria-disabled={!isValid || !active}
                         className={`save green ${
                             !isValid || !active ? "disabled" : ""
                         }`}
-                    >{t(additionalButton.label)}</button>
+                    >{t(additionalButton.label)}</BaseButton>
                 </Tooltip>
             </div>
         )}
         <div className="pull-right">
-            <button
+            <BaseButton
                 onClick={submit}
                 aria-disabled={!isValid || !active}
                 disabled={!isValid || !active}
                 className={`save green ${
                     !isValid || !active ? "disabled" : ""
                 }`}
-            >{t("SAVE")}</button>
+            >{t("SAVE")}</BaseButton>
         </div>
     </footer>;
 };

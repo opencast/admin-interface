@@ -188,7 +188,7 @@ export const changeStartDate = (
 	);
 };
 
-export const changeStartHour = async (
+export const changeStartHour = (
 	value: string,
 	formikValues: RequiredFormikValues & { scheduleStartDate: string | number, scheduleStartMinute: string },
 	setFieldValue: (field: string, value: string) => Promise<void | FormikErrors<any>>,
@@ -210,7 +210,7 @@ export const changeStartHour = async (
 	setFieldValue("scheduleStartHour", value);
 };
 
-export const changeStartMinute = async (
+export const changeStartMinute = (
 	value: string,
 	formikValues: RequiredFormikValues & { scheduleStartDate: string | number, scheduleStartHour: string },
 	setFieldValue: (field: string, value: string) => Promise<void | FormikErrors<any>>,
@@ -271,7 +271,7 @@ const changeEnd = (
 	}
 };
 
-export const changeEndHour = async (
+export const changeEndHour = (
 	value: string,
 	formikValues: RequiredFormikValues & { scheduleStartDate: string | number, scheduleStartHour: string, scheduleStartMinute: string },
 	setFieldValue: (field: string, value: string) => Promise<void | FormikErrors<any>>,
@@ -292,7 +292,7 @@ export const changeEndHour = async (
 	setFieldValue("scheduleEndHour", value);
 };
 
-export const changeEndMinute = async (
+export const changeEndMinute = (
 	value: string,
 	formikValues: RequiredFormikValues & { scheduleStartDate: string | number, scheduleStartHour: string, scheduleStartMinute: string },
 	setFieldValue: (field: string, value: string) => Promise<void | FormikErrors<any>>,
@@ -345,7 +345,7 @@ const changeDuration = (
 	}
 };
 
-export const changeDurationHour = async (
+export const changeDurationHour = (
 	value: string,
 	formikValues: RequiredFormikValues & {
 		scheduleStartDate: string | number,
@@ -371,7 +371,7 @@ export const changeDurationHour = async (
 	setFieldValue("scheduleDurationHours", value);
 };
 
-export const changeDurationMinute = async (
+export const changeDurationMinute = (
 	value: string,
 	formikValues: RequiredFormikValues & {
 		scheduleStartDate: string | number,
@@ -471,7 +471,7 @@ export const changeStartDateMultiple = (
 	);
 };
 
-export const changeStartHourMultiple = async (
+export const changeStartHourMultiple = (
 	value: string,
 	formikValues: RequiredFormikValues & {
 		scheduleEndDate: string,
@@ -497,7 +497,7 @@ export const changeStartHourMultiple = async (
 	setFieldValue("scheduleStartHour", value);
 };
 
-export const changeStartMinuteMultiple = async (
+export const changeStartMinuteMultiple = (
 	value: string,
 	formikValues: RequiredFormikValues & {
 		scheduleEndDate: string,
@@ -524,7 +524,7 @@ export const changeStartMinuteMultiple = async (
 };
 
 // changes the end in the formik
-export const changeEndDateMultiple = async (
+export const changeEndDateMultiple = (
 	value: string | Date,
 	formikValues: RequiredFormikValues & {
 		scheduleEndDate: string,
@@ -613,7 +613,7 @@ const changeEndMultiple = (
 	}
 };
 
-export const changeEndHourMultiple = async (
+export const changeEndHourMultiple = (
 	value: string,
 	formikValues: RequiredFormikValues & {
 		scheduleEndDate: string,
@@ -639,7 +639,7 @@ export const changeEndHourMultiple = async (
 	setFieldValue("scheduleEndHour", value);
 };
 
-export const changeEndMinuteMultiple = async (
+export const changeEndMinuteMultiple = (
 	value: string,
 	formikValues: RequiredFormikValues & {
 		scheduleEndDate: string,
@@ -709,7 +709,7 @@ const changeDurationMultiple = (
 	}
 };
 
-export const changeDurationHourMultiple = async (
+export const changeDurationHourMultiple = (
 	value: string,
 	formikValues: RequiredFormikValues & {
 		scheduleEndDate: string,
@@ -736,7 +736,7 @@ export const changeDurationHourMultiple = async (
 	setFieldValue("scheduleDurationHours", value);
 };
 
-export const changeDurationMinuteMultiple = async (
+export const changeDurationMinuteMultiple = (
 	value: string,
 	formikValues: RequiredFormikValues & {
 		scheduleEndDate: string,

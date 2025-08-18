@@ -9,7 +9,6 @@ import EventDetailsWorkflowDetails from "../ModalTabsAndPages/EventDetailsWorkfl
 import EventDetailsPublicationTab from "../ModalTabsAndPages/EventDetailsPublicationTab";
 import EventDetailsWorkflowOperations from "../ModalTabsAndPages/EventDetailsWorkflowOperations";
 import EventDetailsWorkflowOperationDetails from "../ModalTabsAndPages/EventDetailsWorkflowOperationDetails";
-import EventDetailsWorkflowErrors from "../ModalTabsAndPages/EventDetailsWorkflowErrors";
 import EventDetailsWorkflowErrorDetails from "../ModalTabsAndPages/EventDetailsWorkflowErrorDetails";
 import EventDetailsAssetsTab from "../ModalTabsAndPages/EventDetailsAssetsTab";
 import EventDetailsSchedulingTab from "../ModalTabsAndPages/EventDetailsSchedulingTab";
@@ -228,7 +227,7 @@ const EventDetails = ({
 				{tabs.map((tab, index) => !tab.hidden && hasAccess(tab.accessRole, user) && (
 					<ButtonLikeAnchor
 						key={tab.name}
-						extraClassName={cn({ active: page === tab.page })}
+						className={cn({ active: page === tab.page })}
 						onClick={() => openTab(index)}
 					>
 						{t(tab.tabNameTranslation)}

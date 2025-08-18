@@ -17,6 +17,7 @@ import { ParseKeys } from "i18next";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
 import { LuCheck, LuEllipsis, LuLoader, LuPause, LuRotateCcw, LuX } from "react-icons/lu";
 import { GoDash } from "react-icons/go";
+import { LuChevronRight } from "react-icons/lu";
 
 /**
  * This component manages the workflow operations for the workflows tab of the event details modal
@@ -31,14 +32,14 @@ const EventDetailsWorkflowOperations = ({
 	const workflowId = useAppSelector(state => getModalWorkflowId(state));
 	const operations = useAppSelector(state => getWorkflowOperations(state));
 
-  const loadWorkflowOperations = async () => {
+  const loadWorkflowOperations = () => {
 		// Fetching workflow operations from server
 		dispatch(fetchWorkflowOperations({ eventId, workflowId }));
 	};
 
   useEffect(() => {
 		// Fetch workflow operations initially
-		loadWorkflowOperations().then();
+		loadWorkflowOperations();
 
 		// Fetch workflow operations every 5 seconds
 		const fetchWorkflowOperationsInterval = setInterval(loadWorkflowOperations, 5000);
@@ -180,12 +181,13 @@ export const Operation = ({
 			{/* link to 'Operation Details'  sub-Tab */}
 			<td>
 				<ButtonLikeAnchor
-					extraClassName="details-link"
+					className="details-link"
 					onClick={() =>
 						openSubTab("workflow-operation-details", operationId)
 					}
 				>
 					{t("EVENTS.EVENTS.DETAILS.MEDIA.DETAILS") /* Details */}
+					<LuChevronRight className="details-link-icon"/>
 				</ButtonLikeAnchor>
 			</td>
 		</tr>

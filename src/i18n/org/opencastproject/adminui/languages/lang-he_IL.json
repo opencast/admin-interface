@@ -209,6 +209,8 @@
 		"SERIES_THEME_REPROCESS_EXISTING_EVENTS": "האירועים הקיימים בסדרה יצטרכו לעבור עיבוד",
 		"SERIES_ACL_LOCKED": "עריכת מדיניות גישה אסורה בזמן שפעולות רצות באירועים שהם חלק מהסדרה",
 		"EVENT_ACL_MISSING_READWRITE_ROLE": "המדיניות גישה דורשת תפקיד אחד לפחות עם הרשאות קריאה וכתיבה.",
+		"METADATA_SAVED": "The metadata has been saved.",
+		"METADATA_NOT_SAVED": "The metadata has NOT been saved!",
 		"THEME_NAME_EMPTY": "השם אינו יכול להשאר ריק",
 		"BUMPER_UPLOAD_ERROR": "שגיאה בזמן האלעת מדיה",
 		"THEME_CREATED": "ערכת הנושא נוצרה",
@@ -895,7 +897,11 @@
 						"ADDITIONAL_ACTIONS": "פעולות נוספות",
 						"ACTION": "פעולות",
 						"NEW": "מדיניות חדשה",
-						"DETAILS": "Details"
+						"NON_USER_ROLES": "Roles and Groups authorized for the event",
+						"USER": "User",
+						"USERS": "Users who are authorized for the event",
+						"NEW_USER": "New user",
+						"SANITIZATION_NOTE": "User role sanitization is enabled in your Opencast, therefore user roles are displayed alongside other roles. This does not impact role functionality in any way."
 					},
 					"ROLES": {
 						"LABEL": "Select or create a role"
@@ -982,7 +988,6 @@
 					"ACTIONS": "פעולות",
 					"DETAILS": "פרטים",
 					"DESCRIPTION": "תאור",
-					"MORE_INFO": "More Information",
 					"ID": "מזהה",
 					"TYPE": "סוג",
 					"TITLE": "כותרת",
@@ -1022,11 +1027,13 @@
 				},
 				"WORKFLOW_DETAILS": {
 					"TITLE": "פרטי מהלך-עבודה",
-					"CONFIGURATION": "הגדרות מהלך-עבודה"
+					"CONFIGURATION": "הגדרות מהלך-עבודה",
+					"OPERATIONS": "Operations",
+					"CURRENT_OPERATION": "Current workflow operation"
 				},
 				"WORKFLOW_OPERATIONS": {
 					"TITLE": "פעולות מהלך-עבודה",
-					"DETAILS_LINK": "Operations",
+					"DETAILS_LINK": "All operations",
 					"TABLE_HEADERS": {
 						"TITLE": "כותרת",
 						"STATUS": "מצב",
@@ -1086,7 +1093,8 @@
 						"DATE": "תאריך",
 						"HOST": "מארח מעבד",
 						"TYPE": "סוג שירות",
-						"TECHNICAL_DETAILS": "פרטים טכניים"
+						"TECHNICAL_DETAILS": "פרטים טכניים",
+						"OPERATION": "Operation the error occured in"
 					}
 				}
 			}
@@ -1208,7 +1216,10 @@
 						"ADDITIONAL_ACTIONS": "פעולות נוספות",
 						"ACTION": "פעולות",
 						"NEW": "מדיניות חדשה",
-						"DETAILS": "Details",
+						"NON_USER_ROLES": "Roles and Groups authorized for the series",
+						"USER": "User",
+						"USERS": "Users who are authorized for the series",
+						"NEW_USER": "New user",
 						"REPLACE_EVENT_ACLS": "עדכון הרשאות אירוע",
 						"REPLACE_EVENT_ACLS_HINT": "בדיקה שכל האירועים של סדרה זו יש הרשאות אלה בתוקף",
 						"LOAD_MORE_LIMIT": "policies shown.",
@@ -1467,8 +1478,11 @@
 						"ADDITIONAL_ACTIONS": "פעולות נוספות",
 						"ACTION": "פעולות",
 						"NEW": "מדיניות חדשה",
-						"DETAILS": "Details",
-						"DESCRIPTION": "נא לבחור סט מדיניויות מוגדרות מראש או להוסיף מדיניות מותאמת אישית להלן"
+						"NON_USER_ROLES": "Roles and Groups authorized for the access policy",
+						"DESCRIPTION": "נא לבחור סט מדיניויות מוגדרות מראש או להוסיף מדיניות מותאמת אישית להלן",
+						"USER": "User",
+						"USERS": "Users who are authorized for the access policy",
+						"NEW_USER": "New user"
 					},
 					"ROLES": {
 						"LABEL": "בחר תפקיד",

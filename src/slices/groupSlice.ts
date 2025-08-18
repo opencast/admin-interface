@@ -6,6 +6,7 @@ import { addNotification } from "./notificationSlice";
 import { TableConfig } from "../configs/tableConfigs/aclsTableConfig";
 import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
 import { initialFormValuesNewGroup } from "../configs/modalConfig";
+import { AppThunk } from "../store";
 
 /**
  * This file contains redux reducer for actions affecting the state of groups
@@ -67,7 +68,7 @@ export const fetchGroups = createAppAsyncThunk("groups/fetchGroups", async (_, {
 });
 
 // post new group to backend
-export const postNewGroup = createAppAsyncThunk("groups/postNewGroup", async (values: typeof initialFormValuesNewGroup, { dispatch }) => {
+export const postNewGroup = (values: typeof initialFormValuesNewGroup): AppThunk => dispatch => {
 	// get URL params used for post request
 	const data = buildGroupBody(values);
 
@@ -89,9 +90,9 @@ export const postNewGroup = createAppAsyncThunk("groups/postNewGroup", async (va
 				dispatch(addNotification({ type: "error", key: "GROUP_NOT_SAVED" }));
 			}
 		});
-});
+};
 
-export const deleteGroup = createAppAsyncThunk("groups/deleteGroup", async (id: Group["id"], { dispatch }) => {
+export const deleteGroup = (id: Group["id"]): AppThunk => dispatch => {
 	// API call for deleting a group
 	axios
 		.delete(`/admin-ng/groups/${id}`)
@@ -104,7 +105,7 @@ export const deleteGroup = createAppAsyncThunk("groups/deleteGroup", async (id: 
 			// add error notification
 			dispatch(addNotification({ type: "error", key: "GROUP_NOT_DELETED" }));
 		});
-});
+};
 
 const groupSlice = createSlice({
 	name: "groups",

@@ -8,6 +8,7 @@ import { FormikProps } from "formik";
 import { EditedEvents } from "../../../../slices/eventSlice";
 import { ParseKeys } from "i18next";
 import ModalContent from "../../../shared/modals/ModalContent";
+import { LuTriangleAlert } from "react-icons/lu";
 
 /**
  * This component renders the summary page of the edit scheduled bulk action
@@ -195,6 +196,7 @@ const EditScheduledEventsSummaryPage = <T extends RequiredFormProps>({
 					<div className="row">
 						{/* Show only if there no changes*/}
 						<div className="alert sticky warning">
+							<LuTriangleAlert className="warning-symbol-warning"/>
 							<p>{t("BULK_ACTIONS.EDIT_EVENTS.GENERAL.NOCHANGES")}</p>
 						</div>
 					</div>

@@ -1,5 +1,3 @@
-@use "../../base/fontawesome/fa-mixins";
-@use "../../base/fontawesome/variables" as variables2;
 @use "../../base/variables";
 
 /**
@@ -91,7 +89,8 @@
     }
 
     .video-icon {
-        @include fa-mixins.fa-icon(variables2.$fa-var-play-circle, before, inherit, 0, 0, variables.$primary-color-green-light-2, 24px);
+        color: variables.$primary-color-green-light-2;
+        font-size: 24px;
     }
 
 
@@ -102,7 +101,8 @@
         display: inline-block;
         float: right;
         margin-left: auto;
-        @include fa-mixins.fa-icon(variables2.$fa-var-play-circle-o, before, inherit, 0, 0, variables.$primary-color-green-light-2, 24px);
+        color: variables.$primary-color-green-light-2;
+        font-size: 24px;
 
         &:active:before,
         &:hover:before {

@@ -7,9 +7,10 @@ import { useAppDispatch } from "../../../store";
 import { deleteTheme, ThemeDetailsType } from "../../../slices/themeSlice";
 import ThemeDetails from "./wizard/ThemeDetails";
 import { ActionCellDelete } from "../../shared/ActionCellDelete";
-import { IconButton } from "../../shared/IconButton";
 import { Modal, ModalHandle } from "../../shared/modals/Modal";
 import { useTranslation } from "react-i18next";
+import ButtonLikeAnchor from "../../shared/ButtonLikeAnchor";
+import { LuFileText } from "react-icons/lu";
 
 /**
  * This component renders the action cells of themes in the table view
@@ -44,12 +45,14 @@ const ThemesActionsCell = ({
 	return (
 		<>
 			{/* edit themes */}
-			<IconButton
-				callback={() => showThemeDetails()}
-				iconClassname={"more"}
+			<ButtonLikeAnchor
+				onClick={() => showThemeDetails()}
+				className={"action-cell-button"}
 				editAccessRole={"ROLE_UI_THEMES_EDIT"}
 				tooltipText={"CONFIGURATION.THEMES.TABLE.TOOLTIP.DETAILS"}
-			/>
+			>
+				<LuFileText />
+			</ButtonLikeAnchor>
 
 			{/* themes details modal */}
 			<Modal

@@ -24,6 +24,8 @@ import { Modal, ModalHandle } from "./modals/Modal";
 import { Resource } from "../../slices/tableSlice";
 import { ParseKeys } from "i18next";
 import ModalContentTable from "./modals/ModalContentTable";
+import BaseButton from "./BaseButton";
+import { LuCirclePlus, LuCircleX, LuGrip } from "react-icons/lu";
 
 /**
  * This component renders the modal for editing which columns are shown in the table
@@ -192,12 +194,15 @@ const EditTableViewModalContent = ({
 								{deactivatedCols.map((column, key) =>
 									column ? (
 										<li className="drag-item" key={key}>
+											<LuGrip />
 											<div className="title">{t(column.label)}</div>
 											<ButtonLikeAnchor
-												extraClassName="move-item add"
+												className="move-item add"
 												onClick={() => changeColumn(column, false)}
+												tooltipText={"PREFERENCES.TABLE.ADD_COLUMN"}
+												aria-label={t("PREFERENCES.TABLE.ADD_COLUMN")}
 											>
-												<span className="sr-only">{t("PREFERENCES.TABLE.ADD_COLUMN")}</span>
+												<LuCirclePlus />
 											</ButtonLikeAnchor>
 										</li>
 									) : null,
@@ -241,14 +246,17 @@ const EditTableViewModalContent = ({
 																		style={{ ...provided.draggableProps.style }}
 																		className="drag-item"
 																	>
+																		<LuGrip />
 																		<div className="title">
 																			{t(column.label)}
 																		</div>
 																		<ButtonLikeAnchor
-																			extraClassName="move-item remove"
+																			className="move-item remove"
 																			onClick={() => changeColumn(column, true)}
+																			tooltipText="PREFERENCES.TABLE.REMOVE_COLUMN"
+																			aria-label={t("PREFERENCES.TABLE.REMOVE_COLUMN")}
 																		>
-																			<span className="sr-only">{t("PREFERENCES.TABLE.REMOVE_COLUMN")}</span>
+																			<LuCircleX />
 																		</ButtonLikeAnchor>
 																	</div>
 																)}
@@ -280,15 +288,15 @@ const EditTableViewModalContent = ({
 
 			<footer>
 				{/* Render buttons for updating table data */}
-					<button onClick={() => clearData()} className="cancel active">
+					<BaseButton onClick={() => clearData()} className="cancel active">
 						{t("CANCEL") /* Cancel*/}
-					</button>
-					<button onClick={() => save()} className="submit active">
+					</BaseButton>
+					<BaseButton onClick={() => save()} className="submit active">
 						{t("SAVE") /* Save As Default */}
-					</button>
-					<button onClick={() => resetToInitialConfig()} className="cancel active">
+					</BaseButton>
+					<BaseButton onClick={() => resetToInitialConfig()} className="cancel active">
 						{t("RESET") /* Reset saved setting */}
-					</button>
+					</BaseButton>
 			</footer>
 		</>
 	);

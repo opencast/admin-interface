@@ -1,6 +1,5 @@
 @use "sass:color";
 @use "../base/variables";
-@use "../base/fontawesome/fa-mixins";
 
 /**
  * Licensed to The Apereo Foundation under one or more contributor license
@@ -61,23 +60,9 @@
     $icon-display-value: inline-block;
     $icon-pesudo-position: before;
 
-
-    // FontAwesome Icon Mixin
-    &:after {
-        content: "\f078";
+    .chevron-down {
         color: inherit;
-        font-family: FontAwesome;
         font-size: 12px;
-        font-style: normal;
-        font-weight: normal;
-        line-height: 1;
-        display: inline;
-        margin: 0;
-        padding: 0;
-        @include fa-mixins.font-smoothing(on);
-    }
-
-    &:after {
         position: absolute;
         top: 13px;
         right: 10px;

@@ -14,7 +14,6 @@ import store from "./store";
 import "./i18n/i18n";
 
 // import css files for certain libraries
-import "font-awesome/css/font-awesome.min.css";
 import "react-datepicker/dist/react-datepicker.css";
 import { HotkeysProvider } from "react-hotkeys-hook";
 

@@ -23,32 +23,9 @@
 @use "sass:color";
 @use "button";
 @use "triangle-point";
-@use "../base/fontawesome/fa-mixins";
-@use "../base/fontawesome/variables" as variables2;
 @use "../base/variables";
 
 // Temporary Inline Files
-
-// Build icons mixin
-@mixin build-icon($top, $left, $image, $width, $height) {
-    top: $top;
-    left: $left;
-    width: $width;
-    height: $height;
-    background-image: url("#{variables.$img-path}/#{$image}.png");
-    background-size: $width $height;
-}
-
-
-// Mixin for removing the object padding
-// Easier to add this than add padding to every element
-@mixin negate-padding($col-width) {
-    // re-position
-    margin-left: -20px;
-    margin-bottom: -20px;
-    padding-left: 20px;
-    width: ($col-width - 2);
-}
 
 @mixin accordion-header($height, $expand: false) {
     box-sizing: border-box;
@@ -69,7 +46,6 @@
 
     @if $expand == true {
         cursor: pointer;
-        @include fa-mixins.fa-icon(variables2.$fa-var-chevron-down, after, inline-block, 10px 0);
 
         &:hover {
             background: linear-gradient(to bottom, #fff, color.adjust(#f3f5f6, $lightness: -2%));
@@ -82,44 +58,5 @@
         &:after {
             float: right;
         }
-    }
-}
-
-@mixin btn-dd-content-mixin($width) {
-
-    // Base styles
-    position: absolute;
-    top: 52px;
-    left: -($width * 0.5 - 20);
-    z-index: variables.$max-z - 9;
-    visibility: hidden;
-    opacity: 0;
-    transition: all 200ms;
-    background: variables.$white;
-    border: variables.$thin-border-stroke variables.$main-border-color;
-    border-radius: variables.$main-border-radius;
-    width: $width;
-
-    header {
-        background: linear-gradient(variables.$white, #f7f7f7);
-        border-top-left-radius: variables.$main-border-radius;
-        border-top-right-radius: variables.$main-border-radius;
-        border-bottom: variables.$thin-border-stroke variables.$main-border-color;
-        height: 30px;
-
-        > h4 {
-            line-height: 30px;
-            padding-left: 10px;
-        }
-    }
-
-    .footer-btn {
-        background: linear-gradient(variables.$off-white, #f0f2f5);
-        border-top: variables.$thin-border-stroke color.adjust(#f0f2f5, $lightness: -10%);
-        border-bottom-left-radius: variables.$main-border-radius;
-        border-bottom-right-radius: variables.$main-border-radius;
-        display: block;
-        line-height: 30px;
-        text-align: center;
     }
 }

@@ -136,7 +136,7 @@ export const getWorkflowByJobId = createSelector(
 	[
 		getWorkflowOperations,
 		(_operations, rootJobId: number) => rootJobId,
-		(_operations, rootJobId: number, jobId: number) => jobId,
+		(_operations, _rootJobId: number, jobId: number) => jobId,
 	],
 	(operations, rootJobId, jobId) => {
 		let operation = null;

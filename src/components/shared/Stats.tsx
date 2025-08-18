@@ -13,7 +13,7 @@ import { loadEventsIntoTable } from "../../thunks/tableThunks";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { fetchEvents } from "../../slices/eventSlice";
 import { ParseKeys } from "i18next";
-import { Tooltip } from "./Tooltip";
+import BaseButton from "./BaseButton";
 
 /**
  * This component renders the status bar of the event view and filters depending on these
@@ -67,26 +67,26 @@ const Stats = () => {
 				{/* Show one counter for each status */}
 				{stats.map((st, key) => (
 					<div className="col" key={key}>
-						<Tooltip title={t("DASHBOARD.BUTTON_TOOLTIP", { filterName: t(st.description as ParseKeys) })}>
-							<button
-								className="stat"
-								aria-label={t("DASHBOARD.BUTTON_TOOLTIP", { filterName: t(st.description as ParseKeys) })}
-								onClick={() => showStatsFilter(st)}
-							>
-								<div>{st.count}</div>
-								{/* Show the description of the status, if defined,
-									else show name of filter and its value*/}
-								{st.description ? (
-									<span>{t(st.description as ParseKeys)}</span>
-								) : (
-									st.filters.map((filter, key) => (
-										<span key={key}>
-											{t(filter.filter as ParseKeys)}: {t(filter.value as ParseKeys)}
-										</span>
-									))
-								)}
-							</button>
-						</Tooltip>
+						<BaseButton
+							className="stat"
+							tooltipText={"DASHBOARD.BUTTON_TOOLTIP"}
+							tooltipParams={{ filterName: t(st.description as ParseKeys) }}
+							aria-label={t("DASHBOARD.BUTTON_TOOLTIP", { filterName: t(st.description as ParseKeys) })}
+							onClick={() => showStatsFilter(st)}
+						>
+							<div>{st.count}</div>
+							{/* Show the description of the status, if defined,
+								else show name of filter and its value*/}
+							{st.description ? (
+								<span>{t(st.description as ParseKeys)}</span>
+							) : (
+								st.filters.map((filter, key) => (
+									<span key={key}>
+										{t(filter.filter as ParseKeys)}: {t(filter.value as ParseKeys)}
+									</span>
+								))
+							)}
+						</BaseButton>
 					</div>
 				))}
 			</div>

@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../../../store";
 import { fetchEventPublications } from "../../../../slices/eventDetailsSlice";
 import { ParseKeys } from "i18next";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
+import { LuCirclePlay } from "react-icons/lu";
 
 const EventDetailsPublicationTab = ({
 	eventId,
@@ -58,7 +59,7 @@ const EventDetailsPublicationTab = ({
 															}}
 														/>
 													) : (
-														<i className="video-icon" />
+														<LuCirclePlay className="video-icon"/>
 													)}
 												</span>
 												<div>
@@ -71,7 +72,9 @@ const EventDetailsPublicationTab = ({
 												</div>
 
 												{publication.enabled ? (
-													<a className="play" href={publication.url} target="_blank" rel="noreferrer"/>
+													<a className="play" href={publication.url} target="_blank" rel="noreferrer">
+														<LuCirclePlay />
+													</a>
 												) : (
 													<span style={styleSpan}>
 														{t(

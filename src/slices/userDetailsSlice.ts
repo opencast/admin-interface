@@ -4,6 +4,7 @@ import { addNotification } from "./notificationSlice";
 import { buildUserBody } from "../utils/resourceUtils";
 import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
 import { UserRole } from "./userSlice";
+import { AppThunk } from "../store";
 
 /**
  * This file contains redux reducer for actions affecting the state of details of a user
@@ -58,10 +59,10 @@ export const fetchUserDetails = createAppAsyncThunk("userDetails/fetchUserDetail
 });
 
 // update existing user with changed values
-export const updateUserDetails = createAppAsyncThunk("userDetails/updateUserDetails", async (params: {
+export const updateUserDetails = (params: {
 	values: UpdateUser,
 	username: UserDetailsState["name"]
-}, { dispatch }) => {
+}): AppThunk => dispatch => {
 	const { username, values } = params;
 
 	// get URL params used for put request
@@ -78,7 +79,7 @@ export const updateUserDetails = createAppAsyncThunk("userDetails/updateUserDeta
 			console.error(response);
 			dispatch(addNotification({ type: "error", key: "USER_NOT_SAVED" }));
 		});
-});
+};
 
 const userDetailsSlice = createSlice({
 	name: "userDetails",

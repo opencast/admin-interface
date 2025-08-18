@@ -8,6 +8,7 @@ import { useAppDispatch } from "../../../store";
 import { Publication } from "../../../slices/eventDetailsSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { ParseKeys } from "i18next";
+import { LuCirclePlay } from "react-icons/lu";
 
 // References for detecting a click outside of the container of the popup listing publications of an event
 const containerPublications = React.createRef<HTMLDivElement>();
@@ -77,7 +78,7 @@ const PublishCell = ({
 
 	return (
 		<div className="popover-wrapper">
-			{onlyEngage && (
+			{onlyEngage && publications.length > 0 && (
 				<Tooltip title={t("EVENTS.EVENTS.TABLE.TOOLTIP.PLAYER")}>
 					<a href={publications[0].url} rel="noreferrer" target="_blank">
 						<ButtonLikeAnchor>
@@ -88,7 +89,7 @@ const PublishCell = ({
 			)}
 			{!onlyEngage && publications.length > 0 && (
 				<>
-					<ButtonLikeAnchor extraClassName="popover-wrapper__trigger">
+					<ButtonLikeAnchor className="popover-wrapper__trigger">
 						<span onClick={() => setShowPopup(!showPopup)}>{t("YES")}</span>
 					</ButtonLikeAnchor>
 					{showPopup && (
@@ -107,10 +108,12 @@ const PublishCell = ({
 												rel="noreferrer"
 												key={key}
 											>
+												<LuCirclePlay className="play-circle-icon"/>
 												<span>{publication.label ? t(publication.label as ParseKeys) : t(publication.name as ParseKeys)}</span>
 											</a>
 										) : (
-											<ButtonLikeAnchor key={key} extraClassName="popover__list-item">
+											<ButtonLikeAnchor key={key} className="popover__list-item">
+												<LuCirclePlay className="play-circle-icon"/>
 												<span>{publication.label ? t(publication.label as ParseKeys) : t(publication.name as ParseKeys)}</span>
 											</ButtonLikeAnchor>
 										)

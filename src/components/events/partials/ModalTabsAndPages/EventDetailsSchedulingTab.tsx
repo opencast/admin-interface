@@ -179,7 +179,7 @@ const EventDetailsSchedulingTab = ({
 	};
 
 	// submits the formik form
-	const submitForm = async (values: SchedulingInfo) => {
+	const submitForm = (values: SchedulingInfo) => {
 		dispatch(removeNotificationWizardForm());
 		const startDate = makeDate(
 			values.scheduleStartDate,
@@ -250,7 +250,7 @@ const EventDetailsSchedulingTab = ({
 					<Formik<InitialValues>
 						enableReinitialize
 						initialValues={getInitialValues()}
-						onSubmit={values => submitForm(values).then(() => {})}
+						onSubmit={values => submitForm(values)}
 						innerRef={formikRef}
 					>
 						{formik => (

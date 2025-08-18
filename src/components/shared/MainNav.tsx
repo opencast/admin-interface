@@ -12,6 +12,16 @@ import { useAppSelector } from "../../store";
 import { Tooltip } from "./Tooltip";
 import ButtonLikeAnchor from "./ButtonLikeAnchor";
 import { ParseKeys } from "i18next";
+import {
+	LuCalendarCheck,
+	LuChartNoAxesColumnIncreasing,
+	LuMenu,
+	LuServer,
+	LuSettings,
+	LuUser,
+	LuVideo,
+} from "react-icons/lu";
+import { IconType } from "react-icons";
 
 /**
  * This component renders the main navigation that opens when the burger button is clicked
@@ -74,13 +84,13 @@ const MainNav = ({
 					path: "/events/events",
 					accessRole: "ROLE_UI_EVENTS_VIEW",
 					tooltipTitle: "NAV.EVENTS.TITLE",
-					className: "events",
+					Icon: LuCalendarCheck,
 				},
 				{
 					path: "/events/series",
 					accessRole: "ROLE_UI_SERIES_VIEW",
 					tooltipTitle: "NAV.EVENTS.TITLE",
-					className: "events",
+					Icon: LuCalendarCheck,
 				},
 			],
 		},
@@ -90,7 +100,7 @@ const MainNav = ({
 					path: "/recordings/recordings",
 					accessRole: "ROLE_UI_LOCATIONS_VIEW",
 					tooltipTitle: "NAV.CAPTUREAGENTS.TITLE",
-					className: "recordings",
+					Icon: LuVideo,
 				},
 			],
 		},
@@ -100,19 +110,19 @@ const MainNav = ({
 					path: "/systems/jobs",
 					accessRole: "ROLE_UI_JOBS_VIEW",
 					tooltipTitle: "NAV.SYSTEMS.TITLE",
-					className: "systems",
+					Icon: LuServer,
 				},
 				{
 					path: "/systems/servers",
 					accessRole: "ROLE_UI_SERVERS_VIEW",
 					tooltipTitle: "NAV.SYSTEMS.TITLE",
-					className: "systems",
+					Icon: LuServer,
 				},
 				{
 					path: "/systems/services",
 					accessRole: "ROLE_UI_SERVICES_VIEW",
 					tooltipTitle: "NAV.SYSTEMS.TITLE",
-					className: "systems",
+					Icon: LuServer,
 				},
 			],
 		},
@@ -122,19 +132,19 @@ const MainNav = ({
 					path: "/users/users",
 					accessRole: "ROLE_UI_USERS_VIEW",
 					tooltipTitle: "NAV.USERS.TITLE",
-					className: "users",
+					Icon: LuUser,
 				},
 				{
 					path: "/users/groups",
 					accessRole: "ROLE_UI_GROUPS_VIEW",
 					tooltipTitle: "NAV.USERS.TITLE",
-					className: "users",
+					Icon: LuUser,
 				},
 				{
 					path: "/users/acls",
 					accessRole: "ROLE_UI_ACLS_VIEW",
 					tooltipTitle: "NAV.USERS.TITLE",
-					className: "users",
+					Icon: LuUser,
 				},
 			],
 		},
@@ -144,7 +154,7 @@ const MainNav = ({
 					path: "/configuration/themes",
 					accessRole: "ROLE_UI_THEMES_VIEW",
 					tooltipTitle: "NAV.CONFIGURATION.TITLE",
-					className: "configuration",
+					Icon: LuSettings,
 				},
 			],
 		},
@@ -154,7 +164,7 @@ const MainNav = ({
 					path: "/statistics/organization",
 					accessRole: "ROLE_UI_STATISTICS_ORGANIZATION_VIEW",
 					tooltipTitle: "NAV.STATISTICS.TITLE",
-					className: "statistics",
+					Icon: LuChartNoAxesColumnIncreasing,
 				},
 			],
 		},
@@ -179,7 +189,7 @@ const MainNav = ({
 		<div className="menu-top" >
 			<ButtonLikeAnchor onClick={() => toggleMenu()}>
 				<Tooltip title={t("HOTKEYS.DESCRIPTIONS.GENERAL.MAIN_MENU")} placement={"right"}>
-					<i className="fa fa-bars" />
+					<LuMenu />
 				</Tooltip>
 			</ButtonLikeAnchor>
 			{isOpen && (
@@ -245,11 +255,11 @@ const MainNavButton = ({
 const MainNavLink = ({
 	path,
 	tooltipTitle,
-	className,
+	Icon,
 }: {
 	path: string
 	tooltipTitle: ParseKeys
-	className: string
+	Icon: IconType
 }) => {
 	const { t } = useTranslation();
 
@@ -257,7 +267,11 @@ const MainNavLink = ({
 		<NavLink to={path}
 			className={({ isActive }) => isActive ? "roll-up-menu-active" : ""}>
 			<Tooltip title={t(tooltipTitle)} placement={"right"}>
-				<i className={className} />
+				<Icon style={{
+					height: "100%",
+					fontSize: 29,
+					color: "#818181",
+				}}/>
 			</Tooltip>
 		</NavLink>
 	);

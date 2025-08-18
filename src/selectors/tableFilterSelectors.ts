@@ -13,12 +13,12 @@ export const getSelectedFilter = (state: RootState) => state.tableFilters.select
 export const getSecondFilter = (state: RootState) => state.tableFilters.secondFilter;
 export const getCurrentFilterResource = (state: RootState) => state.tableFilters.currentResource;
 export const getFilters = createSelector(
-	[getAllFilters, (state, resource: Resource) => resource],
+	[getAllFilters, (_state, resource: Resource) => resource],
 	(filters, resource) => {
 		return filters.filter(obj => obj.resource === resource);
 	});
 export const getTextFilter = createSelector(
-	[getAllTextFilter, (state, resource: Resource) => resource],
+	[getAllTextFilter, (_state, resource: Resource) => resource],
 	(textFilter, resource) => {
 		const textFilte = textFilter.find(obj => obj.resource === resource);
 		return textFilte?.text ?? "";
