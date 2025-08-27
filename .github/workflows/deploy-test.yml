@@ -111,7 +111,7 @@ jobs:
       - name: generate index.html
         working-directory: admin-interface-test
         run: |
-          echo '<html><body><ul>' > index.html
+          echo '<html><head><link rel=stylesheet type=text/css href=index.css /></head><body><div class="head-container"><img src=https://admin-interface.opencast.org/develop/assets/opencast-white-B3KJ3o-a.svg /></div><div class="navbar-container"></div><div class="text-container"><p>Test deployment for the latest development versions of the Opencast admininterface.The branches listed here correspond to Opencast's own branches.</br><b>Please select a version.</b></p></div><ul>' > index.html
           find . -maxdepth 2 -name '*_*' -type d \
             | sort -r \
             | sed 's/^\(.*\)$/<li><a href=\1>\1<\/a><\/li>/' >> index.html
