@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { useAppDispatch } from "../../../store";
 import { Series } from "../../../slices/seriesSlice";
 import BaseButton from "../../shared/BaseButton";
+import { resetFilterValues } from "../../../slices/tableFilterSlice";
 
 /**
  * This component renders the title cells of series in the table view
@@ -16,6 +17,7 @@ const SeriesTitleCell = ({
 	const navigate = useNavigate();
 
 	const redirectToEvents = async (seriesId: string) => {
+		dispatch(resetFilterValues());
 		// set the series filter value of events to series title
 		await dispatch(setSpecificEventFilter({ filter: "series", filterValue: seriesId }));
 		navigate("/events/events");
