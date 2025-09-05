@@ -18,7 +18,7 @@ import {
 import { getUserInformation } from "../../../selectors/userInfoSelectors";
 import { hasAccess } from "../../../utils/utils";
 import DropDown from "../DropDown";
-import { filterRoles, getAclTemplateText, handleTemplateChange, policiesFiltered, rolesFilteredbyPolicies } from "../../../utils/aclUtils";
+import { filterRoles, getAclTemplateText, handleTemplateChange, policiesFiltered } from "../../../utils/aclUtils";
 import { useAppDispatch, useAppSelector } from "../../../store";
 import { removeNotificationWizardForm, addNotification } from "../../../slices/notificationSlice";
 import { useTranslation } from "react-i18next";
@@ -310,7 +310,6 @@ const ResourceDetailsAccessPolicyTab = ({
 												<AccessPolicyTable
 													isUserTable={true}
 													policiesFiltered={policiesFiltered(formik.values.policies, true)}
-													rolesFilteredbyPolicies={rolesFilteredbyPolicies(roles, formik.values.policies, true)}
 													header={userPolicyTableHeaderText}
 													firstColumnHeader={userPolicyTableRoleText}
 													createLabel={userPolicyTableNewText}
@@ -327,7 +326,6 @@ const ResourceDetailsAccessPolicyTab = ({
 											<AccessPolicyTable
 												isUserTable={false}
 												policiesFiltered={policiesFiltered(formik.values.policies, false)}
-												rolesFilteredbyPolicies={rolesFilteredbyPolicies(roles, formik.values.policies, false)}
 												header={policyTableHeaderText}
 												firstColumnHeader={policyTableRoleText}
 												createLabel={policyTableNewText}
@@ -347,7 +345,6 @@ const ResourceDetailsAccessPolicyTab = ({
 											<AccessPolicyTable
 												isUserTable={false}
 												policiesFiltered={formik.values.policies}
-												rolesFilteredbyPolicies={filterRoles(roles, formik.values.policies)}
 												header={policyTableHeaderText}
 												firstColumnHeader={policyTableRoleText}
 												createLabel={policyTableNewText}
@@ -397,7 +394,6 @@ type AccessPolicyTabFormikProps = {
 export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 	isUserTable,
 	policiesFiltered,
-	rolesFilteredbyPolicies,
 	header,
 	firstColumnHeader,
 	createLabel,
@@ -410,7 +406,6 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 }: {
 	isUserTable: boolean
 	policiesFiltered: TransformedAcl[]
-	rolesFilteredbyPolicies: Role[]
 	header?: ParseKeys
 	firstColumnHeader: ParseKeys
 	createLabel: ParseKeys,
@@ -541,12 +536,12 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 																		text={createPolicyLabel(policy)}
 																		options={
 																			roles.length > 0
-																				? formatAclRolesForDropdown(rolesFilteredbyPolicies)
+																				? formatAclRolesForDropdown(filterRoles(roles, formik.values.policies, policy.role))
 																				: []
 																		}
 																		fetchOptions={() =>
 																			roles.length > 0
-																				? formatAclRolesForDropdown(rolesFilteredbyPolicies)
+																				? formatAclRolesForDropdown(filterRoles(roles, formik.values.policies, policy.role))
 																				: []
 																		}
 																		required={true}
@@ -573,6 +568,7 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 																		skipTranslate
 																		optionHeight={35}
 																		customCSS={{ width: "100%", optionPaddingTop: 5 }}
+																		isAclDropDown
 																	/>
 																) : (
 																	<p>{policy.role}</p>
@@ -811,6 +807,7 @@ export const TemplateSelector = <T extends TemplateSelectorProps>({
 											}
 										}}
 										placeholder={t(buttonText)}
+										isAclDropDown
 									/>
 								)}
 								{!(aclTemplates.length > 0) &&

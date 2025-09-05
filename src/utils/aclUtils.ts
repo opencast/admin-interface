@@ -24,10 +24,18 @@ export const getAclTemplateText = (
 	}
 };
 
-export const filterRoles = (roles: Role[], policies: TransformedAcl[]) => {
-	return roles.filter(
-		role => !policies.find(policy => policy.role === role.name),
-	);
+export const filterRoles = (roles: Role[], policies: TransformedAcl[], currentRole?: string) => {
+  // Collect all roles currently selected in policies
+  const selectedRoles = policies
+    .map(p => p.role)
+    .filter(Boolean);
+
+  return roles.filter(r =>
+    // keep it if it's not already selected
+    !selectedRoles.includes(r.name)
+    // OR it is the current role for this dropdown row
+    || r.name === currentRole,
+  );
 };
 
 // Get all policies that have user information, or all policies that do not have user information

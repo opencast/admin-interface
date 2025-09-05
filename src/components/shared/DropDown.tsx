@@ -41,6 +41,7 @@ const DropDown = <T, >({
 	optionHeight = 25,
 	customCSS,
 	fetchOptions,
+	isAclDropDown = false,
 }: {
 	ref?: React.RefObject<SelectInstance<any, boolean, GroupBase<any>> | null>
 	value: T
@@ -66,7 +67,8 @@ const DropDown = <T, >({
 		optionPaddingTop?: number,
 		optionLineHeight?: string
 	},
-	fetchOptions?: () => { label: string, value: string}[]
+	fetchOptions?: () => { label: string, value: string}[],
+	isAclDropDown?: boolean
 }) => {
 	const { t } = useTranslation();
 
@@ -167,7 +169,6 @@ const DropDown = <T, >({
 		));
 	};
 
-
   const commonProps: Props = {
 		tabIndex: tabIndex,
 		theme: theme => (dropDownSpacingTheme(theme)),
@@ -192,6 +193,14 @@ const DropDown = <T, >({
 		// @ts-expect-error: React-Select typing does not account for the typing of option it itself requires
 		components: { MenuList },
 		filterOption: createFilter({ ignoreAccents: false }), // To improve performance on filtering
+
+		isOptionSelected: (option, _selectValue) => {
+		  const typedOption = option as DropDownOption;
+		  if (isAclDropDown) {
+		    return false;
+		  }
+		  return typedOption.value === value;
+		},
 	};
 
 	return creatable ? (
