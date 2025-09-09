@@ -9,7 +9,7 @@ import {
 	fetchAclTemplates,
 	fetchRolesWithTarget,
 } from "../../../../slices/aclSlice";
-import { filterRoles, policiesFiltered, rolesFilteredbyPolicies } from "../../../../utils/aclUtils";
+import { policiesFiltered } from "../../../../utils/aclUtils";
 import { useAppDispatch } from "../../../../store";
 import { TransformedAcl } from "../../../../slices/aclDetailsSlice";
 import { AccessPolicyTable, TemplateSelector } from "../../../shared/modals/ResourceDetailsAccessPolicyTab";
@@ -88,7 +88,6 @@ const AclAccessPage = <T extends RequiredFormProps>({
 										<AccessPolicyTable
 											isUserTable={true}
 											policiesFiltered={policiesFiltered(formik.values.policies, true)}
-											rolesFilteredbyPolicies={rolesFilteredbyPolicies(roles, formik.values.policies, true)}
 											header={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.USERS"}
 											firstColumnHeader={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.USER"}
 											createLabel={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.NEW_USER"}
@@ -103,7 +102,6 @@ const AclAccessPage = <T extends RequiredFormProps>({
 										<AccessPolicyTable
 											isUserTable={false}
 											policiesFiltered={policiesFiltered(formik.values.policies, false)}
-											rolesFilteredbyPolicies={rolesFilteredbyPolicies(roles, formik.values.policies, false)}
 											header={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.NON_USER_ROLES"}
 											firstColumnHeader={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.ROLE"}
 											createLabel={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.NEW"}
@@ -122,7 +120,6 @@ const AclAccessPage = <T extends RequiredFormProps>({
 										<AccessPolicyTable
 											isUserTable={false}
 											policiesFiltered={formik.values.policies}
-											rolesFilteredbyPolicies={filterRoles(roles, formik.values.policies)}
 											firstColumnHeader={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.ROLE"}
 											createLabel={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.NEW"}
 											formik={formik}

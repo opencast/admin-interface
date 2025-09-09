@@ -50,20 +50,6 @@ export const policiesFiltered = (
 	}
 };
 
-// Get all roles that have user information, or all policies that do not have user information
-export const rolesFilteredbyPolicies = (
-roles: Role[],
-policies: TransformedAcl[],
-byUser: boolean,
-) => {
-	roles = filterRoles(roles, policies);
-	if (byUser) {
-		return roles.filter(role => role.user !== undefined);
-	} else {
-		return roles.filter(role => role.user === undefined);
-	}
-};
-
 /* fetches the policies for the chosen template and sets the policies in the formik form to those policies */
 export const handleTemplateChange = async <T extends { policies: TransformedAcl[], aclTemplate: string }>(
 	templateId: string,
