@@ -1111,7 +1111,6 @@ export const saveSchedulingInfo = createAppAsyncThunk("eventDetails/saveScheduli
 	endDate: Date
 }, { dispatch, getState }) => {
 	const { eventId, values, startDate, endDate } = params;
-
 	const state = getState();
 	const oldSource = getSchedulingSource(state);
 	const captureAgents = getRecordings(state);

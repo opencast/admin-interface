@@ -14,6 +14,7 @@ import { availableHotkeys } from "../configs/hotkeysConfig";
 import { studioURL } from "../configs/generalConfig";
 import { hasAccess } from "../utils/utils";
 import RegistrationModal from "./shared/RegistrationModal";
+import TermsOfUseModal from "./shared/TermsOfUseModal";
 import HotKeyCheatSheet from "./shared/HotKeyCheatSheet";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useAppDispatch, useAppSelector } from "../store";
@@ -51,6 +52,7 @@ const Header = () => {
 	const errorCounter = useAppSelector(state => getErrorCount(state));
 	const user = useAppSelector(state => getUserInformation(state));
 	const orgProperties = useAppSelector(state => getOrgProperties(state));
+	const displayTerms = (orgProperties["org.opencastproject.admin.display_terms"] || "false").toLowerCase() === "true";
 
 	const loadHealthStatus = async () => {
 		await dispatch(fetchHealthStatus());
@@ -266,6 +268,9 @@ const Header = () => {
 
 			{/* Adopters Registration Modal */}
 			<RegistrationModal modalRef={registrationModalRef}/>
+
+			{/* Terms of use for all non-admin users */}
+			{displayTerms && !user.roles.includes("ROLE_ADMIN") && <TermsOfUseModal />}
 
 			{/* Hotkey Cheat Sheet */}
 			<HotKeyCheatSheet modalRef={hotKeyCheatSheetModalRef}/>

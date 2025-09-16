@@ -2155,5 +2155,10 @@
 		"IMPRINT": "Imprint",
 		"PRIVACY": "Privacy statement",
 		"NOCONTENT": "Content not available"
+	},
+	"TERMS": {
+		"TITLE": "Terms of use",
+		"NOCONTENT": "Content not available",
+		"AGREE": "I have read and agree to the terms of use"
 	}
 }
