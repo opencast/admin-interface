@@ -2076,6 +2076,8 @@
 				"SELECT_NEXT_DASHBOARD_FILTER": "Select next dashboard filter",
 				"SELECT_PREVIOUS_DASHBOARD_FILTER": "Select previous dashboard filter",
 				"REMOVE_FILTERS": "Clear all filters",
+				"NEXT_STEP": "Go to next step",
+        		"PREVIOUS_STEP": "Go to previous step",
 				"EVENT_VIEW": "Events",
 				"SERIES_VIEW": "Series",
 				"NEW_EVENT": "Add event",

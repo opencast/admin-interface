@@ -49,6 +49,9 @@ import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
 import { NOTIFICATION_CONTEXT } from "../../../../configs/modalConfig";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { ParseKeys } from "i18next";
+import { useHotkeys } from "react-hotkeys-hook";
+import { availableHotkeys } from "../../../../configs/hotkeysConfig";
+
 
 export enum EventDetailsPage {
 	Metadata,
@@ -229,6 +232,46 @@ const EventDetails = ({
 		}
 	};
 
+	const wizardTabs = tabs.filter(tab =>
+	  !tab.hidden && tab.page !== EventDetailsPage.Tobira && tab.page !== EventDetailsPage.Statistics,
+	);
+
+	const goNextStep = () => {
+	  const currentIndex = wizardTabs.findIndex(tab => tab.page === page);
+	  if (currentIndex === -1) { return; } // not in wizard, do nothing
+	  const nextIndex = currentIndex + 1;
+	  if (nextIndex >= wizardTabs.length) { return; } // already at last step (Comments)
+	  openTab(wizardTabs[nextIndex].page);
+	};
+
+	const goPrevStep = () => {
+	  const currentIndex = wizardTabs.findIndex(tab => tab.page === page);
+	  if (currentIndex <= 0) { return; }
+	  openTab(wizardTabs[currentIndex - 1].page);
+	};
+	// NEXT STEP
+	useHotkeys(
+	  availableHotkeys.general.NEXT_STEP.sequence,
+	  event => {
+	    const target = event.target as HTMLElement;
+	    if (!["INPUT", "TEXTAREA"].includes(target.tagName)) {
+	      goNextStep();
+	    }
+	  },
+	  [goNextStep],
+	);
+
+	// PREVIOUS STEP
+	useHotkeys(
+	  availableHotkeys.general.PREVIOUS_STEP.sequence,
+	  event => {
+	    const target = event.target as HTMLElement;
+	    if (!["INPUT", "TEXTAREA"].includes(target.tagName)) {
+	      goPrevStep();
+	    }
+	  },
+	  [goPrevStep],
+	);
 	return (
 		<>
 			<nav className="modal-nav" id="modal-nav">

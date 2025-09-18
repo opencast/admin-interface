@@ -64,6 +64,16 @@ export const availableHotkeys: HotkeyMapType = {
 			description: "HOTKEYS.DESCRIPTIONS.GENERAL.REMOVE_FILTERS",
 			sequence: ["r"],
 		},
+		NEXT_STEP: {
+    		name: "next_step",
+    		description: "HOTKEYS.DESCRIPTIONS.GENERAL.NEXT_STEP",
+    		sequence: ["alt+enter"], // Alt + Enter moves forward
+  		},
+  		PREVIOUS_STEP: {
+    		name: "previous_step",
+    		description: "HOTKEYS.DESCRIPTIONS.GENERAL.PREVIOUS_STEP",
+    		sequence: ["alt+backspace"], // Alt + Backspace moves backward
+  		},
 		CLOSE_MODAL: {
 			name: "close_modal",
 			description: "HOTKEYS.DESCRIPTIONS.GENERAL.CLOSE_MODAL",
