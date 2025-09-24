@@ -31,8 +31,11 @@
     border-bottom-right-radius: variables.$main-border-radius;
     background: color.adjust(variables.$body-background, $lightness: -3%);
     border-top: 1px solid variables.$main-border-color;
-    display: flex;
-    flex-direction: row-reverse;
+    div {
+        &.pull-right{
+            float:right;
+        }
+    }
 
     button {
         @include button.btn(green);
