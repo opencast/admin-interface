@@ -4,7 +4,7 @@ import {
 	dropDownSpacingTheme,
 	dropDownStyle,
 } from "../../utils/componentStyles";
-import { GroupBase, MenuListProps, Props, SelectInstance } from "react-select";
+import { GroupBase, MenuListProps, Props, SelectInstance, createFilter } from "react-select";
 import { isJson } from "../../utils/utils";
 import { ParseKeys } from "i18next";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
@@ -67,7 +67,8 @@ const DropDown = <T, >({
 		optionPaddingTop?: number,
 		optionLineHeight?: string
 	},
-	fetchOptions?: (inputValue: string) => Promise<{ label: string, value: string }[]>
+	fetchOptions?: (inputValue: string) => Promise<{ label: string, value: string }[]>,
+	isAclDropDown?: boolean;
 }) => {
 	const { t } = useTranslation();
 
