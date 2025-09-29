@@ -340,7 +340,6 @@ const EditableSingleValueTime = ({
 const EditableSingleSelectSeries = ({
 	field,
 	metadataField,
-	text,
 	form: { setFieldValue },
 	isFirstField,
 	focused,
