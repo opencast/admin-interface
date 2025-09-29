@@ -40,7 +40,7 @@ import { LuChevronDown, LuChevronLeft, LuChevronRight, LuChevronUp, LuLoaderCirc
 
 const containerPageSize = React.createRef<HTMLDivElement>();
 
-type TemplateMap = {
+export type TemplateMap = {
 	[key: string]: ({ row }: { row: any }) => JSX.Element | JSX.Element[]
 }
 

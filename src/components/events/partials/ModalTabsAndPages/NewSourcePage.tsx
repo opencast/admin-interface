@@ -325,7 +325,8 @@ const Upload = <T extends RequiredFormPropsUpload>({
 							{/* One row for each metadata field*/}
 							{sourceMetadata.UPLOAD && sourceMetadata.UPLOAD.metadata.map((field, key) => (
 								<tr key={key}>
-									<td>
+									{/* Set fixed width to prevent date picker from opening twice */}
+									<td style={{ width: "20%" }}>
 										<span>{t(field.label as ParseKeys)}</span>
 										{field.required && <i className="required">*</i>}
 									</td>
@@ -430,7 +431,7 @@ const Schedule = <T extends {
 									dateFormat="P"
 									popperClassName="datepicker-custom"
 									className="datepicker-custom-input"
-									portalId="root"
+									wrapperClassName="datepicker-custom-wrapper"
 									locale={currentLanguage?.dateLocale}
 									strictParsing
 								/>
@@ -461,7 +462,7 @@ const Schedule = <T extends {
 											dateFormat="P"
 											popperClassName="datepicker-custom"
 											className="datepicker-custom-input"
-											portalId="root"
+											wrapperClassName="datepicker-custom-wrapper"
 											locale={currentLanguage?.dateLocale}
 											strictParsing
 										/>

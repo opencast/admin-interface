@@ -4,6 +4,7 @@ import SeriesDetails from "./SeriesDetails";
 import { removeNotificationWizardForm } from "../../../../slices/notificationSlice";
 import { useAppDispatch } from "../../../../store";
 import { Modal, ModalHandle } from "../../../shared/modals/Modal";
+import { confirmUnsaved } from "../../../../utils/utils";
 import { FormikProps } from "formik";
 
 /**
@@ -25,10 +26,6 @@ const SeriesDetailsModal = ({
 	const [policyChanged, setPolicyChanged] = useState(false);
 	const formikRef = useRef<FormikProps<any>>(null);
 
-	const confirmUnsaved = () => {
-		return window.confirm(t("CONFIRMATIONS.WARNINGS.UNSAVED_CHANGES"));
-	};
-
 	const close = () => {
 		let isUnsavedChanges = false;
 		isUnsavedChanges = policyChanged;
@@ -36,7 +33,7 @@ const SeriesDetailsModal = ({
 			isUnsavedChanges = true;
 		}
 
-		if (!isUnsavedChanges || confirmUnsaved()) {
+		if (!isUnsavedChanges || confirmUnsaved(t)) {
 			setPolicyChanged(false);
 			dispatch(removeNotificationWizardForm());
 			return true;

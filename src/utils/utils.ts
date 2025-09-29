@@ -147,3 +147,10 @@ export const translateOverrideFallback = (asset: UploadOption, t: TFunction, suf
 
 	return result;
 };
+
+/**
+ * Have the browser show a warning dialog for unsaved changes
+ */
+export const confirmUnsaved = (t: TFunction) => {
+	return window.confirm(t("CONFIRMATIONS.WARNINGS.UNSAVED_CHANGES"));
+};

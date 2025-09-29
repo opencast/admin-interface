@@ -16,7 +16,13 @@ import { LuPlus } from "react-icons/lu";
 /**
  * Component that renders the nav bar
  */
-type CreateType = {
+export type NavBarLink = {
+	path: string
+	accessRole: string
+	text: ParseKeys
+}
+
+export type CreateType = {
 	accessRole: string
 	onShowModal?: () => Promise<void>
 	onHideModal?: () => void
@@ -39,11 +45,7 @@ const NavBar = ({
 	navAriaLabel?: ParseKeys
 	displayNavigation: boolean
 	setNavigation: React.Dispatch<React.SetStateAction<boolean>>
-	links: {
-		path: string
-		accessRole: string
-		text: ParseKeys
-	}[]
+	links: NavBarLink[]
 	create?: CreateType
 }) => {
 	const { t } = useTranslation();

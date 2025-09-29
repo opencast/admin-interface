@@ -1,8 +1,8 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import DatePicker from "react-datepicker";
 import cn from "classnames";
-import { getMetadataCollectionFieldName } from "../../../utils/resourceUtils";
+import { getMetadataCollectionFieldName, transformListProvider } from "../../../utils/resourceUtils";
 import { getCurrentLanguageInformation } from "../../../utils/utils";
 import DropDown from "../DropDown";
 import { parseISO } from "date-fns";
@@ -11,6 +11,7 @@ import { MetadataField } from "../../../slices/eventSlice";
 import { GroupBase, SelectInstance } from "react-select";
 import TextareaAutosize from "react-textarea-autosize";
 import { LuCheck, LuSquarePen } from "react-icons/lu";
+import axios from "axios";
 
 /**
  * This component renders an editable field for single values depending on the type of the corresponding metadata
@@ -66,7 +67,7 @@ const RenderField = ({
 			)}
 			{metadataField.type === "text" &&
 				!!metadataField.collection &&
-				metadataField.collection.length > 0 && (
+				(
 					<EditableSingleSelect
 						metadataField={metadataField}
 						field={field}
@@ -92,7 +93,7 @@ const RenderField = ({
 			)}
 			{metadataField.type === "text" &&
 				!(
-					!!metadataField.collection && metadataField.collection.length !== 0
+					metadataField.collection
 				) && (
 					<EditableSingleValue
 						field={field}
@@ -197,16 +198,7 @@ const EditableDateValue = ({
 };
 
 // renders editable field for selecting value via dropdown
-const EditableSingleSelect = ({
-	field,
-	metadataField,
-	text,
-	form: { setFieldValue },
-	isFirstField,
-	focused,
-	setFocused,
-	ref,
-}: {
+type EditableSingleSelectProps = ({
 	field: FieldProps["field"]
 	metadataField: MetadataField
 	text: string
@@ -215,8 +207,24 @@ const EditableSingleSelect = ({
 	focused: boolean,
 	setFocused: (open: boolean) => void
 	ref: React.RefObject<SelectInstance<any, boolean, GroupBase<any>>>
-}) => {
+})
+const EditableSingleSelect = (props: EditableSingleSelectProps) => {
 	const { t } = useTranslation();
+
+	const {
+		field,
+		metadataField,
+		text,
+		form: { setFieldValue },
+		isFirstField,
+		focused,
+		setFocused,
+		ref,
+	} = props;
+
+	if (metadataField.id === "isPartOf") {
+		return <EditableSingleSelectSeries {...props} />;
+	}
 
 	return (
 		<DropDown
@@ -320,6 +328,69 @@ const EditableSingleValueTime = ({
 				autoFocus={isFirstField}
 			/>
 		</div>
+	);
+};
+
+/**
+ * Special case for series. Uses an async selector to fetch options.
+ *
+ * Ideally we could generalize this for all metadata fields with listproviders,
+ * but other listproviders do not offer the required filtering capabilities.
+ */
+const EditableSingleSelectSeries = ({
+	field,
+	metadataField,
+	text,
+	form: { setFieldValue },
+	isFirstField,
+	focused,
+	setFocused,
+	ref,
+}: EditableSingleSelectProps) => {
+	const { t } = useTranslation();
+
+	const [label, setLabel] = useState("");
+
+	useEffect(() => {
+		// The metadata catalog only contains the field value, so we need to fetch the label ourselves
+		const fetchLabelById = async () => {
+			if (field.value) {
+				const res = await axios.get<{ [key: string]: string }>(`/admin-ng/resources/SERIES.WRITE_ONLY.json?limit=1&filter=textFilter:${field.value}`);
+				const data = res.data;
+				const transformedData = transformListProvider(data);
+				if (transformedData.length > 0) {
+					setLabel(transformedData[0].label);
+				}
+			}
+		};
+		fetchLabelById();
+	}, [field.value]);
+
+	// Fetch collection
+	const fetchOptions = async (inputValue: string) => {
+		const res = await axios.get<{ [key: string]: string }>(`/admin-ng/resources/SERIES.WRITE_ONLY.json?filter=textFilter:${inputValue}`);
+		const data = res.data;
+		return transformListProvider(data);
+	};
+
+	return (
+		<DropDown
+			ref={ref}
+			value={field.value as string}
+			text={label}
+			fetchOptions={fetchOptions}
+			required={metadataField.required}
+			handleChange={element => element && setFieldValue(field.name, element.value)}
+			placeholder={focused
+				? `-- ${t("SELECT_NO_OPTION_SELECTED")} --`
+				: `${t("SELECT_NO_OPTION_SELECTED")}`
+			}
+			customCSS={{ isMetadataStyle: focused ? false : true }}
+			handleMenuIsOpen={(open: boolean) => setFocused(open)}
+			openMenuOnFocus
+			autoFocus={isFirstField}
+			skipTranslate={!metadataField.translatable}
+		/>
 	);
 };
 

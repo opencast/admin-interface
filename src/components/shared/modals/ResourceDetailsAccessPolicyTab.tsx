@@ -486,15 +486,15 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 									<th className="fit">
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.READ",
-											) /* <!-- Read --> */
+												"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.WRITE",
+											) /* <!-- Write --> */
 										}
 									</th>
 									<th className="fit">
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.WRITE",
-											) /* <!-- Write --> */
+												"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.READ",
+											) /* <!-- Read --> */
 										}
 									</th>
 									{hasActions && (
@@ -535,11 +535,6 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 																		value={policy.role}
 																		text={createPolicyLabel(policy)}
 																		options={
-																			roles.length > 0
-																				? formatAclRolesForDropdown(filterRoles(roles, formik.values.policies, policy.role))
-																				: []
-																		}
-																		fetchOptions={() =>
 																			roles.length > 0
 																				? formatAclRolesForDropdown(filterRoles(roles, formik.values.policies, policy.role))
 																				: []

@@ -18,7 +18,6 @@ const NewMetadataPage = ({
 	header?: ParseKeys
 }) => {
 	const { t } = useTranslation();
-
 	return (
 		<ModalContentTable>
 			{

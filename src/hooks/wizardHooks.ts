@@ -118,6 +118,17 @@ export const useClickOutsideField = (
 			childRef.current.focus();
 		}
 
+		const handleBlur = (e: FocusEvent) => {
+        // Check if blur moves to an element outside childRef
+        if (childRef.current && !childRef.current.contains(e.relatedTarget as Node)) {
+        setEditMode(false);
+        }
+        };
+
+        if (childRef.current) {
+        childRef.current.addEventListener("blur", handleBlur, true); // capture phase
+        }
+
 		// Adding event listener for detecting click outside
 		window.addEventListener("mousedown", handleClickOutside);
 

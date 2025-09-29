@@ -7,6 +7,7 @@ import { getModalEvent } from "../../../../selectors/eventDetailsSelectors";
 import { setModalEvent, setShowModal } from "../../../../slices/eventDetailsSlice";
 import { Modal } from "../../../shared/modals/Modal";
 import { FormikProps } from "formik";
+import { confirmUnsaved } from "../../../../utils/utils";
 
 /**
  * This component renders the modal for displaying event details
@@ -21,10 +22,6 @@ const EventDetailsModal = () => {
 
 	const event = useAppSelector(state => getModalEvent(state))!;
 
-	const confirmUnsaved = () => {
-		return window.confirm(t("CONFIRMATIONS.WARNINGS.UNSAVED_CHANGES"));
-	};
-
 	const hideModal = () => {
 		dispatch(setModalEvent(null));
 		dispatch(setShowModal(false));
@@ -37,7 +34,7 @@ const EventDetailsModal = () => {
 			isUnsavedChanges = true;
 		}
 
-		if (!isUnsavedChanges || confirmUnsaved()) {
+		if (!isUnsavedChanges || confirmUnsaved(t)) {
 			setPolicyChanged(false);
 			dispatch(removeNotificationWizardForm());
 			hideModal();
