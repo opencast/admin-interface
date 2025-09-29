@@ -4,7 +4,7 @@ import {
 	dropDownSpacingTheme,
 	dropDownStyle,
 } from "../../utils/componentStyles";
-import { GroupBase, MenuListProps, Props, SelectInstance, createFilter } from "react-select";
+import { GroupBase, MenuListProps, Props, SelectInstance } from "react-select";
 import { isJson } from "../../utils/utils";
 import { ParseKeys } from "i18next";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
@@ -179,7 +179,7 @@ const DropDown = <T, >({
 		_inputValue: string,
 		callback: (options: DropDownOption[]) => void,
 	) => {
-		callback(formatOptions(filterOptions(inputValue), required));
+		callback(formatOptions(filterOptions(_inputValue), required));
 	};
 
 
