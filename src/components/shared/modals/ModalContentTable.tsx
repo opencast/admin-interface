@@ -1,5 +1,5 @@
 import ModalContent from "./ModalContent";
-
+import { useRef } from "react";
 /**
  * This component
  */
@@ -14,7 +14,18 @@ const ModalContentTable = ({
 	modalBodyChildren?: React.ReactNode
 	children: React.ReactNode
 }) => {
-
+	 // Store the last blurred/focused element
+  	    const lastFocusedRef = useRef<HTMLElement | null>(null);
+    		const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    		   const active = document.activeElement as HTMLElement | null;
+      if (event.key === "Escape") {
+        if (active && event.currentTarget.contains(active)) {
+          lastFocusedRef.current = active; // store the last focused element
+          active.blur();
+          console.log(lastFocusedRef);
+        }
+      }
+    		};
 
   return (
 		<ModalContent
@@ -22,7 +33,7 @@ const ModalContentTable = ({
 			modalContentClassName={modalContentClassName}
 		>
 			{modalBodyChildren}
-			<div className="full-col">
+			<div className="full-col" onKeyDown={handleKeyDown}>
 				{children}
 			</div>
 		</ModalContent>
