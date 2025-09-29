@@ -177,6 +177,27 @@ export const transformMetadataFields = (metadata: MetadataField[]) => {
 	return metadata;
 };
 
+export const transformListProvider = (collection: { [key: string]: string }) => {
+	return Object.entries(collection)
+		.map(([key, value]) => {
+			if (isJson(value)) {
+				// TODO: Handle JSON parsing errors
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+				const collectionParsed: { [key: string]: string } = JSON.parse(value);
+				return {
+					label: collectionParsed.label || value,
+					value: key,
+					...collectionParsed,
+				};
+			} else {
+				return {
+					label: value,
+					value: key,
+				};
+			}
+		});
+};
+
 // transform metadata catalog for update via post request
 export const transformMetadataForUpdate = (catalog: MetadataCatalog, values: { [key: string]: MetadataCatalog["fields"][0]["value"] }) => {
 	const fields: MetadataCatalog["fields"] = [];

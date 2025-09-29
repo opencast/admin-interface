@@ -45,7 +45,7 @@ const DropDown = <T, >({
 	ref?: React.RefObject<SelectInstance<any, boolean, GroupBase<any>> | null>
 	value: T
 	text: string,
-	options: DropDownOption[],
+	options?: DropDownOption[],
 	required: boolean,
 	handleChange: (option: {value: T, label: string} | null) => void
 	placeholder: string
@@ -66,7 +66,7 @@ const DropDown = <T, >({
 		optionPaddingTop?: number,
 		optionLineHeight?: string
 	},
-	fetchOptions?: () => { label: string, value: string}[]
+	fetchOptions?: (inputValue: string) => Promise<{ label: string, value: string }[]>
 }) => {
 	const { t } = useTranslation();
 
@@ -157,14 +157,29 @@ const DropDown = <T, >({
 		) : null;
 	};
 
+	const filterOptions = (inputValue: string) => {
+		if (options) {
+			return options.filter(option =>
+				option.label.toLowerCase().includes(inputValue.toLowerCase()),
+			);
+		}
+		return [];
+	};
+
+	const loadOptionsAsync = (inputValue: string, callback: (options: DropDownOption[]) => void) => {
+		setTimeout(async () => {
+			callback(formatOptions(
+				fetchOptions ? await fetchOptions(inputValue) : filterOptions(inputValue),
+				required,
+			));
+		}, 1000);
+	};
+
 	const loadOptions = (
 		_inputValue: string,
 		callback: (options: DropDownOption[]) => void,
 	) => {
-		callback(formatOptions(
-			fetchOptions ? fetchOptions() : options,
-			required,
-		));
+		callback(formatOptions(filterOptions(inputValue), required));
 	};
 
 
@@ -176,10 +191,14 @@ const DropDown = <T, >({
 		autoFocus: autoFocus,
 		isSearchable: true,
 		value: { value: value, label: text === "" ? placeholder : text },
-		options: formatOptions(
-			options,
-			required,
-		),
+		defaultOptions: options
+			? formatOptions(
+				options,
+				required,
+			)
+			: true,
+		cacheOptions: true,
+		loadOptions: fetchOptions ? loadOptionsAsync : loadOptions,
 		placeholder: placeholder,
 		onChange: element => handleChange(element as {value: T, label: string}),
 		menuIsOpen: menuIsOpen,
@@ -191,19 +210,12 @@ const DropDown = <T, >({
 
 		// @ts-expect-error: React-Select typing does not account for the typing of option it itself requires
 		components: { MenuList },
-		filterOption: createFilter({ ignoreAccents: false }), // To improve performance on filtering
 	};
 
 	return creatable ? (
 		<AsyncCreatableSelect
 			ref={selectRef}
 			{...commonProps}
-			cacheOptions
-			defaultOptions={formatOptions(
-				options,
-				required,
-			)}
-			loadOptions={loadOptions}
 		/>
 	) : (
 		<AsyncSelect
@@ -211,12 +223,6 @@ const DropDown = <T, >({
 			{...commonProps}
 			openMenuOnFocus={false}
 			noOptionsMessage={() => t("SELECT_NO_MATCHING_RESULTS")}
-			cacheOptions
-			defaultOptions={formatOptions(
-				options,
-				required,
-			)}
-			loadOptions={loadOptions}
 		/>
 	);
 };
