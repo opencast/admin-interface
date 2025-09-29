@@ -66,17 +66,6 @@ export const Modal = forwardRef<ModalHandle, PropsWithChildren<ModalProps>>(
       },
       [ref],
     );
-    // const lastFocusedRef = useRef<HTMLElement | null>(null);
-    // 		const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    // 		   const active = document.activeElement as HTMLElement | null;
-    //   if (event.key === "Escape") {
-    //     if (active && event.currentTarget.contains(active)) {
-    //       lastFocusedRef.current = active; // store the last focused element
-    //       active.blur(); // remove focus
-    //       console.log(lastFocusedRef);
-    //     }
-    //   }
-    // 		};
 	return ReactDOM.createPortal(
 		isOpen &&
 			<FocusTrap

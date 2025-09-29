@@ -22,7 +22,6 @@ const ModalContentTable = ({
         if (active && event.currentTarget.contains(active)) {
           lastFocusedRef.current = active; // store the last focused element
           active.blur();
-          console.log(lastFocusedRef);
         }
       }
     		};
