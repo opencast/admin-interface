@@ -18,7 +18,7 @@ const EventsPresentersCell = ({
 			filterName="presentersBibliographic"
 			fetchResource={fetchEvents}
 			loadResourceIntoTable={loadEventsIntoTable}
-			tooltipText="EVENTS.EVENTS.TABLE.TOOLTIP.PRESENTER"
+			// tooltipText="EVENTS.EVENTS.TABLE.TOOLTIP.PRESENTER"  // Disabled due to performance concerns
 		/>
 	);
 };

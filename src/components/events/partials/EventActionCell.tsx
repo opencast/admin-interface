@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import EmbeddingCodeModal from "./modals/EmbeddingCodeModal";
 import { getUserInformation } from "../../../selectors/userInfoSelectors";
 import { hasAccess } from "../../../utils/utils";
-import SeriesDetailsModal from "./modals/SeriesDetailsModal";
 import { EventDetailsPage } from "./modals/EventDetails";
 import { useAppDispatch, useAppSelector } from "../../../store";
 import {
@@ -11,14 +10,15 @@ import {
 	fetchSeriesDetailsMetadata,
 	fetchSeriesDetailsTheme,
 	fetchSeriesDetailsThemeNames,
+	openModal as openSeriesModal,
 } from "../../../slices/seriesDetailsSlice";
 import { Event, deleteEvent } from "../../../slices/eventSlice";
-import { Tooltip } from "../../shared/Tooltip";
 import { openModal } from "../../../slices/eventDetailsSlice";
 import { ActionCellDelete } from "../../shared/ActionCellDelete";
 import { Modal, ModalHandle } from "../../shared/modals/Modal";
 import ButtonLikeAnchor from "../../shared/ButtonLikeAnchor";
 import { LuFileSymlink, LuFileText, LuFolderOpen, LuLink, LuMessageCircle, LuScissors, LuTriangleAlert } from "react-icons/lu";
+import { SeriesDetailsPage } from "./modals/SeriesDetails";
 
 /**
  * This component renders the action cells of events in the table view
@@ -31,7 +31,6 @@ const EventActionCell = ({
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
-	const seriesDetailsModalRef = useRef<ModalHandle>(null);
 	const embeddingCodeModalRef = useRef<ModalHandle>(null);
 
 	const user = useAppSelector(state => getUserInformation(state));
@@ -45,7 +44,7 @@ const EventActionCell = ({
 	};
 
 	const showSeriesDetailsModal = () => {
-		seriesDetailsModalRef.current?.open();
+		dispatch(openSeriesModal(SeriesDetailsPage.Metadata, row.series ? row.series : null));
 	};
 
 	const onClickSeriesDetails = async () => {
@@ -79,20 +78,12 @@ const EventActionCell = ({
 
 	return (
 		<>
-			{!!row.series && (
-				<SeriesDetailsModal
-					seriesId={row.series.id}
-					seriesTitle={row.series.title}
-					modalRef={seriesDetailsModalRef}
-				/>
-			)}
-
 			{/* Open event details */}
 			<ButtonLikeAnchor
 				onClick={onClickEventDetails}
 				className={"action-cell-button"}
 				editAccessRole={"ROLE_UI_EVENTS_DETAILS_VIEW"}
-				tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.DETAILS"}
+				// tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.DETAILS"} // Disabled due to performance concerns
 			>
 				<LuFileText />
 			</ButtonLikeAnchor>
@@ -103,7 +94,7 @@ const EventActionCell = ({
 					onClick={onClickSeriesDetails}
 					className={"action-cell-button more-series"}
 					editAccessRole={"ROLE_UI_SERIES_DETAILS_VIEW"}
-					tooltipText={"EVENTS.SERIES.TABLE.TOOLTIP.DETAILS"}
+					// tooltipText={"EVENTS.SERIES.TABLE.TOOLTIP.DETAILS"} // Disabled due to performance concerns
 				>
 					<LuFileSymlink />
 				</ButtonLikeAnchor>
@@ -112,7 +103,7 @@ const EventActionCell = ({
 			{/* Delete an event */}
 			<ActionCellDelete
 				editAccessRole={"ROLE_UI_EVENTS_DELETE"}
-				tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.DELETE"}
+				// tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.DELETE"} // Disabled due to performance concerns
 				resourceId={row.id}
 				resourceName={row.title}
 				resourceType={"EVENT"}
@@ -121,13 +112,13 @@ const EventActionCell = ({
 
 			{/* If the event has an preview then the editor can be opened and status if it needs to be cut is shown */}
 			{!!row.has_preview && hasAccess("ROLE_UI_EVENTS_EDITOR_VIEW", user) && (
-				<Tooltip
-					title={
-						row.needs_cutting
-							? t("EVENTS.EVENTS.TABLE.TOOLTIP.EDITOR_NEEDS_CUTTING")
-							: t("EVENTS.EVENTS.TABLE.TOOLTIP.EDITOR")
-					}
-				>
+				// <Tooltip // Disabled due to performance concerns
+				// 	title={
+				// 		row.needs_cutting
+				// 			? t("EVENTS.EVENTS.TABLE.TOOLTIP.EDITOR_NEEDS_CUTTING")
+				// 			: t("EVENTS.EVENTS.TABLE.TOOLTIP.EDITOR")
+				// 	}
+				// >
 					<a
 						href={`/editor-ui/index.html?id=${row.id}`}
 						className="action-cell-button cut"
@@ -136,15 +127,15 @@ const EventActionCell = ({
 						<LuScissors />
 						{row.needs_cutting && <span id="badge" className="badge" />}
 					</a>
-				</Tooltip>
+				// </Tooltip>
 			)}
 
 			{/* If the event has comments and no open comments then the comment tab of event details can be opened directly */}
 			{row.has_comments && !row.has_open_comments && (
 				<ButtonLikeAnchor
 					onClick={() => onClickComments()}
-					tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.COMMENTS"}
-					className={"action-cell-button"}
+					// tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.COMMENTS"} // Disabled due to performance concerns
+					className={"action-cell-button comments"}
 				>
 					<LuMessageCircle style={{
 						color: "#1d5888",
@@ -156,8 +147,8 @@ const EventActionCell = ({
 			{row.has_comments && row.has_open_comments && (
 				<ButtonLikeAnchor
 					onClick={() => onClickComments()}
-					tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.COMMENTS"}
-					className={"action-cell-button"}
+					// tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.COMMENTS"} // Disabled due to performance concerns
+					className={"action-cell-button comments-open"}
 				>
 					<LuMessageCircle style={{
 						color: "#1d5888",
@@ -171,7 +162,7 @@ const EventActionCell = ({
 				<ButtonLikeAnchor
 					onClick={() => onClickWorkflow()}
 					editAccessRole={"ROLE_UI_EVENTS_DETAILS_WORKFLOWS_EDIT"}
-					tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.PAUSED_WORKFLOW"}
+					// tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.PAUSED_WORKFLOW"} // Disabled due to performance concerns
 					className={"action-cell-button"}
 				>
 					<LuTriangleAlert style={{
@@ -184,7 +175,7 @@ const EventActionCell = ({
 			<ButtonLikeAnchor
 				onClick={() => onClickAssets()}
 				editAccessRole={"ROLE_UI_EVENTS_DETAILS_ASSETS_VIEW"}
-				tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.ASSETS"}
+				// tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.ASSETS"} // Disabled due to performance concerns
 				className={"action-cell-button"}
 				>
 					<LuFolderOpen style={{
@@ -196,7 +187,7 @@ const EventActionCell = ({
 			<ButtonLikeAnchor
 				onClick={() => showEmbeddingCodeModal()}
 				editAccessRole={"ROLE_UI_EVENTS_EMBEDDING_CODE_VIEW"}
-				tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.EMBEDDING_CODE"}
+				// tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.EMBEDDING_CODE"} // Disabled due to performance concerns
 				className={"action-cell-button"}
 				>
 					<LuLink style={{

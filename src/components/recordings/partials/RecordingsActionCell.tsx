@@ -37,7 +37,7 @@ const RecordingsActionCell = ({
 				onClick={() => showRecordingDetails()}
 				className={"action-cell-button"}
 				editAccessRole={"ROLE_UI_LOCATIONS_DETAILS_VIEW"}
-				tooltipText={"RECORDINGS.RECORDINGS.TABLE.TOOLTIP.DETAILS"}
+				// tooltipText={"RECORDINGS.RECORDINGS.TABLE.TOOLTIP.DETAILS"} // Disabled due to performance concerns
 			>
 				<LuFileText />
 			</ButtonLikeAnchor>
@@ -50,7 +50,7 @@ const RecordingsActionCell = ({
 			{/* delete location/recording */}
 			<ActionCellDelete
 				editAccessRole={"ROLE_UI_LOCATIONS_DELETE"}
-				tooltipText={"RECORDINGS.RECORDINGS.TABLE.TOOLTIP.DELETE"}
+				// tooltipText={"RECORDINGS.RECORDINGS.TABLE.TOOLTIP.DELETE"} // Disabled due to performance concerns
 				resourceId={row.name}
 				resourceName={row.name}
 				resourceType={"LOCATION"}

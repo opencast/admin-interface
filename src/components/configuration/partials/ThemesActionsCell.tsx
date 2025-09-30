@@ -49,7 +49,7 @@ const ThemesActionsCell = ({
 				onClick={() => showThemeDetails()}
 				className={"action-cell-button"}
 				editAccessRole={"ROLE_UI_THEMES_EDIT"}
-				tooltipText={"CONFIGURATION.THEMES.TABLE.TOOLTIP.DETAILS"}
+				// tooltipText={"CONFIGURATION.THEMES.TABLE.TOOLTIP.DETAILS"} // Disabled due to performance concerns
 			>
 				<LuFileText />
 			</ButtonLikeAnchor>
@@ -67,7 +67,7 @@ const ThemesActionsCell = ({
 			{/* delete themes */}
 			<ActionCellDelete
 				editAccessRole={"ROLE_UI_THEMES_DELETE"}
-				tooltipText={"CONFIGURATION.THEMES.TABLE.TOOLTIP.DELETE"}
+				// tooltipText={"CONFIGURATION.THEMES.TABLE.TOOLTIP.DELETE"} // Disabled due to performance concerns
 				resourceId={row.id}
 				resourceName={row.name}
 				resourceType={"THEME"}

@@ -20,6 +20,7 @@ import { Modal, ModalHandle } from "../shared/modals/Modal";
 import { availableHotkeys } from "../../configs/hotkeysConfig";
 import TableActionDropdown from "../shared/TableActionDropdown";
 import TablePage from "../shared/TablePage";
+import SeriesDetailsModal from "./partials/modals/SeriesDetailsModal";
 
 /**
  * This component renders the table view of series
@@ -27,6 +28,7 @@ import TablePage from "../shared/TablePage";
 const Series = () => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
+
 	const newSeriesModalRef = useRef<ModalHandle>(null);
 	const deleteModalRef = useRef<ModalHandle>(null);
 
@@ -90,6 +92,9 @@ const Series = () => {
 			>
 				<DeleteSeriesModal close={() => deleteModalRef.current?.close?.()} />
 			</Modal>
+
+			{/* Include table modal */}
+			<SeriesDetailsModal />
 		</>
 	);
 };
