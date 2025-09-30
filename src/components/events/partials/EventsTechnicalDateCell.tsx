@@ -36,7 +36,7 @@ const EventsTechnicalDateCell = ({
 		<ButtonLikeAnchor
 			onClick={() => addFilter(row.date)}
 			className={"crosslink"}
-			tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.START"}
+			// tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.START"} // Disabled due to performance concerns
 		>
 			{t("dateFormats.date.short", { date: renderValidDate(row.technical_start) })}
 		</ButtonLikeAnchor>

@@ -26,11 +26,11 @@ import {
 	setShowActions,
 } from "../../slices/eventSlice";
 import EventDetailsModal from "./partials/modals/EventDetailsModal";
-import { showModal } from "../../selectors/eventDetailsSelectors";
 import { eventsLinks } from "./partials/EventsNavigation";
 import { Modal, ModalHandle } from "../shared/modals/Modal";
 import TableActionDropdown from "../shared/TableActionDropdown";
 import TablePage from "../shared/TablePage";
+import SeriesDetailsModal from "./partials/modals/SeriesDetailsModal";
 
 /**
  * This component renders the table view of events
@@ -38,8 +38,6 @@ import TablePage from "../shared/TablePage";
 const Events = () => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
-
-	const displayEventDetailsModal = useAppSelector(state => showModal(state));
 
 	const newEventModalRef = useRef<ModalHandle>(null);
 	const startTaskModalRef = useRef<ModalHandle>(null);
@@ -156,9 +154,8 @@ const Events = () => {
 			</Modal>
 
 			{/* Include table modal */}
-			{displayEventDetailsModal &&
-				<EventDetailsModal />
-			}
+			<EventDetailsModal />
+			<SeriesDetailsModal />
 		</>
 	);
 };

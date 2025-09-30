@@ -22,7 +22,7 @@ const MultiValueCell = ({
 	filterName: string
 	fetchResource: AsyncThunk<any, void, any>
 	loadResourceIntoTable: () => AppThunk
-	tooltipText: ParseKeys,
+	tooltipText?: ParseKeys,
 }) => {
 	const dispatch = useAppDispatch();
 

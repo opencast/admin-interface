@@ -22,11 +22,19 @@ import { TobiraTabHierarchy } from "../components/events/partials/ModalTabsAndPa
 import { TobiraFormProps } from "../components/events/partials/ModalTabsAndPages/NewTobiraPage";
 import { handleTobiraError } from "./shared/tobiraErrors";
 import { AppThunk } from "../store";
+import { AppDispatch } from "../store";
+import { SeriesDetailsPage } from "../components/events/partials/modals/SeriesDetails";
 
 
 /**
  * This file contains redux reducer for actions affecting the state of a series
  */
+type SeriesDetailsModal = {
+	show: boolean,
+	page: SeriesDetailsPage,
+	series: { id: string, title: string } | null,
+}
+
 export type TobiraData = {
 	baseURL: string,
 	id: string,
@@ -48,7 +56,8 @@ type SeriesDetailsState = {
 	errorStatisticsValue: SerializedError | null,
 	statusTobiraData: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorTobiraData: SerializedError | null,
-  	metadata: MetadataCatalog,
+	modal: SeriesDetailsModal,
+	metadata: MetadataCatalog,
 	extendedMetadata: MetadataCatalog[],
 	acl: TransformedAcl[],
 	policyTemplateId: number,
@@ -77,6 +86,11 @@ const initialState: SeriesDetailsState = {
 	errorStatisticsValue: null,
 	statusTobiraData: "uninitialized",
 	errorTobiraData: null,
+		modal: {
+			show: false,
+			page: SeriesDetailsPage.Metadata,
+			series: null,
+		},
 	metadata: {
 		title: "",
 		flavor: "",
@@ -479,11 +493,48 @@ export const fetchSeriesStatisticsValueUpdate = createAppAsyncThunk("seriesDetai
 	);
 });
 
+/**
+ * Open series details modal externally
+ *
+ * @param page modal page
+ * @param series series to show
+ */
+export const openModal = (
+	page: SeriesDetailsPage,
+	series: SeriesDetailsModal["series"],
+) => (dispatch: AppDispatch) => {
+	dispatch(setModalSeries(series));
+	dispatch(openModalTab(page));
+	dispatch(setShowModal(true));
+};
+
+export const openModalTab = (
+	page: SeriesDetailsPage,
+) => (dispatch: AppDispatch) => {
+	dispatch(setModalPage(page));
+	dispatch(setTobiraTabHierarchy("main"));
+};
+
 // Reducer for series details
 const seriesDetailsSlice = createSlice({
 	name: "seriesDetails",
 	initialState,
 	reducers: {
+		setShowModal(state, action: PayloadAction<
+			SeriesDetailsState["modal"]["show"]
+		>) {
+			state.modal.show = action.payload;
+		},
+		setModalPage(state, action: PayloadAction<
+			SeriesDetailsState["modal"]["page"]
+		>) {
+			state.modal.page = action.payload;
+		},
+		setModalSeries(state, action: PayloadAction<
+			SeriesDetailsState["modal"]["series"]
+		>) {
+			state.modal.series = action.payload;
+		},
 		setSeriesDetailsTheme(state, action: PayloadAction<
 			SeriesDetailsState["theme"]
 		>) {
@@ -625,6 +676,9 @@ const seriesDetailsSlice = createSlice({
 });
 
 export const {
+	setShowModal,
+	setModalPage,
+	setModalSeries,
 	setSeriesDetailsTheme,
 	setSeriesDetailsMetadata,
 	setSeriesDetailsExtendedMetadata,

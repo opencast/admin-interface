@@ -85,7 +85,7 @@ const NewAccessPage = <T extends RequiredFormProps>({
 	// If we have to use series ACL, overwrite existing rules
 	useEffect(() => {
 		if (initEventAclWithSeriesAcl && formik.values["dublincore/episode_isPartOf"] && seriesAcl) {
-			formik.setFieldValue("acls", seriesAcl);
+			formik.setFieldValue("policies", seriesAcl);
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [initEventAclWithSeriesAcl, seriesAcl]);

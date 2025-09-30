@@ -37,7 +37,7 @@ const EventsSeriesCell = ({
 					: console.error("Tried to sort by a series, but the series did not exist.")
 				}
 				className={"crosslink"}
-				tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.SERIES"}
+				// tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.SERIES"} // Disabled due to performance concerns
 			>
 				{row.series.title}
 			</ButtonLikeAnchor>

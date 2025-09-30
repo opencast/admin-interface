@@ -33,7 +33,7 @@ const EventsLocationCell = ({
 		<ButtonLikeAnchor
 			onClick={() => addFilter(row.location)}
 			className={"crosslink"}
-			tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.LOCATION"}
+			// tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.LOCATION"} // Disabled due to performance concerns
 		>
 			{row.location}
 		</ButtonLikeAnchor>

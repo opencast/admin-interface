@@ -44,7 +44,7 @@ const EventsStatusCell = ({
 		<ButtonLikeAnchor
 			onClick={() => openStatusModal()}
 			className={"crosslink"}
-			tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.STATUS"}
+			// tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.STATUS"}  // Disabled due to performance concerns
 		>
 			{t(row.displayable_status as ParseKeys)}
 		</ButtonLikeAnchor>
