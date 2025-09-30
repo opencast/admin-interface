@@ -49,6 +49,7 @@ import SchedulingInputs from "../wizards/scheduling/SchedulingInputs";
 import SchedulingConflicts from "../wizards/scheduling/SchedulingConflicts";
 import { ParseKeys } from "i18next";
 import { LuCircleX } from "react-icons/lu";
+import SchedulingRadio from "../wizards/scheduling/SchedulingRadio";
 
 /**
  * This component renders the source page for new events in the new event wizard.
@@ -434,9 +435,32 @@ const Schedule = <T extends {
 				return <></>;
 			}
 			return (
-				<SchedulingInputs
-					inputs={inputDevice.inputs}
-				/>
+				<>
+					<SchedulingInputs
+						name="inputs"
+						inputs={inputDevice.parsedCapabilities.inputs}
+					/>
+				</>
+			);
+		}
+	};
+
+	const renderStreamDeviceOptions = () => {
+		if (formik.values.location) {
+			const inputDevice = inputDevices.find(
+				({ name }) => name === formik.values.location,
+			);
+			if (!inputDevice) {
+				return <></>;
+			}
+			return (
+				<>
+					<SchedulingRadio
+						name="stream"
+						inputs={inputDevice.parsedCapabilities.stream}
+						// formik={formik}
+					/>
+				</>
 			);
 		}
 	};
@@ -671,6 +695,24 @@ const Schedule = <T extends {
 								placeholder={"EVENTS.EVENTS.NEW.SOURCE.PLACEHOLDER.LOCATION"}
 								callback={(value: string) => {
 									formik.setFieldValue("location", value);
+									// Reset location specific fields
+									const inputDevice = inputDevices.find(
+										({ name }) => name === value,
+									);
+									if (inputDevice) {
+										if (inputDevice.parsedCapabilities.stream) {
+											formik.setFieldValue("inputs", []);
+										}
+										if (inputDevice.parsedCapabilities.stream) {
+											if (inputDevice.parsedCapabilities.stream.find(item => item.id === "0")) {
+												formik.setFieldValue("stream", 0);
+											} else if (inputDevice.parsedCapabilities.stream.length === 1) {
+												formik.setFieldValue("stream", inputDevice.parsedCapabilities.stream[0].id);
+											} else {
+												formik.setFieldValue("stream", "");
+											}
+										}
+									}
 								}}
 							/>
 						<tr>
@@ -678,6 +720,12 @@ const Schedule = <T extends {
 							<td>
 								{/* Render checkbox for each input option of the selected input device*/}
 								{renderInputDeviceOptions()}
+							</td>
+						</tr>
+						<tr>
+							<td>{t("EVENTS.EVENTS.NEW.SOURCE.PLACEHOLDER.STREAM")}</td>
+							<td>
+								{renderStreamDeviceOptions()}
 							</td>
 						</tr>
 					</tbody>

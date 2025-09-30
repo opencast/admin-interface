@@ -114,8 +114,14 @@ export type WorkflowOperation = {
 
 type Device = {
 	id: string,
-	inputs: { id: string, value: string }[],
-	inputMethods: string[],
+	parsedCapabilities: {
+		inputs: { id: string, value: string }[],
+		stream: { id: string, value: string }[],
+	},
+	capabilitiesMethods: {
+		inputs: string[],
+		stream: string[],
+	}
 	name: string,
 	// Fields we add to "device" from recordings but don't actually care about?
 	// removable: boolean,
@@ -544,8 +550,14 @@ const initialState: EventDetailsState = {
 		device: {
 			id: "",
 			name: "",
-			inputs: [],
-			inputMethods: [],
+			parsedCapabilities: {
+				inputs: [],
+				stream: [],
+			},
+			capabilitiesMethods: {
+				inputs: [],
+				stream: [],
+			},
 		},
 		agentId: undefined,
 		agentConfiguration: {},
@@ -1014,6 +1026,7 @@ export const fetchSchedulingInfo = createAppAsyncThunk("eventDetails/fetchSchedu
 			agentId: string,
 			agentConfiguration: {
 				"capture.device.names": string,
+				"capture.device.stream": string,
 			},
 			presenters: string[],
 			start: string,
@@ -1041,8 +1054,14 @@ export const fetchSchedulingInfo = createAppAsyncThunk("eventDetails/fetchSchedu
 		let device: Device = {
 			id: "",
 			name: "",
-			inputs: [],
-			inputMethods: [],
+			parsedCapabilities: {
+				inputs: [],
+				stream: [],
+			},
+			capabilitiesMethods: {
+				inputs: [],
+				stream: [],
+			},
 		};
 
 		const agent = captureAgents.find(
@@ -1051,20 +1070,28 @@ export const fetchSchedulingInfo = createAppAsyncThunk("eventDetails/fetchSchedu
 		if (agent) {
 			const inputMethods = [];
 
-			if (
-				schedulingResponse.agentConfiguration["capture.device.names"] !==
-				undefined
-			) {
-				const inputs = schedulingResponse.agentConfiguration[
-					"capture.device.names"
-				].split(",");
+			if (schedulingResponse.agentConfiguration["capture.device.names"] !== undefined) {
+				const inputs = schedulingResponse.agentConfiguration["capture.device.names"].split(",");
 				for (const input of inputs) {
 					inputMethods.push(input);
 				}
 			}
+
+			const streamMethods = [];
+
+			if (schedulingResponse.agentConfiguration["capture.device.stream"] !== undefined) {
+				const stream = schedulingResponse.agentConfiguration["capture.device.stream"].split(",");
+				for (const s of stream) {
+					streamMethods.push(s);
+				}
+			}
+
 			device = {
 				...agent,
-				inputMethods: inputMethods,
+				capabilitiesMethods: {
+					inputs: inputMethods,
+					stream: streamMethods,
+				},
 			};
 		}
 
@@ -1094,6 +1121,7 @@ export const fetchSchedulingInfo = createAppAsyncThunk("eventDetails/fetchSchedu
 export type SchedulingInfo = {
 	captureAgent: string,
 	inputs: string[],
+	stream: string,
 	scheduleDurationHours: string,
 	scheduleDurationMinutes: string,
 	scheduleEndDate: string,
@@ -1114,24 +1142,12 @@ export const saveSchedulingInfo = createAppAsyncThunk("eventDetails/saveScheduli
 	const state = getState();
 	const oldSource = getSchedulingSource(state);
 	const captureAgents = getRecordings(state);
-	let device: Device = {
-		id: "",
-		name: "",
-		inputs: [],
-		inputMethods: [],
-	};
 
 	const agent = captureAgents.find(agent => agent.id === values.captureAgent);
-	if (agent) {
-		device = {
-			...agent,
-			inputMethods: values.inputs,
-		};
-	}
 
 	const source = {
 		...oldSource,
-		agentId: device.id,
+		agentId: agent ? agent.id : "",
 		start: {
 			date: startDate.toISOString(),
 			hour: parseInt(values.scheduleStartHour),
@@ -1146,11 +1162,11 @@ export const saveSchedulingInfo = createAppAsyncThunk("eventDetails/saveScheduli
 			hour: parseInt(values.scheduleDurationHours),
 			minute: parseInt(values.scheduleDurationMinutes),
 		},
-		device: { ...device },
 		agentConfiguration: {
 			...oldSource.agentConfiguration,
 			"capture.device.names": values.inputs.join(","),
-			"event.location": device.id,
+			"capture.device.stream": values.stream,
+			"event.location": agent ? agent.id : "",
 		},
 	};
 
@@ -2279,8 +2295,14 @@ const eventDetailsSlice = createSlice({
 					device: {
 						id: "",
 						name: "",
-						inputs: [],
-						inputMethods: [],
+						parsedCapabilities: {
+							inputs: [],
+							stream: [],
+						},
+						capabilitiesMethods: {
+							inputs: [],
+							stream: [],
+						},
 					},
 					agentId: undefined,
 					agentConfiguration: {},

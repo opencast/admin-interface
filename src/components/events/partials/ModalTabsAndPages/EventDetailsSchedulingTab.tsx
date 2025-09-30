@@ -52,6 +52,7 @@ import SchedulingInputs from "../wizards/scheduling/SchedulingInputs";
 import SchedulingConflicts from "../wizards/scheduling/SchedulingConflicts";
 import { ParseKeys } from "i18next";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
+import SchedulingRadio from "../wizards/scheduling/SchedulingRadio";
 
 export type InitialValues = {
 	scheduleStartDate: string;
@@ -64,6 +65,7 @@ export type InitialValues = {
 	scheduleEndMinute: string;
 	captureAgent: string;
 	inputs: string[];
+	stream: string;
 }
 
 /**
@@ -124,11 +126,24 @@ const EventDetailsSchedulingTab = ({
 	// finds the inputs to be displayed in the formik
 	const getInputs = (deviceId: Recording["id"]) => {
 		if (deviceId === source.device.id) {
-			return source.device.inputs ? source.device.inputs : [];
+			return source.device.parsedCapabilities.inputs ? source.device.parsedCapabilities.inputs : [];
 		} else {
 			for (const agent of filterDevicesForAccess(user, captureAgents)) {
 				if (agent.id === deviceId) {
-					return agent.inputs ? agent.inputs : [];
+					return agent.parsedCapabilities.inputs ? agent.parsedCapabilities.inputs : [];
+				}
+			}
+			return [];
+		}
+	};
+
+	const getStream = (deviceId: Recording["id"]) => {
+		if (deviceId === source.device.id) {
+			return source.device.parsedCapabilities.stream ? source.device.parsedCapabilities.stream : [];
+		} else {
+			for (const agent of filterDevicesForAccess(user, captureAgents)) {
+				if (agent.id === deviceId) {
+					return agent.parsedCapabilities.stream ? agent.parsedCapabilities.stream : [];
 				}
 			}
 			return [];
@@ -138,6 +153,12 @@ const EventDetailsSchedulingTab = ({
 	const getInputForAgent = (deviceId: Recording["id"], input: string) => {
 		const inputs = getInputs(deviceId);
 		const value = inputs.find(agent => agent.id === input)?.value;
+		return value ? t(value as ParseKeys) : "";
+	};
+
+	const getStreamForAgent = (deviceId: Recording["id"], s: string) => {
+		const stream = getStream(deviceId);
+		const value = stream.find(agent => agent.id === s)?.value;
 		return value ? t(value as ParseKeys) : "";
 	};
 
@@ -211,9 +232,12 @@ const EventDetailsSchedulingTab = ({
 		const startDate = new Date(source.start.date);
 		const endDate = new Date(source.end.date);
 
-		const inputs = source.device.inputMethods
-			? Array.from(source.device.inputMethods)
+		const inputs = source.device.capabilitiesMethods.inputs
+			? Array.from(source.device.capabilitiesMethods.inputs)
 			: [];
+		const stream = source.device.capabilitiesMethods.stream && source.device.capabilitiesMethods.stream.length > 0
+			? source.device.capabilitiesMethods.stream[0]
+			: "";
 
 		startDate.setHours(0, 0, 0);
 		endDate.setHours(0, 0, 0);
@@ -229,6 +253,7 @@ const EventDetailsSchedulingTab = ({
 			scheduleEndMinute: source.end.minute != null ? makeTwoDigits(source.end.minute) : "",
 			captureAgent: source.device.name,
 			inputs: inputs.filter(input => input !== ""),
+			stream: stream,
 		};
 	};
 
@@ -504,6 +529,7 @@ const EventDetailsSchedulingTab = ({
 														(hasAccessRole &&
 														accessAllowed(formik.values.captureAgent)
 															? <SchedulingInputs
+																	name="inputs"
 																	inputs={getInputs(formik.values.captureAgent)}
 																/>
 															: formik.values.inputs.map((input, key) => (
@@ -512,6 +538,33 @@ const EventDetailsSchedulingTab = ({
 																		<br />
 																	</span>
 																)))}
+												</td>
+											</tr>
+
+											{/* stream */}
+											<tr>
+												<td>
+													{t(
+														"EVENTS.EVENTS.DETAILS.SOURCE.PLACEHOLDER.STREAM",
+													)}
+												</td>
+												<td>
+													{!!formik.values.captureAgent &&
+														!!getStream(formik.values.captureAgent) &&
+														getStream(formik.values.captureAgent).length >
+															0 &&
+														(hasAccessRole &&
+														accessAllowed(formik.values.captureAgent)
+															? <SchedulingRadio
+																	name="stream"
+																	inputs={getStream(formik.values.captureAgent)}
+																/>
+															:
+																<span>
+																	{getStreamForAgent(formik.values.captureAgent, formik.values.stream)}
+																	<br />
+																</span>
+														)}
 												</td>
 											</tr>
 										</tbody>

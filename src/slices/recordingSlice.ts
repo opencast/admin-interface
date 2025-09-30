@@ -12,7 +12,10 @@ import { AppThunk } from "../store";
  */
 export type Recording = {
 	id: string,
-	inputs: { id: string, value: string }[],
+	parsedCapabilities: {
+		inputs: { id: string, value: string }[],
+		stream: { id: string, value: string }[],
+	},
 	name: string,
 	removable: boolean,
 	status: string,
@@ -57,7 +60,7 @@ export const fetchRecordings = createAppAsyncThunk("recordings/fetchRecordings",
 		Status: string,
 		Update: string,
 		URL: string,
-		inputs?: { id: string, value: string }[],
+		parsedCapabilities?: Recording["parsedCapabilities"],
 	};
 	type FetchRecordings = {
 		results: Results[],
@@ -70,7 +73,7 @@ export const fetchRecordings = createAppAsyncThunk("recordings/fetchRecordings",
 
 	if (flag === "inputs") {
 		res = await axios.get<FetchRecordings>(
-			"/admin-ng/capture-agents/agents.json?inputs=true",
+			"/admin-ng/capture-agents/agents.json?withParsedCapabilities=true",
 			);
 	} else {
 		const state = getState();
@@ -87,12 +90,19 @@ export const fetchRecordings = createAppAsyncThunk("recordings/fetchRecordings",
 	const captureAgents = [];
 
 	for (const agent of recordings.results) {
+		const parsedCapabilities = agent.parsedCapabilities ? agent.parsedCapabilities : {
+			inputs: [],
+			stream: [],
+		};
+		parsedCapabilities.inputs = parsedCapabilities.inputs ? [...parsedCapabilities.inputs] : [];
+		parsedCapabilities.stream = parsedCapabilities.stream ? [...parsedCapabilities.stream] : [];
+
 		const transformedAgent = {
 			id: agent.Name,
 			name: agent.Name,
 			status: agent.Status,
 			updated: agent.Update,
-			inputs: agent.inputs ? [...agent.inputs] : [],
+			parsedCapabilities: parsedCapabilities,
 			type: "LOCATION",
 			url: agent.URL ? agent.URL : "",
 			removable:
