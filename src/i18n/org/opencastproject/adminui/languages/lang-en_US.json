@@ -389,6 +389,10 @@
 			"STREAM": {
 				"0": "Do not send a livestream",
 				"1": "Stream the event"
+			},
+			"RECORD": {
+				"0": "Do not record",
+				"1": "Record and upload"
 			}
 		}
 	},
@@ -527,7 +531,8 @@
 						"START_DATE_FORMAT": "yyyy-mm-dd",
 						"END_DATE": "yyyy-mm-dd",
 						"END_DATE_FORMAT": "yyyy-mm-dd",
-						"STREAM": "Stream"
+						"STREAM": "Stream",
+						"RECORD": "Record"
 					},
 					"UPLOAD": {
 						"CAPTION": "Upload",
@@ -754,7 +759,8 @@
 						"REPEATS": "Repeats",
 						"START_DATE": "yyyy-mm-dd",
 						"END_DATE": "yyyy-mm-dd",
-						"STREAM": "Stream"
+						"STREAM": "Stream",
+						"RECORD": "Record"
 					},
 					"UPLOAD": {
 						"CAPTION": "Upload",

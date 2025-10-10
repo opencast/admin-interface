@@ -15,6 +15,7 @@ export type Recording = {
 	parsedCapabilities: {
 		inputs: { id: string, value: string }[],
 		stream: { id: string, value: string }[],
+		record: { id: string, value: string }[],
 	},
 	name: string,
 	removable: boolean,
@@ -93,9 +94,11 @@ export const fetchRecordings = createAppAsyncThunk("recordings/fetchRecordings",
 		const parsedCapabilities = agent.parsedCapabilities ? agent.parsedCapabilities : {
 			inputs: [],
 			stream: [],
+			record: [],
 		};
 		parsedCapabilities.inputs = parsedCapabilities.inputs ? [...parsedCapabilities.inputs] : [];
 		parsedCapabilities.stream = parsedCapabilities.stream ? [...parsedCapabilities.stream] : [];
+		parsedCapabilities.record = parsedCapabilities.record ? [...parsedCapabilities.record] : [];
 
 		const transformedAgent = {
 			id: agent.Name,

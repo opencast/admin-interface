@@ -117,10 +117,12 @@ type Device = {
 	parsedCapabilities: {
 		inputs: { id: string, value: string }[],
 		stream: { id: string, value: string }[],
+		record: { id: string, value: string }[],
 	},
 	capabilitiesMethods: {
 		inputs: string[],
 		stream: string[],
+		record: string[],
 	}
 	name: string,
 	// Fields we add to "device" from recordings but don't actually care about?
@@ -553,10 +555,12 @@ const initialState: EventDetailsState = {
 			parsedCapabilities: {
 				inputs: [],
 				stream: [],
+				record: [],
 			},
 			capabilitiesMethods: {
 				inputs: [],
 				stream: [],
+				record: [],
 			},
 		},
 		agentId: undefined,
@@ -1027,6 +1031,7 @@ export const fetchSchedulingInfo = createAppAsyncThunk("eventDetails/fetchSchedu
 			agentConfiguration: {
 				"capture.device.names": string,
 				"capture.device.stream": string,
+				"capture.device.record": string,
 			},
 			presenters: string[],
 			start: string,
@@ -1057,10 +1062,12 @@ export const fetchSchedulingInfo = createAppAsyncThunk("eventDetails/fetchSchedu
 			parsedCapabilities: {
 				inputs: [],
 				stream: [],
+				record: [],
 			},
 			capabilitiesMethods: {
 				inputs: [],
 				stream: [],
+				record: [],
 			},
 		};
 
@@ -1086,11 +1093,21 @@ export const fetchSchedulingInfo = createAppAsyncThunk("eventDetails/fetchSchedu
 				}
 			}
 
+			const recordMethods = [];
+
+			if (schedulingResponse.agentConfiguration["capture.device.record"] !== undefined) {
+				const record = schedulingResponse.agentConfiguration["capture.device.record"].split(",");
+				for (const s of record) {
+					recordMethods.push(s);
+				}
+			}
+
 			device = {
 				...agent,
 				capabilitiesMethods: {
 					inputs: inputMethods,
 					stream: streamMethods,
+					record: recordMethods,
 				},
 			};
 		}
@@ -1122,6 +1139,7 @@ export type SchedulingInfo = {
 	captureAgent: string,
 	inputs: string[],
 	stream: string,
+	record: string,
 	scheduleDurationHours: string,
 	scheduleDurationMinutes: string,
 	scheduleEndDate: string,
@@ -1166,6 +1184,7 @@ export const saveSchedulingInfo = createAppAsyncThunk("eventDetails/saveScheduli
 			...oldSource.agentConfiguration,
 			"capture.device.names": values.inputs.join(","),
 			"capture.device.stream": values.stream,
+			"capture.device.record": values.record,
 			"event.location": agent ? agent.id : "",
 		},
 	};
@@ -2298,10 +2317,12 @@ const eventDetailsSlice = createSlice({
 						parsedCapabilities: {
 							inputs: [],
 							stream: [],
+							record: [],
 						},
 						capabilitiesMethods: {
 							inputs: [],
 							stream: [],
+							record: [],
 						},
 					},
 					agentId: undefined,

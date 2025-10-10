@@ -465,6 +465,26 @@ const Schedule = <T extends {
 		}
 	};
 
+	const renderRecordDeviceOptions = () => {
+		if (formik.values.location) {
+			const inputDevice = inputDevices.find(
+				({ name }) => name === formik.values.location,
+			);
+			if (!inputDevice) {
+				return <></>;
+			}
+			return (
+				<>
+					<SchedulingRadio
+						name="record"
+						inputs={inputDevice.parsedCapabilities.record}
+						// formik={formik}
+					/>
+				</>
+			);
+		}
+	};
+
 	return (
 		<div className="obj">
 			<header>{t("EVENTS.EVENTS.NEW.SOURCE.DATE_TIME.CAPTION")}</header>
@@ -712,6 +732,15 @@ const Schedule = <T extends {
 												formik.setFieldValue("stream", "");
 											}
 										}
+										if (inputDevice.parsedCapabilities.record) {
+											if (inputDevice.parsedCapabilities.record.find(item => item.id === "0")) {
+												formik.setFieldValue("record", 0);
+											} else if (inputDevice.parsedCapabilities.record.length === 1) {
+												formik.setFieldValue("record", inputDevice.parsedCapabilities.record[0].id);
+											} else {
+												formik.setFieldValue("record", "");
+											}
+										}
 									}
 								}}
 							/>
@@ -726,6 +755,12 @@ const Schedule = <T extends {
 							<td>{t("EVENTS.EVENTS.NEW.SOURCE.PLACEHOLDER.STREAM")}</td>
 							<td>
 								{renderStreamDeviceOptions()}
+							</td>
+						</tr>
+							<tr>
+							<td>{t("EVENTS.EVENTS.NEW.SOURCE.PLACEHOLDER.RECORD")}</td>
+							<td>
+								{renderRecordDeviceOptions()}
 							</td>
 						</tr>
 					</tbody>

@@ -25,6 +25,7 @@ export interface RecordingDetails {
 	parsedCapabilities: {
 		inputs: { id: string, value: string }[],
 		stream: { id: string, value: string }[],
+		record: { id: string, value: string }[],
 	},
 }
 
@@ -46,6 +47,7 @@ const initialState: RecordingDetailsState = {
 	parsedCapabilities: {
 		inputs: [],
 		stream: [],
+		record: [],
 	},
 };
 
