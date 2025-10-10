@@ -68,6 +68,7 @@ export type InitialValues = {
 	inputs: string[];
 	stream: string;
 	record: string;
+	layout: string;
 }
 
 /**
@@ -165,6 +166,19 @@ const EventDetailsSchedulingTab = ({
 		}
 	};
 
+	const getLayout = (deviceId: Recording["id"]) => {
+		if (deviceId === source.device.id) {
+			return source.device.parsedCapabilities.layout ? source.device.parsedCapabilities.layout : [];
+		} else {
+			for (const agent of filterDevicesForAccess(user, captureAgents)) {
+				if (agent.id === deviceId) {
+					return agent.parsedCapabilities.layout ? agent.parsedCapabilities.layout : [];
+				}
+			}
+			return [];
+		}
+	};
+
 	const getInputForAgent = (deviceId: Recording["id"], input: string) => {
 		const inputs = getInputs(deviceId);
 		const value = inputs.find(agent => agent.id === input)?.value;
@@ -180,6 +194,12 @@ const EventDetailsSchedulingTab = ({
 	const getRecordForAgent = (deviceId: Recording["id"], s: string) => {
 		const record = getRecord(deviceId);
 		const value = record.find(agent => agent.id === s)?.value;
+		return value ? t(value as ParseKeys) : "";
+	};
+
+	const getLayoutForAgent = (deviceId: Recording["id"], s: string) => {
+		const layout = getLayout(deviceId);
+		const value = layout.find(agent => agent.id === s)?.value;
 		return value ? t(value as ParseKeys) : "";
 	};
 
@@ -292,6 +312,9 @@ const EventDetailsSchedulingTab = ({
 		const record = source.device.capabilitiesMethods.record && source.device.capabilitiesMethods.record.length > 0
 			? source.device.capabilitiesMethods.record[0]
 			: "";
+		const layout = source.device.capabilitiesMethods.layout && source.device.capabilitiesMethods.layout.length > 0
+			? source.device.capabilitiesMethods.layout[0]
+			: "";
 
 		startDate.setHours(0, 0, 0);
 		endDate.setHours(0, 0, 0);
@@ -309,6 +332,7 @@ const EventDetailsSchedulingTab = ({
 			inputs: inputs.filter(input => input !== ""),
 			stream: stream,
 			record: record,
+			layout: layout,
 		};
 	};
 
@@ -645,6 +669,33 @@ const EventDetailsSchedulingTab = ({
 															:
 																<span>
 																	{getRecordForAgent(formik.values.captureAgent, formik.values.record)}
+																	<br />
+																</span>
+														)}
+												</td>
+											</tr>
+
+											{/* layout */}
+											<tr>
+												<td>
+													{t(
+														"EVENTS.EVENTS.DETAILS.SOURCE.PLACEHOLDER.LAYOUT",
+													)}
+												</td>
+												<td>
+													{!!formik.values.captureAgent &&
+														!!getLayout(formik.values.captureAgent) &&
+														getLayout(formik.values.captureAgent).length >
+															0 &&
+														(hasAccessRole &&
+														accessAllowed(formik.values.captureAgent)
+															? <SchedulingRadio
+																	name="layout"
+																	inputs={getLayout(formik.values.captureAgent)}
+																/>
+															:
+																<span>
+																	{getLayoutForAgent(formik.values.captureAgent, formik.values.layout)}
 																	<br />
 																</span>
 														)}

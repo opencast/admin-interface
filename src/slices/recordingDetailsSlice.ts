@@ -26,6 +26,7 @@ export interface RecordingDetails {
 		inputs: { id: string, value: string }[],
 		stream: { id: string, value: string }[],
 		record: { id: string, value: string }[],
+		layout: { id: string, value: string }[],
 	},
 }
 
@@ -48,6 +49,7 @@ const initialState: RecordingDetailsState = {
 		inputs: [],
 		stream: [],
 		record: [],
+		layout: [],
 	},
 };
 
