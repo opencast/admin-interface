@@ -17,6 +17,7 @@ export type Recording = {
 		stream: { id: string, value: string }[],
 		record: { id: string, value: string }[],
 		layout: { id: string, value: string }[],
+		cameraPosition: { id: string, value: string }[],
 	},
 	name: string,
 	removable: boolean,
@@ -97,11 +98,13 @@ export const fetchRecordings = createAppAsyncThunk("recordings/fetchRecordings",
 			stream: [],
 			record: [],
 			layout: [],
+			cameraPosition: [],
 		};
 		parsedCapabilities.inputs = parsedCapabilities.inputs ? [...parsedCapabilities.inputs] : [];
 		parsedCapabilities.stream = parsedCapabilities.stream ? [...parsedCapabilities.stream] : [];
 		parsedCapabilities.record = parsedCapabilities.record ? [...parsedCapabilities.record] : [];
 		parsedCapabilities.layout = parsedCapabilities.layout ? [...parsedCapabilities.layout] : [];
+		parsedCapabilities.cameraPosition = parsedCapabilities.cameraPosition ? [...parsedCapabilities.cameraPosition] : [];
 
 		const transformedAgent = {
 			id: agent.Name,

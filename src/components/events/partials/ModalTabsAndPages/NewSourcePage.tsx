@@ -505,6 +505,26 @@ const Schedule = <T extends {
 		}
 	};
 
+		const renderCameraPositionDeviceOptions = () => {
+		if (formik.values.location) {
+			const inputDevice = inputDevices.find(
+				({ name }) => name === formik.values.location,
+			);
+			if (!inputDevice) {
+				return <></>;
+			}
+			return (
+				<>
+					<SchedulingRadio
+						name="cameraPosition"
+						inputs={inputDevice.parsedCapabilities.cameraPosition}
+						// formik={formik}
+					/>
+				</>
+			);
+		}
+	};
+
 	return (
 		<div className="obj">
 			<header>{t("EVENTS.EVENTS.NEW.SOURCE.DATE_TIME.CAPTION")}</header>
@@ -790,6 +810,12 @@ const Schedule = <T extends {
 							<td>{t("EVENTS.EVENTS.NEW.SOURCE.PLACEHOLDER.LAYOUT")}</td>
 							<td>
 								{renderLayoutDeviceOptions()}
+							</td>
+						</tr>
+						<tr>
+							<td>{t("EVENTS.EVENTS.NEW.SOURCE.PLACEHOLDER.CAMERA_POSITION")}</td>
+							<td>
+								{renderCameraPositionDeviceOptions()}
 							</td>
 						</tr>
 					</tbody>

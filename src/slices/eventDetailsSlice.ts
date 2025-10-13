@@ -119,12 +119,14 @@ type Device = {
 		stream: { id: string, value: string }[],
 		record: { id: string, value: string }[],
 		layout: { id: string, value: string }[],
+		cameraPosition: { id: string, value: string }[],
 	},
 	capabilitiesMethods: {
 		inputs: string[],
 		stream: string[],
 		record: string[],
 		layout: string[],
+		cameraPosition: string[],
 	}
 	name: string,
 	// Fields we add to "device" from recordings but don't actually care about?
@@ -559,12 +561,14 @@ const initialState: EventDetailsState = {
 				stream: [],
 				record: [],
 				layout: [],
+				cameraPosition: [],
 			},
 			capabilitiesMethods: {
 				inputs: [],
 				stream: [],
 				record: [],
 				layout: [],
+				cameraPosition: [],
 			},
 		},
 		agentId: undefined,
@@ -1037,6 +1041,7 @@ export const fetchSchedulingInfo = createAppAsyncThunk("eventDetails/fetchSchedu
 				"capture.device.stream": string,
 				"capture.device.record": string,
 				"capture.device.layout": string,
+				"capture.device.cameraPosition": string,
 			},
 			presenters: string[],
 			start: string,
@@ -1069,12 +1074,14 @@ export const fetchSchedulingInfo = createAppAsyncThunk("eventDetails/fetchSchedu
 				stream: [],
 				record: [],
 				layout: [],
+				cameraPosition: [],
 			},
 			capabilitiesMethods: {
 				inputs: [],
 				stream: [],
 				record: [],
 				layout: [],
+				cameraPosition: [],
 			},
 		};
 
@@ -1118,6 +1125,15 @@ export const fetchSchedulingInfo = createAppAsyncThunk("eventDetails/fetchSchedu
 				}
 			}
 
+			const cameraPositionMethods = [];
+
+			if (schedulingResponse.agentConfiguration["capture.device.cameraPosition"] !== undefined) {
+				const cameraPosition = schedulingResponse.agentConfiguration["capture.device.cameraPosition"].split(",");
+				for (const s of cameraPosition) {
+					cameraPositionMethods.push(s);
+				}
+			}
+
 			device = {
 				...agent,
 				capabilitiesMethods: {
@@ -1125,6 +1141,7 @@ export const fetchSchedulingInfo = createAppAsyncThunk("eventDetails/fetchSchedu
 					stream: streamMethods,
 					record: recordMethods,
 					layout: layoutMethods,
+					cameraPosition: cameraPositionMethods,
 				},
 			};
 		}
@@ -1158,6 +1175,7 @@ export type SchedulingInfo = {
 	stream: string,
 	record: string,
 	layout: string,
+	cameraPosition: string,
 	scheduleDurationHours: string,
 	scheduleDurationMinutes: string,
 	scheduleEndDate: string,
@@ -1204,6 +1222,7 @@ export const saveSchedulingInfo = createAppAsyncThunk("eventDetails/saveScheduli
 			"capture.device.stream": values.stream,
 			"capture.device.record": values.record,
 			"capture.device.layout": values.layout,
+			"capture.device.cameraPosition": values.cameraPosition,
 			"event.location": agent ? agent.id : "",
 		},
 	};
@@ -2338,12 +2357,14 @@ const eventDetailsSlice = createSlice({
 							stream: [],
 							record: [],
 							layout: [],
+							cameraPosition: [],
 						},
 						capabilitiesMethods: {
 							inputs: [],
 							stream: [],
 							record: [],
 							layout: [],
+							cameraPosition: [],
 						},
 					},
 					agentId: undefined,

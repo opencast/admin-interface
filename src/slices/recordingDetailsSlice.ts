@@ -27,6 +27,7 @@ export interface RecordingDetails {
 		stream: { id: string, value: string }[],
 		record: { id: string, value: string }[],
 		layout: { id: string, value: string }[],
+		cameraPosition: { id: string, value: string }[],
 	},
 }
 
@@ -50,6 +51,7 @@ const initialState: RecordingDetailsState = {
 		stream: [],
 		record: [],
 		layout: [],
+		cameraPosition: [],
 	},
 };
 

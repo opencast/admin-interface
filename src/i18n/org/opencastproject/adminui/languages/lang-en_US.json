@@ -538,7 +538,8 @@
 						"END_DATE_FORMAT": "yyyy-mm-dd",
 						"STREAM": "Stream",
 						"RECORD": "Record",
-						"LAYOUT": "Layout"
+						"LAYOUT": "Layout",
+						"CAMERA_POSITION": "Camera position"
 					},
 					"UPLOAD": {
 						"CAPTION": "Upload",
@@ -767,7 +768,8 @@
 						"END_DATE": "yyyy-mm-dd",
 						"STREAM": "Stream",
 						"RECORD": "Record",
-						"LAYOUT": "Layout"
+						"LAYOUT": "Layout",
+						"CAMERA_POSITION": "Camera position"
 					},
 					"UPLOAD": {
 						"CAPTION": "Upload",
