@@ -117,6 +117,10 @@ const RenderMultiField = ({
 				field={field}
 				form={form}
 				showCheck={showCheck}
+				onBlur = {() => {
+					submitValue();
+					setEditMode(false);
+				}}
 			/>
 		)
 	);
@@ -180,12 +184,12 @@ const EditMultiSelect = ({
 				{fieldValue instanceof Array &&
 					fieldValue.length !== 0 &&
 					fieldValue.map((item, key) => (
-						<span className="ng-multi-value" key={key}>
+						<span className="multi-value" key={key}>
 							{item}
 							<ButtonLikeAnchor
 								onClick={() => removeItem(key)}
 							>
-								<LuX style={{ verticalAlign: "middle" }}/>
+								<LuX />
 							</ButtonLikeAnchor>
 						</span>
 					))}
@@ -200,14 +204,29 @@ const ShowValue = ({
 	form: { initialValues },
 	field,
 	showCheck,
+	onBlur,
 }: {
-  setEditMode: (e: boolean) => void
+    setEditMode: (e: boolean) => void
 	form: FieldProps["form"]
 	field: FieldProps["field"]
 	showCheck: boolean,
+	onBlur: () => void
 }) => {
 	return (
-		<div onClick={() => setEditMode(true)} className="show-edit">
+	<div
+		tabIndex={0}
+		onClick={() => setEditMode(true)}
+		onFocus={() => setEditMode(true)}  // <-- activate edit mode on focus
+		onKeyDown={e => {
+			if (e.key === "Enter" || e.key === " ") {
+				setEditMode(true);
+				e.preventDefault();
+			}
+		}}
+
+	  onBlur={onBlur}
+  		className="show-edit"
+			>
 			{field.value instanceof Array && field.value.length !== 0 ? (
 				<ul>
 					{field.value.map((item, key) => (
@@ -217,17 +236,16 @@ const ShowValue = ({
 					))}
 				</ul>
 			) : (
-				<span className="editable preserve-newlines">{""}</span>
+				<span className="preserve-newlines">{""}</span>
 			)}
 			<div>
-				<LuSquarePen style={{ float: "right", cursor: "pointer", margin: "5px", fontSize: "14px" }}/>
+				<LuSquarePen className="pen"/>
 				{showCheck && (
 					<LuCheck
-						className={cn("fa-check", {
+						className={cn("checkmark", {
 							// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 							active: JSON.stringify(initialValues[field.name] ?? []) !== JSON.stringify(field.value ?? []),
 						})}
-						style={{ float: "right", cursor: "pointer" }}
 					/>
 				)}
 			</div>

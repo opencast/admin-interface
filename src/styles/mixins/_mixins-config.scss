@@ -24,39 +24,3 @@
 @use "button";
 @use "triangle-point";
 @use "../base/variables";
-
-// Temporary Inline Files
-
-@mixin accordion-header($height, $expand: false) {
-    box-sizing: border-box;
-    height: $height;
-    line-height: $height;
-    background: linear-gradient(to bottom, #fff, #f3f5f6);
-    border-bottom: 1px solid variables.$main-border-color;
-    border-top-left-radius: variables.$main-border-radius;
-    border-top-right-radius: variables.$main-border-radius;
-    margin: 0;
-    width: 100%;
-    padding-left: 10px;
-    padding-right: 10px;
-    color: color.adjust(#8c939b, $lightness: -10%);
-    font-weight: 600;
-    text-shadow: 0 1px 0 variables.$white;
-    font-size: 13px;
-
-    @if $expand == true {
-        cursor: pointer;
-
-        &:hover {
-            background: linear-gradient(to bottom, #fff, color.adjust(#f3f5f6, $lightness: -2%));
-        }
-
-        &:active {
-            background: linear-gradient(to bottom, color.adjust(#fff, $lightness: -2%), color.adjust(#f3f5f6, $lightness: -3%));
-        }
-
-        &:after {
-            float: right;
-        }
-    }
-}

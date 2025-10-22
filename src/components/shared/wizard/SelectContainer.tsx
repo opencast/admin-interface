@@ -70,10 +70,6 @@ const SelectContainer = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const disabledSelectStyle = {
-		backgroundColor: "#eeeff0",
-	};
-
 	const clearSearchField = () => {
 		setSearchField("");
 		setItems(defaultItems);
@@ -215,9 +211,9 @@ const SelectContainer = ({
 						{/* Select with options provided by backend*/}
 						<select
 							multiple
-							className="available"
+							className={cn("available", { disabled: !manageable })}
+							style={manageable ? { minHeight: "11em" } : {}}
 							disabled={!manageable}
-							style={manageable ? { minHeight: "11em" } : disabledSelectStyle}
 							value={markedForAddition}
 							onChange={e => handleChangeAdd(e)}
 						>
@@ -251,9 +247,9 @@ const SelectContainer = ({
 						<label>{t(`${resource.label}.RIGHT` as ParseKeys)}</label>
 						<select
 							multiple
-							className="selected"
+							className={cn("selected", { disabled: !manageable })}
 							disabled={!manageable}
-							style={manageable ? { minHeight: "11em" } : disabledSelectStyle}
+							style={manageable ? { minHeight: "11em" } : {}}
 							onChange={e => handleChangeRemove(e)}
 							value={markedForRemoval}
 						>

@@ -201,7 +201,7 @@ const DeleteSeriesModal = ({
 											</td>
 											{/* Only show check if row has events, else empty cell*/}
 											<td>
-												{series.hasEvents && <LuCheck className={cn("fa-check", { active: true })} />}
+												{series.hasEvents && <LuCheck className={cn("checkmark", { active: true })} />}
 											</td>
 										</tr>
 									))}

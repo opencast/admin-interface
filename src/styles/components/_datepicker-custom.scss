@@ -19,6 +19,7 @@
  *
  */
  @use "sass:color";
+ @use "../base/variables";
 
  .datepicker-custom {
     z-index: 10000 !important;
@@ -35,7 +36,7 @@
 
  .react-datepicker__navigation--years {
     &::before {
-      border-color: #ccc;
+      border-color: variables.$color-silver;
       border-style: solid;
       border-width: 3px 3px 0 0;
       content: '';
@@ -57,6 +58,6 @@
     }
 
     &:hover::before {
-      border-color: color.adjust(#ccc, $lightness: -15%);
+      border-color: color.adjust(variables.$color-silver, $lightness: -15%);
     }
   }

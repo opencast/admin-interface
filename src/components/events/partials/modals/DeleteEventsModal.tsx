@@ -68,7 +68,7 @@ const DeleteEventsModal = ({
 
 	return (
 		<>
-			<ModalContentTable modalContentClassName="modal-content active">
+			<ModalContentTable modalContentClassName="modal-content">
 				<div className="list-obj">
 					<NotificationComponent
 						notification={{

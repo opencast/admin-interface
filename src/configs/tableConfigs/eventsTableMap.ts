@@ -3,7 +3,6 @@ import EventsDateCell from "../../components/events/partials/EventsDateCell";
 import EventsPresentersCell from "../../components/events/partials/EventsPresentersCell";
 import EventsSeriesCell from "../../components/events/partials/EventsSeriesCell";
 import EventsStatusCell from "../../components/events/partials/EventsStatusCell";
-import EventsTechnicalDateCell from "../../components/events/partials/EventsTechnicalDateCell";
 import PublishedCell from "../../components/events/partials/PublishedCell";
 import EventsLocationCell from "../../components/events/partials/EventsLocationCell";
 import EventsEndCell from "../../components/events/partials/EventsEndCell";
@@ -23,7 +22,6 @@ export const eventsTemplateMap = {
 	EventsPresentersCell: EventsPresentersCell,
 	EventsSeriesCell: EventsSeriesCell,
 	EventsStatusCell: EventsStatusCell,
-	EventsTechnicalDateCell: EventsTechnicalDateCell,
 	PublishedCell: PublishedCell,
 	EventsNotesCell: EventsNotesCell,
 };

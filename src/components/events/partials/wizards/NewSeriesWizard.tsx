@@ -24,6 +24,8 @@ import { TransformedAcl } from "../../../../slices/aclDetailsSlice";
 import { removeNotificationWizardForm } from "../../../../slices/notificationSlice";
 import NewMetadataCommonPage from "../ModalTabsAndPages/NewMetadataCommonPage";
 import { hasAccess } from "../../../../utils/utils";
+import { getAclDefaultActions, getAclDefaultTemplate } from "../../../../selectors/aclSelectors";
+import { AclTemplate } from "../../../../slices/aclSlice";
 
 /**
  * This component manages the pages of the new series wizard and the submission of values
@@ -41,6 +43,8 @@ const NewSeriesWizard = ({
 	const tobiraError = useAppSelector(state => getSeriesTobiraPageError(state));
 	const user = useAppSelector(state => getUserInformation(state));
 	const orgProperties = useAppSelector(state => getOrgProperties(state));
+	const aclDefaultActions = useAppSelector(state => getAclDefaultActions(state));
+	const aclDefaultTemplate = useAppSelector(state => getAclDefaultTemplate(state));
 
 	useEffect(() => {
 		dispatch(removeNotificationWizardForm());
@@ -48,20 +52,26 @@ const NewSeriesWizard = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const themesEnabled = (orgProperties["admin.themes.enabled"] || "false").toLowerCase() === "true";
-
-	const initialValues = getInitialValues(metadataFields, extendedMetadata, user);
-
-	const [page, setPage] = useState(0);
-	const [snapshot, setSnapshot] = useState(initialValues);
-	const [pageCompleted, setPageCompleted] = useState<{ [key: number]: boolean }>({});
-
 	useEffect(() => {
 		// This should set off a web request that will intentionally fail, in order
 		// to check if tobira is available at all
 		dispatch(fetchSeriesDetailsTobiraNew(""));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const themesEnabled = (orgProperties["admin.themes.enabled"] || "false").toLowerCase() === "true";
+
+	const initialValues = getInitialValues(
+		metadataFields,
+		extendedMetadata,
+		user,
+		aclDefaultActions,
+		aclDefaultTemplate,
+	);
+
+	const [page, setPage] = useState(0);
+	const [pageCompleted, setPageCompleted] = useState<{ [key: number]: boolean }>({});
+
 
 	type StepName = "metadata" | "metadata-extended" | "access" | "theme" | "tobira" | "summary";
 	type Step = WizardStep & {
@@ -116,9 +126,7 @@ const NewSeriesWizard = ({
 		currentValidationSchema = NewSeriesSchema[steps[page].name];
 	}
 
-	const nextPage = (values: typeof initialValues) => {
-		setSnapshot(values);
-
+	const nextPage = () => {
 		// set page as completely filled out
 		const updatedPageCompleted = pageCompleted;
 		updatedPageCompleted[page] = true;
@@ -127,9 +135,7 @@ const NewSeriesWizard = ({
 		setPage(page + 1);
 	};
 
-	const previousPage = (values: typeof initialValues) => {
-		setSnapshot(values);
-
+	const previousPage = () => {
 		setPage(page - 1);
 	};
 
@@ -150,7 +156,7 @@ const NewSeriesWizard = ({
 		<>
 			{/* Initialize overall form */}
 			<Formik
-				initialValues={snapshot}
+				initialValues={initialValues}
 				validationSchema={currentValidationSchema}
 				onSubmit={values => handleSubmit(values)}
 			>
@@ -193,9 +199,7 @@ const NewSeriesWizard = ({
 								)}
 								{steps[page].name === "access" && (
 									<NewAccessPage
-									// @ts-expect-error TS(7006):
 										nextPage={nextPage}
-										// @ts-expect-error TS(7006):
 										previousPage={previousPage}
 										// @ts-expect-error TS(7006):
 										formik={formik}
@@ -240,6 +244,8 @@ const getInitialValues = (
 	metadataFields: MetadataCatalog,
 	extendedMetadata: MetadataCatalog[],
 	user: UserInfoState,
+	aclDefaultActions: string[],
+	aclDefaultTemplate?: AclTemplate,
 ) => {
 	let initialValues = initialFormValuesNewSeries;
 
@@ -261,10 +267,16 @@ const getInitialValues = (
 			role: user.userRole,
 			read: true,
 			write: true,
-			actions: [],
+			actions: aclDefaultActions ? aclDefaultActions : [],
 			user: user.user,
 		},
 	];
+
+
+	if (aclDefaultTemplate) {
+		initialValues["aclTemplate"] = aclDefaultTemplate.id.toString();
+		initialValues["policies"] = [...aclDefaultTemplate.acl, ...initialValues["policies"]];
+	}
 
 	return initialValues;
 };

@@ -1,7 +1,7 @@
 import { loadEventsIntoTable } from "../../../thunks/tableThunks";
 import { fetchEvents } from "../../../slices/eventSlice";
 import { Event } from "../../../slices/eventSlice";
-import MultiValueCell from "../../shared/MultiValueCell";
+import FilterCell from "../../shared/FilterCell";
 
 /**
  * This component renders the presenters cells of events in the table view
@@ -12,13 +12,16 @@ const EventsPresentersCell = ({
 	row: Event
 }) => {
 	return (
-		<MultiValueCell
-			resource="events"
-			values={row.presenters}
-			filterName="presentersBibliographic"
+		<FilterCell
+			resource={"events"}
+			filterName={"presentersBibliographic"}
+			filterItems={row.presenters.map(presenter => ({
+				filterValue: presenter,
+				children: presenter,
+				// cellTooltipText: "EVENTS.EVENTS.TABLE.TOOLTIP.PRESENTER", // Disabled due to performance concerns
+			}))}
 			fetchResource={fetchEvents}
 			loadResourceIntoTable={loadEventsIntoTable}
-			tooltipText="EVENTS.EVENTS.TABLE.TOOLTIP.PRESENTER"
 		/>
 	);
 };

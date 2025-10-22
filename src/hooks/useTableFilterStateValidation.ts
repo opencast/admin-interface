@@ -22,5 +22,6 @@ export const useTableFilterStateValidation = () => {
 			console.warn("Detected corrupted table filter state, resetting to defaults");
 			dispatch(resetCorruptedState());
 		}
-	}, [dispatch, tableFilters.data, tableFilters.textFilter, tableFilters.stats]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 };

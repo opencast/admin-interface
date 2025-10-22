@@ -39,7 +39,7 @@ const UserEffectiveRolesTab = <T extends RequiredFormProps>({
 
 	return (
 		<ModalContent>
-			<div className="form-container multi-select-container">
+			<div className="form-container effective-roles-container">
 				<label>{t("USERS.USERS.DETAILS.TABS.EFFECTIVEROLES")}</label>
 				<p>{t("USERS.USERS.DETAILS.DESCRIPTION.EFFECTIVEROLES")}</p>
 
@@ -50,7 +50,7 @@ const UserEffectiveRolesTab = <T extends RequiredFormProps>({
 					clearSearchField={clearSearchField}
 				/>
 
-				<select multiple style={{ height: "26em" }}>
+				<select multiple >
 					{items.map((item, key) => (
 						<option key={key} value={item.name}>
 							{item.name}

@@ -92,7 +92,6 @@ const EventDetailsSchedulingTab = ({
 
 	const sourceStartDate = new Date(source.start.date);
 	const endStartDate = new Date(source.start.date);
-
 	useEffect(() => {
 		dispatch(removeNotificationWizardForm());
 		dispatch(checkConflicts({

@@ -26,27 +26,29 @@
 .drop-down-container {
     width: 160px;
     height: 40px;
-    line-height: 40px;
-    display: inline-block;
     border-radius: variables.$main-border-radius;
     padding-left: 15px;
     font-weight: 600;
     font-size: 12px;
     cursor: pointer;
-    position: relative;
-    vertical-align: middle;
     user-select: none;
+    position: relative;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 
     // Pulled from Button Mixin (keep in sync with those styles)
-    background: linear-gradient(#fff, #f7f7f7);
+    background: linear-gradient(variables.$white, variables.$color-lightgray);
     border: variables.$thin-border-stroke variables.$main-border-color;
-    box-shadow: inset 0px 1px 0px 0px #fff, 0px 1px 2px rgba(0,0,0,.05);
+    box-shadow: inset 0px 1px 0px 0px variables.$white, 0px 1px 2px rgba(0,0,0,.05);
     color: variables.$medium-prim-color;
-    text-shadow: 0px 1px 0px #fff;
+    text-shadow: 0px 1px 0px variables.$white;
 
     &:hover {
         border: variables.$thin-border-stroke color.adjust(variables.$main-border-color, $lightness: -2%);
-        background: linear-gradient(color.adjust(#fff, $lightness: -1%), color.adjust(#f7f7f7, $lightness: -1%));
+        background: linear-gradient(color.adjust(variables.$white, $lightness: -1%), color.adjust(variables.$color-lightgray, $lightness: -1%));
         color: variables.$medium-prim-color;
     }
 
@@ -63,9 +65,7 @@
     .chevron-down {
         color: inherit;
         font-size: 12px;
-        position: absolute;
-        top: 13px;
-        right: 10px;
+        margin-right: 10px;
     }
 
     > ul {
@@ -99,13 +99,13 @@
                 line-height: 20px;
 
                 &:hover, &:focus {
-                    color: #666666;
+                    color: variables.$global-text-color;
                     background: #f2f2f2;
                 }
 
                 &.more-link {
                   text-align: center;
-                  color: #378dd4;
+                  color: variables.$l-blue;
                 }
             }
 
@@ -131,16 +131,9 @@
     &.small {
         width: 75px;
         height: 28px;
-        line-height: 26px;
-        display: inline-block;
-        padding-left: 15px;
         font-weight: 600;
         font-size: 12px;
         text-shadow: 0 1px 0 variables.$white;
-        cursor: pointer;
-        position: relative;
-        vertical-align: middle;
-        user-select: none;
         background-repeat: repeat-x;
 
         &:after {
@@ -190,13 +183,13 @@
                     padding: 4px 15px;
 
                     &:hover, &:focus {
-                        color: #666666;
+                        color: variables.$global-text-color;
                         background: #f2f2f2;
                     }
 
                     &.more-link {
                         text-align: center;
-                        color: #378dd4;
+                        color: variables.$l-blue;
                     }
                 }
 

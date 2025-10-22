@@ -28,7 +28,7 @@
 #roll-up-menu {
     float: left;
     width: 80px;
-    background: #fff;
+    background: variables.$white;
     border: variables.$thin-border-stroke #c3cbd0;
     border-top: none;
     border-bottom-left-radius: 4px;
@@ -57,22 +57,19 @@
         line-height: $height;
         margin: 0 auto;
         text-align: center;
-        vertical-align: middle;
         display: block;
 
-        > i {
-            display: inline-block;
-            margin: 0 auto;
+        > .main-nav-icon {
+            height: 100%;
+            font-size: 29px;
             vertical-align: middle;
-            position: relative;
-            line-height: 50px;
             transition: all .2s;
             color: #818181;
         }
 
-        &:hover > i,
-        &:active > i {
-            color: #24425c;
+        &:hover > .main-nav-icon,
+        &:active > .main-nav-icon {
+            color: variables.$d-blue;
         }
 
         @keyframes fadeIn {

@@ -3,8 +3,6 @@ import cn from "classnames";
 import { Step, StepButton, StepLabel, Stepper } from "@mui/material";
 import {
 	isSummaryReachable,
-	stepLabelStyle,
-	stepperStyle,
 } from "../../../utils/wizardUtils";
 import CustomStepIcon from "./CustomStepIcon";
 import { checkAcls } from "../../../slices/aclSlice";
@@ -76,13 +74,12 @@ const WizardStepper = ({
 			nonLinear
 			alternativeLabel
 			connector={<></>}
-			sx={stepperStyle.root}
 			className={cn("step-by-step")}
 		>
 			{steps.map((label, key) =>
 				<Step key={label.translation} completed={completed[key]}>
 					<StepButton onClick={() => handleOnClick(key)}>
-						<StepLabel sx={stepLabelStyle.root} StepIconComponent={CustomStepIcon}>
+						<StepLabel StepIconComponent={CustomStepIcon}>
 							{t(label.translation)}
 						</StepLabel>
 					</StepButton>

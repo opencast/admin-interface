@@ -24,7 +24,7 @@ const DateTimeCell = ({
 	filterName: string
 	fetchResource: AsyncThunk<any, void, any>
 	loadResourceIntoTable: () => AppThunk
-	tooltipText: ParseKeys
+	tooltipText?: ParseKeys
 }) => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();

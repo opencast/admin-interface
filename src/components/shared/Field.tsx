@@ -1,4 +1,4 @@
-import { Field as FormikField } from "formik";
+import { FastField as FormikFastField } from "formik";
 import { FieldAttributes } from "formik/dist/Field";
 
 /**
@@ -6,7 +6,7 @@ import { FieldAttributes } from "formik/dist/Field";
  */
 export const Field = (props: FieldAttributes<any>) => {
   return (
-    <FormikField
+    <FormikFastField
       {...props}
       onKeyDown={(event: KeyboardEvent) => {
         // Handler for basic html inputs to remove focus, if no custom component is passed

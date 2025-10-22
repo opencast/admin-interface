@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Event } from "../../../slices/eventSlice";
-import { Tooltip } from "../../shared/Tooltip";
 import ButtonLikeAnchor from "../../shared/ButtonLikeAnchor";
 import { enrichPublications } from "../../../thunks/assetsThunks";
 import { useAppDispatch } from "../../../store";
@@ -79,13 +78,13 @@ const PublishCell = ({
 	return (
 		<div className="popover-wrapper">
 			{onlyEngage && publications.length > 0 && (
-				<Tooltip title={t("EVENTS.EVENTS.TABLE.TOOLTIP.PLAYER")}>
+				// <Tooltip title={t("EVENTS.EVENTS.TABLE.TOOLTIP.PLAYER")}> // Disabled due to performance concerns
 					<a href={publications[0].url} rel="noreferrer" target="_blank">
 						<ButtonLikeAnchor>
 							{t("YES")}
 						</ButtonLikeAnchor>
 					</a>
-				</Tooltip>
+				// </Tooltip>
 			)}
 			{!onlyEngage && publications.length > 0 && (
 				<>

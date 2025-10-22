@@ -30,6 +30,15 @@ import { removeNotificationWizardTobira } from "../../../../slices/notificationS
 import { ParseKeys } from "i18next";
 import { FormikProps } from "formik";
 
+export enum SeriesDetailsPage {
+	Metadata,
+	ExtendedMetadata,
+	AccessPolicy,
+	Theme,
+	Tobira,
+	Statistics,
+}
+
 /**
  * This component manages the tabs of the series details modal
  */

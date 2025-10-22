@@ -121,7 +121,7 @@ const EventDetailsAssetCatalogDetails = () => {
 									</td>
 									<td>
 										<a href={catalog.url} target="_blank" rel="noreferrer" className="action-cell-button">
-											<LuExternalLink/>
+											<LuExternalLink />
 										</a>
 									</td>
 								</tr>

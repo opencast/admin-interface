@@ -1,7 +1,6 @@
 @use "sass:color";
 @use "../../base/variables";
 @use "../../mixins/button";
-@use "../../mixins/mixins-bourbon";
 
 /**
  * Licensed to The Apereo Foundation under one or more contributor license
@@ -37,7 +36,7 @@
 
         .comment-container {
             padding: variables.$modal-container-padding;
-            height: 400px;
+            height: 300px;
             overflow-y: auto;
 
             .comment {
@@ -117,7 +116,6 @@
                     font-weight: 600;
                     cursor: pointer;
                     color: variables.$l-blue;
-                    display: inline-block;
                     line-height: inherit;
                     padding: initial;
                 }
@@ -133,10 +131,15 @@
                 .resolve {
                     color: variables.$light-prim-color;
                     margin-right: 10px;
+                    cursor: default;
 
                     &.resolved {
                         color: variables.$green;
                     }
+                }
+
+                .active {
+                    background: #BDDAF1;
                 }
             }
         }
@@ -185,51 +188,6 @@
     }
 
 
-
-    // Tags
-    // ----------------------------------------
-    // Currently not used in this build
-
-    &.tags {
-
-        .add-tag-container {
-            background: red;
-            margin: -15px auto 0;
-            text-align: center;
-            padding: 10px 0 0;
-            height: 42px;
-            background: color.adjust(variables.$body-background, $lightness: -3%);
-            border-bottom: 1px solid variables.$main-border-color;
-
-            > a {
-                @include button.btn(green);
-                margin-left: 10px;
-            }
-
-        }
-
-        .tag-container {
-            padding: 15px;
-
-            > span {
-                display: inline-block;
-                padding: 5px 7px;
-                margin: 5px 5px 0 0;
-                font-size: 12px;
-                background: variables.$l-blue;
-                color: #fff;
-                border-radius: variables.$main-border-radius;
-
-                > a {
-                    margin-left: 5px;
-                    color: #fff;
-                }
-            }
-        }
-    }
-
-
-
     // Quick Actions
     // ----------------------------------------
 
@@ -273,10 +231,6 @@
         input {
             margin-right: 10px;
         }
-
-        .fa-arrow-right {
-            margin-top: -25px;
-        }
     }
 
 
@@ -313,22 +267,6 @@
     }
 
 
-    // Remove Button Row within Tables
-    // ----------------------------------------
-
-    .remove-btn-container {
-        height: 50px;
-        border-top: 1px solid variables.$main-border-color;
-    }
-
-    .red-btn {
-        margin: 10px 10px 0 0;
-        display: inline-block;
-        float: right;
-        padding: 7px 10px;
-    }
-
-
     // Dropdown Container
     // ----------------------------------------
 
@@ -344,16 +282,11 @@
     // Manage Files
     // ----------------------------------------
 
-    .file-upload {
-        @include mixins-bourbon.clearfix;
-    }
-
     .upload-file-info {
-        @include mixins-bourbon.clearfix;
         color: variables.$medium-prim-color;
         font-size: 10px;
         font-weight: variables.$weight-semibold;
-        background: #fff;
+        background: variables.$white;
         border: 1px solid variables.$main-border-color;
         border-radius: 10px;
         height: 19px;
@@ -363,13 +296,16 @@
         // Filename label
         p {
             color: variables.$dark-prim-color;
-            display: inline-block;
             padding: 4px 10px;
             float: left;
             max-width: 175px;
             white-space: nowrap;
             text-overflow: ellipsis;
             overflow: hidden;
+
+            .edit {
+                padding: 0px 10px;
+            }
         }
 
         .button-container {
@@ -464,7 +400,6 @@
     }
 
     .list-row {
-        @include mixins-bourbon.clearfix;
         padding: 15px 0;
         border-bottom: 1px solid variables.$main-border-color;
 
@@ -473,7 +408,6 @@
         }
 
         &:last-child {
-            padding-bottom: 0;
             border-bottom: 0;
         }
 
@@ -483,12 +417,8 @@
     }
 
     .list-sub-row {
-        @include mixins-bourbon.clearfix;
+        display: flex;
         padding: 5px 0;
-
-        &:last-child {
-            padding-bottom: 0;
-        }
     }
 
     .header-column,
@@ -510,100 +440,17 @@
     }
 
 
-    // Video Preview
+    // Watermark Layout
     // ----------------------------------------
 
     .video-container {
-        @include mixins-bourbon.clearfix;
-        position: relative;
-
-        .video-wrapper {
-            position: relative;
-            width: 500px;
-            height: auto;
-            padding: 5px;
-            border: 1px solid variables.$main-border-color;
-            border-radius: variables.$main-border-radius;
-            box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .video-overlay {
-            position: absolute;
-            z-index: variables.$z-60;
-            width: 500px;
-            height: 100%;
-            max-width: calc(100% - 10px);
-            max-height: calc(100% - 12px);
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
-            overflow: hidden;
-        }
-
-        iframe {
-            max-width: 100%;
-            margin: 0;
-        }
-
-        // Watermark Layout
-
-        .watermark-preview,
-        .watermark-config {
-
-        }
-
-        .watermark-preview {
-
-            video,
-            iframe,
-            img,
-            picture {
-                max-width: 100%;
-                height: auto;
-            }
-        }
-
-        .watermark-image {
-            position: absolute;
-            z-index: variables.$z-60;
-
-            img {
-                max-width: 50px;
-                height: auto;
-            }
-
-            $watermark-margin: 15px;
-
-            // default attributes
-            bottom: $watermark-margin;
-            right: $watermark-margin;
-
-            &.position-top-left {
-                top: $watermark-margin;
-                left: $watermark-margin;
-            }
-
-            &.position-top-right {
-                top: $watermark-margin;
-                right: $watermark-margin;
-            }
-
-            &.position-bottom-left {
-                bottom: $watermark-margin;
-                left: $watermark-margin;
-            }
-
-            &.position-bottom-right {
-                bottom: $watermark-margin;
-                right: $watermark-margin;
-            }
-        }
-
         .position-selection {
             position: relative;
             padding: 5px;
             border: 1px solid variables.$main-border-color;
             border-radius: variables.$main-border-radius;
             box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-            background: #fff;
+            background: variables.$white;
             min-height: 202px;
         }
 
@@ -638,119 +485,5 @@
             bottom: 5px;
             right: 5px;
         }
-
-        .overlay-meta {
-            padding: 40px 20px;
-            color: rgba(variables.$white, 0.98);
-            text-shadow: 0 1px 2px rgba(variables.$black, 0.2);
-            font-size: 18px;
-            line-height: 22px;
-            font-weight: variables.$weight-semibold;
-            text-align: center;
-            max-height: calc(100% - 0px);
-
-            &.left-aligned {
-                text-align: left;
-            }
-
-            &.right-aligned {
-                text-align: right;
-            }
-
-            h1,
-            h2,
-            h3,
-            h4,
-            h5,
-            h6 {
-                margin-bottom: 8px;
-            }
-
-            h1 {
-                font-size: 30px;
-                line-height: 36px;
-                font-weight: variables.$weight-semibold;
-            }
-
-            h2 {
-                font-size: 28px;
-                line-height: 34px;
-                font-weight: variables.$weight-semibold;
-            }
-
-            h3 {
-                font-size: 26px;
-                line-height: 32px;
-                font-weight: variables.$weight-semibold;
-            }
-
-            h4 {
-                font-size: 24px;
-                line-height: 30px;
-                font-weight: variables.$weight-semibold;
-            }
-
-            h5 {
-                font-size: 22px;
-                line-height: 28px;
-                font-weight: variables.$weight-regular;
-            }
-
-            h6 {
-                font-size: 20px;
-                line-height: 26px;
-                font-weight: variables.$weight-regular;
-            }
-
-            // for legal or other small print
-            &.paragraph-meta {
-                background: linear-gradient(to bottom, rgba(variables.$black, 0.8), rgba(variables.$black, 0.2));
-                height: 100%;
-                font-size: 12px;
-                line-height: 18px;
-                padding: 10px;
-                text-align: left;
-                overflow: auto;
-
-                p {
-                    margin-bottom: 6px;
-                }
-            }
-        }
-    }
-
-    .preview-duration {
-        margin-top: 10px;
-        font-size: 14px;
-
-        .field-title {
-            font-weight: variables.$weight-semibold;
-            color: variables.$dark-prim-color;
-        }
-    }
-
-    // Workflow Definition Configuration Panel
-    #workflow-configuration {
-        legend {
-          padding-top: 20px;
-          padding-bottom: 5px
-        }
-        li {
-          padding: 2px 20px;
-        }
-        input {
-          vertical-align: sub;
-        }
-        input[type=checkbox] {
-          padding: 0px 5px;
-        }
-        label {
-          display: inline-block;
-          padding: 0px
-        }
-        input:disabled+label {
-          opacity: 0.5;
-        }
     }
 }
-

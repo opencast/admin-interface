@@ -105,7 +105,7 @@ const EventDetailsWorkflowDetails = ({
 									}
 								</header>
 								<div className="obj-container">
-									<table className="main-tbl vertical-headers">
+									<table className="main-tbl">
 										<tbody>
 											<tr>
 												<td>
@@ -260,7 +260,7 @@ const EventDetailsWorkflowDetails = ({
 									}
 								</header>
 								<div className="obj-container">
-									<table className="main-tbl vertical-headers">
+									<table className="main-tbl">
 										<tbody>
 											<tr />
 										</tbody>
@@ -278,7 +278,7 @@ const EventDetailsWorkflowDetails = ({
 									}
 								</header>
 								<div className="obj-container">
-									<table className="main-tbl vertical-headers">
+									<table className="main-tbl">
 										<tbody>
 											<tr />
 										</tbody>
@@ -376,7 +376,7 @@ const OperationsPreview = ({
 					}
 					openSubTab={openDetailsSubTab}
 				/>
-				<hr style={{ height: "1px", border: 0, borderTop: "1px solid #ccc", margin: "0", padding: "0" }} />
+				<hr/>
 			</>}
 
 			{/* links to 'Operations' or 'Errors & Warnings' sub-Tabs */}

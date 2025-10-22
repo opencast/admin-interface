@@ -18,12 +18,6 @@ const EventDetailsPublicationTab = ({
 
 	const publications = useAppSelector(state => getPublications(state));
 
-	const styleSpan = {
-		display: "inline-block",
-		float: "right" as const,
-		marginLeft: "auto",
-	};
-
 	useEffect(() => {
 		dispatch(fetchEventPublications(eventId)).then(r => console.info(r));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -76,7 +70,7 @@ const EventDetailsPublicationTab = ({
 														<LuCirclePlay />
 													</a>
 												) : (
-													<span style={styleSpan}>
+													<span className="no-play-text">
 														{t(
 															"EVENTS.EVENTS.DETAILS.PUBLICATIONS.LIVE_EVENT_NOT_IN_PROGRESS",
 														)}

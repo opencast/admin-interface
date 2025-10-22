@@ -50,8 +50,10 @@ $off-white:                    $primary-color-white;
 // ----------------------------------------
 
 $bright-blue:                  #4da1f7;
+$ref-blue:                     #1d5888;
 $red:                          #fa1919;
 $alt-red:                      #e45253;
+$orange:                       #ff8c00;
 $yellow:                       #e4d12e;
 $black:                        #000;
 $white:                        #fff;
@@ -228,6 +230,3 @@ $state-danger-border:            rgb(234.9211137441, 209.1388862559, 209.1388862
 
 // Transition
 $alert-transition: color 300ms ease-in;
-
-// Modal Alerts (styles are inheirted from main alerts)
-$modal-alert-fa-size: 12px;

@@ -26,12 +26,6 @@ const NewUserWizard = ({
 
 	const usernames = useAppSelector(state => getUsernames(state));
 
-	const navStyle = {
-		left: "0px",
-		top: "auto",
-		position: "initial" as const,
-	};
-
 	const [tab, setTab] = useState(0);
 
 	const openTab = (tabNr: number) => {
@@ -61,7 +55,7 @@ const NewUserWizard = ({
 	return (
 		<>
 			{/* Head navigation*/}
-			<nav className="modal-nav" id="modal-nav" style={navStyle}>
+			<nav className="modal-nav">
 				<ButtonLikeAnchor
 					className={cn("wider", { active: tab === 0 })}
 					onClick={() => openTab(0)}

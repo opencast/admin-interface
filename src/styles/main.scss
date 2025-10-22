@@ -22,9 +22,6 @@
 // Frameworks
 // ----------------------------------------
 
-// Bourbon Settings
-$disable-warnings: true !default; // disables deprecation warnings
-
 // Imports
 @use "sass:meta";
 
@@ -36,7 +33,6 @@ $disable-warnings: true !default; // disables deprecation warnings
 
 // Mixins
 @use "mixins/_mixins-config";
-@use "mixins/mixins-bourbon";
 
 // Components
 @use "components/components-config";
@@ -45,7 +41,6 @@ $disable-warnings: true !default; // disables deprecation warnings
 @use "views/views-config";
 
 // Extensions
-@use "extensions/extensions-config";
 @use "base/variables";
 @use "components/alerts";
 @use "mixins/button";
@@ -59,47 +54,6 @@ $disable-warnings: true !default; // disables deprecation warnings
 
 // Third Party Imports
 // ----------------------------------------
-
-// Import custome
-#new-theme-modal, #theme-details {
-
-  [data-modal-tab-content="general"] {
-
-    .input-block {
-      margin-bottom: 15px;
-    }
-
-    .drop-down-container,
-    input[type="text"],
-    textarea {
-      width: 360px;
-      margin-bottom: 0;
-    }
-
-    input[type="checkbox"]{
-      margin: 0px; // reset the top margin from form-container
-      width: 20px; // reset the width from form-container
-    }
-
-    .text-variables {
-      float: right;
-      width: 190px;
-    }
-  }
-}
-
-@include meta.load-css("vendor/chosen");
-
-.filters-container {
-  display: flex;
-
-  div.chosen-container {
-    width: 230px !important;
-    ul.chosen-choices {
-      line-height: 34px;
-    }
-  }
-}
 
 // We rely on border-box to center elements and cut down padding
 // This had to be added during the bourbon upgrade from 4 to 7
@@ -115,119 +69,6 @@ a {
   cursor: pointer;
 }
 
-// Mark mockups as stubs
-.main-view.stub, div.full-col > div.stub {
-  margin-right: 20px;
-  -webkit-background-size: 50px 50px;
-  -moz-background-size: 50px 50px;
-  background-size: 50px 50px;
-
-  background-color: rgba(236, 233, 207, 0.62);
-  background-image: -webkit-gradient(linear, 0 0, 100% 100%, color-stop(.25, rgba(255, 255, 255, .2)), color-stop(.25, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .2)), color-stop(.75, rgba(255, 255, 255, .2)), color-stop(.75, transparent), to(transparent));
-  background-image: -webkit-linear-gradient(-45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent);
-  background-image: -moz-linear-gradient(-45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent);
-  background-image: -ms-linear-gradient(-45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent);
-  background-image: -o-linear-gradient(-45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent);
-  background-image: linear-gradient(-45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent);
-}
-
-
-.modal {
-  top: 30px;
-  position: fixed;
-  max-height: 90vh;
-  overflow: auto;
-  input[readonly] {
-    border: none;
-  }
-  &#group-modal, &#add-acl-modal, &#user-modal {
-    input[type="text"], input[type="password"], [type="email"] {
-      width: 100%;
-      padding-left: 15px;
-    }
-  }
-  .select-container > p {
-    margin-bottom: 10px;
-  }
-
-  h2 {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  // When not focused, make it look like a span
-  .single-value:not(:focus){
-    background-color: transparent;
-    padding: 0px;
-    border: initial;
-    font: inherit;
-    margin: 0px;
-
-    // border-radius: 0;
-    // border-bottom: 1px dashed #999;
-
-    width: auto;
-  }
-  .single-value:focus{
-    width: 98%;
-  }
-
-  .single-value-textarea:not(:focus){
-    background-color: transparent;
-    padding: 0px;
-    border: initial;
-    font: inherit;
-    margin: 0px;
-    resize: none;
-    overflow: hidden;
-
-    // border-radius: 0;
-    // border-bottom: 1px dashed #999;
-
-    width: auto;
-    // height: auto;
-  }
-  .single-value-textarea:focus{
-    resize: vertical;
-
-    width: 98%;
-    // height: auto;
-  }
-
-  .datepicker-custom-input:not(:focus) {
-    background: transparent;
-    padding: 0px;
-    border: initial;
-    font: inherit;
-    margin: 0px;
-    &:hover {
-      border: initial;
-    }
-  }
-
-  .editable {
-    word-wrap: anywhere;
-  }
-}
-
-.modal-animation {
-  -webkit-transition: all linear 0.2s;
-  transition: all linear 0.2s;
-  opacity: 1;
-  visibility: visible;
-  display: block;
-
-  &.ng-hide-add,
-  &.ng-hide-remove {
-    display: block!important;
-  }
-
-  &.ng-hide {
-    opacity: 0;
-  }
-}
-
 // A disabled button (cannot use the btn mixin because of specificity)
 a.disabled, button.disabled, div.disabled {
   opacity: 0.5 !important;
@@ -235,37 +76,11 @@ a.disabled, button.disabled, div.disabled {
   pointer-events: none !important;
 }
 
-.ng-multi-value {
-  display: inline-block;
-  padding: 0px 5px;
-  margin: 1px 5px 1px 0;
-  font-size: 11px;
-  background: variables.$l-blue;
-  color: #fff;
-  border-radius: 4px;
-
-  button {
-    color: white;
-    font-weight: bold;
-  }
-
-  &-green {
-    background: #4bcc8f;
-  }
-
-  &-red {
-    background: #ff0000;
-  }
-}
-
 div.show-edit {
   display: flex;
   justify-content: space-between;
 }
 
-span.editable {
-  border-bottom: 1px dashed #999;
-}
 div.editable {
   cursor: text;
   line-height: 25px;
@@ -328,207 +143,16 @@ textarea.editable {
   height: auto;
 }
 
-.editable-select {
-  margin-top: -26px;
-}
-
-button.red {
-  @include button.btn(red);
-}
-
-button.green {
-  @include button.btn(green-dark-bg);
-}
-
-div[data-modal-tab-content="metadata"], div[data-modal-tab-content="extended-metadata"] {
-  & button.save {
-    float: right;
-  }
-  & td:first-child {
-    width: 200px;
-    max-width: 200px;
-  }
-}
-
-.modal .obj.comments {
-  .add-comment .chosen-container {
-    float: left;
-  }
-  .comment-container {
-    height: 300px;
-    .comment .resolve {
-      cursor: default;
-    }
-  }
-  .comment.active {
-    background: #BDDAF1;
-  }
-  .add-comment {
-    button {
-      float: right;
-    }
-
-    label, input[type=checkbox] {
-      float: left;
-    }
-
-    label, input[type=checkbox] {
-      margin-top: 10px;
-      display: inline-block;
-      margin: 4px;
-      line-height: 2em;
-    }
-    label {
-      margin-right: 20px;
-    }
-    input[type=text] {
-      padding-left: 20px;
-      color: #919FA5;
-    }
-    button.cancel {
-      @include button.btn(grey);
-      height: 40px;
-    }
-    button.save{
-      margin-left: 5px;
-    }
-  }
-}
-// Chosen CSS fix for custom height select fields
-.chosen-container-multi .chosen-choices li.search-field input {
-  height: auto !important;
-}
-
-// Visual search replacements
-.filters-container > input[type="search"] {
-  float: left;
-  margin-right: 0;
-}
-
-input[type="text"].small-search {
-  height: 100%;
-  width: 120px;
-  margin: 0;
-  padding: 1px;
-  text-align: center;
-}
-
-div.table-filter {
-  display: flex;
-  float: right;
-  border: 1px solid #c9d0d3;
-  border-radius: 4px;
-  margin-left: 10px;
-  position: inherit;
-
-  .filters {
-    font-size: 12px;
-    line-height: normal;
-    display: flex;
-    gap: 4px;
-    border: 0;
-    border-radius: 4px;
-    background-color: #fafafa;
-    min-height: 23px;
-    min-width: 150px;
-    padding: 7px;
-
-    .chosen-search {
-      width: 100%;
-    }
-    &>i {
-      font-size: 18px;
-      padding: 2px;
-    }
-
-    span button i {
-      color: white;
-    }
-
-    input {
-      height: auto;
-      border: 1px solid #c9d0d3;
-      border-radius: 3px;
-      background-color: white;
-    }
-
-    .ng-multi-value {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-      margin: 0;
-    }
-
-    .MuiInputBase-input {
-      box-sizing: border-box;
-    }
-
-    .MuiButtonBase-root {
-      padding: 0;
-    }
-
-    .MuiInputAdornment-root {
-      margin: 0;
-    }
-  }
-
-  .fa {
-    font-size: 13px;
-  }
-
-  i {
-    color: variables.$global-text-color;
-    cursor: pointer;
-
-    &.clear {
-      padding: 0 8px 0 0;
-    }
-
-    &.settings {
-      padding: 0 8px 0 0;
-    }
-  }
-
-  .filter-settings-dd {
-    margin-left: 0px;
-    border: 0;
-    float: left;
-    height: 38px;
-
-    .filters-list {
-      opacity: 1;
-      visibility: visible;
-    }
-  }
-}
-
 // Generic select fields
 select {
-  border: 1px solid #c9d0d3;
+  border: 1px solid variables.$main-border-color;
   border-radius: 3px;
-  background-color: white;
+  background-color: variables.$white;
 }
 
 // Disabled input field
 input.disabled, select.disabled {
-  background: #eeeff0;
-}
-
-// Make filter profile dialog work
-.filters-container {
-  .filter-settings-dd .filter-details {
-    opacity: 1;
-    visibility: visible;
-  }
-}
-
-.quick-actions {
-  p {
-    padding: 10px 0;
-  }
-  select {
-    width: 200px;
-  }
+  background: variables.$modal-nav-bg-color;
 }
 
 // Use HTML5 input field for file upload
@@ -536,135 +160,4 @@ input.disabled, select.disabled {
   width: 100%;
   visibility: visible !important;
   text-align: left;
-}
-
-// Notification alias error to danger
-.alert {
-  &.error {
-    @include alerts.alert-variant(variables.$state-danger-bg, variables.$state-danger-border, variables.$state-danger-text);
-  }
-  & .autonomous {
-    padding-right: 20px; /* fixes a design bug */
-  }
-}
-
-
-/*
- * ---------------------------------------------
- * MH-12139 notification upload ratio override
- * ---------------------------------------------
- */
-.alert p {
-  display: inline-flex;
-}
-
-// pagination of tables
-main.main-view {
-  #tbl-view-controls-container {
-
-    .pagination {
-
-      button {
-        padding: 7px 10px;
-      }
-
-      button.wide {
-        width: inline;
-      }
-
-      button:hover:not(.active) {
-        background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#fefefe), to(#f0f0f0));
-        background: -moz-linear-gradient(0% 0% 270deg, #fefefe, #f0f0f0);
-      }
-
-      .active {
-        border: 1px solid #616161;
-      }
-    }
-  }
-}
-
-table.main-tbl {
-  &.vertical-headers {
-    tr > td:first-of-type {
-      white-space: nowrap;
-    }
-  }
-
-  /* we don't want to let the angular animation show up*/
-  .ng-hide-add, .ng-hide-remove {
-    display: none !important;
-  }
-
-  th {
-    span {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-    }
-  }
-
-  td {
-    max-width: 800px;
-  }
-
-  td {
-    .fa-check {
-      float: right;
-      color: variables.$green;
-      margin-top: 3px;
-      font-size: 18px;
-      opacity: 0;
-      visibility: hidden;
-      transition: all .2s;
-
-      &.active {
-        opacity: 1;
-        visibility: visible;
-      }
-
-    } // fa-check
-  }
-}
-
-//we introduced a separate layer in file-upload to support directive
-.modal .obj .obj-container > div.file-upload > p {
-  font-size: 11px;
-  color: #999999;
-  line-height: 18px;
-  margin-bottom: 15px;
-}
-
-.hidden {
-  visibility: hidden;
-}
-
-tr.error {
-  background: variables.$state-warning-bg !important;
-}
-
-tr.info {
-  background: variables.$state-info-bg !important;
-}
-
-.video-player {
-  @include mixins-bourbon.clearfix;
-  width: 100%;
-  margin: 0 auto;
-  background: #1e1e1e;
-  text-align: center;
-  border-radius: 4px 4px 0 0;
-
-  video {
-      max-height: 350px;
-      max-width: 100%;
-      height: auto;
-  }
-}
-
-.table-filter-blue-box {
-  max-width: 250px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }

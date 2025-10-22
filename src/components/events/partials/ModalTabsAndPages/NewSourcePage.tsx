@@ -119,7 +119,7 @@ const NewSourcePage = <T extends RequiredFormProps>({
 				}
 
 				<div className="obj list-obj">
-					<header className="no-expand">
+					<header>
 						{t("EVENTS.EVENTS.NEW.SOURCE.SELECT_SOURCE")}
 					</header>
 					{/* Radio buttons for choosing source mode */}
@@ -269,7 +269,7 @@ const Upload = <T extends RequiredFormPropsUpload>({
 									formik.values.uploadAssetsTrack.map((asset, key) => (
 										<tr key={key}>
 											<td>
-												<span style={{ fontWeight: "bold" }}>
+												<span className="title">
 													{translateOverrideFallback(asset, t, "SHORT")}
 												</span>
 												<p>
@@ -292,7 +292,7 @@ const Upload = <T extends RequiredFormPropsUpload>({
 													/>
 												</div>
 											</td>
-											<td className="fit">
+											<td>
 												<ButtonLikeAnchor
 													style={{ visibility: asset.file ? "visible" : "hidden" }}
 													className="action-cell-button remove"
@@ -316,7 +316,7 @@ const Upload = <T extends RequiredFormPropsUpload>({
 				</div>
 			</div>
 			<div className="obj list-obj">
-				<header className="no-expand">
+				<header>
 					{t("EVENTS.EVENTS.NEW.SOURCE.UPLOAD.RECORDING_METADATA")}
 				</header>
 				<div className="obj-container">

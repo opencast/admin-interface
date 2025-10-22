@@ -25,14 +25,13 @@ const StartTaskModal = ({
 	const initialValues = initialFormValuesStartTask;
 
 	const {
-		snapshot,
 		page,
 		nextPage,
 		previousPage,
 		setPage,
 		pageCompleted,
 		setPageCompleted,
-	} = usePageFunctions(0, initialValues);
+	} = usePageFunctions(0);
 
 	type StepName = "general" | "tasks" | "summary";
 	type Step = WizardStep & {
@@ -87,7 +86,7 @@ const StartTaskModal = ({
 		<>
 			{/* Initialize overall form */}
 			<Formik
-				initialValues={snapshot}
+				initialValues={initialValues}
 				validate={values => validateFormik(values)}
 				onSubmit={values => handleSubmit(values)}
 			>

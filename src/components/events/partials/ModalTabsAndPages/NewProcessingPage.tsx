@@ -72,7 +72,7 @@ const NewProcessingPage = <T extends RequiredFormProps>({
 			<ModalContentTable>
 				{/* Workflow definition Selection*/}
 				<div className="obj quick-actions">
-					<header className="no-expand">
+					<header>
 						{t("EVENTS.EVENTS.NEW.PROCESSING.SELECT_WORKFLOW")}
 					</header>
 					<div className="obj-container padded">

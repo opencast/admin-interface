@@ -18,7 +18,6 @@ const NewMetadataPage = ({
 	header?: ParseKeys
 }) => {
 	const { t } = useTranslation();
-
 	return (
 		<ModalContentTable>
 			{
@@ -27,7 +26,7 @@ const NewMetadataPage = ({
 				metadataCatalogs.length > 0 &&
 				metadataCatalogs.map((catalog, index) => (
 					<div key={index} className="obj tbl-list">
-						{/* <header className="no-expand">{t(header)}</header> */}
+						{/* <header>{t(header)}</header> */}
 						<header>
 							<span>{t(header ? header : catalog.title as ParseKeys)}</span>
 						</header>
@@ -53,7 +52,7 @@ const NewMetadataPage = ({
 														<td>{field.value}</td>
 													)
 												) : (
-													<td className="editable ng-isolated-scope">
+													<td className="editable">
 														{/* Render single value or multi value input */}
 														{field.type === "mixed_text" &&
 														field.collection?.length !== 0 ? (

@@ -20,22 +20,26 @@
  */
 
 
-@use "dropdowns";
-@use "menu-dropdown";
-@use "form";
-@use "multi-select";
-@use "steps";
-@use "breadcrumbs";
-@use "header";
-@use "menu";
-@use "footer";
-@use "tables";
-@use "datepicker-custom";
-@use "inputs";
-@use "stats";
-@use "popover";
 @use "about";
+@use "breadcrumbs";
+@use "datepicker-custom";
+@use "dropdowns";
+@use "footer";
+@use "form";
+@use "header";
+@use "inputs";
+@use "menu-dropdown";
+@use "menu";
+@use "multi-select";
+@use "multi-value";
+@use "popover";
+@use "stats";
+@use "steps";
+@use "table-filter-profiles";
+@use "table-filter";
+@use "tables";
 @use "tooltips";
+@use "video-player";
 
 // Integrated From Extensions
 @use "labels";
@@ -44,7 +48,6 @@
 
 // Large Components
 @use "modals/modals-config";
-@use "data-filter/data-filter-config";
 
 // Alerts
 @use "alerts";

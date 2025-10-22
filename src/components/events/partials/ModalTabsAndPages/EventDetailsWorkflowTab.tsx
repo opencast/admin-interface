@@ -34,6 +34,7 @@ import { ParseKeys } from "i18next";
 import ModalContent from "../../../shared/modals/ModalContent";
 import EventDetailsTabHierarchyNavigation from "./EventDetailsTabHierarchyNavigation";
 import { LuChevronRight, LuCircleStop, LuCircleX, LuHand, LuRefreshCw } from "react-icons/lu";
+import { Tooltip } from "../../../shared/Tooltip";
 
 type InitialValues = {
 	workflowDefinition: string;
@@ -136,7 +137,6 @@ const EventDetailsWorkflowTab = ({
 
 	return (
 		<ModalContent
-			data-modal-tab-content="workflows"
 			modalContentChildren={
 				/* Hierarchy navigation */
 				<EventDetailsTabHierarchyNavigation
@@ -181,7 +181,7 @@ const EventDetailsWorkflowTab = ({
 												{t("EVENTS.EVENTS.DETAILS.WORKFLOWS.STATUS") /* Status */}
 											</th>
 											{isRoleWorkflowEdit && (
-												<th className="fit">
+												<th>
 													{
 														t(
 															"EVENTS.EVENTS.DETAILS.WORKFLOWS.ACTIONS",
@@ -201,7 +201,11 @@ const EventDetailsWorkflowTab = ({
 												<tr key={key}>
 													<td>{item.id}</td>
 													<td>{item.title}</td>
-													<td>{item.submitter}</td>
+													<td>
+														<Tooltip title={item.submitterName}>
+															<span>{item.submitter}</span>
+														</Tooltip>
+													</td>
 													<td>
 														{t("dateFormats.dateTime.medium", {
 															dateTime: renderValidDate(item.submitted),
@@ -216,11 +220,10 @@ const EventDetailsWorkflowTab = ({
 																	onClick={() =>
 																		workflowAction(item.id, "STOP")
 																	}
-																	className="stop"
 																	tooltipText="EVENTS.EVENTS.DETAILS.WORKFLOWS.TOOLTIP.STOP"
 																>
 																	{/* STOP */}
-																	<LuCircleStop style={{ fontSize: "17px", verticalAlign: "middle" }}/>
+																	<LuCircleStop className="workflow-control-icon grey"/>
 																</ButtonLikeAnchor>
 															)}
 															{item.status ===
@@ -229,11 +232,10 @@ const EventDetailsWorkflowTab = ({
 																	onClick={() =>
 																		workflowAction(item.id, "NONE")
 																	}
-																	style={{ color: "red" }}
 																	tooltipText="EVENTS.EVENTS.DETAILS.WORKFLOWS.TOOLTIP.ABORT"
 																>
 																	{/* Abort */}
-																	<LuHand style={{ fontSize: "17px", verticalAlign: "middle" }}/>
+																	<LuHand className="workflow-control-icon red"/>
 																</ButtonLikeAnchor>
 															)}
 															{item.status ===
@@ -245,7 +247,7 @@ const EventDetailsWorkflowTab = ({
 																	tooltipText="EVENTS.EVENTS.DETAILS.WORKFLOWS.TOOLTIP.RETRY"
 																>
 																	{/* Retry */}
-																	<LuRefreshCw style={{ fontSize: "17px", verticalAlign: "middle", color: "#444" }}/>
+																	<LuRefreshCw className="workflow-control-icon darkgray"/>
 																</ButtonLikeAnchor>
 															)}
 															{(item.status ===
@@ -420,35 +422,31 @@ const EventDetailsWorkflowTab = ({
 											!!workflowConfiguration &&
 											!!workflowConfiguration.workflowId &&
 											formik.dirty && (
-												<footer style={{ padding: "0 15px" }}>
-													<div className="pull-left">
-														<button
-															type="reset"
-															onClick={() => {
-																formik.resetForm();
-															}}
-															disabled={!formik.isValid}
-															className={`cancel  ${
-																!formik.isValid ? "disabled" : ""
-															}`}
-														>
-															{t("CANCEL") /* Cancel */}
-														</button>
-													</div>
-													<div>
-														<button
-															onClick={() => formik.handleSubmit()}
-															disabled={!(formik.dirty && formik.isValid)}
-															aria-disabled={!(formik.dirty && formik.isValid)}
-															className={`save green  ${
-																!(formik.dirty && formik.isValid)
-																	? "disabled"
-																	: ""
-															}`}
-														>
-															{t("SAVE") /* Save */}
-														</button>
-													</div>
+												<footer>
+													<button
+														onClick={() => formik.handleSubmit()}
+														disabled={!(formik.dirty && formik.isValid)}
+														aria-disabled={!(formik.dirty && formik.isValid)}
+														className={`save green  ${
+															!(formik.dirty && formik.isValid)
+																? "disabled"
+																: ""
+														}`}
+													>
+														{t("SAVE") /* Save */}
+													</button>
+													<button
+														type="reset"
+														onClick={() => {
+															formik.resetForm();
+														}}
+														disabled={!formik.isValid}
+														className={`cancel  ${
+															!formik.isValid ? "disabled" : ""
+														}`}
+													>
+														{t("CANCEL") /* Cancel */}
+													</button>
 												</footer>
 											)}
 									</div>

@@ -267,11 +267,7 @@ const MainNavLink = ({
 		<NavLink to={path}
 			className={({ isActive }) => isActive ? "roll-up-menu-active" : ""}>
 			<Tooltip title={t(tooltipTitle)} placement={"right"}>
-				<Icon style={{
-					height: "100%",
-					fontSize: 29,
-					color: "#818181",
-				}}/>
+				<Icon className="main-nav-icon"/>
 			</Tooltip>
 		</NavLink>
 	);
