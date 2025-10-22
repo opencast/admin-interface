@@ -249,7 +249,7 @@ const EventDetails = ({
 	};
 	// NEXT STEP
 	useHotkeys(
-	  availableHotkeys.general.NEXT_STEP.sequence,
+	  availableHotkeys.general.NEXT_PANEL.sequence,
 	  event => {
 	    const target = event.target as HTMLElement;
 	    if (!["INPUT", "TEXTAREA"].includes(target.tagName)) {
@@ -261,7 +261,7 @@ const EventDetails = ({
 
 	// PREVIOUS STEP
 	useHotkeys(
-	  availableHotkeys.general.PREVIOUS_STEP.sequence,
+	  availableHotkeys.general.PREVIOUS_PANEL.sequence,
 	  event => {
 	    const target = event.target as HTMLElement;
 	    if (!["INPUT", "TEXTAREA"].includes(target.tagName)) {

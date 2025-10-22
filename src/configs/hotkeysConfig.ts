@@ -59,14 +59,14 @@ export const availableHotkeys: HotkeyMapType = {
             action: 'keyup',
             allowIn: ['INPUT', 'SELECT', 'TEXTAREA']
         },*/
-		NEXT_STEP: {
+		NEXT_PANEL: {
     		name: "next_step",
-    		description: "HOTKEYS.DESCRIPTIONS.GENERAL.NEXT_STEP",
+    		description: "HOTKEYS.DESCRIPTIONS.GENERAL.NEXT_PANEL",
     		sequence: ["alt+enter"], // Alt + Enter moves forward
   		},
-  		PREVIOUS_STEP: {
+  		PREVIOUS_PANEL: {
     		name: "previous_step",
-    		description: "HOTKEYS.DESCRIPTIONS.GENERAL.PREVIOUS_STEP",
+    		description: "HOTKEYS.DESCRIPTIONS.GENERAL.PREVIOUS_PANEL",
     		sequence: ["alt+backspace"], // Alt + Backspace moves backward
   		},
 		REMOVE_FILTERS: {
