@@ -24,39 +24,33 @@ export const SaveEditFooter: React.FC<SaveEditFooterProps> = ({
 }) => {
     const { t } = useTranslation();
 
-    return <footer style={{ padding: "0 15px" }}>
-        {active && isValid && (
-            <div className="pull-left">
-                <BaseButton
-                    type="reset"
-                    onClick={reset}
-                    className="cancel"
-                >{t("CANCEL")}</BaseButton>
-            </div>
-        )}
+    return <footer>
+        <BaseButton
+            onClick={submit}
+            aria-disabled={!isValid || !active}
+            disabled={!isValid || !active}
+            className={`save green ${
+                !isValid || !active ? "disabled" : ""
+            }`}
+        >{t("SAVE")}</BaseButton>
         {additionalButton && (
-            <div className="pull-right" style={{ marginLeft: 5 }}>
-                <Tooltip title={t(additionalButton.hint)}>
-                    <BaseButton
-                        onClick={additionalButton.onClick}
-                        disabled={!isValid || !active}
-                        aria-disabled={!isValid || !active}
-                        className={`save green ${
-                            !isValid || !active ? "disabled" : ""
-                        }`}
-                    >{t(additionalButton.label)}</BaseButton>
-                </Tooltip>
-            </div>
+            <Tooltip title={t(additionalButton.hint)}>
+                <BaseButton
+                    onClick={additionalButton.onClick}
+                    disabled={!isValid || !active}
+                    aria-disabled={!isValid || !active}
+                    className={`save green ${
+                        !isValid || !active ? "disabled" : ""
+                    }`}
+                >{t(additionalButton.label)}</BaseButton>
+            </Tooltip>
         )}
-        <div className="pull-right">
+        {active && isValid && (
             <BaseButton
-                onClick={submit}
-                aria-disabled={!isValid || !active}
-                disabled={!isValid || !active}
-                className={`save green ${
-                    !isValid || !active ? "disabled" : ""
-                }`}
-            >{t("SAVE")}</BaseButton>
-        </div>
+                type="reset"
+                onClick={reset}
+                className="cancel"
+            >{t("CANCEL")}</BaseButton>
+        )}
     </footer>;
 };

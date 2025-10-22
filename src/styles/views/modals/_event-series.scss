@@ -29,121 +29,6 @@
         // Modal Size
         @extend .large-modal;
 
-        .status {
-            line-height: 40px;
-            padding: 2px 20px;// Overide padding
-
-            > input[type="checkbox"] {
-                float: right;
-                margin: 5px -10px 0 0;
-            }
-        }
-
-        .edit-trim {
-
-            > .obj-container {
-                padding: 0px 20px 20px;
-
-                > p {
-                    padding-bottom: 20px;
-                }
-
-                > a {
-                    @include button.btn(white);
-                }
-            }
-        }
-
-        .media-content {
-
-            .desc {
-                margin-bottom: 0;
-            }
-
-            .action-container {
-                border-top: 1px solid variables.$main-border-color;
-                padding: 20px;
-                margin: 0 auto;
-                text-align: center;
-
-                .drop-down-container {
-                    text-align: left;
-                }
-
-                > a {
-                    @include button.btn(white);
-                    margin-left: 5px;
-                    vertical-align: middle;
-                }
-            }
-        }
-
-        .access-control {
-
-            .desc {
-                border-bottom: none;
-            }
-
-            .obj-container {
-                padding-bottom: 15px;
-            }
-
-            .main-tbl {
-                border-top: 1px solid variables.$main-border-color;
-                margin-top: 0;
-                border-top-left-radius: 0;
-                border-top-right-radius: 0;
-            }
-
-            .add-remove-container {
-                box-sizing: border-box;
-                border-top: 1px solid variables.$main-border-color;
-                padding: 20px;
-                width: 100%;
-
-                .left {
-                    float: left;
-                }
-
-                .right {
-                    float: right;
-                }
-
-                .fa {
-                    font-size: 20px;
-                    vertical-align: middle;
-                    margin-right: 10px;
-                }
-
-                .fa-plus-circle {
-                    color: variables.$green;
-                }
-
-                .fa-minus-circle {
-                    color: variables.$red;
-                }
-
-                .btn {
-                    @include button.btn(green);
-                }
-            }
-        }
-
-        .trim-btn-container {
-            .trim-btn {
-                @include button.btn(lightblue);
-                display: inline-block;
-                padding: 10px 25px;
-                margin-bottom: 10px;
-            }
-        }
-
-        .media-stream-details {
-            .main-tbl {
-                border-bottom: 1px solid variables.$main-border-color;
-            }
-        }
-
         .more-info-actions {
 
             ul {
@@ -158,36 +43,13 @@
                     float: right;
                 }
             }
-        }
 
-        .access-control {
-
-            span {
-                font-size: 12px;
-            }
-
-            .fa-plus-circle {
-                color: variables.$green;
-            }
-
-            .cancel {
-                @include button.btn(white);
-                margin-right: 5px;
-            }
-
-            .apply {
-                @include button.btn(green);
-            }
-
-            .btn-container {
-                padding: 10px;
-            }
-        }
-
-        .current-privilege {
-            .sel-dd {
-                width: 200px;
-                margin-top: 10px;
+            hr {
+                height: 1px;
+                border: 0;
+                border-top: 1px solid variables.$color-silver;
+                margin: 0;
+                padding: 0;
             }
         }
 

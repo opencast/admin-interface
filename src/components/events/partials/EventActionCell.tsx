@@ -137,9 +137,7 @@ const EventActionCell = ({
 					// tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.COMMENTS"} // Disabled due to performance concerns
 					className={"action-cell-button comments"}
 				>
-					<LuMessageCircle style={{
-						color: "#1d5888",
-					}}/>
+					<LuMessageCircle className="blue"/>
 				</ButtonLikeAnchor>
 			)}
 
@@ -150,9 +148,7 @@ const EventActionCell = ({
 					// tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.COMMENTS"} // Disabled due to performance concerns
 					className={"action-cell-button comments-open"}
 				>
-					<LuMessageCircle style={{
-						color: "#1d5888",
-					}}/>
+					<LuMessageCircle className="blue"/>
 				</ButtonLikeAnchor>
 			)}
 
@@ -165,9 +161,7 @@ const EventActionCell = ({
 					// tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.PAUSED_WORKFLOW"} // Disabled due to performance concerns
 					className={"action-cell-button"}
 				>
-					<LuTriangleAlert style={{
-						color: "#444",
-					}}/>
+					<LuTriangleAlert className="darkgrey"/>
 				</ButtonLikeAnchor>
 			}
 
@@ -178,9 +172,7 @@ const EventActionCell = ({
 				// tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.ASSETS"} // Disabled due to performance concerns
 				className={"action-cell-button"}
 				>
-					<LuFolderOpen style={{
-						color: "#444",
-					}}/>
+					<LuFolderOpen className="darkgrey"/>
 				</ButtonLikeAnchor>
 
 			{/* Open dialog for embedded code*/}
@@ -190,9 +182,7 @@ const EventActionCell = ({
 				// tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.EMBEDDING_CODE"} // Disabled due to performance concerns
 				className={"action-cell-button"}
 				>
-					<LuLink style={{
-						color: "#444",
-					}}/>
+					<LuLink className="darkgrey"/>
 				</ButtonLikeAnchor>
 
 			{/* Embedding Code Modal */}

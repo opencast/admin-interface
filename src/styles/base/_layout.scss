@@ -41,7 +41,7 @@ body {
 // Resets
 
 a {
-    color: #1d5888;
+    color: variables.$ref-blue;
     text-decoration: none;
 
     &:hover {

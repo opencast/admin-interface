@@ -158,36 +158,35 @@ const PasswordStrengthIndicator = ({
 
 	const setProgBar = (strength: number): [string | undefined, ParseKeys | undefined] => {
 		if (strength >= 90) {
-			return ["green", "USERS.USERS.DETAILS.STRENGTH.VERYSTRONG"];
+			return ["verystrong", "USERS.USERS.DETAILS.STRENGTH.VERYSTRONG"];
 		} else if (strength >= 70) {
-			return ["#388ed6", "USERS.USERS.DETAILS.STRENGTH.STRONG"];
+			return ["strong", "USERS.USERS.DETAILS.STRENGTH.STRONG"];
 		} else if (strength >= 50) {
-			return ["gold", "USERS.USERS.DETAILS.STRENGTH.GOOD"];
+			return ["good", "USERS.USERS.DETAILS.STRENGTH.GOOD"];
 		} else if (strength >= 30) {
-			return ["darkorange", "USERS.USERS.DETAILS.STRENGTH.WEAK"];
+			return ["weak", "USERS.USERS.DETAILS.STRENGTH.WEAK"];
 		} else if (strength > 1) {
-			return ["red", "USERS.USERS.DETAILS.STRENGTH.VERYWEAK"];
+			return ["veryweak", "USERS.USERS.DETAILS.STRENGTH.VERYWEAK"];
 		} else if (strength <= 1) {
-			return ["white", "USERS.USERS.DETAILS.STRENGTH.BAD"];
+			return ["bad", "USERS.USERS.DETAILS.STRENGTH.BAD"];
 		}
 
 		return [undefined, undefined];
 	};
 
 	const strength = calcStrength(password);
-	const [barColor, barText] = setProgBar(strength);
+	const [cssClass, barText] = setProgBar(strength);
 
 	const progressBarStyle = {
-		background: barColor,
 		width: strength + "%",
 	};
 
 	return (
 		<div>
 			<div className="progress pw-strength">
-				<div id="bar" className="progress-bar" style={progressBarStyle}></div>
+				<div className={cn("progress-bar", cssClass)} style={progressBarStyle}></div>
 			</div>
-			<label id="pw" style={{ textAlign: "left" }}>{barText ? t(barText) : undefined}</label>
+			<label className="pw-label">{barText ? t(barText) : undefined}</label>
 		</div>
 	);
 };

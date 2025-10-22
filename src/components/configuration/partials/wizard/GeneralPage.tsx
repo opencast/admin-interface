@@ -21,12 +21,6 @@ const GeneralPage = <T, >({
 }) => {
 	const { t } = useTranslation();
 
-	// Style used in themes details modal
-	const editStyle = {
-		color: "#666666",
-		fontSize: "14px",
-	};
-
 	return (
 		<>
 			{/* Fields for name and description */}
@@ -34,7 +28,7 @@ const GeneralPage = <T, >({
 				<div className="form-container">
 					<div className="row">
 						<Notifications context={"other"}/>
-						<label className="required" style={isEdit ? editStyle : undefined}>
+						<label className="required">
 							{t("CONFIGURATION.THEMES.DETAILS.GENERAL.NAME")}
 						</label>
 						<Field
@@ -47,7 +41,7 @@ const GeneralPage = <T, >({
 						/>
 					</div>
 					<div className="row">
-						<label style={isEdit ? editStyle : undefined}>
+						<label>
 							{t("CONFIGURATION.THEMES.DETAILS.GENERAL.DESCRIPTION")}
 						</label>
 						<Field

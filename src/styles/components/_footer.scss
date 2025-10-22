@@ -1,5 +1,4 @@
 @use "sass:color";
-@use "../mixins/mixins-bourbon";
 @use "../base/variables";
 
 /**
@@ -48,7 +47,6 @@ $footer-background-color: color.adjust(variables.$body-background, $lightness: -
     border-top: 1px solid $footer-border-color;
 
     .feedback-btn {
-        @include mixins-bourbon.clearfix;
         width: 90px;
         position: absolute;
         right: 0;

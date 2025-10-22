@@ -56,7 +56,7 @@ const EventsNotesCell = ({
 	};
 
 	return (
-		<div className="comment-container" key={row.id}>
+		<div className="notes-container" key={row.id}>
 			{comments.length === 0 &&
 				<textarea
 					className="textarea"
@@ -65,7 +65,7 @@ const EventsNotesCell = ({
 				</textarea>
 			}
 			{comments.map((comment, key) => (
-				<div className="comment" key={row.id + key}>
+				<div className="notes" key={row.id + key}>
 					<hr />
 					<textarea
 						className="textarea"

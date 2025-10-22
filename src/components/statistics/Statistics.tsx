@@ -91,7 +91,7 @@ const Statistics = () => {
 						statistics.map((stat, key) => (
 							<div className="obj" key={key}>
 								{/* title of statistic */}
-								<header className="no-expand">{t(stat.title as ParseKeys)}</header>
+								<header>{t(stat.title as ParseKeys)}</header>
 
 								{stat.providerType === "timeSeries" ? (
 									/* visualization of statistic for time series data */

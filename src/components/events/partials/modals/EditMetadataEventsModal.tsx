@@ -146,7 +146,7 @@ const EditMetadataEventsModal = ({
 			{loading && (
 				<ModalContent>
 					<div className="loading">
-						<LuLoaderCircle className="fa-spin" style={{ fontSize: "30px" }}/>
+						<LuLoaderCircle className="fa-spin"/>
 					</div>
 				</ModalContent>
 			)}
@@ -244,7 +244,7 @@ const EditMetadataEventsModal = ({
 																		<i className="required">*</i>
 																	)}
 																</td>
-																<td className="editable ng-isolated-scope">
+																<td className="editable">
 																	{/* Render single value or multi value input */}
 																	{metadata.type === "mixed_text" ? (
 																		<Field

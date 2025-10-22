@@ -23,6 +23,43 @@
  */
 
 
+#edit-table-view-modal {
+
+    .modal-content {
+
+        .row {
+            margin: 15px 0;
+        }
+
+        .tab-description {
+            padding: 10px 0;
+            color: variables.$medium-prim-color;
+            font-size: 12px;
+            line-height: 20px;
+            width: 100%;
+            margin-bottom: 0;
+
+        &.for-header {
+            padding-top: 0;
+        }
+
+        &.for-footer {
+            padding-bottom: 0;
+            margin-bottom: -5px;
+        }
+
+            p:not(:last-child) {
+                margin-bottom: 10px;
+            }
+        }
+
+        // Fix for Half Pixel Rounding Chrome
+        .col {
+            width: 48.72%;
+        }
+    }
+}
+
 .drag-drop-items {
     box-sizing: border-box;
     padding: 15px 10px;
@@ -34,10 +71,10 @@
         border-radius: variables.$main-border-radius;
         cursor: move;
         border: variables.$thin-border-stroke variables.$main-border-color;
-        background: linear-gradient(to bottom, #fff, #f3f5f6);
-        color: color.adjust(#8c939b, $lightness: -10%);
+        background: linear-gradient(to bottom, variables.$white, #f3f5f6);
+        color: color.adjust(variables.$grey, $lightness: -10%);
         font-weight: 600;
-        text-shadow: 0px 1px 0px #fff;
+        text-shadow: 0px 1px 0px variables.$white;
         font-size: 13px;
         position: relative;
         margin: 10px 0;
@@ -52,12 +89,12 @@
         padding-left: 5px;
 
         &:hover {
-            background: linear-gradient(to bottom, #fff, color.adjust(#f3f5f6, $lightness: -2%));
+            background: linear-gradient(to bottom, variables.$white, color.adjust(#f3f5f6, $lightness: -2%));
         }
 
         &:active,
         &.being-dragged {
-            background: linear-gradient(to bottom, color.adjust(#fff, $lightness: -2%), color.adjust(#f3f5f6, $lightness: -3%));
+            background: linear-gradient(to bottom, color.adjust(variables.$white, $lightness: -2%), color.adjust(#f3f5f6, $lightness: -3%));
             cursor: move;
             border: variables.$thin-border-stroke color.adjust(variables.$main-border-color, $lightness: -5%);
             box-shadow: 0 0 4px rgba(0,0,0,0.1);

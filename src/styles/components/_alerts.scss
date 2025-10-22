@@ -157,7 +157,8 @@
     }
 
     p {
-        color: #fff;
+        display: inline-flex;
+        color: variables.$white;
         margin: 12px 0 !important;
         line-height: 16px;
     }

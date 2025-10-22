@@ -95,7 +95,7 @@ const WatermarkPage = <T extends RequiredFormProps>({
 								</header>
 								<div className="obj-container padded">
 									<div className="video-container">
-										<div className="watermark-config">
+										<div>
 											<div className="position-selection">
 												<BaseButton
 													className={cn(

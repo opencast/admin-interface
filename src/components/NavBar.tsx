@@ -118,7 +118,7 @@ const NavBar = ({
 							onClick={showNewResourceModal}
 							style={{ display: "flex", alignItems: "center" }}
 						>
-							<LuPlus className="btn-group-icon"/>
+							<LuPlus className="btn-group-icon" />
 							<span>{t(create.text)}</span>
 						</BaseButton>
 					)}

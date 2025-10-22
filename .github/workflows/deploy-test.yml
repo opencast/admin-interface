@@ -19,7 +19,7 @@ jobs:
       branch: ${{ steps.branch-name.outputs.branch }}
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{github.event.pull_request.head.ref}}
           repository: ${{github.event.pull_request.head.repo.full_name}}
@@ -45,13 +45,13 @@ jobs:
         id: build-path
 
       - name: checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{github.event.pull_request.head.ref}}
           repository: ${{github.event.pull_request.head.repo.full_name}}
 
       - name: get node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 20
 
@@ -81,7 +81,7 @@ jobs:
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       - name: wait for previous workflows to finish
-        uses: softprops/turnstyle@v2
+        uses: softprops/turnstyle@v3
         with:
           same-branch-only: false
         env:

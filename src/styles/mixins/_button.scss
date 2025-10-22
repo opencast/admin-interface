@@ -27,7 +27,7 @@
     font-family: variables.$font-stack;
     text-align: center;
     border-radius: variables.$main-border-radius;
-    color: #fff;
+    color: variables.$white;
     padding: 5px 10px;
     position: relative;
 
@@ -153,23 +153,23 @@
 
         box-shadow: inset 0px 1px 0px 0px color.adjust(#55cef2, $lightness: 10%), 0px 2px 3px 1px rgba(0,0,0,.05);
 
-        background: linear-gradient(#55cef2, #4da1f7);
+        background: linear-gradient(#55cef2, variables.$bright-blue);
 
-        border: variables.$thin-border-stroke color.adjust(#4da1f7, $lightness: -10%);
+        border: variables.$thin-border-stroke color.adjust(variables.$bright-blue, $lightness: -10%);
 
         &:hover {
             cursor: pointer;
-            background: linear-gradient(color.adjust(#55cef2, $lightness: 5%), color.adjust(#4da1f7, $lightness: -10%));
+            background: linear-gradient(color.adjust(#55cef2, $lightness: 5%), color.adjust(variables.$bright-blue, $lightness: -10%));
         }
 
         &:focus {
             cursor: pointer;
-            background: linear-gradient(color.adjust(#55cef2, $lightness: 5%), color.adjust(#4da1f7, $lightness: -10%));
+            background: linear-gradient(color.adjust(#55cef2, $lightness: 5%), color.adjust(variables.$bright-blue, $lightness: -10%));
         }
 
         &:active {
             cursor: pointer;
-            box-shadow: inset 0px 3px 10px 1px color.adjust(#4da1f7, $lightness: -5%);
+            box-shadow: inset 0px 3px 10px 1px color.adjust(variables.$bright-blue, $lightness: -5%);
         }
     }
 
@@ -200,23 +200,23 @@
 
     @else if $color == white {
 
-        background: linear-gradient(#fff, #f7f7f7);
+        background: linear-gradient(variables.$white, #f7f7f7);
         border: variables.$thin-border-stroke variables.$main-border-color;
-        box-shadow: inset 0px 1px 0px 0px #fff, 0px 1px 2px rgba(0,0,0,.05);
+        box-shadow: inset 0px 1px 0px 0px variables.$white, 0px 1px 2px rgba(0,0,0,.05);
         color: variables.$medium-prim-color;
-        text-shadow: 0px 1px 0px #fff;
+        text-shadow: 0px 1px 0px variables.$white;
 
         &:hover {
             cursor: pointer;
             border: variables.$thin-border-stroke color.adjust(variables.$main-border-color, $lightness: -2%);
-            background: linear-gradient(color.adjust(#fff, $lightness: -4%), color.adjust(#f7f7f7, $lightness: -10%));
+            background: linear-gradient(color.adjust(variables.$white, $lightness: -4%), color.adjust(#f7f7f7, $lightness: -10%));
             color: variables.$medium-prim-color;
         }
 
         &:focus {
             cursor: pointer;
             border: variables.$thin-border-stroke color.adjust(variables.$main-border-color, $lightness: -2%);
-            background: linear-gradient(color.adjust(#fff, $lightness: -4%), color.adjust(#f7f7f7, $lightness: -10%));
+            background: linear-gradient(color.adjust(variables.$white, $lightness: -4%), color.adjust(#f7f7f7, $lightness: -10%));
             color: variables.$medium-prim-color;
         }
 
@@ -237,7 +237,7 @@ button {
     display: inline-block;
     height: variables.$btn-height;
     border-radius: variables.$main-border-radius;
-    color: #fff;
+    color: variables.$white;
     font-size: 12px;
     font-weight: variables.$weight-semibold;
 }

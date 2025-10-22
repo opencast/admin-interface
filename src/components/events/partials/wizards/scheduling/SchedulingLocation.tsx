@@ -31,7 +31,7 @@ const SchedulingLocation = ({
 			*
 			* This is the 19th input field.
 			*/}
-			<td className="editable ng-isolated-scope">
+			<td className="editable">
 				<DropDown
 					value={location}
 					text={location}

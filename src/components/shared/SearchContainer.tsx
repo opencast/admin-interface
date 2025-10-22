@@ -47,7 +47,6 @@ const SearchContainer = ({
 				className={buttonClassName}
 				onClick={() => clearSearchField()}
 				disabled={isDisabled}
-				style={{ display: "flex", alignItems: "center" }}
 			>
 				<LuX />
 			</ButtonLikeAnchor>}

@@ -36,7 +36,7 @@ textarea {
     width: 130px;
     font-family: variables.$font-stack;
 
-    background: #fff;
+    background: variables.$white;
     border: variables.$thin-border-stroke variables.$main-border-color;
     border-radius: variables.$main-border-radius;
     margin: 0 auto;
@@ -75,8 +75,13 @@ textarea {
     height: auto;
 }
 
+select[type="text"] {
+    font-weight: 600;
+    color: variables.$medium-prim-color;
+}
+
 select[multiple] {
-    background: #fff;
+    background: variables.$white;
     border: variables.$thin-border-stroke variables.$main-border-color;
     border-radius: variables.$main-border-radius;
     padding: 10px;
@@ -93,7 +98,7 @@ select[multiple] {
 input[type="checkbox"].ios,
 input[type="radio"].ios {
 
-    $white: #fff;
+    $white: variables.$white;
     $grey: #d3d3d3;
     $transition-duration: 250ms;
 
@@ -168,7 +173,7 @@ input[type="radio"].ios {
 
 
     &:focus-within {
-        outline: 3px solid #378dd4;
+        outline: 3px solid variables.$l-blue;
     }
 
     &.expand {
@@ -188,15 +193,18 @@ input[type="radio"].ios {
         @include button.btn(white);
         opacity: 1 !important;
 
+        display: flex;
+        align-items: center;
+
         &, &:hover, &:focus, &:active {
             background: none;
-            background-color: #fff;
+            background-color: variables.$white;
             border: 0;
             box-shadow: none;
         }
 
         &.disabled, &.disabled:hover, &.disabled:focus, &.disabled:active {
-            background-color: #eeeff0,
+            background-color: variables.$modal-nav-bg-color,
         }
 
         &+input.search {

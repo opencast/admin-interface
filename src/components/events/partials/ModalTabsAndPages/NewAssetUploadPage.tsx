@@ -88,7 +88,7 @@ const NewAssetUploadPage = <T extends RequiredFormProps>({
 												</div>
 											</td>
 											{/* Button to remove asset*/}
-											<td className="fit">
+											<td>
 												<ButtonLikeAnchor
 													className="action-cell-button remove"
 													onClick={() => {

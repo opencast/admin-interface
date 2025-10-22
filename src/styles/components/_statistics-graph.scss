@@ -34,10 +34,20 @@
     }
 
     > label {
-      @include button.btn(variables.$white);
+      @include button.btn(white);
       display: inline;
       border-radius: 0;
       margin: -2px;
+
+      > input[type="radio"] {
+        display: none;
+      }
+    }
+
+    > label.selected {
+      background-color: variables.$off-white;
+      background-image: linear-gradient(variables.$off-white, variables.$color-silver);
+      color: variables.$global-text-color;
     }
 
     > label:first-of-type {
@@ -53,7 +63,7 @@
     > input[type="radio"]:checked + label {
       cursor: pointer;
       border: variables.$thin-border-stroke color.adjust(variables.$main-border-color, $lightness: -2%);
-      background: linear-gradient(color.adjust(#fff, $lightness: -4%), color.adjust(#f7f7f7, $lightness: -10%));
+      background: linear-gradient(color.adjust(variables.$white, $lightness: -4%), color.adjust(variables.$color-lightgray, $lightness: -10%));
       color: variables.$medium-prim-color;
       box-shadow: inset 0px 1px 6px 2px rgba(0,0,0,.1);
     }
@@ -71,7 +81,7 @@
 
     .navigation {
 
-      @include button.btn(variables.$white);
+      @include button.btn(white);
     }
 
     > div {
