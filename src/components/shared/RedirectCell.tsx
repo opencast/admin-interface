@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { setSpecificEventFilter } from "../../slices/tableFilterSlice";
+import { setSpecificEventFilter, resetFilterValues } from "../../slices/tableFilterSlice";
 import { useAppDispatch } from "../../store";
 import ButtonLikeAnchor from "./ButtonLikeAnchor";
 import { ParseKeys } from "i18next";
@@ -14,17 +14,22 @@ const RedirectCell = ({
 	filterValue,
 	tooltipText,
 	children,
+    resetBeforeRedirect = false,
 }: {
 	path: string
 	filterName: string
 	filterValue: string
 	tooltipText?: ParseKeys
 	children: ReactNode
+	resetBeforeRedirect?: boolean;
 }) => {
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 
 	const redirectToResource = async (filterValue: string) => {
+		if (resetBeforeRedirect) {
+        dispatch(resetFilterValues());
+        }
 		// Set filter before redirecting
 		await dispatch(setSpecificEventFilter({ filter: filterName, filterValue }));
 		navigate(path);
