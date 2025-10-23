@@ -2086,8 +2086,8 @@
 				"SERIES_VIEW": "Series",
 				"NEW_EVENT": "Add event",
 				"NEW_SERIES": "Add series",
-				"NEXT_PANEL": "Go to next step",
-        		"PREVIOUS_PANEL": "Go to previous step",
+				"NEXT_PANEL": "Go to next pane",
+        		"PREVIOUS_PANEL": "Go to previous pane",
 				"CHEAT_SHEET": "Keyboard shortcuts",
 				"CLOSE_MODAL": "Close dialog"
 			}
