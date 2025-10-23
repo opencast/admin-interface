@@ -56,7 +56,7 @@ const EditScheduledEventsGeneralPage = <T extends RequiredFormProps>({
 
 	return (
 		<>
-			<ModalContent modalContentClassName="modal-content active">
+			<ModalContent modalContentClassName="modal-content">
 				<div className="row">
 					{/* Show only if non-scheduled event is selected*/}
 					{!isAllScheduleEditable(selectedEvents) && (

@@ -184,12 +184,12 @@ const EditMultiSelect = ({
 				{fieldValue instanceof Array &&
 					fieldValue.length !== 0 &&
 					fieldValue.map((item, key) => (
-						<span className="ng-multi-value" key={key}>
+						<span className="multi-value" key={key}>
 							{item}
 							<ButtonLikeAnchor
 								onClick={() => removeItem(key)}
 							>
-								<LuX style={{ verticalAlign: "middle" }}/>
+								<LuX />
 							</ButtonLikeAnchor>
 						</span>
 					))}
@@ -236,17 +236,16 @@ const ShowValue = ({
 					))}
 				</ul>
 			) : (
-				<span className="editable preserve-newlines">{""}</span>
+				<span className="preserve-newlines">{""}</span>
 			)}
 			<div>
-				<LuSquarePen style={{ float: "right", cursor: "pointer", margin: "5px", fontSize: "14px" }}/>
+				<LuSquarePen className="pen"/>
 				{showCheck && (
 					<LuCheck
-						className={cn("fa-check", {
+						className={cn("checkmark", {
 							// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 							active: JSON.stringify(initialValues[field.name] ?? []) !== JSON.stringify(field.value ?? []),
 						})}
-						style={{ float: "right", cursor: "pointer" }}
 					/>
 				)}
 			</div>

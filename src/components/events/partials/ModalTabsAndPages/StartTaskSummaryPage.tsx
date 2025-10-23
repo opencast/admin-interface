@@ -29,7 +29,7 @@ const StartTaskSummaryPage = <T extends RequiredFormProps>({
 
 	return (
 		<>
-			<ModalContentTable modalContentClassName="modal-content active">
+			<ModalContentTable modalContentClassName="modal-content">
 				<div className="obj list-obj">
 					<header>{t("BULK_ACTIONS.SCHEDULE_TASK.SUMMARY.CAPTION")}</header>
 					<div className="obj-container">

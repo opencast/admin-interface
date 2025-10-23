@@ -30,6 +30,7 @@ import { ParseKeys } from "i18next";
 import ButtonLikeAnchor from "../ButtonLikeAnchor";
 import { formatAclTemplatesForDropdown } from "../../../utils/dropDownUtils";
 import ModalContentTable from "./ModalContentTable";
+import { getAclDefaults } from "../../../selectors/aclSelectors";
 import { LuCircleX } from "react-icons/lu";
 
 
@@ -417,18 +418,14 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 	editAccessRole: string
 }) => {
 	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
 
 	const user = useAppSelector(state => getUserInformation(state));
-
-	const [aclDefaults, setAclDefaults] = useState<{ [key: string]: string }>();
+	const aclDefaults = useAppSelector(state => getAclDefaults(state));
 
 	useEffect(() => {
-		async function fetchData() {
-			const responseDefaults = await fetchAclDefaults();
-			setAclDefaults(responseDefaults);
-		}
-
-		fetchData();
+		dispatch(fetchAclDefaults());
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const createPolicy = (role: string, withUser: boolean): TransformedAcl => {
@@ -483,14 +480,14 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 											) /* <!-- Role --> */
 										}
 									</th>
-									<th className="fit">
+									<th>
 										{
 											t(
 												"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.WRITE",
 											) /* <!-- Write --> */
 										}
 									</th>
-									<th className="fit">
+									<th>
 										{
 											t(
 												"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.READ",
@@ -498,7 +495,7 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 										}
 									</th>
 									{hasActions && (
-										<th className="fit">
+										<th>
 											{
 												t(
 													"EVENTS.SERIES.DETAILS.ACCESS.ACCESS_POLICY.ADDITIONAL_ACTIONS",
@@ -507,7 +504,7 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 										</th>
 									)}
 									{hasAccess(editAccessRole, user) && (
-										<th className="fit">
+										<th>
 											{
 												t(
 													"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.ACTION",
@@ -571,7 +568,7 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 															</td>
 
 															{/* Checkboxes for policy.read and policy.write */}
-															<td className="fit text-center">
+															<td className="text-center">
 																<Field
 																	type="checkbox"
 																	name={`policies.${formik.values.policies.findIndex(p => p === policy)}.read`}
@@ -596,7 +593,7 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 																	}
 																/>
 															</td>
-															<td className="fit text-center">
+															<td className="text-center">
 																<Field
 																	type="checkbox"
 																	name={`policies.${formik.values.policies.findIndex(p => p === policy)}.write`}
@@ -627,7 +624,7 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 
 															{/* Multi value field for policy.actions (additional actions) */}
 															{hasActions && (
-																<td className="fit editable">
+																<td className="editable">
 																	{!transactions.readOnly &&
 																		hasAccess(
 																			editAccessRole,
@@ -747,16 +744,7 @@ export const TemplateSelector = <T extends TemplateSelectorProps>({
 
 	const user = useAppSelector(state => getUserInformation(state));
 
-	const [aclDefaults, setAclDefaults] = useState<{ [key: string]: string }>();
-
-	useEffect(() => {
-		async function fetchData() {
-			const responseDefaults = await fetchAclDefaults();
-			setAclDefaults(responseDefaults);
-		}
-
-		fetchData();
-	}, []);
+	const aclDefaults = useAppSelector(state => getAclDefaults(state));
 
 	if (!hasAccess(editAccessRole, user)) {
 		return <></>;

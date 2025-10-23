@@ -122,11 +122,7 @@ const FileUpload = <T extends RequiredFormProps>({
 						{/* else render button for upload */}
 						{!!formik.values[fileId] && file ? (
 							<div className="upload-file-info">
-								<p
-									style={
-										isEdit ? { padding: "0px 10px" } : { padding: "4px 10px" }
-									}
-								>
+								<p className={isEdit ? "edit" : ""}>
 									<a href={URL.createObjectURL(file)} target="_blank" rel="noreferrer">
 										{formik.values[fileName] as string}
 									</a>

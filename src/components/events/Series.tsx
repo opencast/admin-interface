@@ -19,6 +19,7 @@ import { eventsLinks } from "./partials/EventsNavigation";
 import { Modal, ModalHandle } from "../shared/modals/Modal";
 import { availableHotkeys } from "../../configs/hotkeysConfig";
 import TableActionDropdown from "../shared/TableActionDropdown";
+import { fetchAclDefaults } from "../../slices/aclSlice";
 import TablePage from "../shared/TablePage";
 import SeriesDetailsModal from "./partials/modals/SeriesDetailsModal";
 
@@ -48,6 +49,7 @@ const Series = () => {
 			dispatch(fetchSeriesMetadata()),
 			dispatch(fetchSeriesThemes()),
 			dispatch(fetchSeriesDetailsTobiraNew("/")),
+			dispatch(fetchAclDefaults()),
 		]);
 
 		newSeriesModalRef.current?.open();

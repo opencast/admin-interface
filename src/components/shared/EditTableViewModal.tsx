@@ -43,7 +43,7 @@ const EditTableViewModal = ({
 		<Modal
 			header={t("PREFERENCES.TABLE.CAPTION")}
 			classId="edit-table-view-modal"
-			className="modal active modal-animation"
+			className="modal modal-animation"
 			ref={modalRef}
 		>
 			<EditTableViewModalContent
@@ -233,7 +233,6 @@ const EditTableViewModalContent = ({
 												<div
 													{...provided.droppableProps}
 													ref={provided.innerRef}
-													// style={}
 												>
 													{activeCols.filter(col => col).map((column, key) =>
 														(

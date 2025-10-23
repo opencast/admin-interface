@@ -42,7 +42,7 @@ const NewThemePage = <T extends RequiredFormProps>({
 		<>
 			<ModalContentTable>
 				<div className="obj quick-actions">
-					<header className="no-expand">
+					<header>
 						{t("EVENTS.SERIES.NEW.THEME.TITLE")}
 					</header>
 					<div className="obj-container padded">

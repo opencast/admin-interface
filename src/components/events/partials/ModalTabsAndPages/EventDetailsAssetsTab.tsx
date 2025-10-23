@@ -82,25 +82,6 @@ const EventDetailsAssetsTab = ({
 		},
 	];
 
-	const assetsNavStyle = {
-		borderBottom: "1px solid #d6d6d6",
-		lineHeight: "35px",
-		paddingLeft: "15px",
-	};
-
-	const assetsTabActive = {
-		padding: "14px 5px",
-		fontWeight: "600",
-		minWidth: "100px",
-		color: "#435263",
-	};
-
-	const assetsTabInactive = {
-		padding: "14px 5px",
-		minWidth: "100px",
-		color: "#646e75",
-	};
-
 	useEffect(() => {
 		dispatch(removeNotificationWizardForm());
 		dispatch(fetchAssets(eventId)).then();
@@ -126,11 +107,11 @@ const EventDetailsAssetsTab = ({
 	return (
 		<>
 			{/* Assets tabs */}
-			<nav style={assetsNavStyle}>
+			<nav>
 				{assetsTabs.map((tab, key) => (
 					<ButtonLikeAnchor
 						key={key}
-						style={tab.tabHierarchies.includes(assetsTabHierarchy) ? assetsTabActive : assetsTabInactive}
+						className={tab.tabHierarchies.includes(assetsTabHierarchy) ? "active" : "inactive"}
 						onClick={tab.open}
 					>
 						{t(tab.tabNameTranslation)}

@@ -1,7 +1,6 @@
 import React from "react";
 import EventDetailsTabHierarchyNavigation from "./EventDetailsTabHierarchyNavigation";
 import Notifications from "../../../shared/Notifications";
-import { styleButtonSpacing } from "../../../../utils/eventDetailsUtils";
 import { Formik, FormikProps } from "formik";
 import { translateOverrideFallback } from "../../../../utils/utils";
 import { useAppDispatch, useAppSelector } from "../../../../store";
@@ -114,7 +113,7 @@ const EventDetailsAssetsAddAsset = ({
 														</div>
 													</td>
 													{/* Button to remove asset*/}
-													<td className="fit">
+													<td>
 														<ButtonLikeAnchor
 															className="action-cell-button remove"
 															onClick={() => {
@@ -138,12 +137,12 @@ const EventDetailsAssetsAddAsset = ({
 								<footer>
 									<BaseButton
 										className="submit"
-										style={styleButtonSpacing}
 										type="submit"
 										onClick={() => formik.handleSubmit()}
 									>
 										{t("EVENTS.EVENTS.NEW.UPLOAD_ASSET.ADD")}
 									</BaseButton>
+									<div></div>
 								</footer>
 							</div>
 						)}

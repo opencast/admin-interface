@@ -261,9 +261,9 @@ const TableFilters = ({
 							<ButtonLikeAnchor
 								onClick={() => setFilterSelector(!showFilterSelector)}
 								tooltipText="TABLE_FILTERS.ADD"
-								style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+								className="table-filter-button"
 							>
-								<HiFunnel style={{ fontSize: "13px", color: "#666" }}/>
+								<HiFunnel />
 							</ButtonLikeAnchor>
 
 							{/* show if icon is clicked*/}
@@ -325,7 +325,7 @@ const TableFilters = ({
 							{/* Show for each selected filter a blue label containing its name and option */}
 							{filterMap.map((filter, key) => {
 								return filter.value && (
-									<span className="ng-multi-value" key={key}>
+									<span className="multi-value" key={key}>
 										{
 											// Use different representation of name and value depending on type of filter
 											filter.type === "period" ? (
@@ -347,7 +347,6 @@ const TableFilters = ({
 										<ButtonLikeAnchor
 											onClick={() => removeFilter(filter)}
 											tooltipText="TABLE_FILTERS.REMOVE"
-											style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
 										>
 											<LuX />
 										</ButtonLikeAnchor>
@@ -361,18 +360,18 @@ const TableFilters = ({
 							<ButtonLikeAnchor
 								onClick={removeFilters}
 								tooltipText="TABLE_FILTERS.CLEAR"
-								style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "0 8px 0 0" }}
+								className="table-filter-button"
 							>
-								<LuX style={{ color: "#666" }}/>
+								<LuX/>
 							</ButtonLikeAnchor>
 						}
 						{/* Settings icon to open filters profile dialog (save and editing filter profiles)*/}
 						<ButtonLikeAnchor
 							onClick={() => setFilterSettings(!showFilterSettings)}
 							tooltipText="TABLE_FILTERS.PROFILES.FILTERS_HEADER"
-							style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "0 8px 0 0" }}
+							className="table-filter-button"
 						>
-							<LuSettings className="settings" style={{ color: "#666" }}/>
+							<LuSettings />
 						</ButtonLikeAnchor>
 
 						{/* Filter profile dialog for saving and editing filter profiles */}

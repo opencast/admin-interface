@@ -10,6 +10,7 @@ import { AppDispatch, AppThunk, RootState } from "../store";
 import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
 import { initialFormValuesNewAcl } from "../configs/modalConfig";
 import { TransformedAcl } from "./aclDetailsSlice";
+import { fetchUsersForTemplate } from "./userSlice";
 
 /**
  * This file contains redux reducer for actions affecting the state of acls
@@ -52,6 +53,13 @@ export type AclResult = {
 	organizationId: string,
 }
 
+export type AclTemplate = {
+	acl: TransformedAcl[],
+	id: number,
+	name: string,
+	organizationId: string,
+}
+
 type AclsState = {
 	status: "uninitialized" | "loading" | "succeeded" | "failed",
 	error: SerializedError | null,
@@ -61,6 +69,8 @@ type AclsState = {
 	count: number,
 	offset: number,
 	limit: number,
+	aclDefaults: { [key: string]: string },
+	aclDefaultTemplate?: AclTemplate,
 };
 
 // Fill columns initially with columns defined in aclsTableConfig
@@ -79,6 +89,7 @@ const initialState: AclsState = {
 	count: 0,
 	offset: 0,
 	limit: 0,
+	aclDefaults: {},
 };
 
 export const fetchAcls = createAppAsyncThunk("acls/fetchAcls", async (_, { getState }) => {
@@ -113,21 +124,66 @@ export const fetchAclActions = async () => {
 };
 
 // fetch defaults for the access policy tab in the details views
-export const fetchAclDefaults = async () => {
+export const fetchAclDefaults = createAppAsyncThunk("acls/fetchAclDefaults", async (_, { getState }) => {
+	const state = getState();
 	const data = await axios.get<{ [key: string]: string }>("/admin-ng/resources/ACL.DEFAULTS.json");
 
 	const response = data.data;
 
-	return response;
-};
+	let defaultTemplate = undefined;
+	// If the a default template id is configured and we haven't fetched the default template
+	// yet, do that now.
+	if (response["default_template"] && !state.acls.aclDefaultTemplate) {
+		const templateName = response["default_template"];
+		// fetch information about chosen template from backend
+		const template = await fetchAclTemplateByName(templateName);
+		// fetch user info
+		const users = await fetchUsersForTemplate(template.acl.map(role => role.role));
+
+		// Add user info to applicable roles
+		template.acl = template.acl.map(acl => {
+			if (users && users[acl.role]) {
+				acl.user = {
+					username: users[acl.role].username,
+					name: users[acl.role].name,
+					email: users[acl.role].email,
+				};
+			}
+
+			return acl;
+		});
+
+		defaultTemplate = template;
+	}
+
+	return { aclDefaults: response, aclDefaultTemplate: defaultTemplate };
+});
 
 // fetch all policies of an certain acl template
 export const fetchAclTemplateById = async (id: string) => {
 	const response = await axios.get<AclResult>(`/acl-manager/acl/${id}`);
 
-	const acl = response.data.acl;
+	const template = response.data;
 
-	return transformAclTemplatesResponse(acl);
+	const transformedResponse: AclTemplate = {
+		...template,
+		acl: transformAclTemplatesResponse(template.acl),
+	};
+
+	return transformedResponse;
+};
+
+export const fetchAclTemplateByName = async (name: string) => {
+	const response = await axios.get<AclResult>(`/admin-ng/acl/acl/${name}`);
+
+	const template = response.data;
+
+	const transformedResponse: AclTemplate = {
+		...template,
+		acl: transformAclTemplatesResponse(template.acl),
+	};
+
+	return transformedResponse;
 };
 
 // fetch roles for select dialogs and access policy pages
@@ -268,6 +324,13 @@ const aclsSlice = createSlice({
 				state.status = "failed";
 				state.results = [];
 				state.error = action.error;
+			})
+			.addCase(fetchAclDefaults.fulfilled, (state, action: PayloadAction<{
+				aclDefaults: AclsState["aclDefaults"],
+				aclDefaultTemplate?: AclsState["aclDefaultTemplate"],
+			}>) => {
+				state.aclDefaults = action.payload.aclDefaults;
+				state.aclDefaultTemplate = action.payload.aclDefaultTemplate;
 			});
 	},
 });

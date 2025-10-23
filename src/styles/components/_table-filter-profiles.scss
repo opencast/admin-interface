@@ -1,6 +1,6 @@
 @use "sass:color";
-@use "../../base/variables";
-@use "../../mixins/button";
+@use "../base/variables";
+@use "../mixins/button";
 
 /**
  * Licensed to The Apereo Foundation under one or more contributor license
@@ -37,14 +37,14 @@
     visibility: hidden;
     opacity: 0;
     pointer-events: auto;
-    background: #fff;
+    background: variables.$white;
     border: variables.$thin-border-stroke variables.$main-border-color;
     border-radius: variables.$main-border-radius;
     width: $width;
 
     // Common Elements
     header {
-        background: linear-gradient(#fff, #f7f7f7);
+        background: linear-gradient(variables.$white, variables.$color-lightgray);
         border-top-left-radius: variables.$main-border-radius;
         border-top-right-radius: variables.$main-border-radius;
         border-bottom: 1px solid variables.$main-border-color;
@@ -62,7 +62,7 @@
         }
     } // header
     .footer-btn {
-        background: linear-gradient(#fafafa, #f0f2f5);
+        background: linear-gradient(variables.$off-white, #f0f2f5);
         border-top: 1px solid color.adjust(#f0f2f5, $lightness: -10%);
         border-bottom-left-radius: variables.$main-border-radius;
         border-bottom-right-radius: variables.$main-border-radius;
@@ -82,7 +82,11 @@
     font-weight: 600;
     font-size: 12px;
     color: black 40%;
-    text-shadow: 0px 1px 0px #fff;
+    text-shadow: 0px 1px 0px variables.$white;
+
+    // Make filter profile dialog work
+    opacity: 1;
+    visibility: visible;
 
     .filters-list {
         @include filter-dd-mixin();
@@ -126,6 +130,11 @@
 
     .filter-details {
         @include filter-dd-mixin();
+
+        // Make filter profile dialog work
+        opacity: 1;
+        visibility: visible;
+
 
         .edit-details {
             padding: 5px 10px;
@@ -212,5 +221,3 @@
         visibility: visible;
     } } // filters-list active
 }
-
-

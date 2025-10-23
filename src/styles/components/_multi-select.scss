@@ -1,4 +1,3 @@
-@use "../mixins/mixins-bourbon";
 @use "../base/variables";
 @use "../mixins/button";
 
@@ -25,7 +24,7 @@
 
 
 .multi-select-container {
-    @include mixins-bourbon.clearfix;
+    display: flex;
 
     select[multiple] {
         margin-top: 10px;
@@ -70,9 +69,6 @@
 
     .multi-select-col {
         width: 45%;
-        display: block;
-        float: left;
-        vertical-align: top;
     }
 }
 
@@ -112,5 +108,28 @@
 
     &.offset-col-2 .multi-select-col:last-child select[multiple] {
         height: $multiple-select-expanded-height;
+    }
+}
+
+.effective-roles-container {
+    select[multiple] {
+        height: 26em;
+        margin-top: 10px;
+        font-size: 12px;
+        padding: 5px;
+
+        option {
+            padding: 3px 0px;
+        }
+    }
+
+    select {
+        width: 100%;
+    }
+
+    p {
+        font-size: 12px;
+        color: variables.$medium-prim-color;
+        line-height: 22px;
     }
 }

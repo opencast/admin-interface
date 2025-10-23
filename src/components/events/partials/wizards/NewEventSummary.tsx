@@ -125,7 +125,7 @@ const NewEventSummary = <T extends RequiredFormProps>({
 				formik.values.sourceMode === "UPLOAD" &&
 				uploadAssetsNonTrack.length > 0 ? (
 					<div className="obj tbl-list">
-						<header className="no-expand">
+						<header>
 							{t("EVENTS.EVENTS.NEW.UPLOAD_ASSET.CAPTION")}
 						</header>
 						<div className="obj-container">
@@ -148,7 +148,7 @@ const NewEventSummary = <T extends RequiredFormProps>({
 
 				{/* Summary source */}
 				<div className="obj tbl-list">
-					<header className="no-expand">
+					<header>
 						{t("EVENTS.EVENTS.NEW.SOURCE.CAPTION")}
 					</header>
 					<div className="obj-container">
@@ -272,7 +272,7 @@ const NewEventSummary = <T extends RequiredFormProps>({
 
 				{/* Summary processing configuration */}
 				<div className="obj tbl-list">
-					<header className="no-expand">
+					<header>
 						{t("EVENTS.EVENTS.NEW.PROCESSING.CAPTION")}
 					</header>
 					<table className="main-tbl">

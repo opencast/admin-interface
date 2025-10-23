@@ -26,14 +26,13 @@ const NewAclWizard = ({
 	};
 
 	const {
-		snapshot,
 		page,
 		nextPage,
 		previousPage,
 		setPage,
 		pageCompleted,
 		setPageCompleted,
-	} = usePageFunctions(0, initialValues);
+	} = usePageFunctions(0);
 
 	type StepName = "metadata" | "access" | "summary";
 	type Step = WizardStep & {
@@ -67,7 +66,7 @@ const NewAclWizard = ({
 		<>
 			{/* Initialize overall form */}
 			<Formik
-				initialValues={snapshot}
+				initialValues={initialValues}
 				validationSchema={currentValidationSchema}
 				onSubmit={values => handleSubmit(values)}
 			>

@@ -99,7 +99,7 @@ const NewAccessPage = <T extends RequiredFormProps>({
 					<ul>
 						<li>
 							<div className="obj list-obj">
-								<header className="no-expand">
+								<header>
 									{t("EVENTS.SERIES.NEW.ACCESS.ACCESS_POLICY.TITLE")}
 								</header>
 

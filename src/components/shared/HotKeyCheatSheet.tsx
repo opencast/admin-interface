@@ -36,7 +36,7 @@ const HotKeyCheatSheet = ({
 			classId=""
 			ref={modalRef}
 		>
-			<ModalContentTable modalContentClassName="modal-content active">
+			<ModalContentTable modalContentClassName="modal-content">
 				<p className="hint">{t("HOTKEYS.CHEAT_SHEET.HINT")}</p>
 				{/* Repeat table for each key */}
 				{Object.keys(availableHotkeys).map((hotkeyGroup, key) => (
@@ -49,7 +49,7 @@ const HotKeyCheatSheet = ({
 								{/* Repeat row for each hotkey in group*/}
 								{Object.keys(availableHotkeys[hotkeyGroup]).map(
 									(hotkey, key) => (
-										<tr key={key} style={{ opacity: !(hotkeys && checkHotkeys(hotkeys, availableHotkeys[hotkeyGroup][hotkey].sequence)) ? "50%" : "100%" }}>
+										<tr key={key} className={!(hotkeys && checkHotkeys(hotkeys, availableHotkeys[hotkeyGroup][hotkey].sequence)) ? "disabled" : ""}>
 											<td className="hotkey">
 												<p className="combo">
 													<span className="chord">

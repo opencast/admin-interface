@@ -1,5 +1,4 @@
 @use "sass:color";
-@use "../mixins/mixins-bourbon";
 @use "../base/variables";
 
 /**
@@ -56,6 +55,10 @@ body {
     padding: 30px variables.$side-margin 60px 0;
     position: relative;
 
+    &.open {
+        margin-left: 130px;
+    }
+
     &.has-alert {
         padding: 10px variables.$side-margin 60px 0;
     }
@@ -97,9 +100,9 @@ body {
         // ## (End)
 
         .filters-container {
-            @include mixins-bourbon.clearfix;
             float: right;
             position: relative;
+            display: flex;
 
             // Refactor if ">" selector is not there the filters break
             > span {
@@ -110,11 +113,6 @@ body {
 
             strong {
                 color: variables.$medium-prim-color;
-            }
-
-            .fa-info-circle {
-                color: variables.$l-blue;
-                cursor: pointer;
             }
 
             .drop-down-container {
@@ -156,18 +154,18 @@ body {
                 color: #717171;
                 text-shadow: 0 1px 0 rgba(variables.$white, 1);
                 border: variables.$thin-border-stroke variables.$main-border-color;
-                background: linear-gradient(to bottom, #f8f8f8, #e9e9e9);
+                background: linear-gradient(to bottom, variables.$color-lightgray, #e9e9e9);
 
                 // Pulled from Button Mixin (keep in sync with those styles)
-                background: linear-gradient(#fff, #f7f7f7);
+                background: linear-gradient(variables.$white, variables.$color-lightgray);
                 border: variables.$thin-border-stroke variables.$main-border-color;
-                box-shadow: inset 0px 1px 0px 0px #fff, 0px 1px 2px rgba(0,0,0,.05);
+                box-shadow: inset 0px 1px 0px 0px variables.$white, 0px 1px 2px rgba(0,0,0,.05);
                 color: variables.$medium-prim-color;
-                text-shadow: 0px 1px 0px #fff;
+                text-shadow: 0px 1px 0px variables.$white;
 
                 &:hover:not(.active) {
                     border: variables.$thin-border-stroke color.adjust(variables.$main-border-color, $lightness: -2%);
-                    background: linear-gradient(color.adjust(#fff, $lightness: -1%), color.adjust(#f7f7f7, $lightness: -1%));
+                    background: linear-gradient(color.adjust(variables.$white, $lightness: -1%), color.adjust(variables.$color-lightgray, $lightness: -1%));
                     color: variables.$medium-prim-color;
                 }
 

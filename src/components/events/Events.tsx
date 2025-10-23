@@ -29,6 +29,7 @@ import EventDetailsModal from "./partials/modals/EventDetailsModal";
 import { eventsLinks } from "./partials/EventsNavigation";
 import { Modal, ModalHandle } from "../shared/modals/Modal";
 import TableActionDropdown from "../shared/TableActionDropdown";
+import { fetchAclDefaults } from "../../slices/aclSlice";
 import TablePage from "../shared/TablePage";
 import SeriesDetailsModal from "./partials/modals/SeriesDetailsModal";
 
@@ -61,6 +62,7 @@ const Events = () => {
 		await Promise.all([
 			dispatch(fetchEventMetadata()),
 			dispatch(fetchAssetUploadOptions()),
+			dispatch(fetchAclDefaults()),
 		]);
 
 		newEventModalRef.current?.open();

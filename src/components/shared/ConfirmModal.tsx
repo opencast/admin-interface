@@ -59,7 +59,7 @@ const ConfirmModal = <T, >({
 
 					<div>
 						<p>
-							<span style={{ padding: "0px 4px" }}>
+							<span>
 								{t(`CONFIRMATIONS.METADATA.NOTICE.${resourceType}`)}
 							</span>
 						</p>

@@ -1,4 +1,3 @@
-import { stepIcon } from "../../../utils/wizardUtils";
 import { FaCircle, FaDotCircle } from "react-icons/fa";
 import { StepIconProps } from "@mui/material";
 
@@ -9,11 +8,11 @@ const CustomStepIcon = (props: StepIconProps) => {
 	const { completed, active } = props;
 
 	return (
-		<div style={stepIcon.root}>
+		<div className="custom-step-icon">
 			{completed ? (
-				<FaCircle style={{ ...stepIcon.circle, ...(active && stepIcon.circleActive) }}/>
+				<FaCircle className={active ? "active" : ""} />
 			) : (
-				<FaDotCircle style={{ ...stepIcon.circle, ...(active && stepIcon.circleActive) }} />
+				<FaDotCircle className={active ? "active" : ""} />
 			)}
 		</div>
 	);

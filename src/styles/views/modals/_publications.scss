@@ -98,7 +98,6 @@
     // ----------------------------------------
 
     .play {
-        display: inline-block;
         float: right;
         margin-left: auto;
         color: variables.$primary-color-green-light-2;
@@ -108,6 +107,10 @@
         &:hover:before {
             color: variables.$primary-color-green;
         }
+    }
+
+    .no-play-text {
+        margin-left: auto;
     }
 
     .file-select-btn {
@@ -121,11 +124,6 @@
         float: right;
         visibility: hidden;
         width: 0;
-    }
-
-    &.rs-radio input[type="radio"] {
-        height: 50px;
-        float: left;
     }
 
     input[type="radio"] {

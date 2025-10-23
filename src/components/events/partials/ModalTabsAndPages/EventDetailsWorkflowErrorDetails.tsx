@@ -5,7 +5,6 @@ import {
 	getWorkflowErrorDetails,
 	isFetchingWorkflowErrorDetails,
 } from "../../../../selectors/eventDetailsSelectors";
-import { errorDetailStyle } from "../../../../utils/eventDetailsUtils";
 import EventDetailsTabHierarchyNavigation from "./EventDetailsTabHierarchyNavigation";
 import { useAppDispatch, useAppSelector } from "../../../../store";
 import { removeNotificationWizardForm } from "../../../../slices/notificationSlice";
@@ -137,7 +136,7 @@ const EventDetailsWorkflowErrorDetails = ({
 										{errorDetails.details.map((item, key) => (
 											<div key={key}>
 												<h3>{item.name}</h3>
-												<div style={errorDetailStyle}>
+												<div className="workflow-error-details">
 													<pre>{item.value}</pre>
 												</div>
 											</div>

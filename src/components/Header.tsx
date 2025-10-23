@@ -195,9 +195,7 @@ const Header = () => {
 						>
 							<Tooltip active={!displayMenuNotify} title={t("SYSTEM_NOTIFICATIONS")}>
 								<BaseButton onClick={() => setMenuNotify(!displayMenuNotify)} className="nav-dd-element">
-									<LuBell style={{
-										fontSize: "20px",
-									}}/>
+									<LuBell className="header-icon"/>
 									{errorCounter !== 0 && (
 										<span id="error-count" className="badge">
 											{errorCounter}
@@ -326,11 +324,11 @@ const MenuNotify = ({
 						>
 							<span> {service.name} </span>
 							{service.error ? (
-								<span className="ng-multi-value ng-multi-value-red">
+								<span className="multi-value multi-value-red">
 									{service.status}
 								</span>
 							) : (
-								<span className="ng-multi-value ng-multi-value-green">
+								<span className="multi-value multi-value-green">
 									{service.status}
 								</span>
 							)}

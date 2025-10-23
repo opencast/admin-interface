@@ -60,13 +60,6 @@ const TimeSeriesStatistics = ({
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
-	// Style for radio buttons
-	const radioButtonStyle = {
-		backgroundColor: "whitesmoke",
-		backgroundImage: "linear-gradient(whitesmoke, #dedddd)",
-		color: "#666666",
-	};
-
 	// available modes of choosing statistic timeframe
 	const timeModes = statisticTimeModes;
 
@@ -210,16 +203,11 @@ const TimeSeriesStatistics = ({
 						{timeModes.map((mode, key) => (
 							<label
 								htmlFor={providerId + "-mode-" + key}
-								style={
-									formik.values.timeMode === mode.value
-										? radioButtonStyle
-										: {}
-								}
+								className={formik.values.timeMode === mode.value ? "selected" : ""}
 								key={key}
 							>
 								<Field
 									type="radio"
-									style={{ display: "none" }}
 									name="timeMode"
 									value={mode.value}
 									id={providerId + "-mode-" + key}

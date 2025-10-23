@@ -25,11 +25,15 @@
 @use "statistics";
 
 // Modal Views
-@use "modals/modal-dialog";
-@use "modals/group";
-@use "modals/lists";
-@use "modals/new-event-series";
-@use "modals/event-series";
 @use "modals/edit-events";
-@use "modals/hotkey-cheat-sheet";
+@use "modals/edit-table-view";
 @use "modals/embedded-code";
+@use "modals/event-series";
+@use "modals/group";
+@use "modals/hotkey-cheat-sheet";
+@use "modals/publications";
+@use "modals/modal-dialog";
+@use "modals/new-event-series";
+@use "modals/registration";
+@use "modals/workflows";
+@use "modals/workflow-configuration";

@@ -55,7 +55,7 @@ const RenderField = ({
 			}}
 			onFocus={onFocus}
 			onBlur={onBlur}
-			style={{ display: "flex", justifyContent: "space-between" }}
+			className="single-value"
 		>
 			{metadataField.type === "time" && (
 				<EditableSingleValueTime
@@ -123,17 +123,16 @@ const RenderField = ({
 					ref={editableRef}
 				/>
 			)}
-			<div style={{ display: "flex", justifyContent: "flex-end" }}>
+			<div className="single-value-right">
 				{!focused && showCheck && (
 					<LuCheck
-						className={cn("fa-check", {
+						className={cn("checkmark", {
 							// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 							active: form.initialValues[field.name] !== field.value,
 						})}
-						style={{ float: "right", cursor: "pointer" }}
 					/>
 				)}
-				{!focused && <LuSquarePen style={{ float: "right", cursor: "pointer", margin: "5px", fontSize: "14px" }}/>}
+				{!focused && <LuSquarePen className="pen"/>}
 			</div>
 		</div>
 	);

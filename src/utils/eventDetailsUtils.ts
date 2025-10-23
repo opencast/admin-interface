@@ -4,35 +4,6 @@ import { Event } from "../slices/eventSlice";
 /**
  * This file contains functions and constants that are needed in the event details modal
  */
-
-export const styleNav = {
-	borderBottom: "1px solid #d6d6d6",
-	lineHeight: "35px",
-};
-
-export const styleNavHierarchyInactive = {
-	marginLeft: "30px",
-	color: "#92a0ab",
-};
-
-export const styleNavHierarchy = {
-	marginLeft: "30px",
-	marginRight: "30px",
-	fontWeight: "600",
-	color: "#5d7589",
-};
-
-export const styleButtonSpacing = {
-	marginTop: "13px",
-	marginLeft: "15px",
-	marginRight: "15px",
-};
-
-export const errorDetailStyle = {
-	overflow: "auto",
-	width: "750px",
-};
-
 export const formatDuration = (durationInMS: number) => {
 	const duration = moment.duration(durationInMS);
 	if (duration.asHours() > 1) {

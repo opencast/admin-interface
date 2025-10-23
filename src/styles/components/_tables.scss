@@ -26,6 +26,33 @@
 
 
 // Table styles
+.action-bar {
+    border: 1px solid variables.$main-border-color;
+    border-bottom: none;
+    border-top-left-radius: variables.$main-border-radius;
+    border-top-right-radius: variables.$main-border-radius;
+    background: linear-gradient(to bottom, variables.$white, variables.$color-lightgray);
+
+    $action-icon-margin: 0 4px 0 0;
+
+    ul {
+        padding: 10px 12px 12px;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    button {
+        $highlight-blue: variables.$ref-blue;
+
+        color: $highlight-blue;
+        text-shadow: 0 1px 0 rgba(variables.$white, 0.75);
+
+        &:hover {
+            color: color.adjust($highlight-blue, $lightness: 10%);
+        }
+    }
+}
+
 .main-tbl {
     $border-color: #c7ced3;
     $col-padding: 7px;
@@ -38,14 +65,14 @@
 
     @mixin apply-row-stripe() {
         box-sizing: border-box;
-        background: #f7f7f7;
+        background: variables.$color-lightgray;
 
         > td {
             border-top: 1px solid #e2e2e2;
             border-bottom: 1px solid #e2e2e2;
 
             > .hidden-input {
-                background: #f7f7f7;
+                background: variables.$color-lightgray;
             }
         }
     }
@@ -85,7 +112,7 @@
 
         // Aesthetic Style
         border-right: 1px solid #c9d0d6;
-        border-left: 1px solid #fff;
+        border-left: 1px solid variables.$white;
         border-bottom: 1px solid $border-color;
         user-select: none;
         background: linear-gradient(to bottom, color.adjust(variables.$off-white, $lightness: -1%), color.adjust(#f1f3f5, $lightness: -3%));
@@ -96,7 +123,7 @@
         font-size: 13px;
         font-weight: 600;
         color: variables.$medium-prim-color;
-        text-shadow: 0px 1px 0px #fff;
+        text-shadow: 0px 1px 0px variables.$white;
 
         > .info {
             padding-left: 5px;
@@ -146,6 +173,32 @@
         &.status-col {
             width: 43px;
         }
+
+        span {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+
+            div {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+
+                .chevron-up {
+                    position: relative;
+                    top: 3px;
+                    color: variables.$grey;
+                }
+                .chevron-down {
+                    position: relative;
+                    top: -3px;
+                    color: variables.$grey;
+                }
+                .active {
+                    color: variables.$l-blue;
+                }
+            }
+        }
     }
 
     tr {
@@ -175,7 +228,7 @@
         // at the bottom of rows.
         &.total {
             > td {
-                background: color.adjust(#f8f8f8, $lightness: -2%);
+                background: color.adjust(variables.$color-lightgray, $lightness: -2%);
                 color: variables.$medium-prim-color;
                 font-weight: bold;
 
@@ -187,7 +240,11 @@
         }
 
         &.darker-row {
-            background: color.adjust(#f7f7f7, $lightness: -5%);
+            background: color.adjust(variables.$color-lightgray, $lightness: -5%);
+        }
+
+        &.disabled {
+            opacity: 50%;
         }
     }
 
@@ -196,6 +253,25 @@
     }
 
     td {
+        .checkmark {
+            float: right;
+            color: variables.$green;
+            margin-top: 3px;
+            font-size: 18px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all .2s;
+
+            &.active {
+                opacity: 1;
+                visibility: visible;
+            }
+
+        }
+    }
+
+    td {
+        max-width: 800px;
         padding: $col-padding;
         color: variables.$medium-prim-color;
         border-right: 1px solid #c9d0d6;
@@ -209,7 +285,7 @@
             vertical-align: middle;
             position: relative;
             border-radius: inherit;
-            color: #1d5888;
+            color: variables.$ref-blue;
             padding: unset;
 
             &.action-cell-button {
@@ -219,6 +295,14 @@
                 > svg {
                     width: 100%;
                     height: 100%;
+                }
+
+                .blue {
+                    color: variables.$ref-blue;
+                }
+
+                .darkgrey {
+                    color: variables.$color-darkgray;
                 }
             }
 
@@ -242,10 +326,6 @@
                   border-radius:100%;
                   background-color: variables.$red;
                 }
-            }
-
-            &.stop {
-                color: variables.$grey;
             }
 
             &.edit {
@@ -273,17 +353,17 @@
                 width: 7px;
                 height: 7px;
                 border-radius: 50%;
-                border: 2px solid #fff;
+                border: 2px solid variables.$white;
                 background: variables.$red;
                 width: 10px;
                 height: 10px;
             }
         }
 
-        .comment-container {
+        .notes-container {
             overflow-y: auto;
 
-            .comment {
+            .notes {
                 &:first-child h4 {
                     margin-top: 0;
                 }
@@ -320,6 +400,10 @@
 
         &:last-child {
             border-right: none;
+        }
+
+        .title {
+            font-weight: bold;
         }
 
         span[data-status]:before {
@@ -380,7 +464,7 @@
         // Input
         > input {
             box-sizing: border-box;
-            border: variables.$thin-border-stroke #ccc;
+            border: variables.$thin-border-stroke variables.$color-silver;
             border-radius: variables.$main-border-radius;
             display: inline-block;
             padding-left: 10px;
@@ -408,97 +492,16 @@
         }
     }
 
-    &.accordion-tbl {
-
-        // Remove styling on all rows becasue we need to use
-        // jQuery to add the .stripe class.
-
-        // Reason for this is because there is no way to skip over
-        // hidden rows in CSS, which is needed because sub-tbl is a hidden row
-        // Annoying I know...
-        tr {
-            background: none;
-
-            &:nth-child(even) {
-                background: none;
-
-                > td {
-                    border-top: none;
-                    border-bottom: none;
-                }
-            }
-        }
-
-        // Use mixin when jQuery applies this class.
-        tr.stripe {
-            @include apply-row-stripe;
-        }
-
-        .tbl-row-toggle {
-            font-size: 15px;
-            padding-left: 3px;
-
-            &.open {
-                transform: rotate(90deg);
-            }
-        }
-    }
-
-    .sub-tbl-container {
-        display: none;
-
-        // Select first TD the one that contains the accordion-tbl
-        // and remove padding
-        > td {
-            padding-left: 0;
-        }
-
-        tr:nth-child(even) {
-            @include apply-row-stripe;
-        }
-
-        .main-tbl {
-            border-top: 1px solid variables.$main-border-color;
-            border-bottom: 1px solid variables.$main-border-color;
-        }
-
-        .sub-tbl tr:first-child > td {
-            border-top: 1px solid variables.$main-border-color;
-        }
-
-        // This is used to know if the row that opened the tbl was striped
-        // to add the correct border
-        &.has-stripe-row {
-            .sub-tbl tr:first-child > td {
-                border-top: none;
-            }
-
-            .sub-tbl tr:last-child > td {
-                border-bottom: 1px solid variables.$main-border-color;
-                border-bottom-left-radius: 0;
-                border-bottom-right-radius: 0;
-            }
-        }
-
-        .link {
-            line-height: 20px;
-        }
-
-        p {
-            line-height: 25px;
-        }
-
-        .sub-tbl td:first-child {
-            width: 180px;
-        }
-    }
-
     // Special columns
     // ---------------
 
-    .center-col {
-        text-align: center;
-        padding: 0;
+    .metadata-entry {
+        border: 1px solid variables.$color-silver;
+        border-radius: 5px;
+        padding: 0 5px;
+        margin-right: 5px;
+        display: inline-block;
+        text-align: left;
     }
 }
 

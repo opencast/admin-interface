@@ -36,7 +36,7 @@ const SchedulingTime = ({
 				{t(title)}{" "}
 				<i className="required">*</i>
 			</td>
-			<td className="editable ng-isolated-scope">
+			<td className="editable">
 				{/* drop-down for hour */}
 				<DropDown
 					value={hour}

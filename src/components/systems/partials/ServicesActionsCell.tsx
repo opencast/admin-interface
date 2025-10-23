@@ -28,7 +28,7 @@ const ServicesActionCell = ({
 				editAccessRole={"ROLE_UI_SERVICES_STATUS_EDIT"}
 				// tooltipText={"SYSTEMS.SERVICES.TABLE.SANITIZE"} // Disabled due to performance concerns
 			>
-				<LuRotateCcw style={{ fontSize: "18px", color: "#444" }}/>
+				<LuRotateCcw className="darkgrey"/>
 			</ButtonLikeAnchor>
 		) : <></>
 	);

@@ -3,14 +3,11 @@ import { useEffect, useState } from "react";
 import { Event } from "../slices/eventSlice";
 import { isEvent } from "../slices/tableSlice";
 
-export const usePageFunctions = <initialValuesType>(initialPage: number, initialValues: initialValuesType) => {
+export const usePageFunctions = (initialPage: number) => {
 	const [page, setPage] = useState(initialPage);
-	const [snapshot, setSnapshot] = useState(initialValues);
 	const [pageCompleted, setPageCompleted] = useState<{ [key: number]: boolean }>({});
 
-	const nextPage = (values: initialValuesType) => {
-		setSnapshot(values);
-
+	const nextPage = () => {
 		// set page as completely filled out
 		const updatedPageCompleted = pageCompleted;
 		updatedPageCompleted[page] = true;
@@ -19,13 +16,11 @@ export const usePageFunctions = <initialValuesType>(initialPage: number, initial
 		setPage(page + 1);
 	};
 
-	const previousPage = (values: initialValuesType) => {
-		setSnapshot(values);
+	const previousPage = () => {
 		setPage(page - 1);
 	};
 
 	return {
-		snapshot,
 		page,
 		nextPage,
 		previousPage,

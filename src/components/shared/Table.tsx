@@ -66,17 +66,6 @@ const Table = ({
 	// Size options for pagination
 	const sizeOptions = [10, 20, 50, 100, 1000];
 
-	const lengthDivStyle = {
-		position: "absolute" as const,
-		visibility: "hidden" as const,
-		height: "auto",
-		width: "auto",
-		whiteSpace: "nowrap" as const,
-	};
-	const loadingTdStyle = {
-		textAlign: "center" as const,
-	};
-
 	const directAccessible = getDirectAccessiblePages(pages, pagination);
 
 	const { t } = useTranslation();
@@ -186,7 +175,6 @@ const Table = ({
 				modalRef={editTableViewModalRef}
 			/>
 
-			<div id="length-div" style={lengthDivStyle}></div>
 			<table className={"main-tbl highlight-hover"}>
 				<thead>
 					<tr>
@@ -216,19 +204,13 @@ const Table = ({
 								>
 									<span>
 										<span>{t(column.label)}</span>
-										<div style={{
-											display: "flex",
-											flexDirection: "column",
-											justifyContent: "center",
-										}}>
-											<LuChevronUp style={{
-												position: "relative",
-												top: "3px",
-												color: reverse === "ASC" && column.name === sortBy ? "#378dd4" : "#8c939b" }}/>
-											<LuChevronDown style={{
-												position: "relative",
-												top: "-3px",
-												color: reverse !== "ASC" && column.name === sortBy ? "#378dd4" : "#8c939b" }}/>
+										<div>
+											<LuChevronUp
+												className={cn("chevron-up", { active: reverse === "ASC" && column.name === sortBy })}
+											/>
+											<LuChevronDown
+												className={cn("chevron-down", { active: reverse === "ASC" && column.name === sortBy })}
+											/>
 										</div>
 									</span>
 								</th>
@@ -243,7 +225,7 @@ const Table = ({
 				<tbody>
 					{table.status === "loading" && rows.length === 0 ? (
 						<tr>
-							<td colSpan={table.columns.length} style={loadingTdStyle}>
+							<td colSpan={table.columns.length} style={{ textAlign: "center" }}>
 								<LuLoaderCircle className="fa-spin" style={{ fontSize: "30px" }}/>
 							</td>
 						</tr>
@@ -311,7 +293,7 @@ const Table = ({
 					tabIndex={0}
 				>
 					<span>{pagination.limit}</span>
-					<LuChevronDown className="chevron-down" style={{ top: "7px" }}/>
+					<LuChevronDown className="chevron-down"/>
 					{/* Drop down menu for selection of page size */}
 					{showPageSizes && (
 						<ul className="dropdown-ul">
