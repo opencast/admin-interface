@@ -14,9 +14,7 @@ const EventsStartCell = ({
 
 	return (
 		// Link template for start date of event
-		<span>
-			{t("dateFormats.time.short", { time: renderValidDate(row.start_date) })}
-		</span>
+		<>{t("dateFormats.time.short", { time: renderValidDate(row.start_date) })}</>
 	);
 };
 

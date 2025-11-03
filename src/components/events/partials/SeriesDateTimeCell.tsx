@@ -12,19 +12,16 @@ const SeriesDateTimeCell = ({
 }) => {
 	return (
 		<>
-			{row.creation_date !== undefined && (() => {
-				const creationDate = row.creation_date;
-				return (
-					<DateTimeCell
-						resource="series"
-						date={creationDate}
-						filterName="CreationDate"
-						fetchResource={fetchSeries}
-						loadResourceIntoTable={loadSeriesIntoTable}
-						// tooltipText="EVENTS.SERIES.TABLE.TOOLTIP.CREATION" // Disabled due to performance concerns
-					/>
-				);
-			})()}
+			{row.creation_date !== undefined &&
+				<DateTimeCell
+					resource="series"
+					date={row.creation_date}
+					filterName="CreationDate"
+					fetchResource={fetchSeries}
+					loadResourceIntoTable={loadSeriesIntoTable}
+					// tooltipText="EVENTS.SERIES.TABLE.TOOLTIP.CREATION" // Disabled due to performance concerns
+				/>
+			}
 		</>
 	);
 };

@@ -3,12 +3,12 @@ import { useTranslation } from "react-i18next";
 import {
 	getMultiSelect,
 	getPageOffset,
-	getTable,
+	getTableColumns,
 	getTableDirection,
 	getTablePages,
 	getTablePagination,
-	getTableRows,
 	getTableSorting,
+	getTableStatus,
 } from "../../selectors/tableSelectors";
 import {
 	Row,
@@ -17,8 +17,11 @@ import {
 	setSortBy,
 	updatePageSize,
 	Page,
-	Pagination,
+	Pagination as PaginationType,
 	ReverseOptions,
+	selectRowIds,
+	selectRowById,
+	rowsSelectors,
 } from "../../slices/tableSlice";
 import {
 	changeAllSelected,
@@ -36,7 +39,7 @@ import { TableColumn } from "../../configs/tableConfigs/aclsTableConfig";
 import ButtonLikeAnchor from "./ButtonLikeAnchor";
 import { ModalHandle } from "./modals/Modal";
 import { ParseKeys } from "i18next";
-import { LuChevronDown, LuChevronLeft, LuChevronRight, LuChevronUp, LuLoaderCircle } from "react-icons/lu";
+import { LuChevronDown, LuChevronLeft, LuChevronRight, LuChevronUp } from "react-icons/lu";
 
 const containerPageSize = React.createRef<HTMLDivElement>();
 
@@ -52,81 +55,11 @@ const Table = ({
 }: {
 	templateMap: TemplateMap
 }) => {
+	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
-	const table = useAppSelector(state => getTable(state));
-	const pageOffset = useAppSelector(state => getPageOffset(state));
-	const pages = useAppSelector(state => getTablePages(state));
-	const pagination = useAppSelector(state => getTablePagination(state));
-	const rows = useAppSelector(state => getTableRows(state));
-	const sortBy = useAppSelector(state => getTableSorting(state));
-	const reverse = useAppSelector(state => getTableDirection(state));
-	const multiSelect = useAppSelector(state => getMultiSelect(state));
-
-	// Size options for pagination
-	const sizeOptions = [10, 20, 50, 100, 1000];
-
-	const directAccessible = getDirectAccessiblePages(pages, pagination);
-
-	const { t } = useTranslation();
-
-	// State of dropdown menu
-	const [showPageSizes, setShowPageSizes] = useState(false);
 	const editTableViewModalRef = useRef<ModalHandle>(null);
 	const selectAllCheckboxRef = useRef<HTMLInputElement>(null);
-
-	useEffect(() => {
-		// Function for handling clicks outside of an open dropdown menu
-		const handleClickOutside = (e: MouseEvent) => {
-			if (
-				e && containerPageSize.current && !containerPageSize.current.contains(e.target as Node)
-			) {
-				setShowPageSizes(false);
-			}
-		};
-
-		// Event listener for handle a click outside of dropdown menu
-		window.addEventListener("mousedown", handleClickOutside);
-
-		return () => {
-			window.removeEventListener("mousedown", handleClickOutside);
-		};
-	});
-
-	// Select or deselect all rows on a page
-	const onChangeAllSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const selected = e.target.checked;
-		dispatch(changeAllSelected(selected));
-	};
-
-	const changePageSize = (size: number) => {
-		forceDeselectAll();
-		dispatch(updatePageSize(size));
-		dispatch(setOffset(0));
-		dispatch(updatePages());
-	};
-
-	// Navigation to previous page possible?
-	const isNavigatePrevious = () => {
-		return pageOffset > 0;
-	};
-
-	// Navigation to next page possible?
-	const isNavigateNext = () => {
-		return pageOffset < pages.length - 1;
-	};
-
-	const sortByColumn = (colName: string) => {
-		// By sorting, any selected item has to be deselected!
-		forceDeselectAll();
-		dispatch(setSortBy(colName));
-		let direction: ReverseOptions = "ASC";
-		if (reverse && reverse === "ASC") {
-			direction = "DESC";
-		}
-		dispatch(reverseTable(direction));
-		dispatch(updatePages());
-	};
 
 	const forceDeselectAll = () => {
 		dispatch(changeAllSelected(false));
@@ -141,17 +74,6 @@ const Table = ({
 
 	const hideEditTableViewModal = () => {
 		editTableViewModalRef.current?.close?.();
-	};
-
-	const tryToGetValueForKeyFromRowAsString = (row: Row, key: string) => {
-		if (key in row) {
-			const value = row[key as keyof Row];
-			if (typeof value === "string") {
-				return value;
-			}
-		}
-
-		return "";
 	};
 
 	return (
@@ -178,194 +100,383 @@ const Table = ({
 			<table className={"main-tbl highlight-hover"}>
 				<thead>
 					<tr>
-						{/* Only show if multiple selection is possible */}
-						{multiSelect ? (
-							<th className="small">
-								{/* Checkbox to select all rows*/}
-								<input
-									ref={selectAllCheckboxRef}
-									type="checkbox"
-									onChange={e => onChangeAllSelected(e)}
-									aria-label={t("EVENTS.EVENTS.TABLE.SELECT_ALL")}
-								/>
-							</th>
-						) : null}
-
-						{/* todo: if not column.deactivated*/}
-						{table.columns.map((column, key) =>
-							column.deactivated ? null : column.sortable ? ( // Check if column is sortable and render accordingly
-								<th
-									key={key}
-									className={cn({
-										"col-sort": !!sortBy && column.name === sortBy,
-										sortable: true,
-									})}
-									onClick={() => sortByColumn(column.name)}
-								>
-									<span>
-										<span>{t(column.label)}</span>
-										<div>
-											<LuChevronUp
-												className={cn("chevron-up", { active: reverse === "ASC" && column.name === sortBy })}
-											/>
-											<LuChevronDown
-												className={cn("chevron-down", { active: reverse === "ASC" && column.name === sortBy })}
-											/>
-										</div>
-									</span>
-								</th>
-							) : (
-								<th key={key} className={cn({ sortable: false })}>
-									<span>{t(column.label)}</span>
-								</th>
-							),
-						)}
+						<MultiSelect
+							selectAllCheckboxRef={selectAllCheckboxRef}
+						/>
+						<TableHeadRows
+							forceDeselectAll={forceDeselectAll}
+						/>
 					</tr>
 				</thead>
 				<tbody>
-					{table.status === "loading" && rows.length === 0 ? (
-						<tr>
-							<td colSpan={table.columns.length} style={{ textAlign: "center" }}>
-								<LuLoaderCircle className="fa-spin" style={{ fontSize: "30px" }}/>
-							</td>
-						</tr>
-					) : !(table.status === "loading") && rows.length === 0 ? (
-						// Show if no results and table is not loading
-						<tr>
-							<td colSpan={table.columns.length}>{t("TABLE_NO_RESULT")}</td>
-						</tr>
-					) : (
-						!(table.status === "loading") &&
-						// Repeat for each row in table.rows
-						rows.map((row, key) => (
-							<tr key={key}>
-								{/* Show if multi selection is possible */}
-								{/* Checkbox for selection of row */}
-								{multiSelect && "id" in row && (
-									<td>
-										<input
-											type="checkbox"
-											checked={row.selected}
-											onChange={() => dispatch(changeRowSelection(row.id))}
-											aria-label={t("EVENTS.EVENTS.TABLE.SELECT_EVENT", { title: "title" in row ? row.title : row.id })}
-										/>
-									</td>
-								)}
-								{/* Populate table */}
-								{table.columns.map((column, key) =>
-									!column.template &&
-									!column.translate &&
-									!column.deactivated ? (
-										<td key={key}>{column.name in row ? row[column.name as keyof Row] : ""}</td>
-									) : !column.template &&
-									  column.translate &&
-									  !column.deactivated ? (
-										// Show only if column not template, translate, not deactivated
-										<td key={key}>{t(tryToGetValueForKeyFromRowAsString(row, column.name) as ParseKeys)}</td>
-									) : !!column.template &&
-									  !column.deactivated &&
-									  !!templateMap[column.template] ? (
-										// if column has a template then apply it
-										<td key={key}>
-											<ColumnTemplate
-												row={row}
-												column={column}
-												templateMap={templateMap}
-											/>
-										</td>
-									) : !column.deactivated ? (
-										<td />
-									) : null,
-								)}
-							</tr>
-						))
-					)}
+					<TableBody
+						templateMap={templateMap}
+					/>
 				</tbody>
 			</table>
 
-			{/* Selection of page size */}
 			<div id="tbl-view-controls-container">
-				<div
-					className="drop-down-container small flipped"
-					onClick={() => setShowPageSizes(!showPageSizes)}
-					ref={containerPageSize}
-					role="button"
-					tabIndex={0}
-				>
-					<span>{pagination.limit}</span>
-					<LuChevronDown className="chevron-down"/>
-					{/* Drop down menu for selection of page size */}
-					{showPageSizes && (
-						<ul className="dropdown-ul">
-							{sizeOptions.map((size, key) => (
-								<li key={key}>
-									<ButtonLikeAnchor
-										onClick={() => changePageSize(size)}
-									>
-										{size}
-									</ButtonLikeAnchor>
-								</li>
-							))}
-						</ul>
-					)}
-				</div>
-
+				{/* Selection of page size */}
+				<PageSize
+					forceDeselectAll={forceDeselectAll}
+				/>
 				{/* Pagination and navigation trough pages */}
-				<div className="pagination">
-					<ButtonLikeAnchor
-						className={cn("prev", { disabled: !isNavigatePrevious() })}
-						aria-disabled={!isNavigatePrevious()}
-						onClick={() => {
-							dispatch(goToPage(pageOffset - 1));
-							forceDeselectAll();
-						}}
-						tooltipText="TABLE_PREVIOUS"
-						aria-label={t("TABLE_PREVIOUS")}
-					>
-						<LuChevronLeft />
-					</ButtonLikeAnchor>
-					{directAccessible.map((page, key) =>
-						page.active ? (
-							<ButtonLikeAnchor key={key}
-								className="active"
-								aria-label={t("TABLE_CURRENT", { pageNumber: page.label })}
-							>
-								{page.label}
-							</ButtonLikeAnchor>
-						) : (
-							<ButtonLikeAnchor key={key}
-								aria-label={t("TABLE_NUMBERED", { pageNumber: page.label })}
-								onClick={() => {
-									dispatch(goToPage(page.number));
-									forceDeselectAll();
-								}}
-							>
-								{page.label}
-							</ButtonLikeAnchor>
-						),
-					)}
-
-					<ButtonLikeAnchor
-						className={cn("next", { disabled: !isNavigateNext() })}
-						aria-disabled={!isNavigateNext()}
-						onClick={() => {
-							dispatch(goToPage(pageOffset + 1));
-							forceDeselectAll();
-						}}
-						tooltipText="TABLE_NEXT"
-						aria-label={t("TABLE_NEXT")}
-					>
-						<LuChevronRight />
-					</ButtonLikeAnchor>
-				</div>
+				<Pagination
+					forceDeselectAll={forceDeselectAll}
+				/>
 			</div>
 		</>
 	);
 };
 
-// get all pages directly accessible from current page
+// Only show if multiple selection is possible
+const MultiSelect = ({ selectAllCheckboxRef }: { selectAllCheckboxRef: React.RefObject<HTMLInputElement | null> }) => {
+	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
 
-const getDirectAccessiblePages = (pages: Page[], pagination: Pagination) => {
+	const multiSelect = useAppSelector(state => getMultiSelect(state));
+
+	// Select or deselect all rows on a page
+	const onChangeAllSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const selected = e.target.checked;
+		dispatch(changeAllSelected(selected));
+	};
+
+	return (
+		<>
+			{multiSelect &&
+				<th className="small">
+					{/* Checkbox to select all rows*/}
+					<input
+						ref={selectAllCheckboxRef}
+						type="checkbox"
+						onChange={e => onChangeAllSelected(e)}
+						aria-label={t("EVENTS.EVENTS.TABLE.SELECT_ALL")}
+					/>
+				</th>
+			}
+		</>
+	);
+};
+
+const TableHeadRows = ({ forceDeselectAll }: { forceDeselectAll: () => unknown }) => {
+	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
+
+	const columns = useAppSelector(state => getTableColumns(state));
+	const sortBy = useAppSelector(state => getTableSorting(state));
+	const reverse = useAppSelector(state => getTableDirection(state));
+
+	const sortByColumn = (colName: string) => {
+		// By sorting, any selected item has to be deselected!
+		forceDeselectAll();
+		dispatch(setSortBy(colName));
+		let direction: ReverseOptions = "ASC";
+		if (reverse && reverse === "ASC") {
+			direction = "DESC";
+		}
+		dispatch(reverseTable(direction));
+		dispatch(updatePages());
+	};
+
+	return (
+		<>
+			{columns.map((column, key) =>
+				column.deactivated ? null : column.sortable ? ( // Check if column is sortable and render accordingly
+					<th
+						key={key}
+						className={cn({
+							"col-sort": !!sortBy && column.name === sortBy,
+							sortable: true,
+						})}
+						onClick={() => sortByColumn(column.name)}
+					>
+						<span>
+							<span>{t(column.label)}</span>
+							<div>
+								<LuChevronUp
+									className={cn("chevron-up", { active: reverse === "ASC" && column.name === sortBy })}
+								/>
+								<LuChevronDown
+									className={cn("chevron-down", { active: reverse === "ASC" && column.name === sortBy })}
+								/>
+							</div>
+						</span>
+					</th>
+				) : (
+					<th key={key} className={cn({ sortable: false })}>
+						<span>{t(column.label)}</span>
+					</th>
+				),
+			)}
+		</>
+	);
+};
+
+const TableBody = ({ templateMap }: { templateMap: TemplateMap }) => {
+	const { t } = useTranslation();
+
+	const columnCount = useAppSelector(state => getTableColumns(state).length);
+	const rowCount = useAppSelector(rowsSelectors.selectTotal);
+	const status = useAppSelector(state => getTableStatus(state));
+
+	return (
+		<>
+			{status === "loading" && rowCount === 0 ? (
+				<tr>
+					<td colSpan={columnCount} style={{ textAlign: "center" }}>
+						<i className="fa fa-spinner fa-spin fa-2x fa-fw" />
+					</td>
+				</tr>
+			) : !(status === "loading") && rowCount === 0 ? (
+				// Show if no results and table is not loading
+				<tr>
+					<td colSpan={columnCount}>{t("TABLE_NO_RESULT")}</td>
+				</tr>
+			) : (
+				!(status === "loading") &&
+				// Repeat for each row in table.rows
+				<TableRows
+					templateMap={templateMap}
+				/>
+			)}
+		</>
+	);
+};
+
+const TableRows = ({ templateMap }: { templateMap: TemplateMap }) => {
+	const rowKeys = useAppSelector(selectRowIds);
+
+	return (
+		<>
+			{rowKeys.map(rowKey => (
+				<TableRow
+					key={rowKey}
+					rowKey={rowKey}
+					templateMap={templateMap}
+				/>
+			))}
+		</>
+	);
+};
+
+const TableRow = ({ rowKey, templateMap }: { rowKey: string, templateMap: TemplateMap }) => {
+	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
+
+	const row = useAppSelector(state => selectRowById(state, rowKey));
+
+	const columns = useAppSelector(state => getTableColumns(state));
+	const multiSelect = useAppSelector(state => getMultiSelect(state));
+
+	const tryToGetValueForKeyFromRowAsString = (row: Row, key: string) => {
+		if (key in row) {
+			const value = row[key as keyof Row];
+			if (typeof value === "string") {
+				return value;
+			}
+		}
+
+		return "";
+	};
+
+	const renderCell = (column: TableColumn, index: number) => {
+		if (column.deactivated) {
+			return null;
+		}
+
+		// Column template available
+		if (column.template && templateMap[column.template]) {
+			return (
+				<td key={index}>
+					<ColumnTemplate row={row} column={column} templateMap={templateMap} />
+				</td>
+			);
+		}
+
+		// Nothing available
+		if (!column.template && !column.translate) {
+			return <td key={index}>{column.name in row ? row[column.name as keyof Row] : ""}</td>;
+		}
+
+		// Translation available
+		if (!column.template && column.translate) {
+			return <td key={index}>{t(tryToGetValueForKeyFromRowAsString(row, column.name) as ParseKeys)}</td>;
+		}
+
+
+
+		return <td key={index} />;
+	};
+
+	return (
+		<tr>
+			{/* Show if multi selection is possible */}
+			{/* Checkbox for selection of row */}
+			{multiSelect && (
+				<td>
+					<input
+						type="checkbox"
+						checked={row.selected}
+						onChange={() => dispatch(changeRowSelection(row.id))}
+						aria-label={t("EVENTS.EVENTS.TABLE.SELECT_EVENT", { title: "title" in row ? row.title : row.id })}
+					/>
+				</td>
+			)}
+			{/* Populate table */}
+			{columns.map(renderCell)}
+		</tr>
+	);
+};
+
+// Apply a column template and render corresponding components
+const ColumnTemplate = ({ row, column, templateMap }: {row: Row, column: TableColumn, templateMap: TemplateMap}) => {
+	if (!column.template) {
+		return <></>;
+	}
+	const Template = templateMap[column.template];
+	return <Template row={row} />;
+};
+
+/**
+ * Change amount of rows displayed in the table
+ */
+const PageSize = ({ forceDeselectAll }: { forceDeselectAll: () => unknown }) => {
+	const dispatch = useAppDispatch();
+	const pagination = useAppSelector(state => getTablePagination(state));
+
+	const sizeOptions = [10, 20, 50, 100, 1000]; // Size options for pagination
+	const [showPageSizes, setShowPageSizes] = useState(false);
+
+	useEffect(() => {
+		// Function for handling clicks outside of an open dropdown menu
+		const handleClickOutside = (e: MouseEvent) => {
+			if (
+				e && containerPageSize.current && !containerPageSize.current.contains(e.target as Node)
+			) {
+				setShowPageSizes(false);
+			}
+		};
+
+		// Event listener for handle a click outside of dropdown menu
+		window.addEventListener("mousedown", handleClickOutside);
+
+		return () => {
+			window.removeEventListener("mousedown", handleClickOutside);
+		};
+	});
+
+	const changePageSize = (size: number) => {
+		forceDeselectAll();
+		dispatch(updatePageSize(size));
+		dispatch(setOffset(0));
+		dispatch(updatePages());
+	};
+
+	return (
+		<div
+			className="drop-down-container small flipped"
+			onClick={() => setShowPageSizes(!showPageSizes)}
+			ref={containerPageSize}
+			role="button"
+			tabIndex={0}
+		>
+			<span>{pagination.limit}</span>
+			<LuChevronDown className="chevron-down"/>
+			{/* Drop down menu for selection of page size */}
+			{showPageSizes && (
+				<ul className="dropdown-ul">
+					{sizeOptions.map((size, key) => (
+						<li key={key}>
+							<ButtonLikeAnchor
+								onClick={() => changePageSize(size)}
+							>
+								{size}
+							</ButtonLikeAnchor>
+						</li>
+					))}
+				</ul>
+			)}
+		</div>
+	);
+};
+
+/**
+ * Switch between table pages
+ */
+const Pagination = ({ forceDeselectAll }: { forceDeselectAll: () => unknown }) => {
+	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
+
+	const pageOffset = useAppSelector(state => getPageOffset(state));
+	const pages = useAppSelector(state => getTablePages(state));
+	const pagination = useAppSelector(state => getTablePagination(state));
+
+	const directAccessible = getDirectAccessiblePages(pages, pagination);
+
+	// Navigation to previous page possible?
+	const isNavigatePrevious = () => {
+		return pageOffset > 0;
+	};
+
+	// Navigation to next page possible?
+	const isNavigateNext = () => {
+		return pageOffset < pages.length - 1;
+	};
+
+	return (
+		<div className="pagination">
+			<ButtonLikeAnchor
+				className={cn("prev", { disabled: !isNavigatePrevious() })}
+				aria-disabled={!isNavigatePrevious()}
+				onClick={() => {
+					dispatch(goToPage(pageOffset - 1));
+					forceDeselectAll();
+				}}
+				tooltipText="TABLE_PREVIOUS"
+				aria-label={t("TABLE_PREVIOUS")}
+			>
+				<LuChevronLeft />
+			</ButtonLikeAnchor>
+			{directAccessible.map((page, key) =>
+				page.active ? (
+					<ButtonLikeAnchor key={key}
+						className="active"
+						aria-label={t("TABLE_CURRENT", { pageNumber: page.label })}
+					>
+						{page.label}
+					</ButtonLikeAnchor>
+				) : (
+					<ButtonLikeAnchor key={key}
+						aria-label={t("TABLE_NUMBERED", { pageNumber: page.label })}
+						onClick={() => {
+							dispatch(goToPage(page.number));
+							forceDeselectAll();
+						}}
+					>
+						{page.label}
+					</ButtonLikeAnchor>
+				),
+			)}
+
+			<ButtonLikeAnchor
+				className={cn("next", { disabled: !isNavigateNext() })}
+				aria-disabled={!isNavigateNext()}
+				onClick={() => {
+					dispatch(goToPage(pageOffset + 1));
+					forceDeselectAll();
+				}}
+				tooltipText="TABLE_NEXT"
+				aria-label={t("TABLE_NEXT")}
+			>
+				<LuChevronRight />
+			</ButtonLikeAnchor>
+		</div>
+	);
+};
+
+// get all pages directly accessible from current page
+const getDirectAccessiblePages = (pages: Page[], pagination: PaginationType) => {
 	let startIndex = pagination.offset - pagination.directAccessibleNo,
 		endIndex = pagination.offset + pagination.directAccessibleNo,
 		i,
@@ -412,15 +523,6 @@ const getDirectAccessiblePages = (pages: Page[], pagination: Pagination) => {
 	}
 
 	return directAccessible;
-};
-
-// Apply a column template and render corresponding components
-const ColumnTemplate = ({ row, column, templateMap }: {row: Row, column: TableColumn, templateMap: TemplateMap}) => {
-	if (!column.template) {
-		return <></>;
-	}
-	const Template = templateMap[column.template];
-	return <Template row={row} />;
 };
 
 export default Table;

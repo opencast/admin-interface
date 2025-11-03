@@ -1,4 +1,4 @@
-import { PayloadAction, SerializedError, createSlice } from "@reduxjs/toolkit";
+import { EntityState, PayloadAction, SerializedError, createEntityAdapter, createSlice, nanoid } from "@reduxjs/toolkit";
 import { aclsTableConfig, TableConfig } from "../configs/tableConfigs/aclsTableConfig";
 import { Server } from "./serverSlice";
 import { Recording } from "./recordingSlice";
@@ -19,6 +19,7 @@ import { servicesTableConfig } from "../configs/tableConfigs/servicesTableConfig
 import { usersTableConfig } from "../configs/tableConfigs/usersTableConfig";
 import { groupsTableConfig } from "../configs/tableConfigs/groupsTableConfig";
 import { themesTableConfig } from "../configs/tableConfigs/themesTableConfig";
+import { RootState } from "../store";
 
 /*
 Overview of the structure of the data in arrays in state
@@ -77,7 +78,14 @@ export function isSeries(row: Row | Event | Series | Recording | Server | Job | 
 }
 
 // TODO: Improve row typing. While this somewhat correctly reflects the current state of our code, it is rather annoying to work with.
-export type Row = { selected: boolean } & (Event | Series | Recording | Server | Job | Service | User | Group | AclResult | ThemeDetailsType)
+export type Row = {
+	id: string, // For use with entityAdapter. Directly taken from event/series etc. if available
+	selected: boolean // If the row was marked in the ui by the user
+} & (Event | Series | Recording | Server | Job | Service | User | Group | AclResult | ThemeDetailsType)
+
+export type SubmitRow = {
+	selected: boolean
+} & (Event | Series | Recording | Server | Job | Service | User | Group | AclResult | ThemeDetailsType)
 
 export type Resource = "events" | "series" | "recordings" | "jobs" | "servers" | "services" | "users" | "groups" | "acls" | "themes"
 
@@ -93,9 +101,30 @@ export type TableState = {
 	sortBy: { [key in Resource]: string },  // Key is resource, value is actual sorting parameter
 	predicate: string,
 	reverse: { [key in Resource]: ReverseOptions },  // Key is resource, value is actual sorting parameter
-	rows: Row[],
+	rows: EntityState<Row, string>,
 	maxLabel: string,
 	pagination: Pagination,
+}
+
+const rowsAdapter = createEntityAdapter<Row>();
+
+// Since not all rows are guaranteed to have an id: string, this computes one
+function getRowKey(row: SubmitRow): string {
+	if ("id" in row && row.id != null) {
+		return `${row.id}`; // works for Event, Series, Recording, etc.
+	}
+	if ("cores" in row) { // Server
+		return `${row.hostname}`;
+	}
+	if ("completed" in row) { // Service
+		return `${row.name}`;
+	}
+	if ("username" in row) { // User
+		return `${row.username}`;
+	}
+
+	// Fallback
+	return nanoid();
 }
 
 // initial redux state
@@ -142,7 +171,7 @@ const initialState: TableState = {
 		acls: "ASC",
 		themes: "ASC",
 	},
-	rows: [],
+	rows: rowsAdapter.getInitialState(),
 	maxLabel: "",
 	pagination: {
 		limit: 10,
@@ -161,7 +190,7 @@ const tableSlice = createSlice({
 			columns: TableConfig["columns"],
 			resource: TableState["resource"],
 			pages: TableState["pages"],
-			rows: TableState["rows"],
+			rows: SubmitRow[],
 			sortBy: TableState["sortBy"][Resource],
 			reverse: TableState["reverse"][Resource],
 			totalItems: TableState["pagination"]["totalItems"],
@@ -170,13 +199,29 @@ const tableSlice = createSlice({
 			state.columns = action.payload.columns;
 			state.resource = action.payload.resource;
 			state.pages = action.payload.pages;
-			state.rows = action.payload.rows;
 			state.sortBy[action.payload.resource] = action.payload.sortBy;
 			state.reverse[action.payload.resource] = action.payload.reverse;
 			state.pagination = {
 				...state.pagination,
 				totalItems: action.payload.totalItems,
 			};
+
+			// Entity Adapter preparations
+			const rows: Row[] = [];
+
+			action.payload.rows.forEach(row => {
+				const rowId = getRowKey(row);                // new stable id
+
+				// @ts-expect-error: Id will not be number
+				rows.push({
+					...row,
+					id: rowId,
+				});
+			});
+
+			// Replace state with the fetched entities
+			rowsAdapter.setAll(state.rows, rows);
+
 		},
 		loadColumns(state, action: PayloadAction<
 			TableState["columns"]
@@ -184,34 +229,28 @@ const tableSlice = createSlice({
 			state.columns = action.payload;
 		},
 		selectRow(state, action: PayloadAction<
-			number | string
+			string
 		>) {
 			const id = action.payload;
-			state.rows = state.rows.map(row => {
-				if ("id" in row && row.id === id) {
-					return {
-						...row,
-						selected: !row.selected,
-					};
-				}
-				return row;
-			});
+			const row = state.rows.entities[id];
+			if (row) {
+				rowsAdapter.updateOne(state.rows, {
+					id,
+					changes: { selected: !row.selected },
+				});
+			}
 		},
 		selectAll(state) {
-			state.rows = state.rows.map(row => {
-				return {
-					...row,
-					selected: true,
-				};
-			});
+			rowsAdapter.updateMany(
+				state.rows,
+				state.rows.ids.map(id => ({ id, changes: { selected: true } })),
+			);
 		},
 		deselectAll(state) {
-			state.rows = state.rows.map(row => {
-				return {
-					...row,
-					selected: false,
-				};
-			});
+			rowsAdapter.updateMany(
+				state.rows,
+				state.rows.ids.map(id => ({ id, changes: { selected: false } })),
+			);
 		},
 		reverseTable(state, action: PayloadAction<
 			TableState["reverse"][Resource]
@@ -291,6 +330,15 @@ const tableSlice = createSlice({
 		},
 	},
 });
+
+export const {
+	selectIds: selectRowIds,
+	selectById: selectRowById,
+} = rowsAdapter.getSelectors<RootState>(s => s.table.rows);
+
+export const rowsSelectors = rowsAdapter.getSelectors<RootState>(
+	s => s.table.rows,
+);
 
 export const {
 	loadResourceIntoTable,

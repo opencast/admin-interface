@@ -12,17 +12,21 @@ const EventsLocationCell = ({
 	row: Event
 }) => {
 	return (
-		<FilterCell
-			resource={"events"}
-			filterName={"location"}
-			filterItems={[{
-				filterValue: row.location,
-				children: row.location,
-				// cellTooltipText: "EVENTS.EVENTS.TABLE.TOOLTIP.LOCATION", // Disabled due to performance concerns
-			}]}
-			fetchResource={fetchEvents}
-			loadResourceIntoTable={loadEventsIntoTable}
-		/>
+		<>
+			{ row.location &&
+				<FilterCell
+					resource={"events"}
+					filterName={"location"}
+					filterItems={[{
+						filterValue: row.location,
+						children: row.location,
+						// cellTooltipText: "EVENTS.EVENTS.TABLE.TOOLTIP.LOCATION", // Disabled due to performance concerns
+					}]}
+					fetchResource={fetchEvents}
+					loadResourceIntoTable={loadEventsIntoTable}
+				/>
+			}
+		</>
 	);
 };
 

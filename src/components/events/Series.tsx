@@ -7,7 +7,7 @@ import {
 	loadSeriesIntoTable,
 } from "../../thunks/tableThunks";
 import { getTotalSeries, isShowActions } from "../../selectors/seriesSeletctor";
-import { useAppDispatch, useAppSelector } from "../../store";
+import { useAppDispatch } from "../../store";
 import {
 	fetchSeries,
 	fetchSeriesMetadata,
@@ -34,9 +34,6 @@ const Series = () => {
 	const deleteModalRef = useRef<ModalHandle>(null);
 
 	const location = useLocation();
-
-	// const series = useAppSelector(state => getTotalSeries(state));
-	const showActions = useAppSelector(state => isShowActions(state));
 
 	useEffect(() => {
 		// disable actions button
@@ -82,7 +79,7 @@ const Series = () => {
 							text: "BULK_ACTIONS.DELETE.SERIES.CAPTION",
 						},
 					]}
-					disabled={!showActions}
+					isShowActions={isShowActions}
 				/>
 			</TablePage>
 
