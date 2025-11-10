@@ -6,6 +6,6 @@ WORKDIR /admin-interface
 
 RUN npm ci
 
-ENV CI true
-ENV BROWSER none
+ENV CI=true
+ENV BROWSER=none
 CMD [ "npm", "start", "--", "--host", "0.0.0.0"]

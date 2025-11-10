@@ -24,6 +24,8 @@ import { Modal, ModalHandle } from "./modals/Modal";
 import { Resource } from "../../slices/tableSlice";
 import { ParseKeys } from "i18next";
 import ModalContentTable from "./modals/ModalContentTable";
+import BaseButton from "./BaseButton";
+import { LuCirclePlus, LuCircleX, LuGrip } from "react-icons/lu";
 
 /**
  * This component renders the modal for editing which columns are shown in the table
@@ -41,7 +43,7 @@ const EditTableViewModal = ({
 		<Modal
 			header={t("PREFERENCES.TABLE.CAPTION")}
 			classId="edit-table-view-modal"
-			className="modal active modal-animation"
+			className="modal modal-animation"
 			ref={modalRef}
 		>
 			<EditTableViewModalContent
@@ -73,7 +75,7 @@ const EditTableViewModalContent = ({
 	useEffect(() => {
 		if (!isColsLoaded) {
 			if (activeColumns.length !== 0 || deactivatedColumns.length !== 0) {
-				setIsColsLoaded(true)
+				setIsColsLoaded(true);
 			}
 			setActiveColumns(activeColumns);
 			setDeactivatedColumns(deactivatedColumns);
@@ -89,11 +91,11 @@ const EditTableViewModalContent = ({
 	// set deactivated property of column to true (deactivate = true) or false (deactivate = false) and move to corresponding list
 	const changeColumn = (column: TableColumn, deactivate: boolean) => {
 		if (deactivate) {
-			setActiveColumns(activeCols.filter((col) => col !== column));
+			setActiveColumns(activeCols.filter(col => col !== column));
 			column = { ...column, deactivated: deactivate };
 			setDeactivatedColumns(deactivatedCols.concat(column));
 		} else {
-			setDeactivatedColumns(deactivatedCols.filter((col) => col !== column));
+			setDeactivatedColumns(deactivatedCols.filter(col => col !== column));
 			column = { ...column, deactivated: deactivate };
 			setActiveColumns(activeCols.concat(column));
 		}
@@ -102,7 +104,7 @@ const EditTableViewModalContent = ({
 	// save new values of which columns are active or deactivated and apply changes to table
 	const save = () => {
 		const settings = activeCols.concat(deactivatedCols);
-		dispatch(changeColumnSelection(settings))
+		dispatch(changeColumnSelection(settings));
 		close();
 	};
 
@@ -116,9 +118,9 @@ const EditTableViewModalContent = ({
 	// Reset columns to how they were before the user made any changes ever
 	const resetToInitialConfig = () => {
 		const initialConfig = getConfigByResource(resource);
-		setActiveColumns(initialConfig?.columns.filter((column) => !column.deactivated) ?? []);
-		setDeactivatedColumns(initialConfig?.columns.filter((column) => column.deactivated) ?? []);
-	}
+		setActiveColumns(initialConfig?.columns.filter(column => !column.deactivated) ?? []);
+		setDeactivatedColumns(initialConfig?.columns.filter(column => column.deactivated) ?? []);
+	};
 
 	const getConfigByResource = (resource: Resource) => {
 		switch (resource) {
@@ -133,37 +135,37 @@ const EditTableViewModalContent = ({
 			case "acls": return aclsTableConfig;
 			case "themes": return themesTableConfig;
 		}
-	}
+	};
 
 	// change column order based on where column was dragged and dropped
-	const onDragEnd: OnDragEndResponder = (result) => {
+	const onDragEnd: OnDragEndResponder = result => {
 		// dropped outside the list
-		const destination = result.destination
+		const destination = result.destination;
 		if (destination === null) {
 			return;
 		}
 
-		setActiveColumns((columns) => arrayMoveImmutable(columns, result.source.index, destination.index));
-	}
+		setActiveColumns(columns => arrayMoveImmutable(columns, result.source.index, destination.index));
+	};
 
 	const getTranslationForSubheading = (resource: Resource): ParseKeys | undefined => {
 		const resourceUC: Uppercase<Resource> = resource.toUpperCase() as Uppercase<Resource>;
 		if (resourceUC === "EVENTS" || resourceUC === "SERIES") {
-			return `EVENTS.${resourceUC}.TABLE.CAPTION`
+			return `EVENTS.${resourceUC}.TABLE.CAPTION`;
 		}
 		if (resourceUC === "RECORDINGS") {
-			return `${resourceUC}.${resourceUC}.TABLE.CAPTION`
+			return `${resourceUC}.${resourceUC}.TABLE.CAPTION`;
 		}
 		if (resourceUC === "JOBS" || resourceUC === "SERVERS" || resourceUC === "SERVICES") {
-			return `SYSTEMS.${resourceUC}.TABLE.CAPTION`
+			return `SYSTEMS.${resourceUC}.TABLE.CAPTION`;
 		}
 		if (resourceUC === "USERS" || resourceUC === "GROUPS" || resourceUC === "ACLS") {
-			return `USERS.${resourceUC}.TABLE.CAPTION`
+			return `USERS.${resourceUC}.TABLE.CAPTION`;
 		}
 		if (resourceUC === "THEMES") {
-			return `CONFIGURATION.${resourceUC}.TABLE.CAPTION`
+			return `CONFIGURATION.${resourceUC}.TABLE.CAPTION`;
 		}
-	}
+	};
 
 	return (
 		<>
@@ -183,7 +185,7 @@ const EditTableViewModalContent = ({
 								<h2>
 									{
 										t(
-											"PREFERENCES.TABLE.AVAILABLE_COLUMNS"
+											"PREFERENCES.TABLE.AVAILABLE_COLUMNS",
 										) /* Available Columns */
 									}
 								</h2>
@@ -192,15 +194,18 @@ const EditTableViewModalContent = ({
 								{deactivatedCols.map((column, key) =>
 									column ? (
 										<li className="drag-item" key={key}>
+											<LuGrip />
 											<div className="title">{t(column.label)}</div>
 											<ButtonLikeAnchor
-												extraClassName="move-item add"
+												className="move-item add"
 												onClick={() => changeColumn(column, false)}
+												tooltipText={"PREFERENCES.TABLE.ADD_COLUMN"}
+												aria-label={t("PREFERENCES.TABLE.ADD_COLUMN")}
 											>
-												<span className="sr-only">{t("PREFERENCES.TABLE.ADD_COLUMN")}</span>
+												<LuCirclePlus />
 											</ButtonLikeAnchor>
 										</li>
-									) : null
+									) : null,
 								)}
 							</ul>
 						</div>
@@ -212,7 +217,7 @@ const EditTableViewModalContent = ({
 								<h2>
 									{
 										t(
-											"PREFERENCES.TABLE.SELECTED_COLUMNS"
+											"PREFERENCES.TABLE.SELECTED_COLUMNS",
 										) /* Selected Columns */
 									}
 								</h2>
@@ -221,38 +226,41 @@ const EditTableViewModalContent = ({
 								<li>
 									<DragDropContext
 										onDragEnd={onDragEnd}
+										dragHandleUsageInstructions={t("PREFERENCES.TABLE.DRAG_HANDLE_USAGE_INSTRUCTIONS")}
 									>
 										<Droppable droppableId="droppable">
-											{(provided, snapshot) => (
+											{(provided, _snapshot) => (
 												<div
 													{...provided.droppableProps}
 													ref={provided.innerRef}
-													// style={}
 												>
 													{activeCols.filter(col => col).map((column, key) =>
 														(
 															<Draggablee key={column.name} draggableId={column.name} index={key}>
-																{(provided, snapshot) => (
+																{(provided, _snapshot) => (
 																	<div
 																		ref={provided.innerRef}
 																		{...provided.draggableProps}
 																		{...provided.dragHandleProps}
-																		style={{...provided.draggableProps.style}}
+																		style={{ ...provided.draggableProps.style }}
 																		className="drag-item"
 																	>
+																		<LuGrip />
 																		<div className="title">
 																			{t(column.label)}
 																		</div>
 																		<ButtonLikeAnchor
-																			extraClassName="move-item remove"
+																			className="move-item remove"
 																			onClick={() => changeColumn(column, true)}
+																			tooltipText="PREFERENCES.TABLE.REMOVE_COLUMN"
+																			aria-label={t("PREFERENCES.TABLE.REMOVE_COLUMN")}
 																		>
-																			<span className="sr-only">{t("PREFERENCES.TABLE.REMOVE_COLUMN")}</span>
+																			<LuCircleX />
 																		</ButtonLikeAnchor>
 																	</div>
 																)}
 															</Draggablee>
-														)
+														),
 													)}
 													{provided.placeholder}
 												</div>
@@ -279,18 +287,18 @@ const EditTableViewModalContent = ({
 
 			<footer>
 				{/* Render buttons for updating table data */}
-					<button onClick={() => clearData()} className="cancel active">
-						{t("CANCEL") /*Cancel*/}
-					</button>
-					<button onClick={() => save()} className="submit active">
+					<BaseButton onClick={() => clearData()} className="cancel active">
+						{t("CANCEL") /* Cancel*/}
+					</BaseButton>
+					<BaseButton onClick={() => save()} className="submit active">
 						{t("SAVE") /* Save As Default */}
-					</button>
-					<button onClick={() => resetToInitialConfig()} className="cancel active">
+					</BaseButton>
+					<BaseButton onClick={() => resetToInitialConfig()} className="cancel active">
 						{t("RESET") /* Reset saved setting */}
-					</button>
+					</BaseButton>
 			</footer>
 		</>
 	);
-}
+};
 
 export default EditTableViewModal;

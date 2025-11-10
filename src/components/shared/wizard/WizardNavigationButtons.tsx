@@ -1,4 +1,3 @@
-import React from "react";
 import { FormikProps } from "formik";
 import NavigationButtons from "../NavigationButtons";
 import { ParseKeys } from "i18next";
@@ -40,11 +39,25 @@ const WizardNavigationButtons = <T, >({
 			isSubmitDisabled={disabled}
 			nextPage={
 				isLast
-				? () => { !!submitPage ? submitPage() : formik.handleSubmit(); }
-				: () => { !!nextPage && nextPage(formik.values); }
+				? () => {
+					if (submitPage) {
+						submitPage();
+					 } else {
+						formik.handleSubmit();
+					 }
+				}
+				: () => {
+					if (nextPage) {
+						nextPage(formik.values);
+					}
+				}
 			}
 			previousPage={
-				() => { !!previousPage && previousPage(formik.values) }
+				() => {
+					if (previousPage) {
+						previousPage(formik.values);
+					}
+				}
 			}
 			nextTranslationString={
 				isLast

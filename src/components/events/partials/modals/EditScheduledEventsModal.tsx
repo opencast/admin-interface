@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Formik } from "formik";
 import { initialFormValuesEditScheduledEvents } from "../../../../configs/modalConfig";
-import WizardStepper from "../../../shared/wizard/WizardStepper";
+import WizardStepper, { WizardStep } from "../../../shared/wizard/WizardStepper";
 import EditScheduledEventsGeneralPage from "../ModalTabsAndPages/EditScheduledEventsGeneralPage";
 import EditScheduledEventsEditPage from "../ModalTabsAndPages/EditScheduledEventsEditPage";
 import EditScheduledEventsSummaryPage from "../ModalTabsAndPages/EditScheduledEventsSummaryPage";
@@ -21,7 +21,6 @@ import {
 } from "../../../../slices/eventSlice";
 import { fetchRecordings } from "../../../../slices/recordingSlice";
 import { Event } from "../../../../slices/eventSlice";
-import { ParseKeys } from "i18next";
 
 /**
  * This component manages the pages of the edit scheduled bulk action
@@ -38,14 +37,13 @@ const EditScheduledEventsModal = ({
 	const initialValues = initialFormValuesEditScheduledEvents;
 
 	const {
-		snapshot,
 		page,
 		nextPage,
 		previousPage,
 		setPage,
 		pageCompleted,
 		setPageCompleted,
-	} = usePageFunctions(0, initialValues);
+	} = usePageFunctions(0);
 
 	// for edit page: conflicts with other events
 	const [conflicts, setConflicts] = useState<Conflict[]>([]);
@@ -58,10 +56,12 @@ const EditScheduledEventsModal = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const steps: {
-		translation: ParseKeys
-		name: string
-	}[] = [
+	type StepName = "general" | "edit" | "summary";
+	type Step = WizardStep & {
+		name: StepName,
+	}
+
+	const steps: Step[] = [
 		{
 			translation: "BULK_ACTIONS.EDIT_EVENTS.GENERAL.CAPTION",
 			name: "general",
@@ -88,16 +88,15 @@ const EditScheduledEventsModal = ({
 			errors.events = "Not all events editable!";
 		}
 		if (steps[page].name !== "general") {
-			return checkSchedulingConflicts(
+			const isConflict = checkSchedulingConflicts(
 				values,
 				setConflicts,
-				dispatch
-			).then((result) => {
-				if (!result) {
-					errors.editedEvents = "Scheduling conflicts exist!";
-				}
-				return errors;
-			});
+				dispatch,
+			);
+			if (!isConflict) {
+				errors.editedEvents = "Scheduling conflicts exist!";
+			}
+			return errors;
 		} else {
 			return errors;
 		}
@@ -120,12 +119,12 @@ const EditScheduledEventsModal = ({
 		<>
 			{/* Initialize overall form */}
 			<Formik
-				initialValues={snapshot}
-				validate={(values) => validateFormik(values)}
-				onSubmit={(values) => handleSubmit(values)}
+				initialValues={initialValues}
+				validate={values => validateFormik(values)}
+				onSubmit={values => handleSubmit(values)}
 			>
 				{/* Render wizard pages depending on current value of page variable */}
-				{(formik) => {
+				{formik => {
 					// eslint-disable-next-line react-hooks/rules-of-hooks
 					useEffect(() => {
 						formik.validateForm().then();
@@ -137,20 +136,20 @@ const EditScheduledEventsModal = ({
 							{/* Stepper that shows each step of wizard as header */}
 							<WizardStepper
 								steps={steps}
-								page={page}
-								setPage={setPage}
+								activePageIndex={page}
+								setActivePage={setPage}
 								completed={pageCompleted}
 								setCompleted={setPageCompleted}
-								formik={formik}
+								isValid={formik.isValid}
 							/>
 							<div>
-								{page === 0 && (
+								{steps[page].name === "general" && (
 									<EditScheduledEventsGeneralPage
 										formik={formik}
 										nextPage={nextPage}
 									/>
 								)}
-								{page === 1 && (
+								{steps[page].name === "edit" && (
 									<EditScheduledEventsEditPage
 										formik={formik}
 										nextPage={nextPage}
@@ -160,7 +159,7 @@ const EditScheduledEventsModal = ({
 										setPageCompleted={setPageCompleted}
 									/>
 								)}
-								{page === 2 && (
+								{steps[page].name === "summary" && (
 									<EditScheduledEventsSummaryPage
 										formik={formik}
 										previousPage={previousPage}

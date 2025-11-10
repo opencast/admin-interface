@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { getMetadataCollectionFieldName } from "../../../../../utils/resourceUtils";
 import { MetadataCatalog } from "../../../../../slices/eventSlice";
@@ -12,10 +11,10 @@ import { ParseKeys } from "i18next";
 const MetadataSummaryTable = ({
 	metadataCatalogs,
 	formikValues,
-	header
+	header,
 }: {
 	metadataCatalogs: MetadataCatalog[],
-	formikValues: { [key: string]: string | string[] | boolean },
+	formikValues: { [key: string]: string | string[] | boolean | Date },
 	header: ParseKeys,
 }) => {
 	const { t } = useTranslation();
@@ -51,8 +50,12 @@ const MetadataSummaryTable = ({
 						{
 							value: fieldValue,
 						},
-						t
-					)
+						t,
+					);
+				}
+
+				if (fieldValue instanceof Date) {
+					fieldValue = t("dateFormats.dateTime.short", { dateTime: fieldValue });
 				}
 
 				metadata = metadata.concat({
@@ -67,12 +70,12 @@ const MetadataSummaryTable = ({
 
 	return (
 		<div className="obj tbl-list">
-			<header className="no-expand">{t(header)}</header>
+			<header>{t(header)}</header>
 			<div className="obj-container">
 				{catalogs.map((catalog, key) => (
 					<table key={key} className="main-tbl">
 						<tbody>
-							{/*Insert row for each metadata entry user has provided*/}
+							{/* Insert row for each metadata entry user has provided*/}
 							{catalog.map((entry, key) => (
 								<tr key={key}>
 									<td>{t(entry.label as ParseKeys)}</td>

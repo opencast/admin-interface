@@ -47,20 +47,34 @@ import { Recording } from "../../../../slices/recordingSlice";
 import { useTranslation } from "react-i18next";
 import WizardNavigationButtons from "../../../shared/wizard/WizardNavigationButtons";
 import SchedulingTime from "../wizards/scheduling/SchedulingTime";
-import SchedulingEndDateDisplay from "../wizards/scheduling/SchedulingEndDateDisplay";
 import SchedulingLocation from "../wizards/scheduling/SchedulingLocation";
 import SchedulingInputs from "../wizards/scheduling/SchedulingInputs";
 import SchedulingConflicts from "../wizards/scheduling/SchedulingConflicts";
 import { ParseKeys } from "i18next";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
 
-/**../wizards/scheduling/SchedulingTime
+export type InitialValues = {
+	scheduleStartDate: string;
+	scheduleStartHour: string;
+	scheduleStartMinute: string;
+	scheduleDurationHours: string;
+	scheduleDurationMinutes: string;
+	scheduleEndDate: string;
+	scheduleEndHour: string;
+	scheduleEndMinute: string;
+	captureAgent: string;
+	inputs: string[];
+}
+
+/**
  * This component manages the main assets tab of event details modal
  */
 const EventDetailsSchedulingTab = ({
 	eventId,
+	formikRef,
 }: {
 	eventId: string,
+	formikRef?: React.RefObject<FormikProps<InitialValues> | null>
 }) => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
@@ -73,19 +87,18 @@ const EventDetailsSchedulingTab = ({
 	const captureAgents = useAppSelector(state => getRecordings(state));
 
 	const checkConflictsWrapper = (eventId: string, startDate: Date, endDate: Date, deviceId: string) => {
-		dispatch(checkConflicts({eventId, startDate, endDate, deviceId}));
-	}
+		dispatch(checkConflicts({ eventId, startDate, endDate, deviceId }));
+	};
 
 	const sourceStartDate = new Date(source.start.date);
 	const endStartDate = new Date(source.start.date);
-
 	useEffect(() => {
 		dispatch(removeNotificationWizardForm());
 		dispatch(checkConflicts({
 			eventId,
 			startDate: sourceStartDate,
 			endDate: endStartDate,
-			deviceId: source.device.id
+			deviceId: source.device.id,
 		})).then();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -102,7 +115,7 @@ const EventDetailsSchedulingTab = ({
 	// Variable and function for checking access rights
 	const hasAccessRole = hasAccess(
 		"ROLE_UI_EVENTS_DETAILS_SCHEDULING_EDIT",
-		user
+		user,
 	);
 	const accessAllowed = (agentId: Recording["id"]) => {
 		return !checkingConflicts && hasDeviceAccess(user, agentId);
@@ -111,11 +124,11 @@ const EventDetailsSchedulingTab = ({
 	// finds the inputs to be displayed in the formik
 	const getInputs = (deviceId: Recording["id"]) => {
 		if (deviceId === source.device.id) {
-			return !!source.device.inputs ? source.device.inputs : [];
+			return source.device.inputs ? source.device.inputs : [];
 		} else {
 			for (const agent of filterDevicesForAccess(user, captureAgents)) {
 				if (agent.id === deviceId) {
-					return !!agent.inputs ? agent.inputs : [];
+					return agent.inputs ? agent.inputs : [];
 				}
 			}
 			return [];
@@ -124,9 +137,9 @@ const EventDetailsSchedulingTab = ({
 
 	const getInputForAgent = (deviceId: Recording["id"], input: string) => {
 		const inputs = getInputs(deviceId);
-		const value = inputs.find((agent) => agent.id === input)?.value;
+		const value = inputs.find(agent => agent.id === input)?.value;
 		return value ? t(value as ParseKeys) : "";
-	}
+	};
 
 	// changes the inputs in the formik
 	const changeInputs = (deviceId: Recording["id"], setFieldValue: (field: string, value: any) => Promise<void | FormikErrors<any>>) => {
@@ -138,7 +151,7 @@ const EventDetailsSchedulingTab = ({
 	};
 
 	// checks validity of the formik form
-	const checkValidity = (formik: FormikProps<any>) => {
+	const checkValidity = (formik: FormikProps<InitialValues>) => {
 		if (
 			formik.dirty &&
 			formik.isValid &&
@@ -151,7 +164,7 @@ const EventDetailsSchedulingTab = ({
 				if (!_.isEqual(formik.values.inputs, formik.initialValues.inputs)) {
 					return !_.isEqual(
 						formik.values.inputs.sort(),
-						formik.initialValues.inputs.sort()
+						formik.initialValues.inputs.sort(),
 					);
 				} else {
 					return true;
@@ -165,32 +178,31 @@ const EventDetailsSchedulingTab = ({
 	};
 
 	// submits the formik form
-	const submitForm = async (values: SchedulingInfo) => {
+	const submitForm = (values: SchedulingInfo) => {
 		dispatch(removeNotificationWizardForm());
 		const startDate = makeDate(
 			values.scheduleStartDate,
 			values.scheduleStartHour,
-			values.scheduleStartMinute
+			values.scheduleStartMinute,
 		);
 		const endDate = makeDate(
 			values.scheduleEndDate,
 			values.scheduleEndHour,
-			values.scheduleEndMinute
+			values.scheduleEndMinute,
 		);
-		dispatch(checkConflicts({eventId, startDate, endDate, deviceId: values.captureAgent})).then(
-			(r) => {
+		dispatch(checkConflicts({ eventId, startDate, endDate, deviceId: values.captureAgent })).then(
+			r => {
 				if (r) {
-					dispatch(saveSchedulingInfo({eventId, values, startDate, endDate})).then();
+					dispatch(saveSchedulingInfo({ eventId, values, startDate, endDate })).then();
 				} else {
 					dispatch(addNotification({
 						type: "error",
 						key: "EVENTS_NOT_UPDATED",
 						duration: -1,
-						parameter: undefined,
-						context: NOTIFICATION_CONTEXT
+						context: NOTIFICATION_CONTEXT,
 					}));
 				}
-			}
+			},
 		);
 	};
 
@@ -199,7 +211,7 @@ const EventDetailsSchedulingTab = ({
 		const startDate = new Date(source.start.date);
 		const endDate = new Date(source.end.date);
 
-		const inputs = !!source.device.inputMethods
+		const inputs = source.device.inputMethods
 			? Array.from(source.device.inputMethods)
 			: [];
 
@@ -216,7 +228,7 @@ const EventDetailsSchedulingTab = ({
 			scheduleEndHour: source.end.hour != null ? makeTwoDigits(source.end.hour) : "",
 			scheduleEndMinute: source.end.minute != null ? makeTwoDigits(source.end.minute) : "",
 			captureAgent: source.device.name,
-			inputs: inputs.filter((input) => input !== ""),
+			inputs: inputs.filter(input => input !== ""),
 		};
 	};
 
@@ -234,18 +246,19 @@ const EventDetailsSchedulingTab = ({
 				/* Scheduling configuration */
 				hasSchedulingProperties && (
 				/* Initialize form */
-					<Formik
+					<Formik<InitialValues>
 						enableReinitialize
 						initialValues={getInitialValues()}
-						onSubmit={(values) => submitForm(values).then((r) => {})}
+						onSubmit={values => submitForm(values)}
+						innerRef={formikRef}
 					>
-						{(formik) => (
+						{formik => (
 							<div className="obj tbl-details">
 								<header>
 									<span>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.SCHEDULING.CAPTION"
+												"EVENTS.EVENTS.DETAILS.SCHEDULING.CAPTION",
 											) /* Scheduling configuration */
 										}
 									</span>
@@ -257,7 +270,7 @@ const EventDetailsSchedulingTab = ({
 											<tr>
 												<td>
 													{t(
-														"EVENTS.EVENTS.DETAILS.SOURCE.DATE_TIME.TIMEZONE"
+														"EVENTS.EVENTS.DETAILS.SOURCE.DATE_TIME.TIMEZONE",
 													)}
 												</td>
 												<td>{tz}</td>
@@ -267,7 +280,7 @@ const EventDetailsSchedulingTab = ({
 											<tr>
 												<td>
 													{t(
-														"EVENTS.EVENTS.DETAILS.SOURCE.DATE_TIME.START_DATE"
+														"EVENTS.EVENTS.DETAILS.SOURCE.DATE_TIME.START_DATE",
 													)}
 												</td>
 												<td>
@@ -283,7 +296,7 @@ const EventDetailsSchedulingTab = ({
 																	formik.values,
 																	formik.setFieldValue,
 																	eventId,
-																	checkConflictsWrapper
+																	checkConflictsWrapper,
 																)
 															}
 															showYearDropdown
@@ -291,15 +304,14 @@ const EventDetailsSchedulingTab = ({
 															yearDropdownItemNumber={2}
 															dateFormat="P"
 															popperClassName="datepicker-custom"
-															className="datepicker-custom-input"
-															portalId="root"
+															wrapperClassName="datepicker-custom-wrapper"
 															locale={currentLanguage?.dateLocale}
 															strictParsing
 														/>
 													) : (
 														<>
 															{sourceStartDate.toLocaleDateString(
-																currentLanguage ? currentLanguage.dateLocale.code : undefined
+																currentLanguage ? currentLanguage.dateLocale.code : undefined,
 															)}
 														</>
 													)}
@@ -321,8 +333,8 @@ const EventDetailsSchedulingTab = ({
 															formik.values,
 															formik.setFieldValue,
 															eventId,
-															checkConflictsWrapper
-														)
+															checkConflictsWrapper,
+														);
 													}}
 													callbackMinute={(value: string) => {
 														changeStartMinute(
@@ -330,8 +342,8 @@ const EventDetailsSchedulingTab = ({
 															formik.values,
 															formik.setFieldValue,
 															eventId,
-															checkConflictsWrapper
-														)
+															checkConflictsWrapper,
+														);
 													}}
 												/>
 											)}
@@ -361,8 +373,8 @@ const EventDetailsSchedulingTab = ({
 															formik.values,
 															formik.setFieldValue,
 															eventId,
-															checkConflictsWrapper
-														)
+															checkConflictsWrapper,
+														);
 													}}
 													callbackMinute={(value: string) => {
 														changeDurationMinute(
@@ -370,8 +382,8 @@ const EventDetailsSchedulingTab = ({
 															formik.values,
 															formik.setFieldValue,
 															eventId,
-															checkConflictsWrapper
-														)
+															checkConflictsWrapper,
+														);
 													}}
 												/>
 											)}
@@ -379,7 +391,7 @@ const EventDetailsSchedulingTab = ({
 											<tr>
 												<td>
 													{t(
-														"EVENTS.EVENTS.DETAILS.SOURCE.DATE_TIME.DURATION"
+														"EVENTS.EVENTS.DETAILS.SOURCE.DATE_TIME.DURATION",
 													)}
 												</td>
 												<td>
@@ -403,8 +415,8 @@ const EventDetailsSchedulingTab = ({
 															formik.values,
 															formik.setFieldValue,
 															eventId,
-															checkConflictsWrapper
-														)
+															checkConflictsWrapper,
+														);
 													}}
 													callbackMinute={(value: string) => {
 														changeEndMinute(
@@ -412,24 +424,23 @@ const EventDetailsSchedulingTab = ({
 															formik.values,
 															formik.setFieldValue,
 															eventId,
-															checkConflictsWrapper
-														)
+															checkConflictsWrapper,
+														);
 													}}
+													date={
+														hasAccessRole &&
+														(new Date(formik.values.scheduleEndDate).getDate() !==
+														new Date(formik.values.scheduleStartDate).getDate())
+														? formik.values.scheduleEndDate
+														: undefined
+													}
 												/>
 											)}
-											{hasAccessRole &&
-												formik.values.scheduleEndDate.toString() !==
-													formik.values.scheduleStartDate.toString() && (
-														<SchedulingEndDateDisplay
-															scheduleEndDate={formik.values.scheduleEndDate}
-														/>
-												)
-											}
 											{!hasAccessRole && (
 											<tr>
 												<td>
 													{t(
-														"EVENTS.EVENTS.DETAILS.SOURCE.DATE_TIME.END_TIME"
+														"EVENTS.EVENTS.DETAILS.SOURCE.DATE_TIME.END_TIME",
 													)}
 												</td>
 												<td>
@@ -439,9 +450,9 @@ const EventDetailsSchedulingTab = ({
 														formik.values.scheduleStartDate.toString() && (
 														<span>
 															{new Date(
-																formik.values.scheduleEndDate
+																formik.values.scheduleEndDate,
 															).toLocaleDateString(
-																currentLanguage ? currentLanguage.dateLocale.code : undefined
+																currentLanguage ? currentLanguage.dateLocale.code : undefined,
 															)}
 														</span>
 													)}
@@ -454,16 +465,16 @@ const EventDetailsSchedulingTab = ({
 														location={formik.values.captureAgent}
 														inputDevices={filterDevicesForAccess(
 															user,
-															captureAgents
-														).filter((a) => filterCaptureAgents(a))}
+															captureAgents,
+														).filter(a => filterCaptureAgents(a))}
 														disabled={!accessAllowed(formik.values.captureAgent)}
 														title={"EVENTS.EVENTS.DETAILS.SOURCE.PLACEHOLDER.LOCATION"}
 														placeholder={"EVENTS.EVENTS.DETAILS.SOURCE.PLACEHOLDER.LOCATION"}
 														callback={(value: string) => {
 															changeInputs(
 																value,
-																formik.setFieldValue
-															)
+																formik.setFieldValue,
+															);
 														}}
 													/>
 												)}
@@ -471,7 +482,7 @@ const EventDetailsSchedulingTab = ({
 													<tr>
 														<td>
 															{t(
-																"EVENTS.EVENTS.DETAILS.SOURCE.PLACEHOLDER.LOCATION"
+																"EVENTS.EVENTS.DETAILS.SOURCE.PLACEHOLDER.LOCATION",
 															)}
 														</td>
 														<td>{source.device.name}</td>
@@ -482,7 +493,7 @@ const EventDetailsSchedulingTab = ({
 											<tr>
 												<td>
 													{t(
-														"EVENTS.EVENTS.DETAILS.SOURCE.PLACEHOLDER.INPUTS"
+														"EVENTS.EVENTS.DETAILS.SOURCE.PLACEHOLDER.INPUTS",
 													)}
 												</td>
 												<td>

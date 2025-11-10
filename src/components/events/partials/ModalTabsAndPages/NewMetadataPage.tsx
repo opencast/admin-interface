@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { Field } from "../../../shared/Field";
 import RenderField from "../../../shared/wizard/RenderField";
@@ -13,22 +12,21 @@ import ModalContentTable from "../../../shared/modals/ModalContentTable";
  */
 const NewMetadataPage = ({
 	metadataCatalogs,
-	header
+	header,
 }: {
 	metadataCatalogs: MetadataCatalog [],
 	header?: ParseKeys
 }) => {
 	const { t } = useTranslation();
-
 	return (
 		<ModalContentTable>
 			{
-				//iterate through metadata catalogs
+				// iterate through metadata catalogs
 				!!metadataCatalogs &&
 				metadataCatalogs.length > 0 &&
 				metadataCatalogs.map((catalog, index) => (
 					<div key={index} className="obj tbl-list">
-						{/* <header className="no-expand">{t(header)}</header> */}
+						{/* <header>{t(header)}</header> */}
 						<header>
 							<span>{t(header ? header : catalog.title as ParseKeys)}</span>
 						</header>
@@ -48,13 +46,13 @@ const NewMetadataPage = ({
 												</td>
 												{field.readOnly ? (
 													// non-editable field if readOnly is set or user doesn't have edit access rights
-													!!field.collection ? (
+													field.collection ? (
 														<td>{getMetadataCollectionFieldName(field, field, t)}</td>
 													) : (
 														<td>{field.value}</td>
 													)
 												) : (
-													<td className="editable ng-isolated-scope">
+													<td className="editable">
 														{/* Render single value or multi value input */}
 														{field.type === "mixed_text" &&
 														field.collection?.length !== 0 ? (

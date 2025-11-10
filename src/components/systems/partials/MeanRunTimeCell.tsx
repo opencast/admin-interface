@@ -1,4 +1,3 @@
-import React from "react";
 import { Service } from "../../../slices/serviceSlice";
 import moment from "moment";
 
@@ -6,7 +5,7 @@ import moment from "moment";
  * This component renders the mean run time cells of systems in the table view
  */
 const MeanRunTimeCell = ({
-	row
+	row,
 }: {
 	row: Service
 }) => {

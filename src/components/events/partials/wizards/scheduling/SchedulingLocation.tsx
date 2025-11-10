@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import DropDown from "../../../../shared/DropDown";
 import { Recording } from "../../../../../slices/recordingSlice";
@@ -32,15 +31,15 @@ const SchedulingLocation = ({
 			*
 			* This is the 19th input field.
 			*/}
-			<td className="editable ng-isolated-scope">
+			<td className="editable">
 				<DropDown
 					value={location}
 					text={location}
 					options={formatCaptureAgentForDropdown(inputDevices)}
 					required={true}
-					handleChange={(element) => {
+					handleChange={element => {
 						if (element) {
-							callback(element.value)
+							callback(element.value);
 						}
 					}}
 					placeholder={t(placeholder)}
@@ -48,7 +47,7 @@ const SchedulingLocation = ({
 				/>
 			</td>
 		</tr>
-	)
+	);
 };
 
 export default SchedulingLocation;

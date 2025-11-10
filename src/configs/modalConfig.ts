@@ -6,6 +6,7 @@ import { initArray } from "../utils/utils";
 import { EditedEvents, Event, UploadAssetsTrack } from "../slices/eventSlice";
 import { Role } from "../slices/aclSlice";
 import { ParseKeys } from "i18next";
+import { UserRole } from "../slices/userSlice";
 
 // Context for notifications shown in modals
 export const NOTIFICATION_CONTEXT = "modal-form";
@@ -31,7 +32,7 @@ export const initialFormValuesNewEvents: {
 	processingWorkflow: string,
 	configuration: { [key: string]: string },
 	aclTemplate: string,
-	acls: TransformedAcl[],
+	policies: TransformedAcl[],
 	uploadAssetsTrack?: UploadAssetsTrack[]
 	[key: string]: unknown,  // Metadata fields that are getting added later
 } = {
@@ -46,11 +47,11 @@ export const initialFormValuesNewEvents: {
 	scheduleEndMinute: "",
 	repeatOn: [],
 	location: "",
-	//deviceInputs: [],
+	// deviceInputs: [],
 	processingWorkflow: "",
 	configuration: {},
 	aclTemplate: "",
-	acls: [],
+	policies: [],
 };
 
 // constants for hours and minutes (used in selection for start/end time and duration)
@@ -98,14 +99,14 @@ export const WORKFLOW_UPLOAD_ASSETS_NON_TRACK = "publish-uploaded-assets";
 // All fields for new series form that are fix and not depending on response of backend
 // InitialValues of Formik form (others computed dynamically depending on responses from backend)
 export const initialFormValuesNewSeries: {
-	acls: TransformedAcl[],
+	policies: TransformedAcl[],
 	theme: string,
 
 	breadcrumbs: TobiraPage[],
 	selectedPage?: TobiraPage,
 	[key: string]: unknown,  // Metadata fields that are getting added later
 } = {
-	acls: [
+	policies: [
 		{
 			role: "ROLE_USER_ADMIN",
 			read: true,
@@ -153,10 +154,10 @@ export const initialFormValuesNewThemes = {
 // InitialValues of Formik form (others computed dynamically depending on responses from backend)
 export const initialFormValuesNewAcl: {
 	name: string,
-	acls: TransformedAcl[],
+	policies: TransformedAcl[],
 } = {
 	name: "",
-	acls: [],
+	policies: [],
 };
 
 // All fields for new group form that are fix and not depending on response of backend
@@ -182,6 +183,7 @@ export const initialFormValuesNewUser: {
 	password: string,
 	passwordConfirmation: string,
 	roles: Role[],
+	assignedRoles: UserRole[],
 	manageable: boolean,
 } = {
 	username: "",
@@ -190,6 +192,7 @@ export const initialFormValuesNewUser: {
 	password: "",
 	passwordConfirmation: "",
 	roles: [],
+	assignedRoles: [],
 	manageable: true,
 };
 

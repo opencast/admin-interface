@@ -1,0 +1,83 @@
+@use "../base/variables";
+
+div.table-filter {
+  display: flex;
+  float: right;
+  border: 1px solid variables.$main-border-color;
+  border-radius: 4px;
+  margin-left: 10px;
+  position: inherit;
+
+  .filters {
+    font-size: 12px;
+    line-height: normal;
+    display: flex;
+    gap: 4px;
+    border: 0;
+    border-radius: 4px;
+    background-color: variables.$off-white;
+    min-height: 23px;
+    min-width: 150px;
+    padding: 7px;
+
+    .table-filter-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      > svg {
+        font-size: 13px;
+        color: variables.$global-text-color;
+      }
+    }
+
+    input {
+      height: auto;
+      border: 1px solid variables.$main-border-color;
+      border-radius: 3px;
+      background-color: variables.$white;
+    }
+
+    .multi-value {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      margin: 0;
+
+      > button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+
+  .table-filter-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: variables.$global-text-color;
+    cursor: pointer;
+    padding: 0 8px 0 0;
+  }
+
+  .filter-settings-dd {
+    margin-left: 0px;
+    border: 0;
+    float: left;
+    height: 38px;
+
+    .filters-list {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+}
+
+.table-filter-blue-box {
+  max-width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -9,8 +9,8 @@ import { UploadOption } from "../slices/eventSlice";
  */
 
 export const getTimezoneOffset = () => {
-	let d = new Date();
-	let offset = d.getTimezoneOffset() * -1;
+	const d = new Date();
+	const offset = d.getTimezoneOffset() * -1;
 
 	return offset / 60;
 };
@@ -35,11 +35,11 @@ export const getCurrentLanguageInformation = () => {
 
 // fills an array from 00 to number of elements specified
 export const initArray = (numberOfElements: number) => {
-	let i,
-		result = [];
+	let i;
+	const result = [];
 	for (i = 0; i < numberOfElements; i++) {
 		result.push({
-			index: i,
+			index: makeTwoDigits(i),
 			value: makeTwoDigits(i),
 		});
 	}
@@ -60,7 +60,7 @@ export const makeTwoDigits = (number: number) => {
  * to [{id: id1, value: value1},{id: id2, value: value2}]
  */
 export const transformToIdValueArray = (data: {[key: string | number]: string}) => {
-	return Object.keys(data).map((key) => {
+	return Object.keys(data).map(key => {
 		return {
 			id: key,
 			value: data[key],
@@ -73,9 +73,9 @@ export const transformToIdValueArray = (data: {[key: string | number]: string}) 
  * to their corresponding boolean value. All other values stay the same.
  */
 export const parseBooleanInObject = (baseObject: {[key: string]: unknown}) => {
-	let parsedObject: {[key: string]: unknown} = {};
+	const parsedObject: {[key: string]: unknown} = {};
 
-	Object.keys(baseObject).forEach((config) => {
+	Object.keys(baseObject).forEach(config => {
 		parsedObject[config] = parseValueForBooleanStrings(baseObject[config]);
 	});
 
@@ -107,10 +107,12 @@ export const hasAccess = (role: string, userInfo: UserInfoState) => {
 // checks, if a String is proper JSON
 export const isJson = (text: string) => {
 	try {
+		// TODO: Handle JSON parsing errors
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		const json = JSON.parse(text);
 		const type = Object.prototype.toString.call(json);
 		return type === "[object Object]" || type === "[object Array]";
-	} catch (e) {
+	} catch (_e) {
 		return false;
 	}
 };
@@ -126,7 +128,7 @@ export const isJson = (text: string) => {
  */
 export const translateOverrideFallback = (asset: UploadOption, t: TFunction, suffix?: "SHORT" | "DETAIL") => {
 	let result = undefined;
-	const sub = !!suffix ? `.${suffix}` as const : "" as const;
+	const sub = suffix ? `.${suffix}` as const : "" as const;
 	const translatable = asset["title"] + sub;
 
 	if (asset[`displayOverride${sub}` as const]) {
@@ -144,4 +146,11 @@ export const translateOverrideFallback = (asset: UploadOption, t: TFunction, suf
 	}
 
 	return result;
-}
+};
+
+/**
+ * Have the browser show a warning dialog for unsaved changes
+ */
+export const confirmUnsaved = (t: TFunction) => {
+	return window.confirm(t("CONFIRMATIONS.WARNINGS.UNSAVED_CHANGES"));
+};

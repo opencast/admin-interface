@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { renderValidDate } from "../../../utils/dateUtils";
 import { Job } from "../../../slices/jobSlice";
@@ -7,7 +6,7 @@ import { Job } from "../../../slices/jobSlice";
  * This component renders the started date cells of jobs in the table view
  */
 const JobsStartedCell = ({
-	row
+	row,
 }: {
 	row: Job
 }) => {

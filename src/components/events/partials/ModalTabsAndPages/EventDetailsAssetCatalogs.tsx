@@ -1,4 +1,3 @@
-import React from "react";
 import Notifications from "../../../shared/Notifications";
 import {
 	getAssetCatalogs,
@@ -10,6 +9,7 @@ import { AssetTabHierarchy } from "../modals/EventDetails";
 import { useTranslation } from "react-i18next";
 import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
+import { LuChevronRight } from "react-icons/lu";
 
 /**
  * This component manages the catalogs sub-tab for assets tab of event details modal
@@ -27,7 +27,7 @@ const EventDetailsAssetCatalogs = ({
 
 	const openSubTab = (subTabName: AssetTabHierarchy, catalogId = "") => {
 		if (subTabName === "catalog-details") {
-			dispatch(fetchAssetCatalogDetails({eventId, catalogId})).then();
+			dispatch(fetchAssetCatalogDetails({ eventId, catalogId })).then();
 		}
 		dispatch(setModalAssetsTabHierarchy(subTabName));
 	};
@@ -41,7 +41,7 @@ const EventDetailsAssetCatalogs = ({
 				<header>
 					{
 						t(
-							"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.CAPTION"
+							"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.CAPTION",
 						) /* Catalogs */
 					}
 				</header>
@@ -55,21 +55,21 @@ const EventDetailsAssetCatalogs = ({
 								<th>
 									{
 										t(
-											"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.TYPE"
+											"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.TYPE",
 										) /* Type */
 									}
 								</th>
 								<th>
 									{
 										t(
-											"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.MIMETYPE"
+											"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.MIMETYPE",
 										) /* Mimetype */
 									}
 								</th>
 								<th>
 									{
 										t(
-											"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.TAGS"
+											"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.TAGS",
 										) /* Tags */
 									}
 								</th>
@@ -90,16 +90,17 @@ const EventDetailsAssetCatalogs = ({
 										</td>
 										<td>
 											<ButtonLikeAnchor
-												extraClassName="details-link"
+												className="details-link"
 												onClick={() =>
 													openSubTab("catalog-details", item.id)
 												}
 											>
 												{
 													t(
-														"EVENTS.EVENTS.DETAILS.ASSETS.DETAILS"
+														"EVENTS.EVENTS.DETAILS.ASSETS.DETAILS",
 													) /* Details */
 												}
+												<LuChevronRight className="details-link-icon"/>
 											</ButtonLikeAnchor>
 										</td>
 									</tr>

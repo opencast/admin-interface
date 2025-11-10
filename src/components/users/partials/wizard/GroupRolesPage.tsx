@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import WizardNavigationButtons from "../../../shared/wizard/WizardNavigationButtons";
 import SelectContainer from "../../../shared/wizard/SelectContainer";
 import { fetchRolesWithTarget } from "../../../../slices/aclSlice";
@@ -12,7 +12,7 @@ const GroupRolesPage = <T, >({
 	formik,
 	nextPage,
 	previousPage,
-	isEdit
+	isEdit,
 }: {
 	formik: FormikProps<T>,
 	nextPage?: (values: T) => void,
@@ -29,7 +29,7 @@ const GroupRolesPage = <T, >({
 			// fetch information about roles
 			setLoading(true);
 			const responseRoles = await fetchRolesWithTarget("USER");
-			let roleNames = [];
+			const roleNames = [];
 			for (let i = 0; i < responseRoles.length; i++) {
 				if (responseRoles[i].type !== "GROUP") {
 					roleNames.push({
@@ -48,7 +48,7 @@ const GroupRolesPage = <T, >({
 		<>
 			<ModalContent>
 				<div className="form-container">
-					{/*Select container for roles*/}
+					{/* Select container for roles*/}
 					{!loading && (
 						<SelectContainer
 							resource={{

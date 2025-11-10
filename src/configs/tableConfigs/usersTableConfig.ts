@@ -31,7 +31,7 @@ export const usersTableConfig: TableConfig = {
 			template: "UsersRolesCell",
 			name: "roles",
 			label: "USERS.USERS.TABLE.ROLES",
-			sortable: true,
+			sortable: false,
 		},
 		{
 			name: "provider",

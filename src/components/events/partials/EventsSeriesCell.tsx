@@ -1,11 +1,7 @@
-import React from "react";
-import { getFilters } from "../../../selectors/tableFilterSelectors";
-import { editFilterValue } from "../../../slices/tableFilterSlice";
 import { loadEventsIntoTable } from "../../../thunks/tableThunks";
-import { useAppDispatch, useAppSelector } from "../../../store";
 import { fetchEvents } from "../../../slices/eventSlice";
 import { Event } from "../../../slices/eventSlice";
-import { IconButton } from "../../shared/IconButton";
+import FilterCell from "../../shared/FilterCell";
 
 /**
  * This component renders the series cells of events in the table view
@@ -15,33 +11,19 @@ const EventsSeriesCell = ({
 }: {
 	row: Event
 }) => {
-	const dispatch = useAppDispatch();
-
-	const filterMap = useAppSelector(state => getFilters(state, "events"));
-
-	// Filter with value of current cell
-	const addFilter = async (seriesId: string) => {
-		let filter = filterMap.find(({ name }) => name === "series");
-		if (!!filter) {
-			await dispatch(editFilterValue({filterName: filter.name, value: seriesId}));
-			await dispatch(fetchEvents());
-			dispatch(loadEventsIntoTable());
-		}
-	};
-
 	return (
-		!!row.series ? (
-			// Link template for series of event
-			<IconButton
-				callback={() => row.series
-					? addFilter(row.series.id)
-					: console.error("Tried to sort by a series, but the series did not exist.")
-				}
-				iconClassname={"crosslink"}
-				tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.SERIES"}
-			>
-				{row.series.title}
-			</IconButton>
+		row.series ? (
+			<FilterCell
+				resource={"events"}
+				filterName={"series"}
+				filterItems={[{
+					filterValue: row.series.id,
+					children: row.series.title,
+					// cellTooltipText: "EVENTS.EVENTS.TABLE.TOOLTIP.SERIES", // Disabled due to performance concerns
+				}]}
+				fetchResource={fetchEvents}
+				loadResourceIntoTable={loadEventsIntoTable}
+			/>
 		)
 		: <></>
 	);

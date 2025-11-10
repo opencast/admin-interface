@@ -1,0 +1,96 @@
+name: Build » Deploy main branches
+
+on:
+  push:
+    branches:
+      - develop
+      - r/*
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  detect-repo-owner:
+    if: github.repository_owner == 'opencast'
+    runs-on: ubuntu-latest
+    outputs:
+      server: ${{ steps.test-server.outputs.server }}
+      branch: ${{ steps.branch-name.outputs.branch }}
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v5
+
+      - name: Determine the correct test server
+        id: test-server
+        run: echo "server=https://`./.github/get-release-server.sh ${{ github.ref_name }}`" >> $GITHUB_OUTPUT
+
+      - name: Determine branch name
+        id: branch-name
+        run: |
+          #Temp becomes something like r/17.x
+          export TEMP=${{ github.ref_name }}
+          #Strip the r/ prefix, giving us just 17.x.  If this is main/develop this does nothing
+          echo "branch=${TEMP#r\/}" >> $GITHUB_OUTPUT
+
+  deploy-main-branches:
+    runs-on: ubuntu-latest
+    needs: detect-repo-owner
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v5
+
+      - name: Get Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20
+
+      - name: Run npm ci
+        run: npm ci
+
+      - name: Build the app
+        run: |
+          npm run build
+        env:
+          VITE_TEST_SERVER_URL: ${{needs.detect-repo-owner.outputs.server}}
+          NODE_ENV: development
+          VITE_TEST_SERVER_AUTH: "admin:opencast"
+
+      - name: Prepare git
+        run: |
+          git config --global user.name "Admin Interface Deployment Bot"
+          git config --global user.email "cloud@opencast.org"
+
+      - name: Commit new version
+        run: |
+          # Save the current assets from the main branch
+          mv .github/assets assets_temp
+          # Update and change to the gh-pages branch
+          git fetch --unshallow origin gh-pages
+          git checkout gh-pages
+          # Update gh-pages
+          rm -rf $BRANCH
+          mv build $BRANCH
+          #Generate an index, in case anyone lands at the root of the test domain
+          echo $'<html><head><link rel=stylesheet type=text/css href=assets/index.css /></head><body><div class="head-container"><img src=assets/opencast-white.svg /></div><div class="navbar-container"></div><div class="text-container"><p>Deployment for the latest development versions of the Opencast admin interface.The branches listed here correspond to Opencast\'s own branches.</br><b>Please select a version.</b></p></div><ul>' > index.html
+          find . -mindepth 1 -maxdepth 1 -type d \
+            | grep '[0-9]*.x\|develop' \
+            | sort -r \
+            | sed 's/^\(.*\)$/<li><a href=\1>\1<\/a><\/li>/' >> index.html
+          echo '</ul></body></html>' >> index.html
+          git add $BRANCH index.html
+          git diff --staged --quiet || git commit --amend -m "Build $(date)"
+        env:
+          BRANCH: ${{needs.detect-repo-owner.outputs.branch}}
+
+      - name: update CSS and other assets
+        if: github.ref == 'refs/heads/develop'
+        run: |
+          rm -rf assets
+          mv assets_temp assets
+          git add assets
+          git diff --staged --quiet || git commit --amend -m "Build $(date)"
+
+
+      - name: Push updates
+        run: git push origin gh-pages --force

@@ -1,19 +1,28 @@
-import { PayloadAction, SerializedError, createSlice } from '@reduxjs/toolkit'
+import { PayloadAction, SerializedError, createSlice } from "@reduxjs/toolkit";
 import { TableConfig, aclsTableConfig } from "../configs/tableConfigs/aclsTableConfig";
-import axios from 'axios';
-import { getURLParams, prepareAccessPolicyRulesForPost, transformAclTemplatesResponse } from '../utils/resourceUtils';
-import { transformToIdValueArray } from '../utils/utils';
-import { NOTIFICATION_CONTEXT_ACCESS } from '../configs/modalConfig';
-import { addNotification, removeNotificationWizardAccess } from './notificationSlice';
+import axios from "axios";
+import { getURLParams, prepareAccessPolicyRulesForPost, transformAclTemplatesResponse } from "../utils/resourceUtils";
+import { transformToIdValueArray } from "../utils/utils";
+import { NOTIFICATION_CONTEXT_ACCESS } from "../configs/modalConfig";
+import { addNotification, removeNotificationWizardAccess } from "./notificationSlice";
 import { getUserInformation } from "../selectors/userInfoSelectors";
-import { AppDispatch } from '../store';
-import { createAppAsyncThunk } from '../createAsyncThunkWithTypes';
+import { AppDispatch, AppThunk, RootState } from "../store";
+import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
 import { initialFormValuesNewAcl } from "../configs/modalConfig";
-import { TransformedAcl } from './aclDetailsSlice';
+import { TransformedAcl } from "./aclDetailsSlice";
+import { fetchUsersForTemplate } from "./userSlice";
 
 /**
  * This file contains redux reducer for actions affecting the state of acls
  */
+type FetchAcls = {
+	total: AclsState["total"],
+	count: AclsState["count"],
+	limit: AclsState["limit"],
+	offset: AclsState["offset"],
+	results: AclsState["results"],
+};
+
 export type Ace = {
 	action: string,
 	allow: boolean,
@@ -29,6 +38,12 @@ export type Role = {
 	name: string,
 	organization: string,
 	type: string,
+	isSanitize: boolean,
+	user?: {
+		username: string,
+		name: string,
+		email: string,
+	}
 }
 
 export type AclResult = {
@@ -38,8 +53,15 @@ export type AclResult = {
 	organizationId: string,
 }
 
+export type AclTemplate = {
+	acl: TransformedAcl[],
+	id: number,
+	name: string,
+	organizationId: string,
+}
+
 type AclsState = {
-	status: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	status: "uninitialized" | "loading" | "succeeded" | "failed",
 	error: SerializedError | null,
 	results: AclResult[],
 	columns: TableConfig["columns"],
@@ -47,17 +69,19 @@ type AclsState = {
 	count: number,
 	offset: number,
 	limit: number,
+	aclDefaults: { [key: string]: string },
+	aclDefaultTemplate?: AclTemplate,
 };
 
 // Fill columns initially with columns defined in aclsTableConfig
-const initialColumns = aclsTableConfig.columns.map((column) => ({
+const initialColumns = aclsTableConfig.columns.map(column => ({
 	...column,
 	deactivated: false,
 }));
 
 // Initial state of acls in redux store
 const initialState: AclsState = {
-	status: 'uninitialized',
+	status: "uninitialized",
 	error: null,
 	results: [],
 	columns: initialColumns,
@@ -65,33 +89,34 @@ const initialState: AclsState = {
 	count: 0,
 	offset: 0,
 	limit: 0,
+	aclDefaults: {},
 };
 
-export const fetchAcls = createAppAsyncThunk('acls/fetchAcls', async (_, { getState }) => {
+export const fetchAcls = createAppAsyncThunk("acls/fetchAcls", async (_, { getState }) => {
 	const state = getState();
-	let params = getURLParams(state, "acls");
+	const params = getURLParams(state, "acls");
 	// Just make the async request here, and return the response.
 	// This will automatically dispatch a `pending` action first,
 	// and then `fulfilled` or `rejected` actions based on the promise.
-	const res = await axios.get("/admin-ng/acl/acls.json", { params: params });
+	const res = await axios.get<FetchAcls>("/admin-ng/acl/acls.json", { params: params });
 	return res.data;
 });
 
 // todo: unite following in one fetch method (maybe also move to own file containing all fetches regarding resources endpoint)
 // get acl templates
 export const fetchAclTemplates = async () => {
-	let data = await axios.get("/admin-ng/resources/ACL.json");
+	const data = await axios.get<{ [key: string]: string }>("/admin-ng/resources/ACL.json");
 
-	const response = await data.data;
+	const response = data.data;
 
 	return transformToIdValueArray(response);
 };
 
 // fetch additional actions that a policy allows user to perform on an event
 export const fetchAclActions = async () => {
-	let data = await axios.get("/admin-ng/resources/ACL.ACTIONS.json");
+	const data = await axios.get<{ [key: string]: string }>("/admin-ng/resources/ACL.ACTIONS.json");
 
-	const response = await data.data;
+	const response = data.data;
 
 	const actions = transformToIdValueArray(response);
 
@@ -99,41 +124,86 @@ export const fetchAclActions = async () => {
 };
 
 // fetch defaults for the access policy tab in the details views
-export const fetchAclDefaults = async () => {
-	let data = await axios.get("/admin-ng/resources/ACL.DEFAULTS.json");
+export const fetchAclDefaults = createAppAsyncThunk("acls/fetchAclDefaults", async (_, { getState }) => {
+	const state = getState();
+	const data = await axios.get<{ [key: string]: string }>("/admin-ng/resources/ACL.DEFAULTS.json");
 
-	const response = await data.data;
+	const response = data.data;
 
-	return response;
-};
+	let defaultTemplate = undefined;
+	// If the a default template id is configured and we haven't fetched the default template
+	// yet, do that now.
+	if (response["default_template"] && !state.acls.aclDefaultTemplate) {
+		const templateName = response["default_template"];
+		// fetch information about chosen template from backend
+		const template = await fetchAclTemplateByName(templateName);
+		// fetch user info
+		const users = await fetchUsersForTemplate(template.acl.map(role => role.role));
+
+		// Add user info to applicable roles
+		template.acl = template.acl.map(acl => {
+			if (users && users[acl.role]) {
+				acl.user = {
+					username: users[acl.role].username,
+					name: users[acl.role].name,
+					email: users[acl.role].email,
+				};
+			}
+
+			return acl;
+		});
+
+		defaultTemplate = template;
+	}
+
+	return { aclDefaults: response, aclDefaultTemplate: defaultTemplate };
+});
 
 // fetch all policies of an certain acl template
 export const fetchAclTemplateById = async (id: string) => {
-	let response = await axios.get(`/acl-manager/acl/${id}`);
+	const response = await axios.get<AclResult>(`/acl-manager/acl/${id}`);
 
-	let acl = response.data.acl;
+	const template = response.data;
 
-	return transformAclTemplatesResponse(acl);
+	const transformedResponse: AclTemplate = {
+		...template,
+		acl: transformAclTemplatesResponse(template.acl),
+	};
+
+	return transformedResponse;
+};
+
+export const fetchAclTemplateByName = async (name: string) => {
+	const response = await axios.get<AclResult>(`/admin-ng/acl/acl/${name}`);
+
+	const template = response.data;
+
+	const transformedResponse: AclTemplate = {
+		...template,
+		acl: transformAclTemplatesResponse(template.acl),
+	};
+
+	return transformedResponse;
 };
 
 // fetch roles for select dialogs and access policy pages
 export const fetchRolesWithTarget = async (target: string) => {
-	let params = {
+	const params = {
 		limit: -1,
 		target: target,
 	};
 
-	let response = await axios.get("/admin-ng/acl/roles.json", { params: params });
-	let data : Role[] = response.data
+	const response = await axios.get<Role[]>("/admin-ng/acl/roles.json", { params: params });
+	const data = response.data;
 
-	return await data;
+	return data;
 };
 
 // post new acl to backend
-export const postNewAcl = (values: typeof initialFormValuesNewAcl) => async (dispatch: AppDispatch) => {
-	let acls = prepareAccessPolicyRulesForPost(values.acls);
+export const postNewAcl = (values: typeof initialFormValuesNewAcl): AppThunk => dispatch => {
+	const acls = prepareAccessPolicyRulesForPost(values.policies);
 
-	let data = new URLSearchParams();
+	const data = new URLSearchParams();
 	data.append("name", values.name);
 	data.append("acl", JSON.stringify(acls));
 
@@ -143,38 +213,39 @@ export const postNewAcl = (values: typeof initialFormValuesNewAcl) => async (dis
 				"Content-Type": "application/x-www-form-urlencoded",
 			},
 		})
-		.then((response) => {
+		.then(response => {
 			console.info(response);
-			dispatch(addNotification({type: "success", key: "ACL_ADDED"}));
+			dispatch(addNotification({ type: "success", key: "ACL_ADDED" }));
 		})
-		.catch((response) => {
+		.catch(response => {
 			console.error(response);
-			dispatch(addNotification({type: "error", key: "ACL_NOT_SAVED"}));
-		});
-};
-// delete acl with provided id
-export const deleteAcl = (id: number) => async (dispatch: AppDispatch) => {
-	axios
-		.delete(`/admin-ng/acl/${id}`)
-		.then((res) => {
-			console.info(res);
-			//add success notification
-			dispatch(addNotification({type: "success", key: "ACL_DELETED"}));
-		})
-		.catch((res) => {
-			console.error(res);
-			// add error notification
-			dispatch(addNotification({type: "error", key: "ACL_NOT_DELETED"}));
+			dispatch(addNotification({ type: "error", key: "ACL_NOT_SAVED" }));
 		});
 };
 
-// @ts-expect-error TS(7006):
-export const checkAcls = (acls: TransformedAcl[]) => async (dispatch: AppDispatch, getState) => {
+// delete acl with provided id
+export const deleteAcl = (id: number): AppThunk => dispatch => {
+	axios
+		.delete(`/admin-ng/acl/${id}`)
+		.then(res => {
+			console.info(res);
+			// add success notification
+			dispatch(addNotification({ type: "success", key: "ACL_DELETED" }));
+		})
+		.catch(res => {
+			console.error(res);
+			// add error notification
+			dispatch(addNotification({ type: "error", key: "ACL_NOT_DELETED" }));
+		});
+};
+
+
+export const checkAcls = (acls: TransformedAcl[]) => (dispatch: AppDispatch, getState: () => RootState) => {
 	// Remove old notifications of context event-access
 	// Helps to prevent multiple notifications for same problem
 	dispatch(removeNotificationWizardAccess());
 
-	let user = getUserInformation(getState());
+	const user = getUserInformation(getState());
 
 	let check = true;
 	let bothRights = false;
@@ -202,9 +273,8 @@ export const checkAcls = (acls: TransformedAcl[]) => async (dispatch: AppDispatc
 				type: "warning",
 				key: "INVALID_ACL_RULES",
 				duration: -1,
-				parameter: undefined,
-				context: NOTIFICATION_CONTEXT_ACCESS
-			})
+				context: NOTIFICATION_CONTEXT_ACCESS,
+			}),
 		);
 	}
 
@@ -214,9 +284,8 @@ export const checkAcls = (acls: TransformedAcl[]) => async (dispatch: AppDispatc
 				type: "warning",
 				key: "MISSING_ACL_RULES",
 				duration: -1,
-				parameter: undefined,
-				context: NOTIFICATION_CONTEXT_ACCESS
-			})
+				context: NOTIFICATION_CONTEXT_ACCESS,
+			}),
 		);
 		check = false;
 	}
@@ -225,7 +294,7 @@ export const checkAcls = (acls: TransformedAcl[]) => async (dispatch: AppDispatc
 };
 
 const aclsSlice = createSlice({
-	name: 'acls',
+	name: "acls",
 	initialState,
 	reducers: {
 		setAclColumns(state, action: PayloadAction<
@@ -237,19 +306,13 @@ const aclsSlice = createSlice({
 	// These are used for thunks
 	extraReducers: builder => {
 		builder
-			.addCase(fetchAcls.pending, (state) => {
-				state.status = 'loading';
+			.addCase(fetchAcls.pending, state => {
+				state.status = "loading";
 			})
 			// Pass the generated action creators to `.addCase()`
-			.addCase(fetchAcls.fulfilled, (state, action: PayloadAction<{
-				total: AclsState["total"],
-				count: AclsState["count"],
-				limit: AclsState["limit"],
-				offset: AclsState["offset"],
-				results: AclsState["results"],
-			}>) => {
+			.addCase(fetchAcls.fulfilled, (state, action: PayloadAction<FetchAcls>) => {
 				// Same "mutating" update syntax thanks to Immer
-				state.status = 'succeeded';
+				state.status = "succeeded";
 				const acls = action.payload;
 				state.total = acls.total;
 				state.count = acls.count;
@@ -258,11 +321,18 @@ const aclsSlice = createSlice({
 				state.results = acls.results;
 			})
 			.addCase(fetchAcls.rejected, (state, action) => {
-				state.status = 'failed';
+				state.status = "failed";
 				state.results = [];
 				state.error = action.error;
+			})
+			.addCase(fetchAclDefaults.fulfilled, (state, action: PayloadAction<{
+				aclDefaults: AclsState["aclDefaults"],
+				aclDefaultTemplate?: AclsState["aclDefaultTemplate"],
+			}>) => {
+				state.aclDefaults = action.payload.aclDefaults;
+				state.aclDefaultTemplate = action.payload.aclDefaultTemplate;
 			});
-	}
+	},
 });
 
 export const { setAclColumns } = aclsSlice.actions;

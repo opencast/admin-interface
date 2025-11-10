@@ -1,4 +1,3 @@
-import React from "react";
 import Notifications from "../../../shared/Notifications";
 import {
 	getAssetAttachmentDetails,
@@ -8,6 +7,7 @@ import { humanReadableBytesFilter } from "../../../../utils/eventDetailsUtils";
 import { useAppSelector } from "../../../../store";
 import { useTranslation } from "react-i18next";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
+import { LuExternalLink } from "react-icons/lu";
 
 /**
  * This component manages the attachment details sub-tab for assets tab of event details modal
@@ -26,7 +26,7 @@ const EventDetailsAssetAttachmentDetails = () => {
 				<header>
 					{
 						t(
-							"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.DETAILS.CAPTION"
+							"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.DETAILS.CAPTION",
 						) /* Attachment Details */
 					}
 				</header>
@@ -38,7 +38,7 @@ const EventDetailsAssetAttachmentDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.DETAILS.ID"
+												"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.DETAILS.ID",
 											) /* Id */
 										}
 									</td>
@@ -48,7 +48,7 @@ const EventDetailsAssetAttachmentDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.DETAILS.TYPE"
+												"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.DETAILS.TYPE",
 											) /* Type */
 										}
 									</td>
@@ -58,7 +58,7 @@ const EventDetailsAssetAttachmentDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.DETAILS.MIMETYPE"
+												"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.DETAILS.MIMETYPE",
 											) /* Mimetype */
 										}
 									</td>
@@ -69,7 +69,7 @@ const EventDetailsAssetAttachmentDetails = () => {
 										<td>
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.DETAILS.SIZE"
+													"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.DETAILS.SIZE",
 												) /* Size */
 											}
 										</td>
@@ -80,7 +80,7 @@ const EventDetailsAssetAttachmentDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.DETAILS.CHECKSUM"
+												"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.DETAILS.CHECKSUM",
 											) /* Checksum */
 										}
 									</td>
@@ -90,7 +90,7 @@ const EventDetailsAssetAttachmentDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.DETAILS.REFERENCE"
+												"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.DETAILS.REFERENCE",
 											) /* Reference */
 										}
 									</td>
@@ -100,7 +100,7 @@ const EventDetailsAssetAttachmentDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.DETAILS.TAGS"
+												"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.DETAILS.TAGS",
 											) /* Tags */
 										}
 									</td>
@@ -114,16 +114,18 @@ const EventDetailsAssetAttachmentDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.DETAILS.URL"
+												"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.DETAILS.URL",
 											) /* Link */
 										}
 									</td>
 									<td>
 										<a
-											className="fa fa-external-link"
 											href={attachment.url}
 											target="_blank" rel="noreferrer"
-										/>
+											className="action-cell-button"
+										>
+											<LuExternalLink />
+										</a>
 									</td>
 								</tr>
 							</tbody>

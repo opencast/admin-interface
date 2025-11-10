@@ -1,14 +1,14 @@
 # This workflow runs on any change made to a pull-request and aims to verify
 # that the correct label is present.
 
-name: Check proper label usage
+name: Check » Proper label usage
 
 on:
   pull_request_target:
     types: [opened, labeled, unlabeled, synchronize]
 
 jobs:
-  labels:
+  check-labels:
     runs-on: ubuntu-latest
     steps:
       # Ensure that one of the required labels is present and none of the undesired is absent

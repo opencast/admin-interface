@@ -1,4 +1,4 @@
-name: Merge conflict check
+name: Check » Merge conflicts
 on:
   push:
   pull_request_target:
@@ -7,7 +7,7 @@ on:
       - synchronize
 
 jobs:
-  main:
+  check-merge-conflicts:
     runs-on: ubuntu-latest
     steps:
       - name: Check for dirty pull requests

@@ -28,6 +28,7 @@ export const themesTableConfig: TableConfig = {
 			sortable: true,
 		},
 		{
+			template: "ThemesDateTimeCell",
 			name: "creation_date",
 			label: "CONFIGURATION.THEMES.TABLE.CREATED",
 			sortable: true,

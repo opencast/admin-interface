@@ -1,64 +1,68 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import cn from "classnames";
 import { Step, StepButton, StepLabel, Stepper } from "@mui/material";
 import {
 	isSummaryReachable,
-	stepLabelStyle,
-	stepperStyle,
 } from "../../../utils/wizardUtils";
 import CustomStepIcon from "./CustomStepIcon";
 import { checkAcls } from "../../../slices/aclSlice";
 import { useAppDispatch } from "../../../store";
-import { FormikProps } from "formik/dist/types";
 import { ParseKeys } from "i18next";
+import { TransformedAcl } from "../../../slices/aclDetailsSlice";
+
+export type WizardStep = {
+	translation: ParseKeys,
+	name: string,
+}
 
 /**
  * This components renders the stepper navigation of new resource wizards
  */
 const WizardStepper = ({
 	steps,
-	page,
-	setPage,
-	formik,
+	activePageIndex,
+	setActivePage,
 	completed,
 	setCompleted,
-	hasAccessPage = false,
+	acls,
+	isValid = false,
 }: {
-	steps: {
-		name: string,
-		translation: ParseKeys,
-		hidden?: boolean,
-	}[],
-	page: number,
-	setPage: (num: number) => void,
-	formik: FormikProps<any>,
+	steps: WizardStep[],
+	activePageIndex: number,
+	setActivePage: (num: number) => void,
 	completed: Record<number, boolean>,
 	setCompleted: (rec: Record<number, boolean>) => void,
-	hasAccessPage?: boolean,
+	acls?: TransformedAcl[], // If there is an acl page
+	isValid: boolean,
 }) => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
-	const handleOnClick = async (key: number) => {
+	const handleOnClick = (key: number) => {
 		if (isSummaryReachable(key, steps, completed)) {
-			if (hasAccessPage) {
-				let check = await dispatch(checkAcls(formik.values.acls));
+			if (acls) {
+				const check = dispatch(checkAcls(acls));
 				if (!check) {
 					return;
 				}
 			}
 
-			if (formik.isValid) {
-				let updatedCompleted = completed;
-				updatedCompleted[page] = true;
+			if (isValid) {
+				const updatedCompleted = completed;
+				updatedCompleted[activePageIndex] = true;
 				setCompleted(updatedCompleted);
-				setPage(key);
+				// If all previous pages have been completed
+				if (Object.values(updatedCompleted)
+						.filter((_, index) => index > key)
+						.every(value => value)
+				) {
+					setActivePage(key);
+				}
 			}
 
-			if (!formik.isValid) {
+			if (!isValid) {
 				if (completed[key]) {
-					setPage(key);
+					setActivePage(key);
 				}
 			}
 		}
@@ -66,23 +70,20 @@ const WizardStepper = ({
 
 	return (
 		<Stepper
-			activeStep={page}
+			activeStep={activePageIndex}
 			nonLinear
 			alternativeLabel
 			connector={<></>}
-			sx={stepperStyle.root}
 			className={cn("step-by-step")}
 		>
 			{steps.map((label, key) =>
-				!label.hidden ? (
-					<Step key={label.translation} completed={completed[key]}>
-						<StepButton onClick={() => handleOnClick(key)}>
-							<StepLabel sx={stepLabelStyle.root} StepIconComponent={CustomStepIcon}>
-								{t(label.translation)}
-							</StepLabel>
-						</StepButton>
-					</Step>
-				) : <React.Fragment key={label.translation} />
+				<Step key={label.translation} completed={completed[key]}>
+					<StepButton onClick={() => handleOnClick(key)}>
+						<StepLabel StepIconComponent={CustomStepIcon}>
+							{t(label.translation)}
+						</StepLabel>
+					</StepButton>
+				</Step>,
 			)}
 		</Stepper>
 	);

@@ -7,6 +7,7 @@ import { useAppSelector } from "../../../../store";
 import { FormikProps } from "formik";
 import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
+import { LuCircleX } from "react-icons/lu";
 
 /**
  * This component renders the asset upload page of the new event wizard
@@ -14,13 +15,13 @@ import ModalContentTable from "../../../shared/modals/ModalContentTable";
  */
 interface RequiredFormProps {
 	sourceMode: string,
-	[key: string]: any,
+	[key: string]: unknown,
 }
 
 const NewAssetUploadPage = <T extends RequiredFormProps>({
 	formik,
 	nextPage,
-	previousPage
+	previousPage,
 }: {
 	formik: FormikProps<T>,
 	nextPage: (values: T) => void,
@@ -30,12 +31,6 @@ const NewAssetUploadPage = <T extends RequiredFormProps>({
 
 	const uploadAssetOptions = useAppSelector(state => getAssetUploadOptions(state));
 
-	// if user not chose upload in step before, the skip this step
-	if (formik.values.sourceMode !== "UPLOAD") {
-		nextPage(formik.values);
-		return null;
-	}
-
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>, assetId: string) => {
 		if (e.target.files) {
 			if (e.target.files.length === 0) {
@@ -44,7 +39,7 @@ const NewAssetUploadPage = <T extends RequiredFormProps>({
 				formik.setFieldValue(assetId, e.target.files[0]);
 			}
 		} else {
-			console.warn("File event did not contain any files")
+			console.warn("File event did not contain any files");
 		}
 	};
 
@@ -75,26 +70,34 @@ const NewAssetUploadPage = <T extends RequiredFormProps>({
 														id={asset.id}
 														className="blue-btn file-select-btn"
 														accept={asset.accept}
-														onChange={(e) => handleChange(e, asset.id)}
+														onChange={e => handleChange(e, asset.id)}
 														type="file"
 														tabIndex={0}
 													/>
-													{formik.values[asset.id] && (
-														<span className="ui-helper">
-															{formik.values[asset.id].name.substr(0, 50)}
-														</span>
-													)}
+													{(() => {
+														const val = formik.values[asset.id];
+														if (val instanceof File) {
+															return (
+																<span className="ui-helper">
+																	{val.name.substring(0, 50)}
+																</span>
+															);
+														}
+														return null;
+													})()}
 												</div>
 											</td>
-											{/*Button to remove asset*/}
-											<td className="fit">
+											{/* Button to remove asset*/}
+											<td>
 												<ButtonLikeAnchor
-													extraClassName="remove"
+													className="action-cell-button remove"
 													onClick={() => {
 														formik.setFieldValue(asset.id, null);
 														(document.getElementById(asset.id) as HTMLInputElement).value = "";
 													}}
-												/>
+												>
+													<LuCircleX />
+												</ButtonLikeAnchor>
 											</td>
 										</tr>
 									))

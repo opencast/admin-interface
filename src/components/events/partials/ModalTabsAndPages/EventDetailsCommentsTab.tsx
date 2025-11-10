@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
 	getComments,
 	getCommentReasons,
@@ -24,6 +24,8 @@ import { useTranslation } from "react-i18next";
 import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
 import { ParseKeys } from "i18next";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
+import BaseButton from "../../../shared/BaseButton";
+import { LuCircleX, LuClock9 } from "react-icons/lu";
 
 /**
  * This component manages the comment tab of the event details modal
@@ -60,7 +62,7 @@ const EventDetailsCommentsTab = ({
 	const user = useAppSelector(state => getUserInformation(state));
 
 	const saveComment = (commentText: string, commentReason: string) => {
-		dispatch(saveNewComment({eventId, commentText, commentReason})).then((successful) => {
+		dispatch(saveNewComment({ eventId, commentText, commentReason })).then(successful => {
 			if (successful) {
 				dispatch(fetchComments(eventId));
 				setNewCommentText("");
@@ -84,18 +86,18 @@ const EventDetailsCommentsTab = ({
 	};
 
 	const saveReply = (originalComment: Comment, reply: string, isResolved: boolean) => {
-		dispatch(saveNewCommentReply({eventId, commentId: originalComment.id, replyText: reply, commentResolved: isResolved})).then(
-			(success) => {
+		dispatch(saveNewCommentReply({ eventId, commentId: originalComment.id, replyText: reply, commentResolved: isResolved })).then(
+			success => {
 				if (success) {
 					dispatch(fetchComments(eventId));
 					exitReplyMode();
 				}
-			}
+			},
 		);
 	};
 
 	const deleteComment = (comment: Comment) => {
-		dispatch(deleteOneComment({eventId, commentId: comment.id})).then((success) => {
+		dispatch(deleteOneComment({ eventId, commentId: comment.id })).then(success => {
 			if (success) {
 				dispatch(fetchComments(eventId));
 			}
@@ -103,7 +105,7 @@ const EventDetailsCommentsTab = ({
 	};
 
 	const deleteReply = (comment: Comment, reply: CommentReply) => {
-		dispatch(deleteCommentReply({eventId, commentId: comment.id, replyId: reply.id})).then((success) => {
+		dispatch(deleteCommentReply({ eventId, commentId: comment.id, replyId: reply.id })).then(success => {
 			if (success) {
 				dispatch(fetchComments(eventId));
 			}
@@ -133,6 +135,7 @@ const EventDetailsCommentsTab = ({
 
 									{/* details about the comment */}
 									<div className="date">
+										<LuClock9 className="dateIcon"/>
 										{t("dateFormats.dateTime.short", {
 											dateTime: renderValidDate(comment.creationDate),
 										}) || ""}
@@ -151,24 +154,24 @@ const EventDetailsCommentsTab = ({
 									{/* links with performable actions for the comment */}
 									{hasAccess(
 										"ROLE_UI_EVENTS_DETAILS_COMMENTS_DELETE",
-										user
+										user,
 									) && (
 										<ButtonLikeAnchor
 											onClick={() => deleteComment(comment)}
-											extraClassName="delete"
+											className="delete"
 										>
 											{t("EVENTS.EVENTS.DETAILS.COMMENTS.DELETE")}
 										</ButtonLikeAnchor>
 									)}
 									{hasAccess(
 										"ROLE_UI_EVENTS_DETAILS_COMMENTS_REPLY",
-										user
+										user,
 									) && (
 										<ButtonLikeAnchor
 											onClick={
 												() => replyTo(comment, key) /* enters reply mode */
 											}
-											extraClassName="reply"
+											className="reply"
 										>
 											{t("EVENTS.EVENTS.DETAILS.COMMENTS.REPLY")}
 										</ButtonLikeAnchor>
@@ -205,15 +208,15 @@ const EventDetailsCommentsTab = ({
 												{/* link for deleting the reply */}
 												{hasAccess(
 													"ROLE_UI_EVENTS_DETAILS_COMMENTS_DELETE",
-													user
+													user,
 												) && (
 													<ButtonLikeAnchor
 														onClick={() =>
 															deleteReply(comment, reply)
 														}
-														extraClassName="delete"
+														className="delete"
 													>
-														<i className="fa fa-times-circle" />
+														<LuCircleX />
 														{t("EVENTS.EVENTS.DETAILS.COMMENTS.DELETE")}
 													</ButtonLikeAnchor>
 												)}
@@ -234,11 +237,11 @@ const EventDetailsCommentsTab = ({
 								{/* text field */}
 								<textarea
 									value={newCommentText}
-									onChange={(comment) =>
+									onChange={comment =>
 										setNewCommentText(comment.target.value)
 									}
 									placeholder={t(
-										"EVENTS.EVENTS.DETAILS.COMMENTS.PLACEHOLDER"
+										"EVENTS.EVENTS.DETAILS.COMMENTS.PLACEHOLDER",
 									)}
 								></textarea>
 
@@ -249,21 +252,30 @@ const EventDetailsCommentsTab = ({
 										text={t(commentReason as ParseKeys)}
 										options={Object.entries(commentReasons).map(([key, value]) => ({ label: value, value: key }))}
 										required={true}
-										handleChange={(element) => {
+										handleChange={element => {
 											if (element) {
-												setCommentReason(element.value)
+												setCommentReason(element.value);
 											}
 										}}
 										placeholder={t(
-											"EVENTS.EVENTS.DETAILS.COMMENTS.SELECTPLACEHOLDER"
+											"EVENTS.EVENTS.DETAILS.COMMENTS.SELECTPLACEHOLDER",
 										)}
-										customCSS={{width: 200, optionPaddingTop: 5, optionLineHeight: "105%"}}
+										customCSS={{ width: 200, optionPaddingTop: 5, optionLineHeight: "105%" }}
 									/>
 								</div>
 
 								{/* submit button for comment (only active, if text has been written and a reason has been selected) */}
-								<button
+								<BaseButton
 									disabled={
+										!!(
+											!newCommentText.length ||
+											newCommentText.length <= 0 ||
+											!commentReason.length ||
+											commentReason.length <= 0 ||
+											isSavingComment
+										)
+									}
+									aria-disabled={
 										!!(
 											!newCommentText.length ||
 											newCommentText.length <= 0 ||
@@ -284,7 +296,7 @@ const EventDetailsCommentsTab = ({
 									onClick={() => saveComment(newCommentText, commentReason)}
 								>
 									{t("SUBMIT") /* Submit */}
-								</button>
+								</BaseButton>
 							</form>
 						))
 				}
@@ -296,7 +308,7 @@ const EventDetailsCommentsTab = ({
 							{/* text field */}
 							<textarea
 								value={commentReplyText}
-								onChange={(reply) =>
+								onChange={reply =>
 									setCommentReplyText(reply.target.value)
 								}
 								placeholder={
@@ -309,7 +321,7 @@ const EventDetailsCommentsTab = ({
 							{/* 'resolved' checkbox */}
 							{hasAccess(
 								"ROLE_UI_EVENTS_DETAILS_COMMENTS_RESOLVE",
-								user
+								user,
 							) && (
 								<>
 									<div className="resolved-checkbox">
@@ -324,7 +336,7 @@ const EventDetailsCommentsTab = ({
 										<label>
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.COMMENTS.RESOLVED"
+													"EVENTS.EVENTS.DETAILS.COMMENTS.RESOLVED",
 												) /* Resolved */
 											}
 										</label>
@@ -333,16 +345,16 @@ const EventDetailsCommentsTab = ({
 							)}
 
 							{/* cancel button (exits reply mode) */}
-							<button className="cancel" onClick={() => exitReplyMode()}>
+							<BaseButton className="cancel" onClick={() => exitReplyMode()}>
 								{
 									t(
-										"EVENTS.EVENTS.DETAILS.COMMENTS.CANCEL_REPLY"
+										"EVENTS.EVENTS.DETAILS.COMMENTS.CANCEL_REPLY",
 									) /* Cancel */
 								}
-							</button>
+							</BaseButton>
 
 							{/* submit button for comment reply (only active, if text has been written) */}
-							<button
+							<BaseButton
 								disabled={
 									!!(
 										!commentReplyText.length ||
@@ -362,13 +374,13 @@ const EventDetailsCommentsTab = ({
 										saveReply(
 											originalComment,
 											commentReplyText,
-											commentReplyIsResolved
-										)
+											commentReplyIsResolved,
+										);
 									}
 								}}
 							>
 								{t("EVENTS.EVENTS.DETAILS.COMMENTS.REPLY") /* Reply */}
-							</button>
+							</BaseButton>
 						</form>
 					)
 				}

@@ -1,29 +1,31 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
-import { User } from "../../../slices/userSlice";
+import { fetchUsers, User } from "../../../slices/userSlice";
+import MultiValueCell from "../../shared/MultiValueCell";
+import { loadUsersIntoTable } from "../../../thunks/tableThunks";
 
 /**
  * This component renders the roles cells of users in the table view
  */
 const UsersRolesCell = ({
-	row
+	row,
 }: {
 	row: User
 }) => {
 	const { t } = useTranslation();
 
 	const getRoleString = () => {
-		let displayRoles = [];
+		const displayRoles = [];
+		const squashedRoles = [];
 		let roleCountUI = 0;
 		let roleCountAPI = 0;
 		let roleCountCaptureAgent = 0;
 
 		for (const role of row.roles) {
-			if (role.name.startsWith('ROLE_UI')) {
+			if (role.name.startsWith("ROLE_UI")) {
 				roleCountUI++;
-			} else if (role.name.startsWith('ROLE_API')) {
+			} else if (role.name.startsWith("ROLE_API")) {
 				roleCountAPI++;
-			} else if (role.name.startsWith('ROLE_CAPTURE_AGENT')) {
+			} else if (role.name.startsWith("ROLE_CAPTURE_AGENT")) {
 				roleCountCaptureAgent++;
 			} else {
 				displayRoles.push(role.name);
@@ -31,22 +33,37 @@ const UsersRolesCell = ({
 		}
 
 		if (roleCountUI > 0) {
-      const desc = t('USERS.USERS.TABLE.COLLAPSED.UI');
-			displayRoles.push(`${roleCountUI} ${desc}`);
+      const desc = t("USERS.USERS.TABLE.COLLAPSED.UI");
+			squashedRoles.push(`${roleCountUI} ${desc}`);
 		}
 		if (roleCountAPI > 0) {
-      const desc = t('USERS.USERS.TABLE.COLLAPSED.API');
-			displayRoles.push(`${roleCountAPI} ${desc}`);
+      const desc = t("USERS.USERS.TABLE.COLLAPSED.API");
+			squashedRoles.push(`${roleCountAPI} ${desc}`);
 		}
 		if (roleCountCaptureAgent > 0) {
-      const desc = t('USERS.USERS.TABLE.COLLAPSED.CAPTURE_AGENT');
-			displayRoles.push(`${roleCountCaptureAgent} ${desc}`);
+      const desc = t("USERS.USERS.TABLE.COLLAPSED.CAPTURE_AGENT");
+			squashedRoles.push(`${roleCountCaptureAgent} ${desc}`);
 		}
 
-		return displayRoles.join(', ');
+		return { displayRoles, squashedRoles };
 	};
 
-	return <span>{getRoleString()}</span>;
+	const { displayRoles, squashedRoles } = getRoleString();
+
+	return (
+		<>
+			<MultiValueCell
+				resource="users"
+				values={displayRoles}
+				filterName="Role"
+				fetchResource={fetchUsers}
+				loadResourceIntoTable={loadUsersIntoTable}
+				tooltipText="USERS.USERS.TABLE.TOOLTIP.ROLES"
+			/>
+			{ displayRoles.length > 0 && squashedRoles.length > 0 && <span>, </span> }
+			<span>{squashedRoles.join(", ")}</span>
+		</>
+	);
 };
 
 export default UsersRolesCell;

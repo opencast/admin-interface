@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { getFilters, getStats } from "../../selectors/tableFilterSelectors";
 import {
@@ -13,6 +13,7 @@ import { loadEventsIntoTable } from "../../thunks/tableThunks";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { fetchEvents } from "../../slices/eventSlice";
 import { ParseKeys } from "i18next";
+import BaseButton from "./BaseButton";
 
 /**
  * This component renders the status bar of the event view and filters depending on these
@@ -28,17 +29,17 @@ const Stats = () => {
 	const showStatsFilter = async (stats: StatsType) => {
 		dispatch(resetFilterValues());
 		let filterValue;
-		await stats.filters.forEach((f) => {
+		stats.filters.forEach(f => {
 			if (f.name.toLowerCase() === "textfilter") {
-				dispatch(editTextFilter(f.value));
+				dispatch(editTextFilter({ text: f.value, resource: "events" }));
 				return;
 			} else {
-				dispatch(removeTextFilter());
+				dispatch(removeTextFilter("events"));
 			}
-			let filter = filterMap.find(({ name }) => name === f.name);
+			const filter = filterMap.find(({ name }) => name === f.name);
 			filterValue = f.value;
-			if (!!filter) {
-				dispatch(editFilterValue({filterName: filter.name, value: filterValue}));
+			if (filter) {
+				dispatch(editFilterValue({ filterName: filter.name, value: filterValue, resource: "events" }));
 			}
 		});
 		await dispatch(fetchEvents());
@@ -54,7 +55,7 @@ const Stats = () => {
 		// Load stats on mount
 		loadStats();
 
-		let fetchEventsInterval = setInterval(() => loadStats(), 5000);
+		const fetchEventsInterval = setInterval(() => loadStats(), 5000);
 
 		return () => clearInterval(fetchEventsInterval);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -66,11 +67,17 @@ const Stats = () => {
 				{/* Show one counter for each status */}
 				{stats.map((st, key) => (
 					<div className="col" key={key}>
-						<button className="stat" onClick={() => showStatsFilter(st)}>
-							<h1>{st.count}</h1>
+						<BaseButton
+							className="stat"
+							tooltipText={"DASHBOARD.BUTTON_TOOLTIP"}
+							tooltipParams={{ filterName: t(st.description as ParseKeys) }}
+							aria-label={t("DASHBOARD.BUTTON_TOOLTIP", { filterName: t(st.description as ParseKeys) })}
+							onClick={() => showStatsFilter(st)}
+						>
+							<div>{st.count}</div>
 							{/* Show the description of the status, if defined,
 								else show name of filter and its value*/}
-							{!!st.description ? (
+							{st.description ? (
 								<span>{t(st.description as ParseKeys)}</span>
 							) : (
 								st.filters.map((filter, key) => (
@@ -79,7 +86,7 @@ const Stats = () => {
 									</span>
 								))
 							)}
-						</button>
+						</BaseButton>
 					</div>
 				))}
 			</div>

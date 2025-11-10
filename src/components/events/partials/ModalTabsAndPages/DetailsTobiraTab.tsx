@@ -12,10 +12,11 @@ import NewTobiraPage, { TobiraFormProps } from "./NewTobiraPage";
 import { fetchSeriesDetailsTobira, removeSeriesTobiraPath, setTobiraTabHierarchy, TobiraData, updateSeriesTobiraPath } from "../../../../slices/seriesDetailsSlice";
 import { fetchSeriesDetailsTobiraNew, TobiraPage } from "../../../../slices/seriesSlice";
 import ConfirmModal from "../../../shared/ConfirmModal";
-import { Tooltip } from "../../../shared/Tooltip";
 import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
 import { ModalHandle } from "../../../shared/modals/Modal";
 import { fetchEventDetailsTobira } from "../../../../slices/eventDetailsSlice";
+import BaseButton from "../../../shared/BaseButton";
+import { LuCircleX, LuCopy, LuSquarePen } from "react-icons/lu";
 
 
 export type TobiraTabHierarchy = "main" | "edit-path";
@@ -50,16 +51,16 @@ const DetailsTobiraTab = ({ kind, id }: DetailsTobiraTabProps) => {
 
 	const tobiraData = useAppSelector(state => kind === "series"
 		? getSeriesDetailsTobiraData(state)
-		: getEventDetailsTobiraData(state)
+		: getEventDetailsTobiraData(state),
 	);
 	const error = useAppSelector(state => kind === "series"
 		? getSeriesDetailsTobiraDataError(state)
-		: getEventDetailsTobiraDataError(state)
+		: getEventDetailsTobiraDataError(state),
 	);
 
 	const i18nKey = kind === "series" ? "SERIES" : "EVENTS";
 	const prefix = kind === "series" ? "s" : "v";
-	const directTobiraLink = tobiraData.baseURL + `/!${prefix}/:` + id;
+	const directTobiraLink = tobiraData.baseURL + `/!${prefix}/` + (tobiraData.id.length > 2 ? tobiraData.id.substring(2) : `:${id}`);
 
 	const getBreadcrumbs = (currentPage: TobiraPage) => {
 		const homepage = {
@@ -72,7 +73,7 @@ const DetailsTobiraTab = ({ kind, id }: DetailsTobiraTabProps) => {
 		};
 
 		return [homepage, ...currentPage.ancestors];
-	}
+	};
 
 	const copyTobiraDirectLink = () => {
 		navigator.clipboard.writeText(directTobiraLink).then(function () {
@@ -80,7 +81,6 @@ const DetailsTobiraTab = ({ kind, id }: DetailsTobiraTabProps) => {
 				type: "info",
 				key: "TOBIRA_COPIED_DIRECT_LINK",
 				duration: 3,
-				parameter: undefined,
 				context: NOTIFICATION_CONTEXT_TOBIRA,
 			}));
 		}, function () {
@@ -88,11 +88,10 @@ const DetailsTobiraTab = ({ kind, id }: DetailsTobiraTabProps) => {
 				type: "error",
 				key: "TOBIRA_FAILED_COPYING_DIRECT_LINK",
 				duration: 3,
-				parameter: undefined,
 				context: NOTIFICATION_CONTEXT_TOBIRA,
 			}));
 		});
-	}
+	};
 
 	const handleSubmit = async (values: TobiraFormProps) => {
 		await dispatch(updateSeriesTobiraPath({
@@ -112,11 +111,11 @@ const DetailsTobiraTab = ({ kind, id }: DetailsTobiraTabProps) => {
 		await dispatch(removeSeriesTobiraPath({
 			seriesId: id,
 			currentPath: hostPage.path,
-		})).then(() => dispatch(fetchSeriesDetailsTobira(id)))
-	}
+		})).then(() => dispatch(fetchSeriesDetailsTobira(id)));
+	};
 
 	const openSubTab = async (tabType: TobiraTabHierarchy, currentPage?: TobiraPage) => {
-		if (!!currentPage) {
+		if (currentPage) {
 			const breadcrumbs = getBreadcrumbs(currentPage);
 			// Breadcrumbs always include at least the homepage, so the length is at least 1.
 			const hostPage = breadcrumbs[breadcrumbs.length - 1];
@@ -150,17 +149,17 @@ const DetailsTobiraTab = ({ kind, id }: DetailsTobiraTabProps) => {
 						<a href={directTobiraLink}>
 							{t(`EVENTS.${i18nKey}.DETAILS.TOBIRA.DIRECT_LINK`)}
 						</a>
-						<button
+						<BaseButton
 							className="tobira-copy-direct-link"
 							onClick={() => copyTobiraDirectLink()}
 							aria-label={t(`EVENTS.${i18nKey}.DETAILS.TOBIRA.COPY_DIRECT_LINK`)}
 						>
 							<i
 								aria-hidden="true"
-								className="fa fa-copy"
 								title={t(`EVENTS.${i18nKey}.DETAILS.TOBIRA.COPY_DIRECT_LINK`)}
 							/>
-						</button>
+							<LuCopy />
+						</BaseButton>
 					</div>
 					{kind === "series" && <p className="tab-description">
 						{t("EVENTS.SERIES.DETAILS.TOBIRA.DESCRIPTION")}
@@ -193,7 +192,7 @@ const DetailsTobiraTab = ({ kind, id }: DetailsTobiraTabProps) => {
 			</Formik>
 		)}
 	</>;
-}
+};
 
 type TobiraTableProps = {
 	tobiraData: TobiraData;
@@ -205,6 +204,7 @@ type TobiraTableProps = {
 const TobiraTable = ({ tobiraData, i18nKey, openSubTab, handleDelete }: TobiraTableProps) => {
 	const { t } = useTranslation();
 	const deleteConfirmationModalRef = useRef<ModalHandle>(null);
+	const prefix = i18nKey === "SERIES" ? "s" : "v";
 
 	return <div className="obj">
 		<header>{t(`EVENTS.${i18nKey}.DETAILS.TOBIRA.PAGES`)}</header>
@@ -213,19 +213,21 @@ const TobiraTable = ({ tobiraData, i18nKey, openSubTab, handleDelete }: TobiraTa
 				{tobiraData.hostPages.length === 0 && <tr>
 					<td className="tobira-not-mounted">
 						{t(`EVENTS.${i18nKey}.DETAILS.TOBIRA.NOT_MOUNTED`)}
-						{i18nKey === "SERIES" && <Tooltip title={t("EVENTS.SERIES.DETAILS.TOBIRA.MOUNT_SERIES")}>
-							<ButtonLikeAnchor
-								style={{ margin: 5 }}
-								extraClassName="edit fa fa-pencil-square pull-right"
-								onClick={() => openSubTab("edit-path")}
-								/>
-						</Tooltip>}
+						{i18nKey === "SERIES" && <ButtonLikeAnchor
+							style={{ margin: 5 }}
+							className="edit pull-right"
+							onClick={() => openSubTab("edit-path")}
+							tooltipText="EVENTS.SERIES.DETAILS.TOBIRA.MOUNT_SERIES"
+						>
+							<LuSquarePen className="pen" />
+						</ButtonLikeAnchor>}
 					</td>
 				</tr>}
 				{tobiraData.hostPages.map(hostPage => <tr key={hostPage.path}>
 					<td>
-						<a href={tobiraData.baseURL + hostPage.path}>
-							{hostPage.path !== '/' && <>
+						<a href={tobiraData.baseURL + hostPage.path +
+							(tobiraData.id.length > 2 ? `/${prefix}/${tobiraData.id.substring(2)}` : "")}>
+							{hostPage.path !== "/" && <>
 								<span className="tobira-page-separator">/</span>
 								{hostPage.ancestors.map((ancestor, key) => (
 									<span key={key}>
@@ -235,10 +237,10 @@ const TobiraTable = ({ tobiraData, i18nKey, openSubTab, handleDelete }: TobiraTa
 								))}
 							</>}
 							<span className="tobira-leaf-page">
-								{hostPage.path !== '/' && <span>
+								{hostPage.path !== "/" && <span>
 									{hostPage.title}
 								</span>}
-								{hostPage.path === '/' && <span>
+								{hostPage.path === "/" && <span>
 									{t(`EVENTS.${i18nKey}.DETAILS.TOBIRA.HOMEPAGE`)}
 								</span>}
 							</span>
@@ -247,15 +249,19 @@ const TobiraTable = ({ tobiraData, i18nKey, openSubTab, handleDelete }: TobiraTa
 							<ButtonLikeAnchor
 								style={{ margin: 5 }}
 								onClick={() => deleteConfirmationModalRef.current?.open()}
-								extraClassName="remove pull-right"
+								className="action-cell-button remove pull-right"
 								tooltipText="EVENTS.SERIES.DETAILS.TOBIRA.REMOVE_PATH"
-							/>
+							>
+								<LuCircleX />
+							</ButtonLikeAnchor>
 							<ButtonLikeAnchor
 								style={{ margin: 5 }}
-								extraClassName="edit fa fa-pencil-square pull-right"
+								className="edit pull-right"
 								onClick={() => openSubTab("edit-path", hostPage)}
 								tooltipText="EVENTS.SERIES.DETAILS.TOBIRA.EDIT_PATH"
-							/>
+							>
+								<LuSquarePen className="pen" />
+							</ButtonLikeAnchor>
 							<ConfirmModal
 								close={() => deleteConfirmationModalRef.current?.close?.()}
 								resourceName={hostPage.path}

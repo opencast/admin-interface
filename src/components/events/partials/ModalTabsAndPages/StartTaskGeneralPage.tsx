@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Notifications from "../../../shared/Notifications";
 import cn from "classnames";
@@ -70,7 +70,7 @@ const StartTaskGeneralPage = <T extends RequiredFormProps>({
 							{t("BULK_ACTIONS.SCHEDULE_TASK.GENERAL.CAPTION")}
 							<span className="header-value">
 								{t("BULK_ACTIONS.SCHEDULE_TASK.GENERAL.SUMMARY", {
-									count: selectedEvents.filter((e) => e.selected === true)
+									count: selectedEvents.filter(e => e.selected === true)
 										.length,
 								})}
 							</span>
@@ -84,10 +84,10 @@ const StartTaskGeneralPage = <T extends RequiredFormProps>({
 												className="select-all-cbox"
 												type="checkbox"
 												checked={allChecked}
-												onChange={(e) => onChangeAllSelected(e)}
+												onChange={e => onChangeAllSelected(e)}
 											/>
 										</th>
-										<th className="full-width">
+										<th>
 											{t("EVENTS.EVENTS.TABLE.TITLE")}
 										</th>
 										<th className="nowrap">
@@ -105,19 +105,19 @@ const StartTaskGeneralPage = <T extends RequiredFormProps>({
 											key={key}
 											className={cn({ error: !isStartable(event) })}
 										>
-											<td>
+											<td className="small">
 												<input
 													name="events"
 													type="checkbox"
-													onChange={(e) => onChangeSelected(e, event.id)}
+													onChange={e => onChangeSelected(e, event.id)}
 													checked={event.selected}
 												/>
 											</td>
 											<td>{event.title}</td>
-											<td className="nowrap">
+											<td>
 												{event.series ? event.series.title : ""}
 											</td>
-											<td className="nowrap">{t(event.event_status as ParseKeys)}</td>
+											<td>{t(event.event_status as ParseKeys)}</td>
 										</tr>
 									))}
 								</tbody>

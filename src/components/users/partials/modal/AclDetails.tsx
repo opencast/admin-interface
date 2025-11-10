@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Formik } from "formik";
 import AclAccessPage from "../wizard/AclAccessPage";
 import AclMetadataPage from "../wizard/AclMetadataPage";
@@ -29,7 +29,7 @@ const AclDetails = ({
 	const initialValues = {
 		name: aclDetails.name,
 		aclTemplate: "",
-		acls: aclDetails.acl,
+		policies: aclDetails.acl,
 	};
 
 	// information about tabs
@@ -57,10 +57,10 @@ const AclDetails = ({
 	const handleSubmit = (
 		values: {
 			name: string,
-			acls: TransformedAcl[],
-		}
+			policies: TransformedAcl[],
+		},
 	) => {
-		dispatch(updateAclDetails({values: values, aclId: aclDetails.id}));
+		dispatch(updateAclDetails({ values: values, aclId: aclDetails.id }));
 		close();
 	};
 
@@ -72,10 +72,10 @@ const AclDetails = ({
 			{/* formik form used in entire modal */}
 			<Formik
 				initialValues={initialValues}
-				validationSchema={NewAclSchema[0]}
-				onSubmit={(values) => handleSubmit(values)}
+				validationSchema={NewAclSchema["metadata"]}
+				onSubmit={values => handleSubmit(values)}
 			>
-				{(formik) => (
+				{formik => (
 					<>
 						{page === 0 && <AclMetadataPage formik={formik} isEdit />}
 						{page === 1 && (
@@ -88,9 +88,10 @@ const AclDetails = ({
 						{/* Navigation buttons and validation */}
 						<WizardNavigationButtons
 							formik={formik}
+							previousPage={close}
 							submitPage={
-								async () => {
-									if (await dispatch(checkAcls(formik.values.acls))) {
+								() => {
+									if (dispatch(checkAcls(formik.values.policies))) {
 										formik.handleSubmit();
 									}
 								}

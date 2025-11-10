@@ -1,6 +1,3 @@
-@use "../mixins/mixins-bourbon";
-@use "../base/fontawesome/fa-mixins";
-@use "../base/fontawesome/variables" as variables2;
 @use "../base/variables";
 @use "../mixins/button";
 
@@ -27,7 +24,7 @@
 
 
 .multi-select-container {
-    @include mixins-bourbon.clearfix;
+    display: flex;
 
     select[multiple] {
         margin-top: 10px;
@@ -72,34 +69,6 @@
 
     .multi-select-col {
         width: 45%;
-        display: block;
-        float: left;
-        vertical-align: top;
-
-        .search-container {
-            width: 100% !important;
-            margin-top: 10px;
-        }
-
-        input.search {
-            border-radius: variables.$main-border-radius 0 0 variables.$main-border-radius;
-            border-right-width: 0;
-            float: left;
-            margin: 0;
-        }
-
-        button.clear {
-            height: inherit;
-            float: right;
-            @include button.btn(white);
-            @include fa-mixins.fa-icon(variables2.$fa-var-times, before, block, 0, 0.45em 0.45em 0.55em 0.45em, inherit, 14px);
-
-            border-radius: 0 variables.$main-border-radius variables.$main-border-radius 0;
-
-            &+input.search {
-                width: calc(100% - 46px) !important;
-            }
-        }
     }
 }
 
@@ -109,17 +78,13 @@
 }
 
 // Used to indicate the correlation between multiple select columns
-.exchange-icon:after {
-    width: 10%;
+.exchange-icon {
+    width: 6%;
     display: block;
     float: left;
     position: relative;
-    top: 60px;
-    content: "\f0ec";
-    font-family: FontAwesome;
     font-size: 18px;
     color: variables.$medium-prim-color;
-    text-align: center;
 }
 
 // Extra Input Offset
@@ -132,7 +97,7 @@
     &.offset-col-1,
     &.offset-col-2 {
 
-        .exchange-icon:after {
+        .exchange-icon {
             top: $icon-top-margin;
         }
     }
@@ -143,5 +108,28 @@
 
     &.offset-col-2 .multi-select-col:last-child select[multiple] {
         height: $multiple-select-expanded-height;
+    }
+}
+
+.effective-roles-container {
+    select[multiple] {
+        height: 26em;
+        margin-top: 10px;
+        font-size: 12px;
+        padding: 5px;
+
+        option {
+            padding: 3px 0px;
+        }
+    }
+
+    select {
+        width: 100%;
+    }
+
+    p {
+        font-size: 12px;
+        color: variables.$medium-prim-color;
+        line-height: 22px;
     }
 }

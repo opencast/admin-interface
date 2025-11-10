@@ -133,6 +133,8 @@
     font-weight: 600;
     padding: 0 15px;
     overflow: hidden;
+    display: flex;
+    align-items: center;
 
     &.sticky {
         margin: 10px 0 20px;
@@ -155,8 +157,9 @@
     }
 
     p {
-        color: #fff;
-        margin: 12px 0;
+        display: inline-flex;
+        color: variables.$white;
+        margin: 12px 0 !important;
         line-height: 16px;
     }
 
@@ -175,8 +178,20 @@
         @include alert-variant(variables.$state-success-bg, variables.$state-success-border, variables.$state-success-text);
     }
 
-    &.danger {
+    &.error {
         @include alert-variant(variables.$state-danger-bg, variables.$state-danger-border, variables.$state-danger-text);
+    }
+
+    .warning-symbol-warning {
+        color: variables.$state-warning-text;
+        margin-right: 5px;
+        font-size: 17px;
+    }
+
+    .warning-symbol-error {
+        color: variables.$state-danger-text;
+        margin-right: 5px;
+        font-size: 17px;
     }
 }
 

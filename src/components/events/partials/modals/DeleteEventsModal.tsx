@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../../../store";
 import { deleteMultipleEvent } from "../../../../slices/eventSlice";
 import { isEvent } from "../../../../slices/tableSlice";
 import NavigationButtons from "../../../shared/NavigationButtons";
+import { NotificationComponent } from "../../../shared/Notifications";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
 
 /**
@@ -33,7 +34,7 @@ const DeleteEventsModal = ({
 	const onChangeAllSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const selected = e.target.checked;
 		setAllChecked(selected);
-		let changedSelection = selectedEvents.map((event) => {
+		const changedSelection = selectedEvents.map(event => {
 			return {
 				...event,
 				selected: selected,
@@ -45,7 +46,7 @@ const DeleteEventsModal = ({
 	// Handle change of checkboxes indicating which events to consider further
 	const onChangeSelected = (e: React.ChangeEvent<HTMLInputElement>, id: string) => {
 		const selected = e.target.checked;
-		let changedEvents = selectedEvents.map((event) => {
+		const changedEvents = selectedEvents.map(event => {
 			if (isEvent(event) && event.id === id) {
 				return {
 					...event,
@@ -60,19 +61,22 @@ const DeleteEventsModal = ({
 		if (!selected) {
 			setAllChecked(false);
 		}
-		if (changedEvents.every((event) => event.selected === true)) {
+		if (changedEvents.every(event => event.selected === true)) {
 			setAllChecked(true);
 		}
 	};
 
 	return (
 		<>
-			<ModalContentTable modalContentClassName="modal-content active">
+			<ModalContentTable modalContentClassName="modal-content">
 				<div className="list-obj">
-					<div className="modal-alert danger obj">
-						<p>{t("BULK_ACTIONS.DELETE_EVENTS_WARNING_LINE1")}</p>
-						<p>{t("BULK_ACTIONS.DELETE_EVENTS_WARNING_LINE2")}</p>
-					</div>
+					<NotificationComponent
+						notification={{
+							type: "error",
+							message: "BULK_ACTIONS.DELETE_EVENTS_WARNING_LINE1",
+							id: 0,
+						}}
+					/>
 
 					<div className="full-col">
 						<div className="obj">
@@ -86,7 +90,7 @@ const DeleteEventsModal = ({
 											<input
 												type="checkbox"
 												checked={allChecked}
-												onChange={(e) => onChangeAllSelected(e)}
+												onChange={e => onChangeAllSelected(e)}
 												className="select-all-cbox"
 											/>
 										</th>
@@ -104,14 +108,13 @@ const DeleteEventsModal = ({
 													name="selection"
 													type="checkbox"
 													checked={event.selected}
-													onChange={(e) => onChangeSelected(e, isEvent(event) ? event.id : "")}
+													onChange={e => onChangeSelected(e, isEvent(event) ? event.id : "")}
 												/>
 											</td>
 											<td>{isEvent(event) && event.title}</td>
 											<td>
 												{/* Repeat for each presenter*/}
-{/* @ts-expect-error TS(7006): Parameter 'presenter' implicitly has an 'any' type... Remove this comment to see the full error message */}
-												{event.presenters.map((presenter, key) => (
+												{isEvent(event) && event.presenters.map((presenter, key) => (
 													<span className="metadata-entry" key={key}>
 														{presenter}
 													</span>
@@ -128,7 +131,7 @@ const DeleteEventsModal = ({
 
 			<NavigationButtons
 				isLast
-				isSubmitDisabled={!selectedEvents.some((event) => event.selected === true)}
+				isSubmitDisabled={!selectedEvents.some(event => event.selected === true)}
 				submitClassName="danger"
 				nextPage={deleteSelectedEvents}
 				previousPage={close}

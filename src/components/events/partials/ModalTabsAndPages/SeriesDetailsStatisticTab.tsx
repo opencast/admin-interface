@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import {
 	getStatistics,
@@ -8,6 +7,7 @@ import { fetchSeriesStatisticsValueUpdate } from "../../../../slices/seriesDetai
 import TimeSeriesStatistics from "../../../shared/TimeSeriesStatistics";
 import { useAppSelector } from "../../../../store";
 import { createChartOptions } from "../../../../utils/statisticsUtils";
+import { NotificationComponent } from "../../../shared/Notifications";
 import { ParseKeys } from "i18next";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
 
@@ -37,16 +37,20 @@ const SeriesDetailsStatisticTab = ({
 				/* error message */
 				<div className="obj">
 					<header>{t(header) /* Statistics */}</header>
-					<div className="modal-alert danger">
-						{t("STATISTICS.NOT_AVAILABLE")}
-					</div>
+						<NotificationComponent
+							notification={{
+								type: "error",
+								message: "STATISTICS.NOT_AVAILABLE",
+								id: 0,
+							}}
+						/>
 				</div>
 			) : (
 				/* iterates over the different available statistics */
 				statistics.map((stat, key) => (
 					<div className="obj" key={key}>
 						{/* title of statistic */}
-						<header className="no-expand">{t(stat.title as ParseKeys)}</header>
+						<header>{t(stat.title as ParseKeys)}</header>
 
 						{stat.providerType === "timeSeries" ? (
 							/* visualization of statistic for time series data */
@@ -71,9 +75,13 @@ const SeriesDetailsStatisticTab = ({
 							</div>
 						) : (
 							/* unsupported type message */
-							<div className="modal-alert danger">
-								{t("STATISTICS.UNSUPPORTED_TYPE")}
-							</div>
+							<NotificationComponent
+								notification={{
+									type: "error",
+									message: "STATISTICS.UNSUPPORTED_TYPE",
+									id: 0,
+								}}
+							/>
 						)}
 					</div>
 				))

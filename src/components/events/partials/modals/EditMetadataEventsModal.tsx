@@ -21,6 +21,7 @@ import { isEvent } from "../../../../slices/tableSlice";
 import WizardNavigationButtons from "../../../shared/wizard/WizardNavigationButtons";
 import { ParseKeys } from "i18next";
 import ModalContent from "../../../shared/modals/ModalContent";
+import { LuLoaderCircle } from "react-icons/lu";
 
 /**
  * This component manges the edit metadata bulk action
@@ -33,9 +34,8 @@ const EditMetadataEventsModal = ({
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
-	const selectedRows = useAppSelector(state => getSelectedRows(state));
+	const selectedEvents = useAppSelector(state => getSelectedRows(state));
 
-	const [selectedEvents] = useState(selectedRows);
 	const [metadataFields, setMetadataFields] = useState<{
 		merged: string[],
 		mergedMetadata: MetadataFieldSelected[],
@@ -43,7 +43,7 @@ const EditMetadataEventsModal = ({
 		runningWorkflow?: string[],
 	}>({
 		merged: [],
-		mergedMetadata: []
+		mergedMetadata: [],
 	});
 	const [loading, setLoading] = useState(true);
 	const [fatalError, setFatalError] = useState<string | undefined>(undefined);
@@ -55,16 +55,16 @@ const EditMetadataEventsModal = ({
 		async function fetchData() {
 			setLoading(true);
 
-			let eventIds: string[] = [];
-			selectedEvents.forEach((event) => isEvent(event) && eventIds.push(event.id));
+			const eventIds: string[] = [];
+			selectedEvents.forEach(event => isEvent(event) && eventIds.push(event.id));
 
 			// Get merged metadata from backend
 			// const responseMetadataFields = await dispatch(postEditMetadata(eventIds))
 			await dispatch(postEditMetadata(eventIds))
 			.then(unwrapResult)
-			.then((result) => {
+			.then(result => {
 				// Set initial values and save metadata field infos in state
-				let initialValues = getInitialValues(result.mergedMetadata);
+				const initialValues = getInitialValues(result.mergedMetadata);
 				setFetchedValues(initialValues);
 				setMetadataFields({
 					merged: result.merged,
@@ -84,15 +84,15 @@ const EditMetadataEventsModal = ({
 	}, []);
 
 	const handleSubmit = (values: { [key: string]: unknown }) => {
-		const response = dispatch(updateBulkMetadata({metadataFields, values}));
+		const response = dispatch(updateBulkMetadata({ metadataFields, values }));
 		console.info(response);
 		close();
 	};
 
 	const onChangeSelected = (e: React.ChangeEvent<HTMLInputElement>, fieldId: string) => {
-		let selected = e.target.checked;
-		let fields = metadataFields;
-		fields.mergedMetadata = metadataFields.mergedMetadata.map((field) => {
+		const selected = e.target.checked;
+		const fields = metadataFields;
+		fields.mergedMetadata = metadataFields.mergedMetadata.map(field => {
 			if (field.id === fieldId) {
 				return {
 					...field,
@@ -112,8 +112,8 @@ const EditMetadataEventsModal = ({
 			return true;
 		}
 
-		let fetched = fetchedValues[field.id];
-		let inForm = formikValues[field.id];
+		const fetched = fetchedValues[field.id];
+		const inForm = formikValues[field.id];
 		let same = false;
 		if (fetched === inForm) {
 			same = true;
@@ -121,8 +121,8 @@ const EditMetadataEventsModal = ({
 			same = fetched.length === inForm.length && fetched.every((e, i) => e === inForm[i]);
 		}
 		if (!same) {
-			let fields = metadataFields;
-			fields.mergedMetadata = metadataFields.mergedMetadata.map((f) => {
+			const fields = metadataFields;
+			fields.mergedMetadata = metadataFields.mergedMetadata.map(f => {
 				if (f.id === field.id) {
 					return {
 						...f,
@@ -146,7 +146,7 @@ const EditMetadataEventsModal = ({
 			{loading && (
 				<ModalContent>
 					<div className="loading">
-						<i className="fa fa-spinner fa-spin fa-2x fa-fw" />
+						<LuLoaderCircle className="fa-spin"/>
 					</div>
 				</ModalContent>
 			)}
@@ -171,15 +171,15 @@ const EditMetadataEventsModal = ({
 			{!loading && fatalError === undefined && (
 				<Formik
 					initialValues={fetchedValues}
-					onSubmit={(values) => handleSubmit(values)}
+					onSubmit={values => handleSubmit(values)}
 				>
-					{(formik) => (
+					{formik => (
 						<>
 							<ModalContent>
 								<div className="obj header-description">
 									<span>
 										{t(
-											"BULK_ACTIONS.EDIT_EVENTS_METADATA.EDIT.DESCRIPTION"
+											"BULK_ACTIONS.EDIT_EVENTS_METADATA.EDIT.DESCRIPTION",
 										)}
 									</span>
 								</div>
@@ -187,7 +187,7 @@ const EditMetadataEventsModal = ({
 									<header>
 										<span>
 											{t(
-												"BULK_ACTIONS.EDIT_EVENTS_METADATA.EDIT.TABLE.CAPTION"
+												"BULK_ACTIONS.EDIT_EVENTS_METADATA.EDIT.TABLE.CAPTION",
 											)}
 										</span>
 									</header>
@@ -198,12 +198,12 @@ const EditMetadataEventsModal = ({
 													<th className="small" />
 													<th>
 														{t(
-															"BULK_ACTIONS.EDIT_EVENTS_METADATA.EDIT.TABLE.FIELDS"
+															"BULK_ACTIONS.EDIT_EVENTS_METADATA.EDIT.TABLE.FIELDS",
 														)}
 													</th>
 													<th>
 														{t(
-															"BULK_ACTIONS.EDIT_EVENTS_METADATA.EDIT.TABLE.VALUES"
+															"BULK_ACTIONS.EDIT_EVENTS_METADATA.EDIT.TABLE.VALUES",
 														)}
 													</th>
 												</tr>
@@ -224,7 +224,7 @@ const EditMetadataEventsModal = ({
 																		name="changes"
 																		checked={isTouchedOrSelected(
 																			metadata,
-																			formik.values
+																			formik.values,
 																		)}
 																		disabled={
 																			(!metadata.differentValues &&
@@ -232,7 +232,7 @@ const EditMetadataEventsModal = ({
 																			(metadata.required &&
 																				!metadata.selected)
 																		}
-																		onChange={(e) =>
+																		onChange={e =>
 																			onChangeSelected(e, metadata.id)
 																		}
 																		className="child-cbox"
@@ -244,7 +244,7 @@ const EditMetadataEventsModal = ({
 																		<i className="required">*</i>
 																	)}
 																</td>
-																<td className="editable ng-isolated-scope">
+																<td className="editable">
 																	{/* Render single value or multi value input */}
 																	{metadata.type === "mixed_text" ? (
 																		<Field
@@ -263,7 +263,7 @@ const EditMetadataEventsModal = ({
 																	)}
 																</td>
 															</tr>
-														)
+														),
 												)}
 											</tbody>
 										</table>
@@ -280,7 +280,7 @@ const EditMetadataEventsModal = ({
 										formik.isValid &&
 										hasAccess(
 											"ROLE_UI_EVENTS_DETAILS_METADATA_EDIT",
-											user
+											user,
 										)
 									)
 								}
@@ -299,8 +299,8 @@ const EditMetadataEventsModal = ({
 
 const getInitialValues = (metadataFields: MetadataFieldSelected[]) => {
 	// Transform metadata fields provided by backend (saved in redux)
-	let initialValues: { [key: string]: string | string[] } = {};
-	metadataFields.forEach((field) => {
+	const initialValues: { [key: string]: string | string[] } = {};
+	metadataFields.forEach(field => {
 		initialValues[field.id] = field.value;
 	});
 

@@ -43,7 +43,7 @@ export const availableHotkeys: HotkeyMapType = {
 			description: "HOTKEYS.DESCRIPTIONS.GENERAL.MAIN_MENU",
 			sequence: ["m"],
 		},
-		/*NEXT_DASHBOARD_FILTER: {
+		/* NEXT_DASHBOARD_FILTER: {
             name: 'select_next_dashboard_filter',
             description: 'HOTKEYS.DESCRIPTIONS.GENERAL.SELECT_NEXT_DASHBOARD_FILTER',
             combo: ['f'],
@@ -68,6 +68,6 @@ export const availableHotkeys: HotkeyMapType = {
 			name: "close_modal",
 			description: "HOTKEYS.DESCRIPTIONS.GENERAL.CLOSE_MODAL",
 			sequence: ["Esc"],
-		}
+		},
 	},
 };

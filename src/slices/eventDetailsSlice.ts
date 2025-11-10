@@ -1,8 +1,7 @@
-import { PayloadAction, SerializedError, createSlice, unwrapResult } from '@reduxjs/toolkit'
-import axios from 'axios';
+import { PayloadAction, SerializedError, createSlice, unwrapResult } from "@reduxjs/toolkit";
+import axios, { AxiosError } from "axios";
 import { addNotification, removeNotificationWizardForm } from "./notificationSlice";
 import {
-	createPolicy,
 	getHttpHeaders,
 	transformMetadataCollection,
 	transformMetadataForUpdate,
@@ -23,21 +22,22 @@ import {
 import { calculateDuration } from "../utils/dateUtils";
 import { fetchRecordings } from "./recordingSlice";
 import { getRecordings } from "../selectors/recordingSelectors";
-import { createAppAsyncThunk } from '../createAsyncThunkWithTypes';
-import { DataResolution, Statistics, TimeMode, fetchStatistics, fetchStatisticsValueUpdate } from './statisticsSlice';
-import { enrichPublications } from '../thunks/assetsThunks';
-import { TransformedAcl } from './aclDetailsSlice';
-import { MetadataCatalog, UploadOption } from './eventSlice';
+import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
+import { DataResolution, Statistics, TimeMode, fetchStatistics, fetchStatisticsValueUpdate } from "./statisticsSlice";
+import { enrichPublications } from "../thunks/assetsThunks";
+import { TransformedAcl } from "./aclDetailsSlice";
+import { MetadataCatalog, UploadOption } from "./eventSlice";
 import { Event } from "./eventSlice";
 import {
 	AssetTabHierarchy,
 	EventDetailsPage,
-	WorkflowTabHierarchy
+	WorkflowTabHierarchy,
 } from "../components/events/partials/modals/EventDetails";
-import { AppDispatch } from "../store";
-import { Ace } from './aclSlice';
-import { setTobiraTabHierarchy, TobiraData } from './seriesDetailsSlice';
-import { handleTobiraError } from './shared/tobiraErrors';
+import { AppDispatch, AppThunk } from "../store";
+import { Ace } from "./aclSlice";
+import { setTobiraTabHierarchy, TobiraData } from "./seriesDetailsSlice";
+import { handleTobiraError } from "./shared/tobiraErrors";
+import camelcaseKeys from "camelcase-keys";
 
 // Contains the navigation logic for the modal
 type EventDetailsModal = {
@@ -73,17 +73,19 @@ type CommentAuthor = {
 	username: string,
 }
 
-type Workflow = {
-	scheduling: boolean,
-	entries: {
-		id: string,
-		status: string,  //translation key
-		submitted: string,  //date
+type WorkflowEntry = {
+			id: string,
+		status: string,  // translation key
+		submitted: string,  // date
 		submitter: string,
 		submitterEmail: string,
 		submitterName: string,
 		title: string
-	}[],
+}
+
+type Workflow = {
+	scheduling: boolean,
+	entries: WorkflowEntry[],
 	// TODO: This looks like really bad practice. Rewrite.
 	workflow: { // The type when looking at the list of workflows
 		workflowId: string,
@@ -100,6 +102,14 @@ type Workflow = {
 		wdid: string
 		wiid: number
 	}
+}
+
+export type WorkflowOperation = {
+	configuration: { [key: string]: string },
+	description: string,
+	id: number,
+	status: string,  // translation key, ending on INSTANTIATED, RUNNING, PAUSED, SUCCEEDED, FAILED, SKIPPED, RETRY
+	title: string,
 }
 
 type Device = {
@@ -148,65 +158,65 @@ export type CommentReply = {
 }
 
 type EventDetailsState = {
-	statusMetadata: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusMetadata: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorMetadata: SerializedError | null,
-	statusAssets: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusAssets: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorAssets: SerializedError | null,
-	statusAssetAttachments: 'uninitialized' | 'loading' | 'succeeded' | 'failed',  // These were previously all just statusAssets
+	statusAssetAttachments: "uninitialized" | "loading" | "succeeded" | "failed",  // These were previously all just statusAssets
 	errorAssetAttachments: SerializedError | null,
-	statusAssetAttachmentDetails: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusAssetAttachmentDetails: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorAssetAttachmentDetails: SerializedError | null,
-	statusAssetCatalogs: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusAssetCatalogs: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorAssetCatalogs: SerializedError | null,
-	statusAssetCatalogDetails: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusAssetCatalogDetails: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorAssetCatalogDetails: SerializedError | null,
-	statusAssetMedia: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusAssetMedia: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorAssetMedia: SerializedError | null,
-	statusAssetMediaDetails: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusAssetMediaDetails: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorAssetMediaDetails: SerializedError | null,
-	statusAssetPublications: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusAssetPublications: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorAssetPublications: SerializedError | null,
-	statusAssetPublicationDetails: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusAssetPublicationDetails: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorAssetPublicationDetails: SerializedError | null,
-	statusPolicies: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusPolicies: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorPolicies: SerializedError | null,
-	statusComments: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusComments: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorComments: SerializedError | null,
-	statusPublications: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusPublications: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorPublications: SerializedError | null,
-	statusSaveComment: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusSaveComment: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorSaveComment: SerializedError | null,
-	statusSaveCommentReply: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusSaveCommentReply: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorSaveCommentReply: SerializedError | null,
-	statusUpdateComment: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusUpdateComment: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorUpdateComment: SerializedError | null,
-	statusScheduling: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusScheduling: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorScheduling: SerializedError | null,
-	statusSaveScheduling: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusSaveScheduling: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorSaveScheduling: SerializedError | null,
-	statusCheckConflicts: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusCheckConflicts: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorCheckConflicts: SerializedError | null,
-	statusWorkflows: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusWorkflows: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorWorkflows: SerializedError | null,
-	statusWorkflowDetails: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusWorkflowDetails: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorWorkflowDetails: SerializedError | null,
-	statusDoWorkflowAction: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusDoWorkflowAction: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorDoWorkflowAction: SerializedError | null,
-	statusDeleteWorkflow: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusDeleteWorkflow: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorDeleteWorkflow: SerializedError | null,
-	statusWorkflowOperations: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusWorkflowOperations: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorWorkflowOperations: SerializedError | null,
-	statusWorkflowOperationDetails: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusWorkflowOperationDetails: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorWorkflowOperationDetails: SerializedError | null,
-	statusWorkflowErrors: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusWorkflowErrors: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorWorkflowErrors: SerializedError | null,
-	statusWorkflowErrorDetails: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusWorkflowErrorDetails: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorWorkflowErrorDetails: SerializedError | null,
-	statusStatistics: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusStatistics: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorStatistics: SerializedError | null,
-	statusStatisticsValue: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusStatisticsValue: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorStatisticsValue: SerializedError | null,
-	statusTobiraData: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusTobiraData: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorTobiraData: SerializedError | null,
 	eventId: string,
 	modal: EventDetailsModal,
@@ -235,9 +245,9 @@ type EventDetailsState = {
 	}>,
 	assetMediaDetails: AssetDetails & {
 		duration: number,
-		has_audio: boolean,
-		has_subtitle: boolean,
-		has_video: boolean,
+		hasAudio: boolean,
+		hasSubtitle: boolean,
+		hasVideo: boolean,
 		streams: {
 			audio: {
 				bitdepth: string,
@@ -263,9 +273,11 @@ type EventDetailsState = {
 			}[],
 		},
 		video: {
-			previews: {
-				uri: string,
-			}[]
+			video: {
+				previews: {
+					uri: string,
+				}[]
+			},
 			url: string,
 		} | undefined,
 	},
@@ -276,6 +288,7 @@ type EventDetailsState = {
 		channel: string,
 	},
 	policies: TransformedAcl[],
+	policyTemplateId: number,
 	comments: Comment[],
 	commentReasons: { [key: string]: string },
 	scheduling: {
@@ -318,28 +331,22 @@ type EventDetailsState = {
 		configuration?: {[key: string]: unknown}
 	},
 	workflowOperations: {
-		entries: {
-			configuration: { [key: string]: string },
-			description: string,
-			id: number,
-			status: string,  // translation key
-			title: string,
-		}[]
+		entries: WorkflowOperation[]
 	},
 	workflowOperationDetails: {
 		completed: string,  // date
 		description: string,
-		exception_handler_workflow: string,
-		execution_host: string,
-		fail_on_error: boolean,
-		failed_attempts: number,
+		exceptionHandlerWorkflow: string,
+		executionHost: string,
+		failOnError: boolean,
+		failedAttempts: number,
 		job: number,
-		max_attempts: number,
+		maxAttempts: number,
 		name: string,
-		retry_strategy: string,
+		retryStrategy: string,
 		started: string,  // date
 		state: string,  // translation key
-		time_in_queue: number,
+		timeInQueue: number,
 	},
 	workflowErrors: {
 		entries: {
@@ -357,11 +364,12 @@ type EventDetailsState = {
 			value: string,
 		}[],
 		id: number,
-		job_id: number,
-		processing_host: string,
-		service_type: string,
+		jobId: number,
+		rootJobId?: number,
+		processingHost: string,
+		serviceType: string,
 		severity: string,
-		technical_details: string,
+		technicalDetails: string,
 		timestamp: string,  // date
 		title: string,
 	},
@@ -373,73 +381,73 @@ type EventDetailsState = {
 
 // Initial state of event details in redux store
 const initialState: EventDetailsState = {
-	statusMetadata: 'uninitialized',
+	statusMetadata: "uninitialized",
 	errorMetadata: null,
-	statusAssets: 'uninitialized',
+	statusAssets: "uninitialized",
 	errorAssets: null,
-	statusAssetAttachments: 'uninitialized',
+	statusAssetAttachments: "uninitialized",
 	errorAssetAttachments: null,
-	statusAssetAttachmentDetails: 'uninitialized',
+	statusAssetAttachmentDetails: "uninitialized",
 	errorAssetAttachmentDetails: null,
-	statusAssetCatalogs: 'uninitialized',
+	statusAssetCatalogs: "uninitialized",
 	errorAssetCatalogs: null,
-	statusAssetCatalogDetails: 'uninitialized',
+	statusAssetCatalogDetails: "uninitialized",
 	errorAssetCatalogDetails: null,
-	statusAssetMedia: 'uninitialized',
+	statusAssetMedia: "uninitialized",
 	errorAssetMedia: null,
-	statusAssetMediaDetails: 'uninitialized',
+	statusAssetMediaDetails: "uninitialized",
 	errorAssetMediaDetails: null,
-	statusAssetPublications: 'uninitialized',
+	statusAssetPublications: "uninitialized",
 	errorAssetPublications: null,
-	statusAssetPublicationDetails: 'uninitialized',
+	statusAssetPublicationDetails: "uninitialized",
 	errorAssetPublicationDetails: null,
-	statusPolicies: 'uninitialized',
+	statusPolicies: "uninitialized",
 	errorPolicies: null,
-	statusComments: 'uninitialized',
+	statusComments: "uninitialized",
 	errorComments: null,
-	statusPublications: 'uninitialized',
+	statusPublications: "uninitialized",
 	errorPublications: null,
-	statusSaveComment: 'uninitialized',
+	statusSaveComment: "uninitialized",
 	errorSaveComment: null,
-	statusSaveCommentReply: 'uninitialized',
+	statusSaveCommentReply: "uninitialized",
 	errorSaveCommentReply: null,
-	statusUpdateComment: 'uninitialized',
+	statusUpdateComment: "uninitialized",
 	errorUpdateComment: null,
-	statusScheduling: 'uninitialized',
+	statusScheduling: "uninitialized",
 	errorScheduling: null,
-	statusSaveScheduling: 'uninitialized',
+	statusSaveScheduling: "uninitialized",
 	errorSaveScheduling: null,
-	statusCheckConflicts: 'uninitialized',
+	statusCheckConflicts: "uninitialized",
 	errorCheckConflicts: null,
-	statusWorkflows: 'uninitialized',
+	statusWorkflows: "uninitialized",
 	errorWorkflows: null,
-	statusWorkflowDetails: 'uninitialized',
+	statusWorkflowDetails: "uninitialized",
 	errorWorkflowDetails: null,
-	statusDoWorkflowAction: 'uninitialized',
+	statusDoWorkflowAction: "uninitialized",
 	errorDoWorkflowAction: null,
-	statusDeleteWorkflow: 'uninitialized',
+	statusDeleteWorkflow: "uninitialized",
 	errorDeleteWorkflow: null,
-	statusWorkflowOperations: 'uninitialized',
+	statusWorkflowOperations: "uninitialized",
 	errorWorkflowOperations: null,
-	statusWorkflowOperationDetails: 'uninitialized',
+	statusWorkflowOperationDetails: "uninitialized",
 	errorWorkflowOperationDetails: null,
-	statusWorkflowErrors: 'uninitialized',
+	statusWorkflowErrors: "uninitialized",
 	errorWorkflowErrors: null,
-	statusWorkflowErrorDetails: 'uninitialized',
+	statusWorkflowErrorDetails: "uninitialized",
 	errorWorkflowErrorDetails: null,
-	statusStatistics: 'uninitialized',
+	statusStatistics: "uninitialized",
 	errorStatistics: null,
-	statusStatisticsValue: 'uninitialized',
+	statusStatisticsValue: "uninitialized",
 	errorStatisticsValue: null,
-	statusTobiraData: 'uninitialized',
+	statusTobiraData: "uninitialized",
 	errorTobiraData: null,
 	eventId: "",
 	modal: {
 		show: false,
 		page: EventDetailsPage.Metadata,
 		event: null,
-		workflowTabHierarchy: 'entry',
-		assetsTabHierarchy: 'entry',
+		workflowTabHierarchy: "workflow-details",
+		assetsTabHierarchy: "entry",
 		workflowId: "",
 	},
 	metadata: {
@@ -489,9 +497,9 @@ const initialState: EventDetailsState = {
 		size: 0,
 		checksum: undefined,
 		reference: "",
-		has_audio: false,
-		has_subtitle: false,
-		has_video: false,
+		hasAudio: false,
+		hasSubtitle: false,
+		hasVideo: false,
 		url: "",
 		streams: {
 			audio: [],
@@ -512,6 +520,7 @@ const initialState: EventDetailsState = {
 		url: "",
 	},
 	policies: [],
+	policyTemplateId: 0,
 	comments: [],
 	commentReasons: {},
 	scheduling: {
@@ -557,7 +566,7 @@ const initialState: EventDetailsState = {
 	},
 	workflowDefinitions: [],
 	baseWorkflow: {
-		workflowId: ""
+		workflowId: "",
 	},
 	workflowOperations: {
 		entries: [],
@@ -565,30 +574,30 @@ const initialState: EventDetailsState = {
 	workflowOperationDetails: {
 		completed: "",
 		description: "",
-		exception_handler_workflow: "",
-		execution_host: "",
-		fail_on_error: false,
-		failed_attempts: 0,
+		exceptionHandlerWorkflow: "",
+		executionHost: "",
+		failOnError: false,
+		failedAttempts: 0,
 		job: 0,
-		max_attempts: 0,
+		maxAttempts: 0,
 		name: "",
-		retry_strategy: "",
+		retryStrategy: "",
 		started: "",
 		state: "",
-		time_in_queue: 0,
+		timeInQueue: 0,
 	},
 	workflowErrors: {
-		entries: []
+		entries: [],
 	},
 	workflowErrorDetails: {
 		description: "",
 		details: [],
 		id: 0,
-		job_id: 0,
-		processing_host: "",
-		service_type: "",
+		jobId: 0,
+		processingHost: "",
+		serviceType: "",
 		severity: "",
-		technical_details: "",
+		technicalDetails: "",
 		timestamp: "",
 		title: "",
 	},
@@ -597,28 +606,29 @@ const initialState: EventDetailsState = {
 	hasStatisticsError: false,
 	tobiraData: {
 		baseURL: "",
+		id: "",
 		hostPages: [],
 	},
 };
 
 
-export const fetchMetadata = createAppAsyncThunk('eventDetails/fetchMetadata', async (eventId: Event["id"]) => {
-	const metadataRequest = await axios.get(`/admin-ng/event/${eventId}/metadata.json`);
-	const metadataResponse = await metadataRequest.data;
+export const fetchMetadata = createAppAsyncThunk("eventDetails/fetchMetadata", async (eventId: Event["id"]) => {
+	const metadataRequest = await axios.get<(MetadataCatalog & { locked?: string})[]>(`/admin-ng/event/${eventId}/metadata.json`);
+	const metadataResponse = metadataRequest.data;
 
 	const mainCatalog = "dublincore/episode";
 	let metadata: MetadataCatalog = {
 		title: "",
 		flavor: "",
-		fields: []
+		fields: [],
 	};
-	let extendedMetadata = [];
+	const extendedMetadata = [];
 
 	for (const catalog of metadataResponse) {
 		let transformedCatalog = { ...catalog };
 
 		if (catalog.locked !== undefined) {
-			let fields = [];
+			const fields = [];
 
 			for (const field of catalog.fields) {
 				const adaptedField = {
@@ -638,19 +648,19 @@ export const fetchMetadata = createAppAsyncThunk('eventDetails/fetchMetadata', a
 			metadata = transformMetadataCollection({ ...transformedCatalog });
 		} else {
 			extendedMetadata.push(
-				transformMetadataCollection({ ...transformedCatalog })
+				transformMetadataCollection({ ...transformedCatalog }),
 			);
 		}
 	}
 
-	return { metadata, extendedMetadata }
+	return { metadata, extendedMetadata };
 });
 
-export const fetchAssets = createAppAsyncThunk('eventDetails/fetchAssets', async (eventId: Event["id"], { dispatch }) => {
-	const assetsRequest = await axios.get(
-		`/admin-ng/event/${eventId}/asset/assets.json`
+export const fetchAssets = createAppAsyncThunk("eventDetails/fetchAssets", async (eventId: Event["id"], { dispatch }) => {
+	const assetsRequest = await axios.get<EventDetailsState["assets"]>(
+		`/admin-ng/event/${eventId}/asset/assets.json`,
 	);
-	const assets = await assetsRequest.data;
+	const assets = assetsRequest.data;
 
 	let transactionsReadOnly = true;
 	const fetchTransactionResult = await dispatch(fetchHasActiveTransactions(eventId))
@@ -659,10 +669,10 @@ export const fetchAssets = createAppAsyncThunk('eventDetails/fetchAssets', async
 		transactionsReadOnly = fetchTransactionResult.active;
 	}
 
-	const resourceOptionsListRequest = await axios.get(
-		`/admin-ng/resources/eventUploadAssetOptions.json`
+	const resourceOptionsListRequest = await axios.get<{ [key: string]: string}>(
+		"/admin-ng/resources/eventUploadAssetOptions.json",
 	);
-	const resourceOptionsListResponse = await resourceOptionsListRequest.data;
+	const resourceOptionsListResponse = resourceOptionsListRequest.data;
 
 	const optionsData = formatUploadAssetOptions(resourceOptionsListResponse);
 
@@ -672,9 +682,8 @@ export const fetchAssets = createAppAsyncThunk('eventDetails/fetchAssets', async
 				type: "warning",
 				key: "ACTIVE_TRANSACTION",
 				duration: -1,
-				parameter: undefined,
-				context: NOTIFICATION_CONTEXT
-			})
+				context: NOTIFICATION_CONTEXT,
+			}),
 		);
 	}
 
@@ -682,8 +691,8 @@ export const fetchAssets = createAppAsyncThunk('eventDetails/fetchAssets', async
 		assets,
 		transactionsReadOnly,
 		uploadAssetOptions: optionsData.assetOptions,
-		uploadSourceOptions: optionsData.sourceOptions
-	}
+		uploadSourceOptions: optionsData.sourceOptions,
+	};
 });
 
 const formatUploadAssetOptions = (optionsData: { [key: string]: string }) => {
@@ -691,7 +700,7 @@ const formatUploadAssetOptions = (optionsData: { [key: string]: string }) => {
 	const optionPrefixAsset = "EVENTS.EVENTS.NEW.UPLOAD_ASSET.OPTION";
 	const workflowPrefix = "EVENTS.EVENTS.NEW.UPLOAD_ASSET.WORKFLOWDEFID";
 
-	let optionsResult: {
+	const optionsResult: {
 		assetOptions: UploadOption[],
 		sourceOptions: UploadOption[],
 		workflow?: string,
@@ -701,8 +710,8 @@ const formatUploadAssetOptions = (optionsData: { [key: string]: string }) => {
 		workflow: "",
 	};
 
-	let uploadAssets: UploadOption[] = [];
-	let uploadSource: UploadOption[] = [];
+	const uploadAssets: UploadOption[] = [];
+	const uploadSource: UploadOption[] = [];
 
 	for (const [key, value] of Object.entries(optionsData)) {
 		if (key.charAt(0) !== "$") {
@@ -711,7 +720,9 @@ const formatUploadAssetOptions = (optionsData: { [key: string]: string }) => {
 				key.indexOf(optionPrefixSource) >= 0
 			) {
 				// parse upload asset options
-				let options: UploadOption = JSON.parse(value);
+				// TODO: Handle JSON parsing errors
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+				const options: UploadOption = JSON.parse(value);
 				if (!options["title"]) {
 					options["title"] = key;
 				}
@@ -735,103 +746,117 @@ const formatUploadAssetOptions = (optionsData: { [key: string]: string }) => {
 	return optionsResult;
 };
 
-export const fetchAssetAttachments = createAppAsyncThunk('eventDetails/fetchAssetAttachments', async (eventId: Event["id"]) => {
-	let params = new URLSearchParams();
+export const fetchAssetAttachments = createAppAsyncThunk("eventDetails/fetchAssetAttachments", async (eventId: Event["id"]) => {
+	const params = new URLSearchParams();
 	params.append("id1", "attachment");
 
-	const attachmentsRequest = await axios.get(
+	const attachmentsRequest = await axios.get<EventDetailsState["assetAttachments"]>(
 		`/admin-ng/event/${eventId}/asset/attachment/attachments.json`,
-		{ params }
+		{ params },
 	);
-	return await attachmentsRequest.data;
+	return attachmentsRequest.data;
 });
 
-export const fetchAssetAttachmentDetails = createAppAsyncThunk('eventDetails/fetchAssetAttachmentDetails', async (params: {
+export const fetchAssetAttachmentDetails = createAppAsyncThunk("eventDetails/fetchAssetAttachmentDetails", async (params: {
 	eventId: Event["id"],
 	attachmentId: EventDetailsState["assetAttachments"][0]["id"]
 }) => {
 	const { eventId, attachmentId } = params;
-	let searchParams = new URLSearchParams();
+	const searchParams = new URLSearchParams();
 	searchParams.append("id1", "attachment");
 
-	const attachmentDetailsRequest = await axios.get(
+	const attachmentDetailsRequest = await axios.get<EventDetailsState["assetAttachmentDetails"]>(
 		`/admin-ng/event/${eventId}/asset/attachment/${attachmentId}.json`,
-		{ params }
+		{ params },
 	);
-	return await attachmentDetailsRequest.data;
+	return attachmentDetailsRequest.data;
 });
 
-export const fetchAssetCatalogs = createAppAsyncThunk('eventDetails/fetchAssetCatalogs', async (eventId: Event["id"]) => {
-	let params = new URLSearchParams();
+export const fetchAssetCatalogs = createAppAsyncThunk("eventDetails/fetchAssetCatalogs", async (eventId: Event["id"]) => {
+	const params = new URLSearchParams();
 	params.append("id1", "catalog");
 
-	const catalogsRequest = await axios.get(
+	const catalogsRequest = await axios.get<EventDetailsState["assetCatalogs"]>(
 		`/admin-ng/event/${eventId}/asset/catalog/catalogs.json`,
-		{ params }
+		{ params },
 	);
-	return await catalogsRequest.data;
+	return catalogsRequest.data;
 });
 
-export const fetchAssetCatalogDetails = createAppAsyncThunk('eventDetails/fetchAssetCatalogDetails', async (params: {
+export const fetchAssetCatalogDetails = createAppAsyncThunk("eventDetails/fetchAssetCatalogDetails", async (params: {
 	eventId: Event["id"],
 	catalogId: EventDetailsState["assetCatalogs"][0]["id"]
 }) => {
 	const { eventId, catalogId } = params;
-	let searchParams = new URLSearchParams();
+	const searchParams = new URLSearchParams();
 	searchParams.append("id1", "catalog");
 
-	const catalogDetailsRequest = await axios.get(
+	const catalogDetailsRequest = await axios.get<EventDetailsState["assetCatalogDetails"]>(
 		`/admin-ng/event/${eventId}/asset/catalog/${catalogId}.json`,
-		{ params }
+		{ params },
 	);
-	return await catalogDetailsRequest.data;
+	return catalogDetailsRequest.data;
 });
 
-export const fetchAssetMedia = createAppAsyncThunk('eventDetails/fetchAssetMedia', async (eventId: Event["id"]) => {
-	let params = new URLSearchParams();
+export const fetchAssetMedia = createAppAsyncThunk("eventDetails/fetchAssetMedia", async (eventId: Event["id"]) => {
+	type FetchAssetMedia = {
+		mimetype: string,
+		id: string,
+		type: string,
+		url: string,
+		tags: string[],
+	};
+	const params = new URLSearchParams();
 	params.append("id1", "media");
 
-	const mediaRequest = await axios.get(
+	const mediaRequest = await axios.get<FetchAssetMedia[]>(
 		`/admin-ng/event/${eventId}/asset/media/media.json`,
-		{ params }
+		{ params },
 	);
-	const mediaResponse = await mediaRequest.data;
+	const mediaResponse = mediaRequest.data;
 
-	let media = [];
+	const media: EventDetailsState["assetMedia"] = [];
 
-	//for every media file item we define the filename
+	// for every media file item we define the filename
 	for (let i = 0; i < mediaResponse.length; i++) {
-		let item = mediaResponse[i];
-		const url = item.url;
-		item.mediaFileName = url
-			.substring(url.lastIndexOf("/") + 1)
-			.split("?")[0];
+		const url = mediaResponse[i].url;
+		const mediaFileName = url.substring(url.lastIndexOf("/") + 1).split("?")[0];
+		const item = {
+			...mediaResponse[i],
+			url,
+			mediaFileName,
+		};
 		media.push(item);
 	}
 
 	return media;
 });
 
-export const fetchAssetMediaDetails = createAppAsyncThunk('eventDetails/fetchAssetMediaDetails', async (params: {
+export const fetchAssetMediaDetails = createAppAsyncThunk("eventDetails/fetchAssetMediaDetails", async (params: {
 	eventId: Event["id"],
 	mediaId: EventDetailsState["assetMedia"][0]["id"]
 }) => {
 	const { eventId, mediaId } = params;
-	let searchParams = new URLSearchParams();
+	const searchParams = new URLSearchParams();
 	searchParams.append("id1", "media");
 
-	const mediaDetailsRequest = await axios.get(
+	const mediaDetailsRequest = await axios.get<Omit<EventDetailsState["assetMediaDetails"], "video">>(
 		`/admin-ng/event/${eventId}/asset/media/${mediaId}.json`,
-		{ params }
+		{ params },
 	);
-	const mediaDetailsResponse = await mediaDetailsRequest.data;
+	const mediaDetailsResponse = mediaDetailsRequest.data;
 
-	let mediaDetails;
+	let mediaDetails: EventDetailsState["assetMediaDetails"];
 
 	if (typeof mediaDetailsResponse === "string") {
+		// TODO: Handle JSON parsing errors
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		mediaDetails = JSON.parse(mediaDetailsResponse);
 	} else {
-		mediaDetails = mediaDetailsResponse;
+		mediaDetails = {
+			...mediaDetailsResponse,
+			video: undefined,
+		};
 	}
 
 	mediaDetails.video = {
@@ -844,88 +869,69 @@ export const fetchAssetMediaDetails = createAppAsyncThunk('eventDetails/fetchAss
 	return mediaDetails;
 });
 
-export const fetchAssetPublications = createAppAsyncThunk('eventDetails/fetchAssetPublications', async (eventId: Event["id"]) => {
-	let params = new URLSearchParams();
+export const fetchAssetPublications = createAppAsyncThunk("eventDetails/fetchAssetPublications", async (eventId: Event["id"]) => {
+	const params = new URLSearchParams();
 	params.append("id1", "publication");
 
-	const publicationsRequest = await axios.get(
+	const publicationsRequest = await axios.get<EventDetailsState["assetPublications"]>(
 		`/admin-ng/event/${eventId}/asset/publication/publications.json`,
-		{ params }
+		{ params },
 	);
-	return await publicationsRequest.data;
+	return publicationsRequest.data;
 });
 
-export const fetchAssetPublicationDetails = createAppAsyncThunk('eventDetails/fetchAssetPublicationDetails', async (params: {
+export const fetchAssetPublicationDetails = createAppAsyncThunk("eventDetails/fetchAssetPublicationDetails", async (params: {
 	eventId: Event["id"],
 	publicationId: EventDetailsState["publications"][0]["id"]
 }) => {
 	const { eventId, publicationId } = params;
-	let searchParams = new URLSearchParams();
+	const searchParams = new URLSearchParams();
 	searchParams.append("id1", "publication");
 
-	const publicationDetailsRequest = await axios.get(
+	const publicationDetailsRequest = await axios.get<EventDetailsState["assetPublicationDetails"]>(
 		`/admin-ng/event/${eventId}/asset/publication/${publicationId}.json`,
-		{ params }
+		{ params },
 	);
-	return await publicationDetailsRequest.data;
+	return publicationDetailsRequest.data;
 });
 
-export const fetchAccessPolicies = createAppAsyncThunk('eventDetails/fetchAccessPolicies', async (id: Event["id"]) => {
-	const policyData = await axios.get(
-		`/admin-ng/event/${id}/access.json`
+export const fetchAccessPolicies = createAppAsyncThunk("eventDetails/fetchAccessPolicies", async (id: Event["id"]) => {
+	type FetchAccessPolicies = {
+		episode_access: {
+			acl: TransformedAcl[],
+			current_acl: number,
+		}
+	};
+	const policyData = await axios.get<FetchAccessPolicies>(
+		`/admin-ng/event/${id}/access.json`,
 	);
-	let accessPolicies = await policyData.data;
+	const accessPolicies = policyData.data;
 
 	let policies: TransformedAcl[] = [];
+	let currentAclTemplateId = 0;
 
-	if (!accessPolicies.episode_access) {
-		return policies;
+	if (accessPolicies !== undefined && accessPolicies.episode_access) {
+		policies = accessPolicies.episode_access.acl;
+		currentAclTemplateId = accessPolicies.episode_access.current_acl;
 	}
 
-	const json = JSON.parse(accessPolicies.episode_access.acl).acl?.ace;
-	if (json === undefined) {
-		return policies;
-	}
-
-	let newPolicies: { [key: string]: TransformedAcl } = {};
-	let policyRoles: string[] = [];
-
-	for (let i = 0; i < json.length; i++) {
-		const policy: Ace = json[i];
-		// By default, allow is true
-		policy.allow ??= true;
-		if (!newPolicies[policy.role]) {
-			newPolicies[policy.role] = createPolicy(policy.role);
-			policyRoles.push(policy.role);
-		}
-		if (policy.action === "read" || policy.action === "write") {
-			newPolicies[policy.role][policy.action] = policy.allow;
-		} else if (policy.allow) {
-			newPolicies[policy.role].actions.push(policy.action);
-		}
-	}
-
-	policies = policyRoles.map((role) => newPolicies[role]);
-
-	return policies;
+	return { policies, currentAclTemplateId };
 });
 
-export const fetchComments = createAppAsyncThunk('eventDetails/fetchComments', async (eventId: Event["id"]) => {
-	const commentsData = await axios.get(`/admin-ng/event/${eventId}/comments`);
-	const comments = await commentsData.data;
+export const fetchComments = createAppAsyncThunk("eventDetails/fetchComments", async (eventId: Event["id"]) => {
+	const commentsData = await axios.get<Comment[]>(`/admin-ng/event/${eventId}/comments`);
+	const comments = commentsData.data;
 
-	const commentReasonsData = await axios.get(
-		`/admin-ng/resources/components.json`
+	const commentReasonsData = await axios.get<{ eventCommentReasons: { [key: string]: string }}>(
+		"/admin-ng/resources/components.json",
 	);
-	const commentReasons = (await commentReasonsData.data).eventCommentReasons;
+	const commentReasons = (commentReasonsData.data).eventCommentReasons;
 
-	return { comments, commentReasons }
+	return { comments, commentReasons };
 });
 
-export const fetchEventPublications = createAppAsyncThunk('eventDetails/fetchEventPublications', async (eventId: Event["id"], { dispatch }) => {
-	let data = await axios.get(`/admin-ng/event/${eventId}/publications.json`);
-
-	let publications: {
+export const fetchEventPublications = createAppAsyncThunk("eventDetails/fetchEventPublications", async (eventId: Event["id"], { dispatch }) => {
+	type FetchEventPublications = {
 		publications: {
 			id: string,
 			name: string,
@@ -933,18 +939,21 @@ export const fetchEventPublications = createAppAsyncThunk('eventDetails/fetchEve
 		}[],
 		"start-date": string,
 		"end-date": string,
-	} = await data.data;
+	};
+	const data = await axios.get<FetchEventPublications>(`/admin-ng/event/${eventId}/publications.json`);
+
+	const publications = data.data;
 
 	return await dispatch(enrichPublications(publications)).unwrap();
 });
 
 // fetch Tobira data of certain series from server
-export const fetchEventDetailsTobira = createAppAsyncThunk('eventDetails/fetchEventDetailsTobira', async (
+export const fetchEventDetailsTobira = createAppAsyncThunk("eventDetails/fetchEventDetailsTobira", async (
 	id: string,
 	{ dispatch },
 ) => {
-	const res = await axios.get(`/admin-ng/event/${id}/tobira/pages`)
-		.catch(response => handleTobiraError(response, dispatch));
+	const res = await axios.get<EventDetailsState["tobiraData"]>(`/admin-ng/event/${id}/tobira/pages`)
+		.catch((error: AxiosError) => handleTobiraError(error, dispatch));
 
 	if (!res) {
 		throw new Error();
@@ -954,45 +963,45 @@ export const fetchEventDetailsTobira = createAppAsyncThunk('eventDetails/fetchEv
 	return data;
 });
 
-export const saveComment = createAppAsyncThunk('eventDetails/saveComment', async (params: {
+export const saveComment = createAppAsyncThunk("eventDetails/saveComment", async (params: {
 	eventId: Event["id"],
 	commentText: Comment["text"],
 	commentReason: Comment["reason"]
 }) => {
 	const { eventId, commentText, commentReason } = params;
-	let headers = getHttpHeaders();
+	const headers = getHttpHeaders();
 
-	let data = new URLSearchParams();
+	const data = new URLSearchParams();
 	data.append("text", commentText);
 	data.append("reason", commentReason);
 
 	const commentSaved = await axios.post(
 		`/admin-ng/event/${eventId}/comment`,
 		data.toString(),
-		headers
+		headers,
 	);
 	await commentSaved.data;
 
 	return true;
 });
 
-export const saveCommentReply = createAppAsyncThunk('eventDetails/saveCommentReply', async (params: {
+export const saveCommentReply = createAppAsyncThunk("eventDetails/saveCommentReply", async (params: {
 	eventId: Event["id"],
 	commentId: Comment["id"],
 	replyText: CommentReply["text"],
 	commentResolved: Comment["resolvedStatus"]
 }) => {
 	const { eventId, commentId, replyText, commentResolved } = params;
-	let headers = getHttpHeaders();
+	const headers = getHttpHeaders();
 
-	let data = new URLSearchParams();
+	const data = new URLSearchParams();
 	data.append("text", replyText);
 	data.append("resolved", String(commentResolved));
 
 	const commentReply = await axios.post(
 		`/admin-ng/event/${eventId}/comment/${commentId}/reply`,
 		data.toString(),
-		headers
+		headers,
 	);
 
 	await commentReply.data;
@@ -1000,12 +1009,21 @@ export const saveCommentReply = createAppAsyncThunk('eventDetails/saveCommentRep
 	return true;
 });
 
-export const fetchSchedulingInfo = createAppAsyncThunk('eventDetails/fetchSchedulingInfo', async (eventId: Event["id"], { dispatch, getState }) => {
+export const fetchSchedulingInfo = createAppAsyncThunk("eventDetails/fetchSchedulingInfo", async (eventId: Event["id"], { dispatch, getState }) => {
+		type FetchSchedulingInfo = {
+			agentId: string,
+			agentConfiguration: {
+				"capture.device.names": string,
+			},
+			presenters: string[],
+			start: string,
+			end: string,
+		};
 		// get data from API about event scheduling
-		const schedulingRequest = await axios.get(
-			`/admin-ng/event/${eventId}/scheduling.json`
+		const schedulingRequest = await axios.get<FetchSchedulingInfo>(
+			`/admin-ng/event/${eventId}/scheduling.json`,
 		);
-		const schedulingResponse = await schedulingRequest.data;
+		const schedulingResponse = schedulingRequest.data;
 
 		// get data from API about capture agents
 		await dispatch(fetchRecordings("inputs"));
@@ -1017,7 +1035,7 @@ export const fetchSchedulingInfo = createAppAsyncThunk('eventDetails/fetchSchedu
 		const endDate = new Date(schedulingResponse.end);
 		const { durationHours, durationMinutes } = calculateDuration(
 			startDate,
-			endDate
+			endDate,
 		);
 
 		let device: Device = {
@@ -1028,10 +1046,10 @@ export const fetchSchedulingInfo = createAppAsyncThunk('eventDetails/fetchSchedu
 		};
 
 		const agent = captureAgents.find(
-			(agent) => agent.id === schedulingResponse.agentId
+			agent => agent.id === schedulingResponse.agentId,
 		);
-		if (!!agent) {
-			let inputMethods = [];
+		if (agent) {
+			const inputMethods = [];
 
 			if (
 				schedulingResponse.agentConfiguration["capture.device.names"] !==
@@ -1086,14 +1104,13 @@ export type SchedulingInfo = {
 	scheduleStartMinute: string,
 }
 
-export const saveSchedulingInfo = createAppAsyncThunk('eventDetails/saveSchedulingInfo', async (params: {
+export const saveSchedulingInfo = createAppAsyncThunk("eventDetails/saveSchedulingInfo", async (params: {
 	eventId: Event["id"],
 	values: SchedulingInfo,
 	startDate: Date,
 	endDate: Date
 }, { dispatch, getState }) => {
 	const { eventId, values, startDate, endDate } = params;
-
 	const state = getState();
 	const oldSource = getSchedulingSource(state);
 	const captureAgents = getRecordings(state);
@@ -1104,8 +1121,8 @@ export const saveSchedulingInfo = createAppAsyncThunk('eventDetails/saveScheduli
 		inputMethods: [],
 	};
 
-	const agent = captureAgents.find((agent) => agent.id === values.captureAgent);
-	if (!!agent) {
+	const agent = captureAgents.find(agent => agent.id === values.captureAgent);
+	if (agent) {
 		device = {
 			...agent,
 			inputMethods: values.inputs,
@@ -1141,7 +1158,7 @@ export const saveSchedulingInfo = createAppAsyncThunk('eventDetails/saveScheduli
 	const end = endDate.toISOString();
 
 	const headers = getHttpHeaders();
-	let data = new URLSearchParams();
+	const data = new URLSearchParams();
 	data.append(
 		"scheduling",
 		JSON.stringify({
@@ -1149,24 +1166,23 @@ export const saveSchedulingInfo = createAppAsyncThunk('eventDetails/saveScheduli
 			start: start,
 			end: end,
 			agentConfiguration: source.agentConfiguration,
-		})
+		}),
 	);
 
 	// save new scheduling information
 	await axios
 		.put(`/admin-ng/event/${eventId}/scheduling`, data, headers)
-		.then((response) => {
+		.then(() => {
 			dispatch(removeNotificationWizardForm());
 			dispatch(fetchSchedulingInfo(eventId));
 		})
-		.catch((response) => {
+		.catch(response => {
 			dispatch(
 				addNotification({
 					type: "error",
 					key: "EVENTS_NOT_UPDATED",
-					parameter: undefined,
-					context: NOTIFICATION_CONTEXT
-				})
+					context: NOTIFICATION_CONTEXT,
+				}),
 			);
 			throw (response);
 		});
@@ -1176,7 +1192,7 @@ export const saveSchedulingInfo = createAppAsyncThunk('eventDetails/saveScheduli
 
 // TODO: This does not return a boolean anymore. Fix this in usage, make users
 // get their info from the state
-export const checkConflicts = createAppAsyncThunk('eventDetails/checkConflicts', async (params: {
+export const checkConflicts = createAppAsyncThunk("eventDetails/checkConflicts", async (params: {
 	eventId: Event["id"],
 	startDate: Date,
 	endDate: Date,
@@ -1194,14 +1210,13 @@ if (endDate < now) {
 			type: "error",
 			key: "CONFLICT_IN_THE_PAST",
 			duration: -1,
-			parameter: undefined,
-			context: NOTIFICATION_CONTEXT
-		})
+			context: NOTIFICATION_CONTEXT,
+		}),
 	);
 	hasSchedulingConflicts = true;
 } else {
 	dispatch(removeNotificationWizardForm());
-	let headers = getHttpHeaders();
+	const headers = getHttpHeaders();
 
 	const conflictTimeFrame = {
 		id: eventId,
@@ -1211,23 +1226,22 @@ if (endDate < now) {
 		end: endDate.toISOString(),
 	};
 
-	let data = new URLSearchParams();
+	const data = new URLSearchParams();
 	data.append("metadata", JSON.stringify(conflictTimeFrame));
 
 	await axios
-		.post(`/admin-ng/event/new/conflicts`, data, headers)
-		.then((response) => {
+		.post<EventDetailsState["schedulingConflicts"]>("/admin-ng/event/new/conflicts", data, headers)
+		.then(response => {
 			const responseStatus = response.status;
 			if (responseStatus === 409) {
-				//conflict detected, add notification and get conflict specifics
+				// conflict detected, add notification and get conflict specifics
 				dispatch(
 					addNotification({
 						type: "error",
 						key: "CONFLICT_DETECTED",
 						duration: -1,
-						parameter: undefined,
-						context: NOTIFICATION_CONTEXT
-					})
+						context: NOTIFICATION_CONTEXT,
+					}),
 				);
 				const conflictsResponse = response.data;
 
@@ -1241,37 +1255,41 @@ if (endDate < now) {
 
 				hasSchedulingConflicts = true;
 			} else if (responseStatus === 204) {
-				//no conflicts detected
+				// no conflicts detected
 				hasSchedulingConflicts = false;
 			} else {
 				hasSchedulingConflicts = true;
 			}
 		})
-		.catch((error) => {
-			const responseStatus = error.response.status;
-			if (responseStatus === 409) {
-				//conflict detected, add notification and get conflict specifics
-				dispatch(
-					addNotification({
-						type: "error",
-						key: "CONFLICT_DETECTED",
-						duration: -1,
-						parameter: undefined,
-						context: NOTIFICATION_CONTEXT
-					})
-				);
-				const conflictsResponse = error.response.data;
+		.catch(error => {
+			if (axios.isAxiosError<{ title: string, start: string, end: string }[]>(error) && error.response) {
+				const responseStatus = error.response.status;
+				if (responseStatus === 409) {
+					// conflict detected, add notification and get conflict specifics
+					dispatch(
+						addNotification({
+							type: "error",
+							key: "CONFLICT_DETECTED",
+							duration: -1,
+							context: NOTIFICATION_CONTEXT,
+						}),
+					);
+					const conflictsResponse = error.response.data;
 
-				for (const conflict of conflictsResponse) {
-					conflicts.push({
-						title: conflict.title,
-						start: conflict.start,
-						end: conflict.end,
-					});
+					for (const conflict of conflictsResponse) {
+						conflicts.push({
+							title: conflict.title,
+							start: conflict.start,
+							end: conflict.end,
+						});
+					}
+
+					hasSchedulingConflicts = true;
+				} else {
+					hasSchedulingConflicts = true;
 				}
-
-				hasSchedulingConflicts = true;
 			} else {
+				console.error("Unexpected error", error);
 				hasSchedulingConflicts = true;
 			}
 		});
@@ -1280,19 +1298,27 @@ if (endDate < now) {
 	return { conflicts, hasSchedulingConflicts };
 });
 
-export const fetchWorkflows = createAppAsyncThunk('eventDetails/fetchWorkflows', async (eventId: Event["id"], { dispatch, getState }) => {
-	const data = await axios.get(`/admin-ng/event/${eventId}/workflows.json`);
-	const workflowsData = await data.data;
+export const fetchWorkflows = createAppAsyncThunk("eventDetails/fetchWorkflows", async (eventId: Event["id"], { dispatch, getState }) => {
+	type FetchWorkflows = {
+		results: WorkflowEntry[]
+	} | {
+		configuration: {
+			straightToPublishing: string
+		},
+		workflowId: string
+	}
+	const data = await axios.get<FetchWorkflows>(`/admin-ng/event/${eventId}/workflows.json`);
+	const workflowsData = data.data;
 	let workflows: Workflow;
 
-	if (!!workflowsData.results) {
+	if ("results" in workflowsData) {
 		workflows = {
 			entries: workflowsData.results,
 			scheduling: false,
 			workflow: {
 				workflowId: "",
 				description: undefined,
-				configuration: undefined
+				configuration: undefined,
 			},
 		};
 
@@ -1313,37 +1339,37 @@ export const fetchWorkflows = createAppAsyncThunk('eventDetails/fetchWorkflows',
 
 		const workflowDefinitions = getWorkflowDef(state);
 
-		dispatch(setEventWorkflowDefinitions({workflows, workflowDefinitions}));
+		dispatch(setEventWorkflowDefinitions({ workflows, workflowDefinitions }));
 	}
 
 	return workflows;
 });
 
-export const fetchWorkflowDetails = createAppAsyncThunk('eventDetails/fetchWorkflowDetails', async (params: {
+export const fetchWorkflowDetails = createAppAsyncThunk("eventDetails/fetchWorkflowDetails", async (params: {
 	eventId: Event["id"],
 	workflowId: string
 }) => {
 	const { eventId, workflowId } = params;
-	const data = await axios.get(
-		`/admin-ng/event/${eventId}/workflows/${workflowId}.json`
+	const data = await axios.get<EventDetailsState["workflows"]["workflow"]>(
+		`/admin-ng/event/${eventId}/workflows/${workflowId}.json`,
 	);
-	return await data.data;
+	return data.data;
 });
 
-export const performWorkflowAction = createAppAsyncThunk('eventDetails/performWorkflowAction', async (params: {
+export const performWorkflowAction = createAppAsyncThunk("eventDetails/performWorkflowAction", async (params: {
 	eventId: Event["id"],
 	workflowId: string,
 	action: string,
 	close?: () => void,
 }, { dispatch }) => {
-	const { eventId, workflowId, action, close} = params;
-	let headers = {
+	const { eventId, workflowId, action, close } = params;
+	const headers = {
 		headers: {
 			"Content-Type": "application/json;charset=utf-8",
 		},
 	};
 
-	let data = {
+	const data = {
 		action: action,
 		id: eventId,
 		wfId: workflowId,
@@ -1353,35 +1379,35 @@ export const performWorkflowAction = createAppAsyncThunk('eventDetails/performWo
 		.put(
 			`/admin-ng/event/${eventId}/workflows/${workflowId}/action/${action}`,
 			data,
-			headers
+			headers,
 		)
-		.then((response) => {
+		.then(() => {
 			dispatch(
 				addNotification({
 					type: "success",
 					key: "EVENTS_PROCESSING_ACTION_" + action,
 					duration: -1,
-					parameter: undefined,
-					context: NOTIFICATION_CONTEXT
-				})
+					context: NOTIFICATION_CONTEXT,
+				}),
 			);
-			close && close();
+			if (close) {
+				close();
+			}
 		})
-		.catch((response) => {
+		.catch(response => {
 			dispatch(
 				addNotification({
 					type: "error",
 					key: "EVENTS_PROCESSING_ACTION_NOT_" + action,
 					duration: -1,
-					parameter: undefined,
-					context: NOTIFICATION_CONTEXT
-				})
+					context: NOTIFICATION_CONTEXT,
+				}),
 			);
-			throw (response)
+			throw (response);
 		});
 });
 
-export const deleteWorkflow = createAppAsyncThunk('eventDetails/deleteWorkflow', async (params: {
+export const deleteWorkflow = createAppAsyncThunk("eventDetails/deleteWorkflow", async (params: {
 	eventId: Event["id"],
 	workflowId: string
 }, { dispatch, getState }) => {
@@ -1389,35 +1415,33 @@ export const deleteWorkflow = createAppAsyncThunk('eventDetails/deleteWorkflow',
 
 	const workflowEntries = await axios
 		.delete(`/admin-ng/event/${eventId}/workflows/${workflowId}`)
-		.then((response) => {
+		.then(() => {
 			dispatch(
 				addNotification({
 					type: "success",
 					key: "EVENTS_PROCESSING_DELETE_WORKFLOW",
 					duration: -1,
-					parameter: undefined,
-					context: NOTIFICATION_CONTEXT
-				})
+					context: NOTIFICATION_CONTEXT,
+				}),
 			);
 
 			const state = getState();
 			const workflows = getWorkflows(state);
 
-			if (!!workflows.entries) {
-				return workflows.entries.filter((wf) => wf.id !== workflowId)
+			if (workflows.entries) {
+				return workflows.entries.filter(wf => wf.id !== workflowId);
 			} else {
 				return workflows.entries;
 			}
 		})
-		.catch((response) => {
+		.catch(response => {
 			dispatch(
 				addNotification({
 					type: "error",
 					key: "EVENTS_PROCESSING_DELETE_WORKFLOW_FAILED",
 					duration: -1,
-					parameter: undefined,
-					context: NOTIFICATION_CONTEXT
-				})
+					context: NOTIFICATION_CONTEXT,
+				}),
 			);
 			throw (response);
 		});
@@ -1425,15 +1449,15 @@ export const deleteWorkflow = createAppAsyncThunk('eventDetails/deleteWorkflow',
 	return workflowEntries;
 });
 
-export const fetchWorkflowOperations = createAppAsyncThunk('eventDetails/fetchWorkflowOperations', async (params: {
+export const fetchWorkflowOperations = createAppAsyncThunk("eventDetails/fetchWorkflowOperations", async (params: {
 	eventId: Event["id"],
 	workflowId: string
 }) => {
 	const { eventId, workflowId } = params;
-	const data = await axios.get(
-		`/admin-ng/event/${eventId}/workflows/${workflowId}/operations.json`
+	const data = await axios.get<EventDetailsState["workflowOperations"]["entries"]>(
+		`/admin-ng/event/${eventId}/workflows/${workflowId}/operations.json`,
 	);
-	const workflowOperationsData = await data.data;
+	const workflowOperationsData = data.data;
 	return { entries: workflowOperationsData };
 });
 
@@ -1449,20 +1473,20 @@ export const fetchWorkflowOperations = createAppAsyncThunk('eventDetails/fetchWo
 export const openModal = (
 	page: EventDetailsPage,
 	event: Event,
-	workflowTab: WorkflowTabHierarchy = 'entry',
-	assetsTab: AssetTabHierarchy = 'entry',
-	workflowId: string = '',
+	workflowTab: WorkflowTabHierarchy = "workflow-details",
+	assetsTab: AssetTabHierarchy = "entry",
+	workflowId: string = "",
 ) => (dispatch: AppDispatch) => {
 	dispatch(setModalEvent(event));
 	dispatch(setModalWorkflowId(workflowId));
-	dispatch(openModalTab(page, workflowTab, assetsTab))
+	dispatch(openModalTab(page, workflowTab, assetsTab));
 	dispatch(setShowModal(true));
 };
 
 export const openModalTab = (
 	page: EventDetailsPage,
 	workflowTab: WorkflowTabHierarchy,
-	assetsTab: AssetTabHierarchy
+	assetsTab: AssetTabHierarchy,
 ) => (dispatch: AppDispatch) => {
 	dispatch(setModalPage(page));
 	dispatch(setTobiraTabHierarchy("main"));
@@ -1470,44 +1494,44 @@ export const openModalTab = (
 	dispatch(setModalAssetsTabHierarchy(assetsTab));
 };
 
-export const fetchWorkflowOperationDetails = createAppAsyncThunk('eventDetails/fetchWorkflowOperationDetails', async (params: {
+export const fetchWorkflowOperationDetails = createAppAsyncThunk("eventDetails/fetchWorkflowOperationDetails", async (params: {
 	eventId: Event["id"],
 	workflowId: string,
 	operationId?: number
 }) => {
 	const { eventId, workflowId, operationId } = params;
-	const data = await axios.get(
-		`/admin-ng/event/${eventId}/workflows/${workflowId}/operations/${operationId}`
+	const data = await axios.get<EventDetailsState["workflowOperationDetails"]>(
+		`/admin-ng/event/${eventId}/workflows/${workflowId}/operations/${operationId}`,
 	);
-	return await data.data;
+	return data.data;
 });
 
-export const fetchWorkflowErrors = createAppAsyncThunk('eventDetails/fetchWorkflowErrors', async (params: {
+export const fetchWorkflowErrors = createAppAsyncThunk("eventDetails/fetchWorkflowErrors", async (params: {
 	eventId: Event["id"],
 	workflowId: string
 }) => {
 	const { eventId, workflowId } = params;
-	const data = await axios.get(
-		`/admin-ng/event/${eventId}/workflows/${workflowId}/errors.json`
+	const data = await axios.get<EventDetailsState["workflowErrors"]["entries"]>(
+		`/admin-ng/event/${eventId}/workflows/${workflowId}/errors.json`,
 	);
-	const workflowErrorsData = await data.data;
+	const workflowErrorsData = data.data;
 	return { entries: workflowErrorsData };
 });
 
-export const fetchWorkflowErrorDetails = createAppAsyncThunk('eventDetails/fetchWorkflowErrorDetails', async (params: {
+export const fetchWorkflowErrorDetails = createAppAsyncThunk("eventDetails/fetchWorkflowErrorDetails", async (params: {
 	eventId: Event["id"],
 	workflowId: number,
 	errorId?: number
 }) => {
 	const { eventId, workflowId, errorId } = params;
-	const data = await axios.get(
-		`/admin-ng/event/${eventId}/workflows/${workflowId}/errors/${errorId}.json`
+	const data = await axios.get<EventDetailsState["workflowErrorDetails"]>(
+		`/admin-ng/event/${eventId}/workflows/${workflowId}/errors/${errorId}.json`,
 	);
-	return await data.data;
+	return data.data;
 });
 
 // TODO: Fix this after the modernization of statisticsThunks happened
-export const fetchEventStatistics = createAppAsyncThunk('eventDetails/fetchEventStatistics', async (eventId: Event["id"], { getState }) => {
+export const fetchEventStatistics = createAppAsyncThunk("eventDetails/fetchEventStatistics", async (eventId: Event["id"], { getState }) => {
 	// get prior statistics
 	const state = getState();
 	const statistics = getStatistics(state);
@@ -1522,7 +1546,7 @@ export const fetchEventStatistics = createAppAsyncThunk('eventDetails/fetchEvent
 });
 
 // TODO: Fix this after the modernization of statisticsThunks happened
-export const fetchEventStatisticsValueUpdate = createAppAsyncThunk('eventDetails/fetchEventStatisticsValueUpdate', async (params: {
+export const fetchEventStatisticsValueUpdate = createAppAsyncThunk("eventDetails/fetchEventStatisticsValueUpdate", async (params: {
 	id: Event["id"],
 	providerId: string,
 	from: string | Date,
@@ -1549,22 +1573,22 @@ export const fetchEventStatisticsValueUpdate = createAppAsyncThunk('eventDetails
 	);
 });
 
-export const updateMetadata = createAppAsyncThunk('eventDetails/updateMetadata', async (params: {
+export const updateMetadata = createAppAsyncThunk("eventDetails/updateMetadata", async (params: {
 	id: Event["id"],
 	values: { [key: string]: MetadataCatalog["fields"][0]["value"] }
 	catalog: MetadataCatalog
-}, { dispatch, getState }) => {
+}, { dispatch }) => {
 	const { id, values, catalog } = params;
 
 	const { fields, data, headers } = transformMetadataForUpdate(
 		catalog,
-		values
+		values,
 	);
 
 	await axios.put(`/admin-ng/event/${id}/metadata`, data, headers);
 
 	// updated metadata in event details redux store
-	let eventMetadata = {
+	const eventMetadata = {
 		flavor: catalog.flavor,
 		title: catalog.title,
 		fields: fields,
@@ -1572,7 +1596,7 @@ export const updateMetadata = createAppAsyncThunk('eventDetails/updateMetadata',
 	dispatch(setEventMetadata(eventMetadata));
 });
 
-export const updateExtendedMetadata = createAppAsyncThunk('eventDetails/updateExtendedMetadata', async (params: {
+export const updateExtendedMetadata = createAppAsyncThunk("eventDetails/updateExtendedMetadata", async (params: {
 	id: Event["id"],
 	values: { [key: string]: MetadataCatalog["fields"][0]["value"] }
 	catalog: MetadataCatalog
@@ -1581,19 +1605,19 @@ export const updateExtendedMetadata = createAppAsyncThunk('eventDetails/updateEx
 
 	const { fields, data, headers } = transformMetadataForUpdate(
 		catalog,
-		values
+		values,
 	);
 
 	await axios.put(`/admin-ng/event/${id}/metadata`, data, headers);
 
 	// updated extended metadata in event details redux store
-	let eventMetadata = {
+	const eventMetadata = {
 		...catalog,
 		fields: fields,
 	};
 
 	const oldExtendedMetadata = getExtendedMetadata(getState());
-	let newExtendedMetadata = [];
+	const newExtendedMetadata = [];
 
 	for (const catalog of oldExtendedMetadata) {
 		if (
@@ -1609,27 +1633,27 @@ export const updateExtendedMetadata = createAppAsyncThunk('eventDetails/updateEx
 	dispatch(setExtendedEventMetadata(newExtendedMetadata));
 });
 
-export const fetchHasActiveTransactions = createAppAsyncThunk('eventDetails/fetchHasActiveTransactions', async (eventId: Event["id"]) => {
-	const transactionsData = await axios.get(
-		`/admin-ng/event/${eventId}/hasActiveTransaction`
+export const fetchHasActiveTransactions = createAppAsyncThunk("eventDetails/fetchHasActiveTransactions", async (eventId: Event["id"]) => {
+	const transactionsData = await axios.get<{ active: boolean }>(
+		`/admin-ng/event/${eventId}/hasActiveTransaction`,
 	);
-	const hasActiveTransactions = await transactionsData.data;
+	const hasActiveTransactions = transactionsData.data;
 	return hasActiveTransactions;
 });
 
-export const updateAssets = createAppAsyncThunk('eventDetails/updateAssets', async (params: {
+export const updateAssets = (params: {
 	values: { [key: string]: File },
 	eventId: Event["id"]
-}, { dispatch, getState }) => {
+}): AppThunk => (dispatch, getState) => {
 	const { values, eventId } = params;
 	// get asset upload options from redux store
 	const state = getState();
 	const uploadAssetOptions = getAssetUploadOptions(state);
 	const uploadAssetWorkflow = getAssetUploadWorkflow(state);
 
-	let formData = new FormData();
+	const formData = new FormData();
 
-	let assets: {
+	const assets: {
 		options: UploadOption[],
 	} = {
 		options: [],
@@ -1637,8 +1661,8 @@ export const updateAssets = createAppAsyncThunk('eventDetails/updateAssets', asy
 
 	let assetFlavors = "";
 
-	uploadAssetOptions.forEach((option) => {
-		if (!!values[option.id]) {
+	uploadAssetOptions.forEach(option => {
+		if (values[option.id]) {
 			formData.append(option.id + ".0", values[option.id]);
 			assets.options = assets.options.concat(option);
 			const uploadAssetFlavor = [option.flavorType, option.flavorSubType].join("/");
@@ -1671,7 +1695,7 @@ export const updateAssets = createAppAsyncThunk('eventDetails/updateAssets', asy
 		JSON.stringify({
 			assets: assets,
 			processing: processing,
-		})
+		}),
 	);
 
 	axios
@@ -1680,161 +1704,164 @@ export const updateAssets = createAppAsyncThunk('eventDetails/updateAssets', asy
 				"Content-Type": "multipart/form-data",
 			},
 		})
-		.then((response) => {
+		.then(response => {
 			console.info(response);
 			dispatch(
 				addNotification({
 					type: "success",
 					key: "EVENTS_UPDATED",
-					parameter: undefined,
-					context: NOTIFICATION_CONTEXT
-				})
+					context: NOTIFICATION_CONTEXT,
+				}),
 			);
 		})
-		.catch((response) => {
+		.catch(response => {
 			console.error(response);
 			dispatch(
 				addNotification({
 					type: "error",
 					key: "EVENTS_NOT_UPDATED",
-					parameter: undefined,
-					context: NOTIFICATION_CONTEXT
-				})
+					context: NOTIFICATION_CONTEXT,
+				}),
 			);
 		});
-});
+};
 
-export const saveAccessPolicies = createAppAsyncThunk('eventDetails/saveAccessPolicies', async (params: {
-	id: Event["id"],
-	policies: { acl: { ace: Ace[] } }
-}, { dispatch }) => {
+export const saveAccessPolicies = createAppAsyncThunk("eventDetails/saveAccessPolicies", async (
+	params: {
+		id: Event["id"],
+		policies: { acl: { ace: Ace[] }},
+	}, { dispatch }) => {
 	const { id, policies } = params;
 	const headers = getHttpHeaders();
 
-	let data = new URLSearchParams();
+	const data = new URLSearchParams();
 	data.append("acl", JSON.stringify(policies));
-	data.append("override", "true");
 
 	return axios
 		.post(`/admin-ng/event/${id}/access`, data.toString(), headers)
-		.then((response) => {
+		.then(response => {
 			console.info(response);
-			dispatch(fetchAccessPolicies(id))
+			dispatch(fetchAccessPolicies(id));
 			dispatch(
 				addNotification({
 					type: "info",
 					key: "SAVED_ACL_RULES",
 					duration: -1,
-					parameter: undefined,
-					context: NOTIFICATION_CONTEXT
-				})
+					context: NOTIFICATION_CONTEXT,
+				}),
 			);
 			return true;
 		})
-		.catch((response) => {
+		.catch(response => {
 			console.error(response);
 			dispatch(
 				addNotification({
 					type: "error",
 					key: "ACL_NOT_SAVED",
 					duration: -1,
-					parameter: undefined,
-					context: NOTIFICATION_CONTEXT
-				})
+					context: NOTIFICATION_CONTEXT,
+				}),
 			);
 			return false;
 		});
 });
 
-export const updateComment = createAppAsyncThunk('eventDetails/updateComment', async (params: {
+export const updateComment = createAppAsyncThunk("eventDetails/updateComment", async (params: {
 	eventId: Event["id"],
 	commentId: Comment["id"],
 	commentText: Comment["text"],
 	commentReason: Comment["reason"]
-}, { dispatch }) => {
+}) => {
 	const { eventId, commentId, commentText, commentReason } = params;
-	let headers = getHttpHeaders();
+	const headers = getHttpHeaders();
 
-	let data = new URLSearchParams();
+	const data = new URLSearchParams();
 	data.append("text", commentText);
 	data.append("reason", commentReason);
 
 	const commentUpdated = await axios.put(
 		`/admin-ng/event/${eventId}/comment/${commentId}`,
 		data.toString(),
-		headers
+		headers,
 	);
 	await commentUpdated.data;
 	return true;
 });
 
-export const deleteComment = createAppAsyncThunk('eventDetails/deleteComment', async (params: {
+export const deleteComment = createAppAsyncThunk("eventDetails/deleteComment", async (params: {
 	eventId: Event["id"],
 	commentId: Comment["id"]
 }) => {
 	const { eventId, commentId } = params;
 	const commentDeleted = await axios.delete(
-		`/admin-ng/event/${eventId}/comment/${commentId}`
+		`/admin-ng/event/${eventId}/comment/${commentId}`,
 	);
 	await commentDeleted.data;
 	return true;
 });
 
-export const deleteCommentReply = createAppAsyncThunk('eventDetails/deleteCommentReply', async (params: {
+export const deleteCommentReply = createAppAsyncThunk("eventDetails/deleteCommentReply", async (params: {
 	eventId: Event["id"],
 	commentId: Comment["id"],
 	replyId: CommentReply["id"]
 }) => {
 	const { eventId, commentId, replyId } = params;
 	const commentReplyDeleted = await axios.delete(
-		`/admin-ng/event/${eventId}/comment/${commentId}/${replyId}`
+		`/admin-ng/event/${eventId}/comment/${commentId}/${replyId}`,
 	);
 	await commentReplyDeleted.data;
 
 	return true;
 });
 
-export const saveWorkflowConfig = createAppAsyncThunk('eventDetails/saveWorkflowConfig', async (params: {
+export const saveWorkflowConfig = (params: {
 	values: {
 		workflowDefinition: string,
 		configuration: { [key: string]: unknown } | undefined
 	},
 	eventId: Event["id"]
-}, { dispatch }) => {
+}): AppThunk => dispatch => {
+// export const saveWorkflowConfig = createAppAsyncThunk("eventDetails/saveWorkflowConfig", async (params: {
+// 	values: {
+// 		workflowDefinition: string,
+// 		configuration: { [key: string]: unknown } | undefined
+// 	},
+// 	eventId: Event["id"]
+// }, { dispatch }) => {
 	const { values, eventId } = params;
-	let jsonData = {
+	const jsonData = {
 		id: values.workflowDefinition,
 		configuration: values.configuration,
 	};
 
-	let header = getHttpHeaders();
-	let data = new URLSearchParams();
+	const header = getHttpHeaders();
+	const data = new URLSearchParams();
 	// Scheduler service in Opencast expects values to be strings, so we convert them here
-	data.append("configuration", JSON.stringify(jsonData, (k, v) => v && typeof v === 'object' ? v : '' + v));
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-return
+	data.append("configuration", JSON.stringify(jsonData, (_k, v) => v && typeof v === "object" ? v : "" + v));
 
 	axios
 		.put(`/admin-ng/event/${eventId}/workflows`, data, header)
-		.then((response) => {
+		.then(response => {
 			console.info(response);
 			dispatch(removeNotificationWizardForm());
 			dispatch(fetchWorkflows(eventId));
 		})
-		.catch((response) => {
+		.catch(response => {
 			console.error(response);
 			dispatch(
 				addNotification({
 					type: "error",
 					key: "EVENTS_NOT_UPDATED",
 					duration: -1,
-					parameter: undefined,
-					context: NOTIFICATION_CONTEXT
-				})
+					context: NOTIFICATION_CONTEXT,
+				}),
 			);
 		});
-});
+};
 
 const eventDetailsSlice = createSlice({
-	name: 'eventDetails',
+	name: "eventDetails",
 	initialState,
 	reducers: {
 		setShowModal(state, action: PayloadAction<
@@ -1902,20 +1929,20 @@ const eventDetailsSlice = createSlice({
 	extraReducers: builder => {
 		builder
 			// fetchMetadata
-			.addCase(fetchMetadata.pending, (state) => {
-				state.statusMetadata = 'loading';
+			.addCase(fetchMetadata.pending, state => {
+				state.statusMetadata = "loading";
 			})
 			.addCase(fetchMetadata.fulfilled, (state, action: PayloadAction<{
 				metadata: EventDetailsState["metadata"],
 				extendedMetadata: EventDetailsState["extendedMetadata"],
 			}>) => {
-				state.statusMetadata = 'succeeded';
+				state.statusMetadata = "succeeded";
 				const eventDetails = action.payload;
 				state.metadata = eventDetails.metadata;
 				state.extendedMetadata = eventDetails.extendedMetadata;
 			})
 			.addCase(fetchMetadata.rejected, (state, action) => {
-				state.statusMetadata = 'failed';
+				state.statusMetadata = "failed";
 				state.metadata = {
 					title: "",
 					flavor: "",
@@ -1926,8 +1953,8 @@ const eventDetailsSlice = createSlice({
 				console.error(action.error);
 			})
 			// fetchAssets
-			.addCase(fetchAssets.pending, (state) => {
-				state.statusAssets = 'loading';
+			.addCase(fetchAssets.pending, state => {
+				state.statusAssets = "loading";
 			})
 			.addCase(fetchAssets.fulfilled, (state, action: PayloadAction<{
 				assets: EventDetailsState["assets"],
@@ -1935,7 +1962,7 @@ const eventDetailsSlice = createSlice({
 				uploadAssetOptions: EventDetailsState["uploadAssetOptions"],
 				uploadSourceOptions: EventDetailsState["uploadSourceOptions"],
 			}>) => {
-				state.statusAssets = 'succeeded';
+				state.statusAssets = "succeeded";
 				const eventDetails = action.payload;
 				state.assets = eventDetails.assets;
 				state.transactionsReadOnly = eventDetails.transactionsReadOnly;
@@ -1943,7 +1970,7 @@ const eventDetailsSlice = createSlice({
 				state.uploadSourceOptions = eventDetails.uploadSourceOptions;
 			})
 			.addCase(fetchAssets.rejected, (state, action) => {
-				state.statusAssets = 'failed';
+				state.statusAssets = "failed";
 				const emptyAssets = {
 					attachments: 0,
 					catalogs: 0,
@@ -1957,33 +1984,33 @@ const eventDetailsSlice = createSlice({
 				console.error(action.error);
 			})
 			// fetchAssetAttachments
-			.addCase(fetchAssetAttachments.pending, (state) => {
-				state.statusAssetAttachments = 'loading';
+			.addCase(fetchAssetAttachments.pending, state => {
+				state.statusAssetAttachments = "loading";
 			})
 			.addCase(fetchAssetAttachments.fulfilled, (state, action: PayloadAction<
 				EventDetailsState["assetAttachments"]
 			>) => {
-				state.statusAssetAttachments = 'succeeded';
+				state.statusAssetAttachments = "succeeded";
 				state.assetAttachments = action.payload;
 			})
 			.addCase(fetchAssetAttachments.rejected, (state, action) => {
-				state.statusAssetAttachments = 'failed';
+				state.statusAssetAttachments = "failed";
 				state.assetAttachments = [];
 				state.errorAssetAttachments = action.error;
 				console.error(action.error);
 			})
 			// fetchAssetAttachmentDetails
-			.addCase(fetchAssetAttachmentDetails.pending, (state) => {
-				state.statusAssetAttachments = 'loading';
+			.addCase(fetchAssetAttachmentDetails.pending, state => {
+				state.statusAssetAttachments = "loading";
 			})
 			.addCase(fetchAssetAttachmentDetails.fulfilled, (state, action: PayloadAction<
 				EventDetailsState["assetAttachmentDetails"]
 			>) => {
-				state.statusAssetAttachments = 'succeeded';
+				state.statusAssetAttachments = "succeeded";
 				state.assetAttachmentDetails = action.payload;
 			})
 			.addCase(fetchAssetAttachmentDetails.rejected, (state, action) => {
-				state.statusAssetAttachments = 'failed';
+				state.statusAssetAttachments = "failed";
 				const emptyAssetAttachmentDetails = {
 					id: "",
 					type: "",
@@ -1999,33 +2026,33 @@ const eventDetailsSlice = createSlice({
 				console.error(action.error);
 			})
 			// fetchAssetCatalogs
-			.addCase(fetchAssetCatalogs.pending, (state) => {
-				state.statusAssetCatalogs = 'loading';
+			.addCase(fetchAssetCatalogs.pending, state => {
+				state.statusAssetCatalogs = "loading";
 			})
 			.addCase(fetchAssetCatalogs.fulfilled, (state, action: PayloadAction<
 				EventDetailsState["assetCatalogs"]
 			>) => {
-				state.statusAssetCatalogs = 'succeeded';
+				state.statusAssetCatalogs = "succeeded";
 				state.assetCatalogs = action.payload;
 			})
 			.addCase(fetchAssetCatalogs.rejected, (state, action) => {
-				state.statusAssetCatalogs = 'failed';
+				state.statusAssetCatalogs = "failed";
 				state.assetCatalogs = [];
 				state.errorAssetCatalogs = action.error;
 				console.error(action.error);
 			})
 			// fetchAssetCatalogDetails
-			.addCase(fetchAssetCatalogDetails.pending, (state) => {
-				state.statusAssetCatalogDetails = 'loading';
+			.addCase(fetchAssetCatalogDetails.pending, state => {
+				state.statusAssetCatalogDetails = "loading";
 			})
 			.addCase(fetchAssetCatalogDetails.fulfilled, (state, action: PayloadAction<
 				EventDetailsState["assetCatalogDetails"]
 			>) => {
-				state.statusAssetCatalogDetails = 'succeeded';
+				state.statusAssetCatalogDetails = "succeeded";
 				state.assetCatalogDetails = action.payload;
 			})
 			.addCase(fetchAssetCatalogDetails.rejected, (state, action) => {
-				state.statusAssetCatalogDetails = 'failed';
+				state.statusAssetCatalogDetails = "failed";
 				const emptyAssetCatalogDetails = {
 					id: "",
 					type: "",
@@ -2041,33 +2068,33 @@ const eventDetailsSlice = createSlice({
 				console.error(action.error);
 			})
 			// fetchAssetMedia
-			.addCase(fetchAssetMedia.pending, (state) => {
-				state.statusAssetMedia = 'loading';
+			.addCase(fetchAssetMedia.pending, state => {
+				state.statusAssetMedia = "loading";
 			})
 			.addCase(fetchAssetMedia.fulfilled, (state, action: PayloadAction<
 				EventDetailsState["assetMedia"]
 			>) => {
-				state.statusAssetMedia = 'succeeded';
+				state.statusAssetMedia = "succeeded";
 				state.assetMedia = action.payload;
 			})
 			.addCase(fetchAssetMedia.rejected, (state, action) => {
-				state.statusAssetMedia = 'failed';
+				state.statusAssetMedia = "failed";
 				state.assetMedia = [];
 				state.errorAssetMedia = action.error;
 				console.error(action.error);
 			})
 			// fetchAssetMediaDetails
-			.addCase(fetchAssetMediaDetails.pending, (state) => {
-				state.statusAssetMediaDetails = 'loading';
+			.addCase(fetchAssetMediaDetails.pending, state => {
+				state.statusAssetMediaDetails = "loading";
 			})
 			.addCase(fetchAssetMediaDetails.fulfilled, (state, action: PayloadAction<
 				EventDetailsState["assetMediaDetails"]
 			>) => {
-				state.statusAssetMediaDetails = 'succeeded';
-				state.assetMediaDetails = action.payload;
+				state.statusAssetMediaDetails = "succeeded";
+				state.assetMediaDetails = camelcaseKeys(action.payload);
 			})
 			.addCase(fetchAssetMediaDetails.rejected, (state, action) => {
-				state.statusAssetMediaDetails = 'failed';
+				state.statusAssetMediaDetails = "failed";
 				const emptyAssetMediaDetails = {
 					id: "",
 					type: "",
@@ -2077,9 +2104,9 @@ const eventDetailsSlice = createSlice({
 					size: 0,
 					checksum: undefined,
 					reference: "",
-					has_audio: false,
-					has_subtitle: false,
-					has_video: false,
+					hasAudio: false,
+					hasSubtitle: false,
+					hasVideo: false,
 					url: "",
 					streams: {
 						audio: [],
@@ -2092,33 +2119,33 @@ const eventDetailsSlice = createSlice({
 				console.error(action.error);
 			})
 			// fetchAssetPublications
-			.addCase(fetchAssetPublications.pending, (state) => {
-				state.statusAssetPublications = 'loading';
+			.addCase(fetchAssetPublications.pending, state => {
+				state.statusAssetPublications = "loading";
 			})
 			.addCase(fetchAssetPublications.fulfilled, (state, action: PayloadAction<
 				EventDetailsState["assetPublications"]
 			>) => {
-				state.statusAssetPublications = 'succeeded';
+				state.statusAssetPublications = "succeeded";
 				state.assetPublications = action.payload;
 			})
 			.addCase(fetchAssetPublications.rejected, (state, action) => {
-				state.statusAssetPublications = 'failed';
+				state.statusAssetPublications = "failed";
 				state.assetPublications = [];
 				state.errorAssetPublications = action.error;
 				console.error(action.error);
 			})
 			// fetchAssetPublicationDetails
-			.addCase(fetchAssetPublicationDetails.pending, (state) => {
-				state.statusAssetPublicationDetails = 'loading';
+			.addCase(fetchAssetPublicationDetails.pending, state => {
+				state.statusAssetPublicationDetails = "loading";
 			})
 			.addCase(fetchAssetPublicationDetails.fulfilled, (state, action: PayloadAction<
 				EventDetailsState["assetPublicationDetails"]
 			>) => {
-				state.statusAssetPublicationDetails = 'succeeded';
+				state.statusAssetPublicationDetails = "succeeded";
 				state.assetPublicationDetails = action.payload;
 			})
 			.addCase(fetchAssetPublicationDetails.rejected, (state, action) => {
-				state.statusAssetPublicationDetails = 'failed';
+				state.statusAssetPublicationDetails = "failed";
 				const emptyAssetPublicationDetails = {
 					id: "",
 					type: "",
@@ -2135,103 +2162,105 @@ const eventDetailsSlice = createSlice({
 				console.error(action.error);
 			})
 			// fetchAccessPolicies
-			.addCase(fetchAccessPolicies.pending, (state) => {
-				state.statusPolicies = 'loading';
+			.addCase(fetchAccessPolicies.pending, state => {
+				state.statusPolicies = "loading";
 			})
-			.addCase(fetchAccessPolicies.fulfilled, (state, action: PayloadAction<
-				EventDetailsState["policies"]
-			>) => {
-				state.statusPolicies = 'succeeded';
-				state.policies = action.payload;
+			.addCase(fetchAccessPolicies.fulfilled, (state, action: PayloadAction<{
+				policies: EventDetailsState["policies"],
+				currentAclTemplateId: EventDetailsState["policyTemplateId"],
+			}>) => {
+				state.statusPolicies = "succeeded";
+				state.policies = action.payload.policies;
+				state.policyTemplateId = action.payload.currentAclTemplateId;
 			})
 			.addCase(fetchAccessPolicies.rejected, (state, action) => {
-				state.statusPolicies = 'failed';
+				state.statusPolicies = "failed";
 				state.errorPolicies = action.error;
 				console.error(action.error);
 			})
 			// fetchComments
-			.addCase(fetchComments.pending, (state) => {
-				state.statusComments = 'loading';
+			.addCase(fetchComments.pending, state => {
+				state.statusComments = "loading";
 			})
 			.addCase(fetchComments.fulfilled, (state, action: PayloadAction<{
 				comments: EventDetailsState["comments"],
 				commentReasons: EventDetailsState["commentReasons"],
 			}>) => {
-				state.statusComments = 'succeeded';
+				state.statusComments = "succeeded";
 				const eventDetails = action.payload;
 				state.comments = eventDetails.comments;
 				state.commentReasons = eventDetails.commentReasons;
 			})
 			.addCase(fetchComments.rejected, (state, action) => {
-				state.statusComments = 'failed';
+				state.statusComments = "failed";
 				state.errorComments = action.error;
 				console.error(action.error);
 			})
 			// fetchEventPublications
-			.addCase(fetchEventPublications.pending, (state) => {
-				state.statusPublications = 'loading';
+			.addCase(fetchEventPublications.pending, state => {
+				state.statusPublications = "loading";
 			})
 			.addCase(fetchEventPublications.fulfilled, (state, action: PayloadAction<
 				EventDetailsState["publications"]
 			>) => {
-				state.statusPublications = 'succeeded';
+				state.statusPublications = "succeeded";
 				state.publications = action.payload;
 			})
 			.addCase(fetchEventPublications.rejected, (state, action) => {
-				state.statusPublications = 'failed';
+				state.statusPublications = "failed";
 				state.errorPublications = action.error;
 				console.error(action.error);
 			})
 			// saveComment
-			.addCase(saveComment.pending, (state) => {
-				state.statusSaveComment = 'loading';
+			.addCase(saveComment.pending, state => {
+				state.statusSaveComment = "loading";
 			})
-			.addCase(saveComment.fulfilled, (state) => {
-				state.statusSaveComment = 'succeeded';
+			.addCase(saveComment.fulfilled, state => {
+				state.statusSaveComment = "succeeded";
 			})
 			.addCase(saveComment.rejected, (state, action) => {
-				state.statusSaveComment = 'failed';
+				state.statusSaveComment = "failed";
 				state.errorSaveComment = action.error;
 				console.error(action.error);
 			})
 			// saveCommentReply
-			.addCase(saveCommentReply.pending, (state) => {
-				state.statusSaveCommentReply = 'loading';
+			.addCase(saveCommentReply.pending, state => {
+				state.statusSaveCommentReply = "loading";
 			})
-			.addCase(saveCommentReply.fulfilled, (state) => {
-				state.statusSaveCommentReply = 'succeeded';
+			.addCase(saveCommentReply.fulfilled, state => {
+				state.statusSaveCommentReply = "succeeded";
 			})
 			.addCase(saveCommentReply.rejected, (state, action) => {
-				state.statusSaveCommentReply = 'failed';
+				state.statusSaveCommentReply = "failed";
 				state.errorSaveCommentReply = action.error;
 				console.error(action.error);
 			})
 			// updateComment
-			.addCase(updateComment.pending, (state) => {
-				state.statusUpdateComment = 'loading';
+			.addCase(updateComment.pending, state => {
+				state.statusUpdateComment = "loading";
 			})
-			.addCase(updateComment.fulfilled, (state) => {
-				state.statusUpdateComment = 'succeeded';
+			.addCase(updateComment.fulfilled, state => {
+				state.statusUpdateComment = "succeeded";
 			})
 			.addCase(updateComment.rejected, (state, action) => {
-				state.statusUpdateComment = 'failed';
+				state.statusUpdateComment = "failed";
 				state.errorUpdateComment = action.error;
 				console.error(action.error);
 			})
 			// fetchSchedulingInfo
-			.addCase(fetchSchedulingInfo.pending, (state) => {
-				state.statusScheduling = 'loading';
+			.addCase(fetchSchedulingInfo.pending, state => {
+				state.statusScheduling = "loading";
 			})
 			.addCase(fetchSchedulingInfo.fulfilled, (state, action: PayloadAction<
 				EventDetailsState["schedulingSource"]
 			>) => {
-				state.statusScheduling = 'succeeded';
+				state.statusScheduling = "succeeded";
 				state.schedulingSource = action.payload;
 				state.scheduling.hasProperties = true;
 			})
 			.addCase(fetchSchedulingInfo.rejected, (state, action) => {
 				// This usually means we have a non-scheduled event
-				state.statusScheduling = 'failed';
+				state.statusScheduling = "failed";
 				const emptySchedulingSource = {
 					start: {
 						date: "",
@@ -2262,46 +2291,46 @@ const eventDetailsSlice = createSlice({
 				console.debug(action.error);
 			})
 			// saveSchedulingInfo
-			.addCase(saveSchedulingInfo.pending, (state) => {
-				state.statusSaveScheduling = 'loading';
+			.addCase(saveSchedulingInfo.pending, state => {
+				state.statusSaveScheduling = "loading";
 			})
 			.addCase(saveSchedulingInfo.fulfilled, (state, action: PayloadAction<
 				EventDetailsState["schedulingSource"]
 			>) => {
-				state.statusSaveScheduling = 'succeeded';
+				state.statusSaveScheduling = "succeeded";
 				state.schedulingSource = action.payload;
 			})
 			.addCase(saveSchedulingInfo.rejected, (state, action) => {
-				state.statusSaveScheduling = 'failed';
+				state.statusSaveScheduling = "failed";
 				state.errorSaveScheduling = action.error;
 				console.error(action.error);
 			})
 			// checkConflicts
-			.addCase(checkConflicts.pending, (state) => {
-				state.statusCheckConflicts = 'loading';
+			.addCase(checkConflicts.pending, state => {
+				state.statusCheckConflicts = "loading";
 			})
 			.addCase(checkConflicts.fulfilled, (state, action: PayloadAction<{
 				conflicts: EventDetailsState["schedulingConflicts"],
 				hasSchedulingConflicts: EventDetailsState["hasSchedulingConflicts"],
 			}>) => {
-				state.statusCheckConflicts = 'succeeded';
+				state.statusCheckConflicts = "succeeded";
 				const eventDetails = action.payload;
 				state.schedulingConflicts = eventDetails.conflicts;
 				state.hasSchedulingConflicts = eventDetails.hasSchedulingConflicts;
 			})
 			.addCase(checkConflicts.rejected, (state, action) => {
-				state.statusCheckConflicts = 'failed';
+				state.statusCheckConflicts = "failed";
 				state.errorCheckConflicts = action.error;
 				console.error(action.error);
 			})
 			// fetchWorkflows
-			.addCase(fetchWorkflows.pending, (state) => {
-				state.statusWorkflows = 'loading';
+			.addCase(fetchWorkflows.pending, state => {
+				state.statusWorkflows = "loading";
 			})
 			.addCase(fetchWorkflows.fulfilled, (state, action: PayloadAction<
 				EventDetailsState["workflows"]
 			>) => {
-				state.statusWorkflows = 'succeeded';
+				state.statusWorkflows = "succeeded";
 				state.workflows = action.payload;
 				if ("workflowId" in state.workflows.workflow && !!state.workflows.workflow.workflowId) {
 					state.workflowConfiguration = state.workflows.workflow;
@@ -2310,22 +2339,34 @@ const eventDetailsSlice = createSlice({
 				}
 			})
 			.addCase(fetchWorkflows.rejected, (state, action) => {
-				state.statusWorkflows = 'failed';
+				state.statusWorkflows = "failed";
+				state.workflows = {
+					scheduling: false,
+					entries: [],
+					workflow: {
+						workflowId: "",
+						description: "",
+					},
+				};
+				state.workflowConfiguration = {
+					workflowId: "",
+					description: "",
+				};
 				state.errorWorkflows = action.error;
 				console.error(action.error);
 			})
 			// fetchWorkflowDetails
-			.addCase(fetchWorkflowDetails.pending, (state) => {
-				state.statusWorkflowDetails = 'loading';
+			.addCase(fetchWorkflowDetails.pending, state => {
+				state.statusWorkflowDetails = "loading";
 			})
 			.addCase(fetchWorkflowDetails.fulfilled, (state, action: PayloadAction<
 				EventDetailsState["workflows"]["workflow"]
 			>) => {
-				state.statusWorkflowDetails = 'succeeded';
+				state.statusWorkflowDetails = "succeeded";
 				state.workflows.workflow = action.payload;
 			})
 			.addCase(fetchWorkflowDetails.rejected, (state, action) => {
-				state.statusWorkflowDetails = 'failed';
+				state.statusWorkflowDetails = "failed";
 				// This is the empty workflow data from the original reducer
 				// TODO: Figure out why it is so vastly different from our initial state
 				// and maybe fix our initial state if this is actually correct
@@ -2337,182 +2378,176 @@ const eventDetailsSlice = createSlice({
 				state.errorWorkflowDetails = action.error;
 			})
 			// performWorkflowAction
-			.addCase(performWorkflowAction.pending, (state) => {
-				state.statusDoWorkflowAction = 'loading';
+			.addCase(performWorkflowAction.pending, state => {
+				state.statusDoWorkflowAction = "loading";
 			})
-			.addCase(performWorkflowAction.fulfilled, (state) => {
-				state.statusDoWorkflowAction = 'succeeded';
+			.addCase(performWorkflowAction.fulfilled, state => {
+				state.statusDoWorkflowAction = "succeeded";
 			})
 			.addCase(performWorkflowAction.rejected, (state, action) => {
-				state.statusDoWorkflowAction = 'failed';
+				state.statusDoWorkflowAction = "failed";
 				state.errorDoWorkflowAction = action.error;
 				console.error(action.error);
 			})
 			// deleteWorkflow
-			.addCase(deleteWorkflow.pending, (state) => {
-				state.statusDeleteWorkflow = 'loading';
+			.addCase(deleteWorkflow.pending, state => {
+				state.statusDeleteWorkflow = "loading";
 			})
 			.addCase(deleteWorkflow.fulfilled, (state, action: PayloadAction<
 				EventDetailsState["workflows"]["entries"]
 			>) => {
-				state.statusDeleteWorkflow = 'succeeded';
+				state.statusDeleteWorkflow = "succeeded";
 				state.workflows.entries = action.payload;
 			})
 			.addCase(deleteWorkflow.rejected, (state, action) => {
-				state.statusDeleteWorkflow = 'failed';
+				state.statusDeleteWorkflow = "failed";
 				state.errorDeleteWorkflow = action.error;
 				console.error(action.error);
 			})
 			// fetchWorkflowOperations
-			.addCase(fetchWorkflowOperations.pending, (state) => {
-				state.statusWorkflowOperations = 'loading';
+			.addCase(fetchWorkflowOperations.pending, state => {
+				state.statusWorkflowOperations = "loading";
 			})
 			.addCase(fetchWorkflowOperations.fulfilled, (state, action: PayloadAction<
 				EventDetailsState["workflowOperations"]
 			>) => {
-				state.statusWorkflowOperations = 'succeeded';
+				state.statusWorkflowOperations = "succeeded";
 				state.workflowOperations = action.payload;
 			})
 			.addCase(fetchWorkflowOperations.rejected, (state, action) => {
-				state.statusWorkflowOperations = 'failed';
+				state.statusWorkflowOperations = "failed";
 				state.workflowOperations = { entries: [] };
 				state.errorWorkflowOperations = action.error;
 			})
 			// fetchWorkflowOperationDetails
-			.addCase(fetchWorkflowOperationDetails.pending, (state) => {
-				state.statusWorkflowOperationDetails = 'loading';
+			.addCase(fetchWorkflowOperationDetails.pending, state => {
+				state.statusWorkflowOperationDetails = "loading";
 			})
 			.addCase(fetchWorkflowOperationDetails.fulfilled, (state, action: PayloadAction<
 				EventDetailsState["workflowOperationDetails"]
 			>) => {
-				state.statusWorkflowOperationDetails = 'succeeded';
-				state.workflowOperationDetails = action.payload;
+				state.statusWorkflowOperationDetails = "succeeded";
+				state.workflowOperationDetails = camelcaseKeys(action.payload);
 			})
 			.addCase(fetchWorkflowOperationDetails.rejected, (state, action) => {
-				state.statusWorkflowOperationDetails = 'failed';
+				state.statusWorkflowOperationDetails = "failed";
 				const emptyOperationDetails = {
 					completed: "",
 					description: "",
-					exception_handler_workflow: "",
-					execution_host: "",
-					fail_on_error: false,
-					failed_attempts: 0,
+					exceptionHandlerWorkflow: "",
+					executionHost: "",
+					failOnError: false,
+					failedAttempts: 0,
 					job: 0,
-					max_attempts: 0,
+					maxAttempts: 0,
 					name: "",
-					retry_strategy: "",
+					retryStrategy: "",
 					started: "",
 					state: "",
-					time_in_queue: 0,
+					timeInQueue: 0,
 				};
 				state.workflowOperationDetails = emptyOperationDetails;
 				state.errorWorkflowOperationDetails = action.error;
 			})
 			// fetchWorkflowErrors
-			.addCase(fetchWorkflowErrors.pending, (state) => {
-				state.statusWorkflowErrors = 'loading';
+			.addCase(fetchWorkflowErrors.pending, state => {
+				state.statusWorkflowErrors = "loading";
 			})
 			.addCase(fetchWorkflowErrors.fulfilled, (state, action: PayloadAction<
 				EventDetailsState["workflowErrors"]
 			>) => {
-				state.statusWorkflowErrors = 'succeeded';
+				state.statusWorkflowErrors = "succeeded";
 				state.workflowErrors = action.payload;
 			})
 			.addCase(fetchWorkflowErrors.rejected, (state, action) => {
-				state.statusWorkflowErrors = 'failed';
+				state.statusWorkflowErrors = "failed";
 				state.workflowErrors = { entries: [] };
 				state.errorWorkflowOperations = action.error;
 			})
 			// fetchWorkflowErrorDetails
-			.addCase(fetchWorkflowErrorDetails.pending, (state) => {
-				state.statusWorkflowErrorDetails = 'loading';
+			.addCase(fetchWorkflowErrorDetails.pending, state => {
+				state.statusWorkflowErrorDetails = "loading";
 			})
 			.addCase(fetchWorkflowErrorDetails.fulfilled, (state, action: PayloadAction<
 				EventDetailsState["workflowErrorDetails"]
 			>) => {
-				state.statusWorkflowErrorDetails = 'succeeded';
-				state.workflowErrorDetails = action.payload;
+				state.statusWorkflowErrorDetails = "succeeded";
+				state.workflowErrorDetails = camelcaseKeys(action.payload);
 			})
 			.addCase(fetchWorkflowErrorDetails.rejected, (state, action) => {
-				state.statusWorkflowErrorDetails = 'failed';
+				state.statusWorkflowErrorDetails = "failed";
 				state.workflowErrorDetails = {
 					description: "",
 					details: [],
 					id: 0,
-					job_id: 0,
-					processing_host: "",
-					service_type: "",
+					jobId: 0,
+					processingHost: "",
+					serviceType: "",
 					severity: "",
-					technical_details: "",
+					technicalDetails: "",
 					timestamp: "",
 					title: "",
 				};
 				state.errorWorkflowOperationDetails = action.error;
 			})
 			// fetchEventStatistics
-			.addCase(fetchEventStatistics.pending, (state) => {
-				state.statusStatistics = 'loading';
+			.addCase(fetchEventStatistics.pending, state => {
+				state.statusStatistics = "loading";
 			})
 			.addCase(fetchEventStatistics.fulfilled, (state, action: PayloadAction<{
 				statistics: EventDetailsState["statistics"],
 				hasError: EventDetailsState["hasStatisticsError"],
 			}>) => {
-				state.statusStatistics = 'succeeded';
+				state.statusStatistics = "succeeded";
 				const eventDetails = action.payload;
 				state.statistics = eventDetails.statistics;
 				state.hasStatisticsError = eventDetails.hasError;
 			})
 			.addCase(fetchEventStatistics.rejected, (state, action) => {
-				state.statusStatistics = 'failed';
+				state.statusStatistics = "failed";
 				state.statistics = [];
 				state.hasStatisticsError = true;
 				state.errorStatistics = action.error;
 				console.error(action.error);
 			})
-			//fetchEventStatisticsValueUpdate
-			.addCase(fetchEventStatisticsValueUpdate.pending, (state) => {
-				state.statusStatisticsValue = 'loading';
+			// fetchEventStatisticsValueUpdate
+			.addCase(fetchEventStatisticsValueUpdate.pending, state => {
+				state.statusStatisticsValue = "loading";
 			})
 			.addCase(fetchEventStatisticsValueUpdate.fulfilled, (state, action: PayloadAction<
-				any
+				EventDetailsState["statistics"]
 			>) => {
-				state.statusStatisticsValue = 'succeeded';
+				state.statusStatisticsValue = "succeeded";
 				state.statistics = action.payload;
 			})
 			.addCase(fetchEventStatisticsValueUpdate.rejected, (state, action) => {
-				state.statusStatisticsValue = 'failed';
+				state.statusStatisticsValue = "failed";
 				state.statistics = [];
 				state.errorStatisticsValue = action.error;
 				console.error(action.error);
 			})
-			.addCase(updateMetadata.rejected, (state, action) => {
+			.addCase(fetchHasActiveTransactions.rejected, (_state, action) => {
 				console.error(action.error);
 			})
-			.addCase(updateExtendedMetadata.rejected, (state, action) => {
-				console.error(action.error);
-			})
-			.addCase(fetchHasActiveTransactions.rejected, (state, action) => {
-				console.error(action.error);
-			})
-			.addCase(deleteComment.rejected, (state, action) => {
+			.addCase(deleteComment.rejected, (_state, action) => {
 				console.error(action.error);
 			})
 			// fetch Tobira data
-			.addCase(fetchEventDetailsTobira.pending, (state) => {
-				state.statusTobiraData = 'loading';
+			.addCase(fetchEventDetailsTobira.pending, state => {
+				state.statusTobiraData = "loading";
 			})
 			.addCase(fetchEventDetailsTobira.fulfilled, (state, action: PayloadAction<
-				EventDetailsState['tobiraData']
+				EventDetailsState["tobiraData"]
 			>) => {
-				state.statusTobiraData = 'succeeded';
+				state.statusTobiraData = "succeeded";
 				state.tobiraData = action.payload;
 				state.errorTobiraData = null;
 			})
 			.addCase(fetchEventDetailsTobira.rejected, (state, action) => {
-				state.statusTobiraData = 'failed';
+				state.statusTobiraData = "failed";
 				state.errorTobiraData = action.error;
-			})
-	}
+			});
+	},
 });
 
 export const {

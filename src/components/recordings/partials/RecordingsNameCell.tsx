@@ -1,10 +1,5 @@
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
-import { setSpecificEventFilter } from "../../../slices/tableFilterSlice";
-import { useAppDispatch } from "../../../store";
-import { Tooltip } from "../../shared/Tooltip";
 import { Recording } from "../../../slices/recordingSlice";
+import RedirectCell from "../../shared/RedirectCell";
 
 /**
  * This component renders the name cells of recordings in the table view
@@ -14,25 +9,15 @@ const RecordingsNameCell = ({
 }: {
 	row: Recording
 }) => {
-	const { t } = useTranslation();
-	const dispatch = useAppDispatch();
-	const navigate = useNavigate();
-
-	const redirectToEvents = async (locationName: string) => {
-		// set the location filter value of events to location name
-		await dispatch(setSpecificEventFilter({ filter: "location", filterValue: locationName }));
-		navigate("/events/events");
-	};
-
 	return (
-		<Tooltip title={t("RECORDINGS.RECORDINGS.TABLE.TOOLTIP.NAME")}>
-			<button
-				className="button-like-anchor crosslink"
-				onClick={() => redirectToEvents(row.name)}
-			>
-				{row.name}
-			</button>
-		</Tooltip>
+		<RedirectCell
+			path={"/events/events"}
+			filterName={"location"}
+			filterValue={row.name}
+			// tooltipText={"RECORDINGS.RECORDINGS.TABLE.TOOLTIP.NAME"} // Disabled due to performance concerns
+		>
+			{row.name}
+		</RedirectCell>
 	);
 };
 

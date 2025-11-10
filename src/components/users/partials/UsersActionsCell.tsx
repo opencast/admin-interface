@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { User, deleteUser } from "../../../slices/userSlice";
 import { useAppDispatch } from "../../../store";
@@ -6,7 +6,8 @@ import { fetchUserDetails } from "../../../slices/userDetailsSlice";
 import { Modal, ModalHandle } from "../../shared/modals/Modal";
 import UserDetails from "./modal/UserDetails";
 import { ActionCellDelete } from "../../shared/ActionCellDelete";
-import { IconButton } from "../../shared/IconButton";
+import ButtonLikeAnchor from "../../shared/ButtonLikeAnchor";
+import { LuFileText } from "react-icons/lu";
 
 /**
  * This component renders the action cells of users in the table view
@@ -28,26 +29,28 @@ const UsersActionCell = ({
 	const showUserDetails = async () => {
 		await dispatch(fetchUserDetails(row.username));
 
-		modalRef.current?.open()
+		modalRef.current?.open();
 	};
 
 	const hideUserDetails = () => {
-		modalRef.current?.close?.()
+		modalRef.current?.close?.();
 	};
 
 	return (
 		<>
 			{/* edit/show user details */}
-			<IconButton
-				callback={() => showUserDetails()}
-				iconClassname={"more"}
+			<ButtonLikeAnchor
+				onClick={() => showUserDetails()}
+				className={"action-cell-button"}
 				editAccessRole={"ROLE_UI_USERS_EDIT"}
-				tooltipText={"USERS.USERS.TABLE.TOOLTIP.DETAILS"}
-			/>
+				// tooltipText={"USERS.USERS.TABLE.TOOLTIP.DETAILS"} // Disabled due to performance concerns
+			>
+				<LuFileText />
+			</ButtonLikeAnchor>
 
 			{/* user details modal */}
 			<Modal
-				header={t("USERS.USERS.DETAILS.EDITCAPTION", { username: row.username })}
+				header={t("USERS.USERS.DETAILS.EDITCAPTION", { name: row.username })}
 				classId="user-details-modal"
 				ref={modalRef}
 			>
@@ -58,7 +61,7 @@ const UsersActionCell = ({
 			{(row.manageable || (row.provider !== "opencast" && row.provider !== "system")) &&
 				<ActionCellDelete
 					editAccessRole={"ROLE_UI_USERS_DELETE"}
-					tooltipText={"USERS.USERS.TABLE.TOOLTIP.DETAILS"}
+					// tooltipText={"USERS.USERS.TABLE.TOOLTIP.DELETE"} // Disabled due to performance concerns
 					resourceId={row.username}
 					resourceName={row.name}
 					resourceType={"USER"}

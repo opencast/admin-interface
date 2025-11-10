@@ -11,16 +11,16 @@ export const systemsLinks: {
 	{
 		path: "/systems/jobs",
 		accessRole: "ROLE_UI_JOBS_VIEW",
-		text: "SYSTEMS.NAVIGATION.JOBS"
+		text: "SYSTEMS.NAVIGATION.JOBS",
 	},
 	{
-		path: "/systems/SERVERS",
+		path: "/systems/servers",
 		accessRole: "ROLE_UI_SERVERS_VIEW",
-		text: "SYSTEMS.NAVIGATION.SERVERS"
+		text: "SYSTEMS.NAVIGATION.SERVERS",
 	},
 	{
 		path: "/systems/services",
 		accessRole: "ROLE_UI_SERVICES_VIEW",
-		text: "SYSTEMS.NAVIGATION.SERVICES"
+		text: "SYSTEMS.NAVIGATION.SERVICES",
 	},
 ];

@@ -13,9 +13,9 @@ import { UserInfoState } from "../slices/userInfoSlice";
 import { hasAccess, isJson } from "./utils";
 import { RootState } from "../store";
 import { MetadataCatalog, MetadataField } from "../slices/eventSlice";
-import { initialFormValuesNewGroup } from '../configs/modalConfig';
-import { UpdateUser } from '../slices/userDetailsSlice';
-import { ParseKeys, TFunction } from 'i18next';
+import { initialFormValuesNewGroup } from "../configs/modalConfig";
+import { UpdateUser } from "../slices/userDetailsSlice";
+import { ParseKeys, TFunction } from "i18next";
 import { TableState } from "../slices/tableSlice";
 
 /**
@@ -37,9 +37,9 @@ export const getURLParams = (
 	resource: TableState["resource"],
 ) => {
 	// get filter map from state
-	let filters = [];
-	let filterMap = getFilters(state, resource);
-	let textFilter = getTextFilter(state);
+	const filters = [];
+	const filterMap = getFilters(state, resource);
+	const textFilter = getTextFilter(state, resource);
 
 	// check if textFilter has value and transform for use as URL param
 	if (textFilter !== "") {
@@ -47,7 +47,7 @@ export const getURLParams = (
 	}
 	// transform filters for use as URL param
 	for (const [key, _] of filterMap.entries()) {
-		if (!!filterMap[key].value) {
+		if (filterMap[key].value) {
 			filters.push([filterMap[key].name, filterMap[key].value.toString()]);
 		}
 	}
@@ -71,7 +71,7 @@ export const getURLParams = (
 		};
 	}
 
-	if (!!getTableSortingForResource(state, resource)) {
+	if (getTableSortingForResource(state, resource)) {
 		params = {
 			...params,
 			sort: getTableSortingForResource(state, resource)
@@ -85,26 +85,34 @@ export const getURLParams = (
 
 // used for create URLSearchParams for API requests used to create/update user
 export const buildUserBody = (values: NewUser | UpdateUser) => {
-	let data = new URLSearchParams();
+	const data = new URLSearchParams();
 	// fill form data with user inputs
 	data.append("username", values.username);
-	values.name && data.append("name", values.name);
-	values.email && data.append("email", values.email);
-	values.password && data.append("password", values.password);
-	values.roles && data.append("roles", JSON.stringify(values.roles));
+	if (values.name) {
+		data.append("name", values.name);
+	}
+	if (values.email) {
+		data.append("email", values.email);
+	}
+	if (values.password) {
+		data.append("password", values.password);
+	}
+	if (values.roles) {
+		data.append("roles", JSON.stringify(values.roles));
+	}
 
 	return data;
 };
 
 // used for create URLSearchParams for API requests used to create/update group
 export const buildGroupBody = (
-	values: typeof initialFormValuesNewGroup
+	values: typeof initialFormValuesNewGroup,
 ) => {
-	let roles = [],
+	const roles = [],
 		users = [];
 
 	// fill form data depending on user inputs
-	let data = new URLSearchParams();
+	const data = new URLSearchParams();
 	data.append("name", values.name);
 	data.append("description", values.description);
 
@@ -124,10 +132,10 @@ export const buildGroupBody = (
 export const getInitialMetadataFieldValues = (
 	metadataCatalog: MetadataCatalog,
 ) => {
-	let initialValues: { [key: string]: string | string[] | boolean } = {};
+	const initialValues: { [key: string]: string | string[] | boolean } = {};
 
 	if (!!metadataCatalog.fields && metadataCatalog.fields.length > 0) {
-		metadataCatalog.fields.forEach((field) => {
+		metadataCatalog.fields.forEach(field => {
 			initialValues[metadataCatalog.flavor + "_" + field.id] = field.value;
 		});
 	}
@@ -147,8 +155,12 @@ export const transformMetadataFields = (metadata: MetadataField[]) => {
 			field.collection = Object.entries(field.collection)
 				.map(([key, value]) => {
 					if (isJson(key)) {
-						let collectionParsed = JSON.parse(key);
+						// TODO: Handle JSON parsing errors
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+						const collectionParsed = JSON.parse(key);
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 						return {
+							// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
 							name: collectionParsed.label || key,
 							value,
 							...collectionParsed,
@@ -165,18 +177,39 @@ export const transformMetadataFields = (metadata: MetadataField[]) => {
 	return metadata;
 };
 
+export const transformListProvider = (collection: { [key: string]: string }) => {
+	return Object.entries(collection)
+		.map(([key, value]) => {
+			if (isJson(value)) {
+				// TODO: Handle JSON parsing errors
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+				const collectionParsed: { [key: string]: string } = JSON.parse(value);
+				return {
+					label: collectionParsed.label || value,
+					value: key,
+					...collectionParsed,
+				};
+			} else {
+				return {
+					label: value,
+					value: key,
+				};
+			}
+		});
+};
+
 // transform metadata catalog for update via post request
 export const transformMetadataForUpdate = (
 	catalog: MetadataCatalog,
-	values: { [key: string]: MetadataCatalog["fields"][0]["value"] }
+	values: { [key: string]: MetadataCatalog["fields"][0]["value"] },
 ) => {
-	let fields: MetadataCatalog["fields"] = [];
-	let updatedFields: { id: string; value: unknown }[] = [];
-	catalog.fields.forEach((field) => {
+	const fields: MetadataCatalog["fields"] = [];
+	const updatedFields: { id: string; value: unknown }[] = [];
+	catalog.fields.forEach(field => {
 		const newValue = values[field.id];
 
 		// update UI state with full field (optional)
-		const fullField = {...field, value: newValue};
+		const fullField = { ...field, value: newValue };
 		fields.push(fullField);
 
 		// only include minimal clean data for backend if value changed
@@ -188,7 +221,7 @@ export const transformMetadataForUpdate = (
 		}
 	});
 
-	let data = new URLSearchParams();
+	const data = new URLSearchParams();
 	data.append(
 		"metadata",
 		JSON.stringify([
@@ -197,7 +230,7 @@ export const transformMetadataForUpdate = (
 				title: catalog.title,
 				fields: updatedFields,
 			},
-		])
+		]),
 	);
 	const headers = getHttpHeaders();
 
@@ -231,7 +264,7 @@ export const prepareMetadataFieldsForPost = (
 				value: values[catalogPrefix + info.id],
 				$$hashKey: "object:123",
 			};
-			if (!!info.translatable) {
+			if (info.translatable) {
 				fieldValue = {
 					...fieldValue,
 					translatable: info.translatable,
@@ -253,24 +286,29 @@ export const prepareMetadataFieldsForPost = (
 };
 
 // returns the name for a field value from the collection
-export const getMetadataCollectionFieldName = (metadataField: { collection?: { [key: string]: unknown }[] }, field: {
-	value: unknown
-}, t: TFunction) => {
+export const getMetadataCollectionFieldName = (
+	metadataField: { collection?: { [key: string]: unknown }[] },
+	field: { value: unknown },
+	t: TFunction,
+) => {
 	try {
-		if (!!metadataField.collection) {
+		if (metadataField.collection) {
 			const collectionField = metadataField.collection.find(
-				(element) => element.value === field.value
+				element => element.value === field.value,
 			);
 
-			if (collectionField && isJson(collectionField.name as string)) {
-				return t(JSON.parse(collectionField.name as string).label);
+			if (collectionField && collectionField.name && isJson(collectionField.name as string)) {
+				// TODO: Handle JSON parsing errors
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+				const name: { label?: ParseKeys } = JSON.parse(collectionField.name as string);
+				return name.label ? t(name.label) : "";
 			}
 
 			return collectionField ? t(collectionField.name as ParseKeys) : "";
 		}
 
 		return "";
-	} catch (e) {
+	} catch (_e) {
 		return "";
 	}
 };
@@ -278,7 +316,7 @@ export const getMetadataCollectionFieldName = (metadataField: { collection?: { [
 // Prepare rules of access policies for post of new events or series
 export const prepareAccessPolicyRulesForPost = (policies: TransformedAcl[]) => {
 	// access policies for post request
-	let access: {
+	const access: {
 		acl: Acl
 	} = {
 		acl: {
@@ -321,7 +359,7 @@ export const transformAclTemplatesResponse = (acl: Acl) => {
 	let template: TransformedAcl[] = [];
 
 	for (let i = 0; acl.ace.length > i; i++) {
-		if (template.find((rule) => rule.role === acl.ace[i].role)) {
+		if (template.find(rule => rule.role === acl.ace[i].role)) {
 			for (let j = 0; template.length > j; j++) {
 				// Only update entry for policy if already added with other action
 				if (template[j].role === acl.ace[i].role) {
@@ -441,7 +479,7 @@ export const buildThemeBody = (values: {
 	watermarkPosition: string,
 }) => {
 	// fill form data depending on user inputs
-	let data = new URLSearchParams();
+	const data = new URLSearchParams();
 	data.append("name", values.name);
 	data.append("description", values.description);
 	data.append("bumperActive", values.bumperActive.toString());

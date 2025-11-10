@@ -24,7 +24,7 @@
 	"LOGOUT": "Ausloggen",
 	"RESET": "Zurücksetzen",
 	"SELECT_NO_OPTION_SELECTED": "Keine Option ausgewählt",
-	"SELECT_NO_OPTION_SELECTED_DASHED": "-- No option selected --",
+	"SELECT_NO_OPTION_SELECTED_DASHED": "-- Keine Option ausgewählt --",
 	"SELECT_NO_OPTIONS_AVAILABLE": "Keine Optionen verfügbar",
 	"SELECT_NO_MATCHING_RESULTS": "Keine Treffer.",
 	"YES": "Ja",
@@ -103,7 +103,8 @@
 			"SELECTED_COLUMNS": "Ausgewählte Spalten",
 			"FOOTER_TEXT": "Die Reihenfolge und Auswahl werden automatisch gespeichert. Drücken Sie \"{{resetTranslation}}\", um die Standardansicht wiederherzustellen.",
 			"ADD_COLUMN": "Spalte hinzufügen",
-			"REMOVE_COLUMN": "Spalte entfernen"
+			"REMOVE_COLUMN": "Spalte entfernen",
+			"DRAG_HANDLE_USAGE_INSTRUCTIONS": "Press space bar to start a drag. When dragging you can use the arrow keys to move the item around and escape to cancel. Some screen readers may require you to be in focus mode or to use your pass through key"
 		}
 	},
 	"CONFIRMATIONS": {
@@ -175,7 +176,7 @@
 		"SERIES_PATH_NOT_UPDATED": "Der Serien-Pfad konnte nicht aktualisiert werden",
 		"SERIES_PATH_NOT_REMOVED": "Der Serien-Pfad konnte nicht entfernt werden",
 		"EVENTS_CREATED": "Das Video wurde angelegt",
-		"EVENTS_UPLOAD_STARTED": "Das Video wird hochgeladen… {{ progress }}%",
+		"EVENTS_UPLOAD_STARTED": "Das Video \"{{ title }}\" wird hochgeladen… {{ progress }}%",
 		"EVENTS_NOT_CREATED": "Das Video konnte nicht angelegt werden",
 		"EVENTS_UPDATED": "Das Video wurde erfolgreich aktualisiert",
 		"EVENTS_UPDATED_ALL": "Alle Videos wurden erfolgreich aktualisiert",
@@ -184,6 +185,8 @@
 		"EVENTS_NOT_UPDATED_ALL": "Kein Video konnte gespeichert werden",
 		"EVENTS_PROCESSING_DELETE_WORKFLOW": "Workflow gelöscht.",
 		"EVENTS_PROCESSING_DELETE_WORKFLOW_FAILED": "Workflow konnte nicht gelöscht werden.",
+		"EVENTS_PROCESSING_ACTION_STOP": "Die Videoverarbeitung wurde gestoppt.",
+		"EVENTS_PROCESSING_ACTION_NON_STOP": "Die Videoverarbeitung konnte nicht gestoppt werden.",
 		"SERIES_NOT_UPDATED": "Diese Serie konnte nicht gespeichert werden",
 		"EVENT_DELETED": "Das Video wurde gelöscht.",
 		"EVENT_WILL_BE_DELETED": "Das Video wird gelöscht",
@@ -198,7 +201,7 @@
 		"CONFLICT_DETECTED": "Planungs-Konflikt: Das neue Video überlappt zeitlich mit einem bereits bestehenden Video. Bitte Standort, Datum oder Zeit anpassen.",
 		"CONFLICT_BULK_DETECTED": "Planungs-Konflikt: Das Ändern des Videos führt zu Konflikten. Bitte Standort, Datum oder Zeit anpassen.",
 		"CONFLICT_ALREADY_ENDED": "Planungs-Fehler: Das Video endete bereits.",
-		"CONFLICT_END_BEFORE_START": "Planungs-Fehler: Der Endzeitpunkt des Ereignisses muss nach dem Anfangszeitpunkt liegen.",
+		"CONFLICT_END_BEFORE_START": "Planungs-Fehler: Der Endzeitpunkt des Ereignisses muss nach dem Startzeitpunkt liegen.",
 		"CONFLICT_IN_THE_PAST": "Die Planung konnte nicht aktualisiert werden: Sie können ein Video nicht in der Vergangenheit planen.",
 		"INVALID_ACL_RULES": "Regeln müssen eine gültige Rolle und Lese-\/Schreibrechte enthalten.",
 		"MISSING_ACL_RULES": "Es ist mindestens eine Rolle mit Lese- und Schreibberechtigungen erforderlich!",
@@ -206,6 +209,8 @@
 		"SERIES_THEME_REPROCESS_EXISTING_EVENTS": "Die vorhandenen Videos in dieser Serie müssen neu verarbeitet werden",
 		"SERIES_ACL_LOCKED": "Das Editieren von Zugriffsrichtlinien ist nicht erlaubt, solange Videos verarbeitet werden, die Teil der Serie sind",
 		"EVENT_ACL_MISSING_READWRITE_ROLE": "Der Zugriffsrichtlinie erfordert mindestens eine Rolle mit Lese- und Schreibberechtigungen.",
+		"METADATA_SAVED": "The metadata has been saved.",
+		"METADATA_NOT_SAVED": "The metadata has NOT been saved!",
 		"THEME_NAME_EMPTY": "Der Name darf nicht leer sein",
 		"BUMPER_UPLOAD_ERROR": "Fehler beim Hochladen von Medien",
 		"THEME_CREATED": "Das Branding wurde erstellt",
@@ -256,7 +261,7 @@
 				"UNAUTHORIZED": "Sie sind nicht berechtigt die hervorgehobenen Videos zu löschen. Um fortzufahren heben Sie die Auswahl dieser auf."
 			}
 		},
-		"DELETE_EVENTS_WARNING_LINE1": "Sobald alle Metadaten gelöscht sind, werden die Audio- und Video-Dateien gelöscht und können nicht wiederhergestellt werden.",
+		"DELETE_EVENTS_WARNING_LINE1": "Mit dem Löschen gehen alle Metadaten, Audio- und Videodateien unwiderruflich verloren.",
 		"DELETE_EVENTS_WARNING_LINE2": "",
 		"DELETE_SERIES_WARNING_LINE1": "Die Metadaten der Serien werden unwiderruflich gelöscht. Die Videos werden nicht gelöscht.",
 		"DELETE_SERIES_WARNING_LINE2": "",
@@ -535,10 +540,10 @@
 					"DATE_TIME": {
 						"CAPTION": "Zeitplan",
 						"START_DATE": "Startdatum",
-						"START_TIME": "Startzeit",
+						"START_TIME": "Start",
 						"TIMEZONE": "Zeitzone",
 						"END_DATE": "Enddatum",
-						"END_TIME": "Endezeit",
+						"END_TIME": "Ende",
 						"DURATION": "Dauer"
 					},
 					"SCHEDULE_SINGLE": {
@@ -571,7 +576,7 @@
 						"PREVIEW_IMAGE": "Vorschaubild",
 						"SMIL": "SMIL-Katalog",
 						"TRACK_PARTS": "Spur-Teile",
-						"SUBTITLES": "Subtitles"
+						"SUBTITLES": "Untertitel"
 					}
 				},
 				"ACCESS": {
@@ -658,7 +663,7 @@
 				"SCHEDULED": "Geplant",
 				"RECORDING": "Zeichnet auf",
 				"UPLOADING": "Lädt hoch",
-				"INGESTING": "Importiert",
+				"INGESTING": "Wird Importiert",
 				"PENDING": "Ausstehend",
 				"PROCESSING": "In Verarbeitung",
 				"PAUSED": "Pausiert",
@@ -752,10 +757,10 @@
 					"DATE_TIME": {
 						"CAPTION": "Zeitplan",
 						"START_DATE": "Startdatum",
-						"START_TIME": "Startzeit",
+						"START_TIME": "Start",
 						"TIMEZONE": "Zeitzone",
 						"END_DATE": "Enddatum",
-						"END_TIME": "Endzeit",
+						"END_TIME": "Ende",
 						"DURATION": "Dauer"
 					},
 					"SCHEDULE_SINGLE": {
@@ -892,7 +897,11 @@
 						"ADDITIONAL_ACTIONS": "Weitere Aktionen",
 						"ACTION": "Aktionen",
 						"NEW": "Neue Richtlinie",
-						"DETAILS": "Details"
+						"NON_USER_ROLES": "Roles and Groups authorized for the event",
+						"USER": "User",
+						"USERS": "Users who are authorized for the event",
+						"NEW_USER": "New user",
+						"SANITIZATION_NOTE": "User role sanitization is enabled in your Opencast, therefore user roles are displayed alongside other roles. This does not impact role functionality in any way."
 					},
 					"ROLES": {
 						"LABEL": "Rolle auswählen oder erstellen"
@@ -942,7 +951,7 @@
 					"SUBJECT": "Betreff",
 					"DESCRIPTION": "Beschreibung",
 					"START_DATE": "Startdatum",
-					"START_TIME": "Startzeit",
+					"START_TIME": "Start",
 					"DURATION": "Länge",
 					"LOCATION": "Standort",
 					"SOURCE": "Quelle",
@@ -979,7 +988,6 @@
 					"ACTIONS": "Aktionen",
 					"DETAILS": "Details",
 					"DESCRIPTION": "Beschreibung",
-					"MORE_INFO": "Mehr Informationen",
 					"ID": "ID",
 					"TYPE": "Typ",
 					"TITLE": "Titel",
@@ -1019,11 +1027,13 @@
 				},
 				"WORKFLOW_DETAILS": {
 					"TITLE": "Workflow-Details",
-					"CONFIGURATION": "Workflow Konfiguration"
+					"CONFIGURATION": "Workflow Konfiguration",
+					"OPERATIONS": "Operations",
+					"CURRENT_OPERATION": "Current workflow operation"
 				},
 				"WORKFLOW_OPERATIONS": {
 					"TITLE": "Workflow-Operationen",
-					"DETAILS_LINK": "Operationen",
+					"DETAILS_LINK": "All operations",
 					"TABLE_HEADERS": {
 						"TITLE": "Titel",
 						"STATUS": "Status",
@@ -1083,7 +1093,8 @@
 						"DATE": "Datum",
 						"HOST": "Verarbeitender Server",
 						"TYPE": "Dienst-Typ",
-						"TECHNICAL_DETAILS": "Technische Details"
+						"TECHNICAL_DETAILS": "Technische Details",
+						"OPERATION": "Operation the error occured in"
 					}
 				}
 			}
@@ -1171,7 +1182,10 @@
 				"TOOLTIP": {
 					"SERIES": "Nach Videos in dieser Serie filtern",
 					"DETAILS": "Seriendetails anzeigen",
-					"DELETE": "Serie löschen"
+					"DELETE": "Serie löschen",
+					"CREATION": "Filter for this creation date",
+					"ORGANIZER": "Filter for this organizer",
+					"CONTRIBUTORS": "Filter for this contributor"
 				}
 			},
 			"DETAILS": {
@@ -1202,7 +1216,10 @@
 						"ADDITIONAL_ACTIONS": "Weitere Aktionen",
 						"ACTION": "Aktionen",
 						"NEW": "Neue Richtlinie",
-						"DETAILS": "Details",
+						"NON_USER_ROLES": "Roles and Groups authorized for the series",
+						"USER": "User",
+						"USERS": "Users who are authorized for the series",
+						"NEW_USER": "New user",
 						"REPLACE_EVENT_ACLS": "Zugriffsrechte der Serie aktualisieren",
 						"REPLACE_EVENT_ACLS_HINT": "Sicherstellen, dass alle Videos dieser Serie genau diese Zugriffsrechte haben",
 						"LOAD_MORE_LIMIT": "angezeigte Richtlinien.",
@@ -1338,7 +1355,7 @@
 			},
 			"DETAILS": {
 				"NEWCAPTION": "Anwender anlegen",
-				"EDITCAPTION": "User details - {{name}}",
+				"EDITCAPTION": "Benutzer-Details - {{name}}",
 				"TABS": {
 					"USER": "Benutzer",
 					"ROLES": "Rollen",
@@ -1461,8 +1478,11 @@
 						"ADDITIONAL_ACTIONS": "Weitere Aktionen",
 						"ACTION": "Aktionen",
 						"NEW": "Neue Richtlinie",
-						"DETAILS": "Details",
-						"DESCRIPTION": "Bitte wählen Sie eine vordefinierten Richtlinie aus oder fügen Sie eine neue Richtlinie hinzu"
+						"NON_USER_ROLES": "Roles and Groups authorized for the access policy",
+						"DESCRIPTION": "Bitte wählen Sie eine vordefinierten Richtlinie aus oder fügen Sie eine neue Richtlinie hinzu",
+						"USER": "User",
+						"USERS": "Users who are authorized for the access policy",
+						"NEW_USER": "New user"
 					},
 					"ROLES": {
 						"LABEL": "Rolle auswählen",
@@ -1693,7 +1713,6 @@
 				"HOST_NAME": "Hostname",
 				"NODE_NAME": "Knotenname",
 				"CORES": "Kerne",
-				"COMPLETED": "Jobs abgeschlossen",
 				"RUNNING": "Jobs in Bearbeitung",
 				"QUEUED": "Jobs in Warteschlange",
 				"MAINTENANCE": "Wartungsarbeiten",
@@ -1704,6 +1723,7 @@
 		"SERVICES": {
 			"TABLE": {
 				"CAPTION": "Dienste",
+				"ONLINE": "Online",
 				"STATUS": "Status",
 				"NAME": "Dienstname",
 				"HOST_NAME": "Hostname",
@@ -1974,6 +1994,8 @@
 	"TABLE_EDIT": "Bearbeiten",
 	"TABLE_NEXT": "Nächste Seite",
 	"TABLE_PREVIOUS": "Vorherige Seite",
+	"TABLE_CURRENT": "Current page {{pageNumber}}",
+	"TABLE_NUMBERED": "Gehe zu Seite {{pageNumber}}",
 	"DASHBOARD": {
 		"RUNNING": "In Verarbeitung",
 		"FINISHED": "Verarbeitet",
@@ -1981,7 +2003,8 @@
 		"FAILED": "Fehlgeschlagen",
 		"FINISHED_WITH_COMMENTS": "Offen",
 		"SCHEDULED": "Geplant",
-		"RECORDING": "Aufnahme"
+		"RECORDING": "Aufnahme",
+		"BUTTON_TOOLTIP": "Apply filter {{filterName}} to the table"
 	},
 	"HOTKEYS": {
 		"CHEAT_SHEET": {
@@ -2077,9 +2100,8 @@
 	"STATISTICS": {
 		"NOT_AVAILABLE": "Die Statistik kann aktuell nicht angezeigt werden. Bitte versuchen Sie es später nochmals.",
 		"UNSUPPORTED_TYPE": "Diese Statistik-Daten können nicht dargestellt werden.",
-		"FROM": "Von",
-		"TO": "Bis",
 		"TOTAL": "Summe",
+		"TIMERANGE": "Zeitspanne",
 		"GRANULARITY": "Granularität",
 		"NAVIGATION": {
 			"ORGANIZATION": "Organisation"

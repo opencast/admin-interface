@@ -5,6 +5,7 @@ import { useClickOutsideField } from "../../../hooks/wizardHooks";
 import { FieldInputProps, FieldProps } from "formik";
 import { MetadataField } from "../../../slices/eventSlice";
 import ButtonLikeAnchor from "../ButtonLikeAnchor";
+import { LuCheck, LuSquarePen, LuX } from "react-icons/lu";
 
 const childRef = React.createRef<HTMLDivElement>();
 
@@ -25,11 +26,11 @@ const RenderMultiField = ({
 	showCheck?: boolean,
 }) => {
 	// Indicator if currently edit mode is activated
-	const {editMode, setEditMode} = useClickOutsideField(childRef);
+	const { editMode, setEditMode } = useClickOutsideField(childRef);
 	// Temporary storage for value user currently types in
 	const [inputValue, setInputValue] = useState("");
 
-	let fieldValue = [...field.value];
+	const fieldValue = [...field.value as string[]];
 
 	// Handle change of value user currently types in
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,9 +49,9 @@ const RenderMultiField = ({
 
 	const submitValue = (alternativeInput?: string) => {
 
-		let newInputValue = inputValue
+		let newInputValue = inputValue;
 		if (alternativeInput) {
-			newInputValue = alternativeInput
+			newInputValue = alternativeInput;
 		}
 
 		if (newInputValue !== "") {
@@ -66,15 +67,15 @@ const RenderMultiField = ({
 				if (onlyCollectionValues) {
 					// add input to formik field value if not already added and input in collection of possible values
 					if (
-						!fieldValue.find((e) => e === newInput) &&
-						fieldInfo.collection?.find((e) => e.value === newInput)
+						!fieldValue.find(e => e === newInput) &&
+						fieldInfo.collection?.find(e => e.value === newInput)
 					) {
 						fieldValue[fieldValue.length] = newInput;
 						form.setFieldValue(field.name, fieldValue);
 					}
 				} else {
 					// add input to formik field value if not already added
-					if (!fieldValue.find((e) => e === newInput)) {
+					if (!fieldValue.find(e => e === newInput)) {
 						fieldValue[fieldValue.length] = newInput;
 						form.setFieldValue(field.name, fieldValue);
 					}
@@ -84,7 +85,7 @@ const RenderMultiField = ({
 			// reset inputValue
 			setInputValue("");
 		}
-	}
+	};
 
 	// Remove item/value from inserted field values
 	const removeItem = (key: number) => {
@@ -116,6 +117,10 @@ const RenderMultiField = ({
 				field={field}
 				form={form}
 				showCheck={showCheck}
+				onBlur = {() => {
+					submitValue();
+					setEditMode(false);
+				}}
 			/>
 		)
 	);
@@ -148,11 +153,11 @@ const EditMultiSelect = ({
 	const textRef = useRef(inputValue);
 	React.useEffect(() => {
 		textRef.current = inputValue;
-	}, [inputValue])
+	}, [inputValue]);
 	React.useEffect(() => {
-		return () => handleBlur(textRef.current)
+		return () => handleBlur(textRef.current);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	}, []);
 
 	return (
 		<>
@@ -162,8 +167,8 @@ const EditMultiSelect = ({
 						type="text"
 						name={field.name}
 						value={inputValue}
-						onKeyDown={(e) => handleKeyDown(e)}
-						onChange={(e) => handleChange(e)}
+						onKeyDown={e => handleKeyDown(e)}
+						onChange={e => handleChange(e)}
 						placeholder={t("EDITABLE.MULTI.PLACEHOLDER")}
 						list="data-list"
 						autoFocus={true}
@@ -179,10 +184,12 @@ const EditMultiSelect = ({
 				{fieldValue instanceof Array &&
 					fieldValue.length !== 0 &&
 					fieldValue.map((item, key) => (
-						<span className="ng-multi-value" key={key}>
+						<span className="multi-value" key={key}>
 							{item}
-							<ButtonLikeAnchor onClick={() => removeItem(key)}>
-								<i className="fa fa-times" />
+							<ButtonLikeAnchor
+								onClick={() => removeItem(key)}
+							>
+								<LuX />
 							</ButtonLikeAnchor>
 						</span>
 					))}
@@ -197,14 +204,29 @@ const ShowValue = ({
 	form: { initialValues },
 	field,
 	showCheck,
+	onBlur,
 }: {
-  setEditMode: (e: boolean) => void
+    setEditMode: (e: boolean) => void
 	form: FieldProps["form"]
 	field: FieldProps["field"]
 	showCheck: boolean,
+	onBlur: () => void
 }) => {
 	return (
-		<div onClick={() => setEditMode(true)} className="show-edit">
+	<div
+		tabIndex={0}
+		onClick={() => setEditMode(true)}
+		onFocus={() => setEditMode(true)}  // <-- activate edit mode on focus
+		onKeyDown={e => {
+			if (e.key === "Enter" || e.key === " ") {
+				setEditMode(true);
+				e.preventDefault();
+			}
+		}}
+
+	  onBlur={onBlur}
+  		className="show-edit"
+			>
 			{field.value instanceof Array && field.value.length !== 0 ? (
 				<ul>
 					{field.value.map((item, key) => (
@@ -214,13 +236,14 @@ const ShowValue = ({
 					))}
 				</ul>
 			) : (
-				<span className="editable preserve-newlines">{""}</span>
+				<span className="preserve-newlines">{""}</span>
 			)}
 			<div>
-				<i className="edit fa fa-pencil-square" />
+				<LuSquarePen className="pen"/>
 				{showCheck && (
-					<i
-						className={cn("saved fa fa-check", {
+					<LuCheck
+						className={cn("checkmark", {
+							// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 							active: JSON.stringify(initialValues[field.name] ?? []) !== JSON.stringify(field.value ?? []),
 						})}
 					/>

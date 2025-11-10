@@ -103,7 +103,8 @@
 			"SELECTED_COLUMNS": "Colonnes choisies",
 			"FOOTER_TEXT": "L'ordre et la sélection seront enregistrés automatiquement. Appuyez sur «{{resetTranslation}} » pour restaurer l'affichage par défaut.",
 			"ADD_COLUMN": "Add column",
-			"REMOVE_COLUMN": "Remove column"
+			"REMOVE_COLUMN": "Remove column",
+			"DRAG_HANDLE_USAGE_INSTRUCTIONS": "Press space bar to start a drag. When dragging you can use the arrow keys to move the item around and escape to cancel. Some screen readers may require you to be in focus mode or to use your pass through key"
 		}
 	},
 	"CONFIRMATIONS": {
@@ -175,7 +176,7 @@
 		"SERIES_PATH_NOT_UPDATED": "The series path could not be updated",
 		"SERIES_PATH_NOT_REMOVED": "The series path could not be removed",
 		"EVENTS_CREATED": "L'événement a été créé",
-		"EVENTS_UPLOAD_STARTED": "L’événement est en cours de téléchargement...",
+		"EVENTS_UPLOAD_STARTED": "The event \"{{ title }}\" is being uploaded… {{ progress }}%",
 		"EVENTS_NOT_CREATED": "L'événement n'a pas pu être créé",
 		"EVENTS_UPDATED": "The event has been successfully updated",
 		"EVENTS_UPDATED_ALL": "Tous les événements ont été mis à jour avec succès",
@@ -184,6 +185,8 @@
 		"EVENTS_NOT_UPDATED_ALL": "Aucun des événements n'a pu être enregistré",
 		"EVENTS_PROCESSING_DELETE_WORKFLOW": "Flux de travail supprimé.",
 		"EVENTS_PROCESSING_DELETE_WORKFLOW_FAILED": "Flux de travail n’a pas pu être supprimé.",
+		"EVENTS_PROCESSING_ACTION_STOP": "The event processing has been stopped.",
+		"EVENTS_PROCESSING_ACTION_NON_STOP": "The event processing could not be stopped.",
 		"SERIES_NOT_UPDATED": "La série n'a pas pu être enregistrée",
 		"EVENT_DELETED": "L'événement a été supprimé.",
 		"EVENT_WILL_BE_DELETED": "L'événement est en cours de suppression",
@@ -206,6 +209,8 @@
 		"SERIES_THEME_REPROCESS_EXISTING_EVENTS": "Les événements existants dans cette série devront être retraités",
 		"SERIES_ACL_LOCKED": "Modification des droits d'accès n'est pas autorisée lorsque des opérations sont en cours d'exécution sur un événement appartenant à cette série",
 		"EVENT_ACL_MISSING_READWRITE_ROLE": "Sélectionner au moins un role avec permission de lecture et écriture.",
+		"METADATA_SAVED": "The metadata has been saved.",
+		"METADATA_NOT_SAVED": "The metadata has NOT been saved!",
 		"THEME_NAME_EMPTY": "Le nom ne peux pas rester vide",
 		"BUMPER_UPLOAD_ERROR": "Erreur lors de l'envoi du ficher",
 		"THEME_CREATED": "Le thème a été créé",
@@ -256,7 +261,7 @@
 				"UNAUTHORIZED": "Vous n'êtes pas autorisé à supprimer les événements sélectionnés . Veuillez les désélectionner pour continuer."
 			}
 		},
-		"DELETE_EVENTS_WARNING_LINE1": "Une fois supprimés, toutes les métadonnées, les fichiers audio et vidéo seront supprimés et rendus irrécupérable.",
+		"DELETE_EVENTS_WARNING_LINE1": "Once deleted, all event metadata, audio and video files are irrevocably gone.",
 		"DELETE_EVENTS_WARNING_LINE2": "",
 		"DELETE_SERIES_WARNING_LINE1": "Une fois supprimées, toutes les métadonnées seront rendues irrécupérables.",
 		"DELETE_SERIES_WARNING_LINE2": "",
@@ -892,7 +897,11 @@
 						"ADDITIONAL_ACTIONS": "Actions supplémentaires",
 						"ACTION": "Actions",
 						"NEW": "Ajouter",
-						"DETAILS": "Détails"
+						"NON_USER_ROLES": "Roles and Groups authorized for the event",
+						"USER": "User",
+						"USERS": "Users who are authorized for the event",
+						"NEW_USER": "New user",
+						"SANITIZATION_NOTE": "User role sanitization is enabled in your Opencast, therefore user roles are displayed alongside other roles. This does not impact role functionality in any way."
 					},
 					"ROLES": {
 						"LABEL": "Select or create a role"
@@ -979,7 +988,6 @@
 					"ACTIONS": "Actions",
 					"DETAILS": "Détails",
 					"DESCRIPTION": "Description",
-					"MORE_INFO": "Plus d'informations",
 					"ID": "ID",
 					"TYPE": "Type",
 					"TITLE": "Titre",
@@ -1019,11 +1027,13 @@
 				},
 				"WORKFLOW_DETAILS": {
 					"TITLE": "Détails du workflow",
-					"CONFIGURATION": "Configuration du flux de travail"
+					"CONFIGURATION": "Configuration du flux de travail",
+					"OPERATIONS": "Operations",
+					"CURRENT_OPERATION": "Current workflow operation"
 				},
 				"WORKFLOW_OPERATIONS": {
 					"TITLE": "Opérations du workflow",
-					"DETAILS_LINK": "Opérations",
+					"DETAILS_LINK": "All operations",
 					"TABLE_HEADERS": {
 						"TITLE": "Titre",
 						"STATUS": "Statut",
@@ -1083,7 +1093,8 @@
 						"DATE": "Date",
 						"HOST": "Hôte",
 						"TYPE": "Type de service",
-						"TECHNICAL_DETAILS": "Détails techniques"
+						"TECHNICAL_DETAILS": "Détails techniques",
+						"OPERATION": "Operation the error occured in"
 					}
 				}
 			}
@@ -1171,7 +1182,10 @@
 				"TOOLTIP": {
 					"SERIES": "Filtrer les événements pour cette série",
 					"DETAILS": "Voir les détails de la série",
-					"DELETE": "Supprimer la série"
+					"DELETE": "Supprimer la série",
+					"CREATION": "Filter for this creation date",
+					"ORGANIZER": "Filter for this organizer",
+					"CONTRIBUTORS": "Filter for this contributor"
 				}
 			},
 			"DETAILS": {
@@ -1202,7 +1216,10 @@
 						"ADDITIONAL_ACTIONS": "Actions supplémentaires",
 						"ACTION": "Actions",
 						"NEW": "Add row",
-						"DETAILS": "Détails",
+						"NON_USER_ROLES": "Roles and Groups authorized for the series",
+						"USER": "User",
+						"USERS": "Users who are authorized for the series",
+						"NEW_USER": "New user",
 						"REPLACE_EVENT_ACLS": "Mettre à jour les permissions de l'événement",
 						"REPLACE_EVENT_ACLS_HINT": "Assurez-vous que tous les événements de cette série ont ces permissions en vigueur",
 						"LOAD_MORE_LIMIT": "policies shown.",
@@ -1461,8 +1478,11 @@
 						"ADDITIONAL_ACTIONS": "Actions supplémentaires",
 						"ACTION": "Actions",
 						"NEW": "Nouvelle ligne",
-						"DETAILS": "Détails",
-						"DESCRIPTION": "S'il vous plaît, choisir un ensemble préconfiguré de règles ou ajouter des règles personnalisées ci-dessous"
+						"NON_USER_ROLES": "Roles and Groups authorized for the access policy",
+						"DESCRIPTION": "S'il vous plaît, choisir un ensemble préconfiguré de règles ou ajouter des règles personnalisées ci-dessous",
+						"USER": "User",
+						"USERS": "Users who are authorized for the access policy",
+						"NEW_USER": "New user"
 					},
 					"ROLES": {
 						"LABEL": "Sélectionner un rôle",
@@ -1693,7 +1713,6 @@
 				"HOST_NAME": "Nom d'hôte",
 				"NODE_NAME": "Nom du nœud",
 				"CORES": "Coeurs",
-				"COMPLETED": "Tâches achevées",
 				"RUNNING": "Tâches en cours",
 				"QUEUED": "Tâches en attente",
 				"MAINTENANCE": "Maintenance",
@@ -1704,6 +1723,7 @@
 		"SERVICES": {
 			"TABLE": {
 				"CAPTION": "Services",
+				"ONLINE": "Online",
 				"STATUS": "Statut",
 				"NAME": "Nom du service",
 				"HOST_NAME": "Nom d'hôte",
@@ -1974,6 +1994,8 @@
 	"TABLE_EDIT": "Éditer",
 	"TABLE_NEXT": "Next page",
 	"TABLE_PREVIOUS": "Previous page",
+	"TABLE_CURRENT": "Current page {{pageNumber}}",
+	"TABLE_NUMBERED": "Go to page {{pageNumber}}",
 	"DASHBOARD": {
 		"RUNNING": "En cours",
 		"FINISHED": "Terminé",
@@ -1981,7 +2003,8 @@
 		"FAILED": "Echoué",
 		"FINISHED_WITH_COMMENTS": "À faire",
 		"SCHEDULED": "Programmé",
-		"RECORDING": "Enregistrement"
+		"RECORDING": "Enregistrement",
+		"BUTTON_TOOLTIP": "Apply filter {{filterName}} to the table"
 	},
 	"HOTKEYS": {
 		"CHEAT_SHEET": {
@@ -2077,9 +2100,8 @@
 	"STATISTICS": {
 		"NOT_AVAILABLE": "Les statistiques ne peuvent pas être affichées pour le moment. Veuillez réessayer plus tard.",
 		"UNSUPPORTED_TYPE": "Désolé, Opencast ne peut pas afficher ce type de données statistiques.",
-		"FROM": "Début",
-		"TO": "A",
 		"TOTAL": "Total",
+		"TIMERANGE": "Time Range",
 		"GRANULARITY": "Granularité",
 		"NAVIGATION": {
 			"ORGANIZATION": "Organization"

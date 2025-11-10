@@ -31,6 +31,10 @@ import DropDown from "./DropDown";
 import { AsyncThunk } from "@reduxjs/toolkit";
 import ButtonLikeAnchor from "./ButtonLikeAnchor";
 import { ParseKeys } from "i18next";
+import SearchContainer from "./SearchContainer";
+import { Resource } from "../../slices/tableSlice";
+import { HiFunnel } from "react-icons/hi2";
+import { LuSettings, LuX } from "react-icons/lu";
 
 /**
  * This component renders the table filters in the upper right corner of the table
@@ -42,7 +46,7 @@ const TableFilters = ({
 }: {
 	loadResource: AsyncThunk<any, void, any>,
 	loadResourceIntoTable: () => AppThunk,
-	resource: string,
+	resource: Resource,
 }) => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
@@ -50,7 +54,7 @@ const TableFilters = ({
 	const filterMap = useAppSelector(state => getFilters(state, resource));
 	const secondFilter = useAppSelector(state => getSecondFilter(state));
 	const selectedFilter = useAppSelector(state => getSelectedFilter(state));
-	const textFilter = useAppSelector(state => getTextFilter(state));
+	const textFilter = useAppSelector(state => getTextFilter(state, resource));
 
 	// Variables for showing different dialogs depending on what was clicked
 	const [showFilterSelector, setFilterSelector] = useState(false);
@@ -62,7 +66,7 @@ const TableFilters = ({
 	const [startDate, setStartDate] = useState<Date | undefined>(undefined);
 	const [endDate, setEndDate] = useState<Date | undefined>(undefined);
 
-	let filter = filterMap.find(({ name }) => name === selectedFilter);
+	const filter = filterMap.find(({ name }) => name === selectedFilter);
 
 	// Remove all selected filters, no filter should be "active" anymore
 	const removeFilters = async () => {
@@ -71,12 +75,12 @@ const TableFilters = ({
 		setEndDate(undefined);
 		setFilterSelector(false);
 
-		dispatch(removeTextFilter());
+		dispatch(removeTextFilter(resource));
 		dispatch(removeSelectedFilter());
 		dispatch(removeSelectedFilter());
 
 		// Set all values of the filters in filterMap back to ""
-		dispatch(resetFilterValues())
+		dispatch(resetFilterValues());
 
 		// Reload resources when filters are removed
 		await dispatch(loadResource());
@@ -91,18 +95,26 @@ const TableFilters = ({
 			setEndDate(undefined);
 		}
 
-		dispatch(editFilterValue({filterName: filter.name, value: ""}));
+		dispatch(editFilterValue({ filterName: filter.name, value: "", resource }));
 
 		// Reload resources when filter is removed
 		await dispatch(loadResource());
 		dispatch(loadResourceIntoTable());
 	};
 
+	const handleSearchChange = (value: string) => {
+		handleChange("textFilter", value);
+	};
+
+	const clearSearchField = () => {
+		dispatch(removeTextFilter(resource));
+	};
+
 	// Handle changes when an item of the component is changed
 	const handleChange = (name: string, value: string) => {
 		let mustApplyChanges = false;
 		if (name === "textFilter") {
-			dispatch(editTextFilter(value));
+			dispatch(editTextFilter({ text: value, resource: resource }));
 			mustApplyChanges = true;
 		}
 
@@ -114,9 +126,9 @@ const TableFilters = ({
 		// If the change is in secondFilter (filter is picked) then the selected value is saved in filterMap
 		// and the filter selections are cleared
 		if (name === "secondFilter") {
-			let filter = filterMap.find(({ name }) => name === selectedFilter);
-			if (!!filter) {
-				dispatch(editFilterValue({filterName: filter.name, value: value}));
+			const filter = filterMap.find(({ name }) => name === selectedFilter);
+			if (filter) {
+				dispatch(editFilterValue({ filterName: filter.name, value: value, resource }));
 				setFilterSelector(false);
 				dispatch(removeSelectedFilter());
 				dispatch(removeSecondFilter());
@@ -135,7 +147,7 @@ const TableFilters = ({
 	// This helps increase performance by reducing the number of calls to load resources.
 	const applyFilterChangesDebounced = async () => {
 		// No matter what, we go to page one.
-		dispatch(goToPage(0))
+		dispatch(goToPage(0));
 		// Reload of resource
 		await dispatch(loadResource());
 		dispatch(loadResourceIntoTable());
@@ -144,20 +156,20 @@ const TableFilters = ({
 	useEffect(() => {
 		if (itemValue) {
 			// Call to apply filter changes with 500MS debounce!
-			let applyFilterChangesDebouncedTimeoutId = setTimeout(applyFilterChangesDebounced, 500);
+			const applyFilterChangesDebouncedTimeoutId = setTimeout(applyFilterChangesDebounced, 500);
 
 			return () => clearTimeout(applyFilterChangesDebouncedTimeoutId);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [itemValue]);
 
-	const handleDatepicker = async (dates?: [Date | undefined | null, Date | undefined | null]) => {
+	const handleDatepicker = (dates?: [Date | undefined | null, Date | undefined | null]) => {
 		if (dates != null) {
-			let [start, end] = dates;
+			const [start, end] = dates;
 
 			start?.setHours(0);
 			start?.setMinutes(0);
-			start?.setSeconds(0)
+			start?.setSeconds(0);
 			end?.setHours(23);
 			end?.setMinutes(59);
 			end?.setSeconds(59);
@@ -171,51 +183,52 @@ const TableFilters = ({
 				setEndDate(end);
 			}
 		}
-	}
+	};
 
 	// Workaround for entering a date range by only entering one date
 	// (e.g. 01/01/2025 results in a range of 01/01/2025 - 01/01/2025)
-	const handleDatePickerOnKeyDown = async (keyEvent: React.KeyboardEvent<HTMLElement>) => {
+	const handleDatePickerOnKeyDown = (keyEvent: React.KeyboardEvent<HTMLElement>) => {
 		if (keyEvent.key === "Enter") {
-			let end = endDate ?? (startDate ? new Date(startDate) : undefined);
+			const end = endDate ?? (startDate ? new Date(startDate) : undefined);
 			end?.setHours(23);
 			end?.setMinutes(59);
 			end?.setSeconds(59);
 
 			submitDateFilter(
 				startDate,
-				end
-			)
+				end,
+			);
 		}
-	}
+	};
 
 	const submitDateFilter = async (start: Date | undefined | null, end: Date | undefined | null) => {
 		if (start && end && moment(start).isValid() && moment(end).isValid()) {
-			let filter = filterMap.find(({ name }) => name === selectedFilter);
+			const filter = filterMap.find(({ name }) => name === selectedFilter);
 			if (filter) {
 				dispatch(editFilterValue({
 					filterName: filter.name,
-					value: start.toISOString() + "/" + end.toISOString()
+					value: start.toISOString() + "/" + end.toISOString(),
+					resource,
 				}));
 				setFilterSelector(false);
 				dispatch(removeSelectedFilter());
 				// Reload of resource after going to very first page.
-				dispatch(goToPage(0))
+				dispatch(goToPage(0));
 				await dispatch(loadResource());
 				dispatch(loadResourceIntoTable());
 			}
 		}
-	}
+	};
 
 	useHotkeys(
     availableHotkeys.general.REMOVE_FILTERS.sequence,
     () => removeFilters(),
 		{ description: t(availableHotkeys.general.REMOVE_FILTERS.description) ?? undefined },
-    [removeFilters]
+    [removeFilters],
   );
 
 	const renderBlueBox = (filter: FilterData) => {
-		let valueLabel = filter.options?.find((opt) => opt.value === filter.value)
+		const valueLabel = filter.options?.find(opt => opt.value === filter.value)
 			?.label || filter.value;
 		return (
 			<span className="table-filter-blue-box">
@@ -227,45 +240,42 @@ const TableFilters = ({
 
 	const getSelectedFilterText = () => {
 		return filter?.label ? t(filter.label as ParseKeys) : selectedFilter;
-	}
+	};
 
 	return (
 		<>
 			<div className="filters-container">
 				{/* Text filter - Search Query */}
-        <div className="search-container">
-          <input
-            type="text"
-            className="search expand"
-            placeholder={t("TABLE_FILTERS.PLACEHOLDER")}
-            onChange={(e) => handleChange("textFilter", e.target.value)}
-            name="textFilter"
-            value={textFilter}
-          />
-        </div>
+				<SearchContainer
+					value={textFilter}
+					handleChange={handleSearchChange}
+					clearSearchField={clearSearchField}
+					isExpand={true}
+				/>
 
 				{/* Selection of filters and management of filter profiles*/}
-				{/*show only if filters.filters contains filters*/}
+				{/* show only if filters.filters contains filters*/}
 				{!!filterMap && (
 					<div className="table-filter">
 						<div className="filters">
 							<ButtonLikeAnchor
 								onClick={() => setFilterSelector(!showFilterSelector)}
 								tooltipText="TABLE_FILTERS.ADD"
+								className="table-filter-button"
 							>
-								<i className="fa fa-filter" />
+								<HiFunnel />
 							</ButtonLikeAnchor>
 
-							{/*show if icon is clicked*/}
+							{/* show if icon is clicked*/}
 							{showFilterSelector && (
-								/*Show all filtersMap as selectable options*/
+								/* Show all filtersMap as selectable options*/
 								<DropDown
 									value={selectedFilter}
 									text={getSelectedFilterText()}
 									options={
 										!!filterMap && filterMap.length > 0
 											? filterMap.filter(
-													(filter) => filter.name !== "presentersBibliographic"
+													filter => filter.name !== "presentersBibliographic",
 												)
 												.sort((a, b) => t(a.label as ParseKeys).localeCompare(t(b.label as ParseKeys))) // Sort alphabetically
 												.map(filter => {
@@ -277,14 +287,14 @@ const TableFilters = ({
 											: []
 									}
 									required={true}
-									handleChange={(element) => handleChange("selectedFilter", element!.value)}
+									handleChange={element => handleChange("selectedFilter", element!.value)}
 									placeholder={
 										!!filterMap && filterMap.length > 0
 											? t(
-												"TABLE_FILTERS.FILTER_SELECTION.PLACEHOLDER"
+												"TABLE_FILTERS.FILTER_SELECTION.PLACEHOLDER",
 												)
 											: t(
-												"TABLE_FILTERS.FILTER_SELECTION.NO_OPTIONS"
+												"TABLE_FILTERS.FILTER_SELECTION.NO_OPTIONS",
 												)
 									}
 									defaultOpen
@@ -294,10 +304,10 @@ const TableFilters = ({
 								/>
 							)}
 
-							{/*Show selection of secondary filter if a main filter is chosen*/}
+							{/* Show selection of secondary filter if a main filter is chosen*/}
 							{!!selectedFilter && (
 								<div>
-									{/*Show the secondary filter depending on the type of main filter chosen (select or period)*/}
+									{/* Show the secondary filter depending on the type of main filter chosen (select or period)*/}
 									<FilterSwitch
 										filter={filter}
 										secondFilter={secondFilter}
@@ -315,7 +325,7 @@ const TableFilters = ({
 							{/* Show for each selected filter a blue label containing its name and option */}
 							{filterMap.map((filter, key) => {
 								return filter.value && (
-									<span className="ng-multi-value" key={key}>
+									<span className="multi-value" key={key}>
 										{
 											// Use different representation of name and value depending on type of filter
 											filter.type === "period" ? (
@@ -338,7 +348,7 @@ const TableFilters = ({
 											onClick={() => removeFilter(filter)}
 											tooltipText="TABLE_FILTERS.REMOVE"
 										>
-											<i className="fa fa-times" />
+											<LuX />
 										</ButtonLikeAnchor>
 									</span>
 								);
@@ -346,18 +356,22 @@ const TableFilters = ({
 						</div>
 
 						{/* Remove icon to clear all filters */}
-						<ButtonLikeAnchor
-							onClick={removeFilters}
-							tooltipText="TABLE_FILTERS.CLEAR"
-						>
-							<i className="clear fa fa-times" />
-						</ButtonLikeAnchor>
+						{filterMap.some(e => e.value) &&
+							<ButtonLikeAnchor
+								onClick={removeFilters}
+								tooltipText="TABLE_FILTERS.CLEAR"
+								className="table-filter-button"
+							>
+								<LuX/>
+							</ButtonLikeAnchor>
+						}
 						{/* Settings icon to open filters profile dialog (save and editing filter profiles)*/}
 						<ButtonLikeAnchor
 							onClick={() => setFilterSettings(!showFilterSettings)}
 							tooltipText="TABLE_FILTERS.PROFILES.FILTERS_HEADER"
+							className="table-filter-button"
 						>
-							<i className="settings fa fa-cog fa-times" />
+							<LuSettings />
 						</ButtonLikeAnchor>
 
 						{/* Filter profile dialog for saving and editing filter profiles */}
@@ -417,30 +431,30 @@ const FilterSwitch = ({
 						text={secondFilter}
 						options={
 							!!filter.options && filter.options.length > 0
-								? filter.options.map((option) => {
+								? filter.options.map(option => {
 									if (!filter.translatable) {
 										return {
 											...option,
 											label: option.label.substr(0, 40),
-										}
+										};
 									} else {
 										return {
 											...option,
 											label: t(option.label as ParseKeys).substr(0, 40),
-										}
+										};
 									}
 								})
 								: []
 						}
 						required={true}
-						handleChange={(element) => handleChange("secondFilter", element!.value)}
+						handleChange={element => handleChange("secondFilter", element!.value)}
 						placeholder={
 							!!filter.options && filter.options.length > 0
 								? t(
-									"TABLE_FILTERS.FILTER_VALUE_SELECTION.PLACEHOLDER"
+									"TABLE_FILTERS.FILTER_VALUE_SELECTION.PLACEHOLDER",
 									)
 								: t(
-									"TABLE_FILTERS.FILTER_SELECTION.NO_OPTIONS"
+									"TABLE_FILTERS.FILTER_SELECTION.NO_OPTIONS",
 									)
 						}
 						autoFocus
@@ -448,6 +462,7 @@ const FilterSwitch = ({
 						openMenuOnFocus
 						menuIsOpen={openSecondFilterMenu}
 						handleMenuIsOpen={setOpenSecondFilterMenu}
+						skipTranslate={!filter.translatable}
 						customCSS={{ width: 200, optionPaddingTop: 5 }}
 					/>
 				</div>
@@ -459,8 +474,8 @@ const FilterSwitch = ({
 						startOpen
 						autoFocus
 						selected={startDate}
-						onChange={(dates) => handleDate(dates)}
-						onKeyDown={(key) => handleDatePickerOnKeyDown(key)}
+						onChange={dates => handleDate(dates)}
+						onKeyDown={key => handleDatePickerOnKeyDown(key)}
 						startDate={startDate}
 						endDate={endDate}
 						selectsRange

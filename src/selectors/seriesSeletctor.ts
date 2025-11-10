@@ -14,8 +14,8 @@ export const getSeriesThemes = (state: RootState) => state.series.themes;
 export const getTotalSeries = (state: RootState) => state.series.total;
 
 export const getSeriesTobiraPage = (state: RootState) =>
-	state.series.tobiraPage
+	state.series.tobiraPage;
 export const getSeriesTobiraPageStatus = (state: RootState) =>
-	state.series.statusTobiraPage
+	state.series.statusTobiraPage;
 export const getSeriesTobiraPageError = (state: RootState) =>
-	state.series.errorTobiraPage
+	state.series.errorTobiraPage;

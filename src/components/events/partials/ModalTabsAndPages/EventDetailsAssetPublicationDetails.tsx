@@ -1,4 +1,3 @@
-import React from "react";
 import Notifications from "../../../shared/Notifications";
 import {
 	getAssetPublicationDetails,
@@ -8,6 +7,7 @@ import { humanReadableBytesFilter } from "../../../../utils/eventDetailsUtils";
 import { useAppSelector } from "../../../../store";
 import { useTranslation } from "react-i18next";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
+import { LuExternalLink } from "react-icons/lu";
 
 /**
  * This component manages the publication details sub-tab for assets tab of event details modal
@@ -27,7 +27,7 @@ const EventDetailsAssetPublicationDetails = () => {
 				<header>
 					{
 						t(
-							"EVENTS.EVENTS.DETAILS.ASSETS.PUBLICATIONS.DETAILS.CAPTION"
+							"EVENTS.EVENTS.DETAILS.ASSETS.PUBLICATIONS.DETAILS.CAPTION",
 						) /* Publication Details */
 					}
 				</header>
@@ -39,7 +39,7 @@ const EventDetailsAssetPublicationDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.PUBLICATIONS.DETAILS.ID"
+												"EVENTS.EVENTS.DETAILS.ASSETS.PUBLICATIONS.DETAILS.ID",
 											) /* Id */
 										}
 									</td>
@@ -49,7 +49,7 @@ const EventDetailsAssetPublicationDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.PUBLICATIONS.DETAILS.TYPE"
+												"EVENTS.EVENTS.DETAILS.ASSETS.PUBLICATIONS.DETAILS.TYPE",
 											) /* Type */
 										}
 									</td>
@@ -59,7 +59,7 @@ const EventDetailsAssetPublicationDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.PUBLICATIONS.DETAILS.MIMETYPE"
+												"EVENTS.EVENTS.DETAILS.ASSETS.PUBLICATIONS.DETAILS.MIMETYPE",
 											) /* Mimetype */
 										}
 									</td>
@@ -70,7 +70,7 @@ const EventDetailsAssetPublicationDetails = () => {
 										<td>
 											{
 												t(
-													"EVENTS.EVENTS.DETAILS.ASSETS.PUBLICATIONS.DETAILS.SIZE"
+													"EVENTS.EVENTS.DETAILS.ASSETS.PUBLICATIONS.DETAILS.SIZE",
 												) /* Size */
 											}
 										</td>
@@ -81,7 +81,7 @@ const EventDetailsAssetPublicationDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.PUBLICATIONS.DETAILS.CHANNEL"
+												"EVENTS.EVENTS.DETAILS.ASSETS.PUBLICATIONS.DETAILS.CHANNEL",
 											) /* Channel */
 										}
 									</td>
@@ -91,7 +91,7 @@ const EventDetailsAssetPublicationDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.PUBLICATIONS.DETAILS.REFERENCE"
+												"EVENTS.EVENTS.DETAILS.ASSETS.PUBLICATIONS.DETAILS.REFERENCE",
 											) /* Reference */
 										}
 									</td>
@@ -101,7 +101,7 @@ const EventDetailsAssetPublicationDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.PUBLICATIONS.DETAILS.TAGS"
+												"EVENTS.EVENTS.DETAILS.ASSETS.PUBLICATIONS.DETAILS.TAGS",
 											) /* Tags */
 										}
 									</td>
@@ -115,16 +115,18 @@ const EventDetailsAssetPublicationDetails = () => {
 									<td>
 										{
 											t(
-												"EVENTS.EVENTS.DETAILS.ASSETS.PUBLICATIONS.DETAILS.URL"
+												"EVENTS.EVENTS.DETAILS.ASSETS.PUBLICATIONS.DETAILS.URL",
 											) /* Link */
 										}
 									</td>
 									<td>
 										<a
-											className="fa fa-external-link"
 											href={publication.url}
 											target="_blank" rel="noreferrer"
-										/>
+											className="action-cell-button"
+										>
+											<LuExternalLink />
+										</a>
 									</td>
 								</tr>
 							</tbody>

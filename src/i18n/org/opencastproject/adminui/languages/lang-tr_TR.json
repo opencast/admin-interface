@@ -103,7 +103,8 @@
 			"SELECTED_COLUMNS": "Seçili sütunlar",
 			"FOOTER_TEXT": "Sıralama ve seçim otomatik olarak kaydedilecek. Varsayılan görünümü yüklemek için \"{{resetTranslation}}\" düğmesine tıklayın.",
 			"ADD_COLUMN": "Add column",
-			"REMOVE_COLUMN": "Remove column"
+			"REMOVE_COLUMN": "Remove column",
+			"DRAG_HANDLE_USAGE_INSTRUCTIONS": "Press space bar to start a drag. When dragging you can use the arrow keys to move the item around and escape to cancel. Some screen readers may require you to be in focus mode or to use your pass through key"
 		}
 	},
 	"CONFIRMATIONS": {
@@ -175,7 +176,7 @@
 		"SERIES_PATH_NOT_UPDATED": "The series path could not be updated",
 		"SERIES_PATH_NOT_REMOVED": "The series path could not be removed",
 		"EVENTS_CREATED": "Etkinlik oluşturuldu",
-		"EVENTS_UPLOAD_STARTED": "Etkinlik yüklenmekte…",
+		"EVENTS_UPLOAD_STARTED": "The event \"{{ title }}\" is being uploaded… {{ progress }}%",
 		"EVENTS_NOT_CREATED": "Etkinlik oluşturulamadı",
 		"EVENTS_UPDATED": "The event has been successfully updated",
 		"EVENTS_UPDATED_ALL": "Tüm etkinlikler başarıyla güncellendi",
@@ -184,6 +185,8 @@
 		"EVENTS_NOT_UPDATED_ALL": "Etkinliklerden hiçbiri kaydedilemedi",
 		"EVENTS_PROCESSING_DELETE_WORKFLOW": "Silinen iş akışı.",
 		"EVENTS_PROCESSING_DELETE_WORKFLOW_FAILED": "İş akışı silinemedi.",
+		"EVENTS_PROCESSING_ACTION_STOP": "The event processing has been stopped.",
+		"EVENTS_PROCESSING_ACTION_NON_STOP": "The event processing could not be stopped.",
 		"SERIES_NOT_UPDATED": "Seriler kaydedilemedi",
 		"EVENT_DELETED": "Etkinlik silindi.",
 		"EVENT_WILL_BE_DELETED": "Etkinlik siliniyor",
@@ -206,6 +209,8 @@
 		"SERIES_THEME_REPROCESS_EXISTING_EVENTS": "Dizideki mevcut etkinliklerin yeniden işlenmesi gerekecek",
 		"SERIES_ACL_LOCKED": "Dizideki etkinlikler üzerinde işlem yapılırken Erişim İlkelerinin düzenlenmesine izin verilmez",
 		"EVENT_ACL_MISSING_READWRITE_ROLE": "Erişim İlkesi en az bir Okuma ve Yazma yetkisi gerektirir.",
+		"METADATA_SAVED": "The metadata has been saved.",
+		"METADATA_NOT_SAVED": "The metadata has NOT been saved!",
 		"THEME_NAME_EMPTY": "İsim boş bırakılamaz",
 		"BUMPER_UPLOAD_ERROR": "Medyayı yüklerken bir hata oluştu",
 		"THEME_CREATED": "Tema oluşturuldu",
@@ -256,7 +261,7 @@
 				"UNAUTHORIZED": "Vurgulanan etkinlikleri silme yetkiniz yok. Lütfen devam etmek için bu seçimleri kaldırın."
 			}
 		},
-		"DELETE_EVENTS_WARNING_LINE1": "Silindikten sonra, tüm etkinlik metaverisi, ses ve video dosyaları silinecek ve kurarılamaz olacaklar.",
+		"DELETE_EVENTS_WARNING_LINE1": "Once deleted, all event metadata, audio and video files are irrevocably gone.",
 		"DELETE_EVENTS_WARNING_LINE2": "",
 		"DELETE_SERIES_WARNING_LINE1": "Silindikten sonra, tüm metaveri serileri kurtarılamaz olacak. Serilerdeki etkinlikler silinmeyecek.",
 		"DELETE_SERIES_WARNING_LINE2": "",
@@ -892,7 +897,11 @@
 						"ADDITIONAL_ACTIONS": "Ek Eylemler",
 						"ACTION": "Eylemler",
 						"NEW": "Yeni sözleşme",
-						"DETAILS": "Ayrıntılar"
+						"NON_USER_ROLES": "Roles and Groups authorized for the event",
+						"USER": "User",
+						"USERS": "Users who are authorized for the event",
+						"NEW_USER": "New user",
+						"SANITIZATION_NOTE": "User role sanitization is enabled in your Opencast, therefore user roles are displayed alongside other roles. This does not impact role functionality in any way."
 					},
 					"ROLES": {
 						"LABEL": "Select or create a role"
@@ -979,7 +988,6 @@
 					"ACTIONS": "Hareketler",
 					"DETAILS": "Ayrıntılar",
 					"DESCRIPTION": "Açıklama",
-					"MORE_INFO": "Daha Fazla Bilgi",
 					"ID": "KİMLİK",
 					"TYPE": "Tür",
 					"TITLE": "Başlık",
@@ -1019,11 +1027,13 @@
 				},
 				"WORKFLOW_DETAILS": {
 					"TITLE": "İş akışı detayları",
-					"CONFIGURATION": "İş akışı yapılandırılması"
+					"CONFIGURATION": "İş akışı yapılandırılması",
+					"OPERATIONS": "Operations",
+					"CURRENT_OPERATION": "Current workflow operation"
 				},
 				"WORKFLOW_OPERATIONS": {
 					"TITLE": "İş akışı operasyonları",
-					"DETAILS_LINK": "İşlemler",
+					"DETAILS_LINK": "All operations",
 					"TABLE_HEADERS": {
 						"TITLE": "Başlık",
 						"STATUS": "Durum",
@@ -1083,7 +1093,8 @@
 						"DATE": "Tarih",
 						"HOST": "Sunucu işletme",
 						"TYPE": "Hizmet Türü",
-						"TECHNICAL_DETAILS": "Teknik Ayrıntılar"
+						"TECHNICAL_DETAILS": "Teknik Ayrıntılar",
+						"OPERATION": "Operation the error occured in"
 					}
 				}
 			}
@@ -1171,7 +1182,10 @@
 				"TOOLTIP": {
 					"SERIES": "Bu seri için etkinlikleri filtrele",
 					"DETAILS": "Seri ayrıntılarını aç",
-					"DELETE": "Seriyi sil"
+					"DELETE": "Seriyi sil",
+					"CREATION": "Filter for this creation date",
+					"ORGANIZER": "Filter for this organizer",
+					"CONTRIBUTORS": "Filter for this contributor"
 				}
 			},
 			"DETAILS": {
@@ -1202,7 +1216,10 @@
 						"ADDITIONAL_ACTIONS": "Ek eylemler",
 						"ACTION": "Eylemler",
 						"NEW": "Yeni sözleşme",
-						"DETAILS": "Ayrıntılar",
+						"NON_USER_ROLES": "Roles and Groups authorized for the series",
+						"USER": "User",
+						"USERS": "Users who are authorized for the series",
+						"NEW_USER": "New user",
 						"REPLACE_EVENT_ACLS": "Etkinlik izinlerini güncelle",
 						"REPLACE_EVENT_ACLS_HINT": "Bu dizinin tüm etkinliklerinin geçerli izinlere sahip olduğundan emin olun",
 						"LOAD_MORE_LIMIT": "policies shown.",
@@ -1461,8 +1478,11 @@
 						"ADDITIONAL_ACTIONS": "Ek Eylemler",
 						"ACTION": "Eylemler",
 						"NEW": "Yeni sözleşme",
-						"DETAILS": "Ayrıntılar",
-						"DESCRIPTION": "Lütfen önceden yapılandırılmış bir ilkeler kümesi seçim veya aşağıdaki özel ilkelerden ekleyin"
+						"NON_USER_ROLES": "Roles and Groups authorized for the access policy",
+						"DESCRIPTION": "Lütfen önceden yapılandırılmış bir ilkeler kümesi seçim veya aşağıdaki özel ilkelerden ekleyin",
+						"USER": "User",
+						"USERS": "Users who are authorized for the access policy",
+						"NEW_USER": "New user"
 					},
 					"ROLES": {
 						"LABEL": "Bir rol seç",
@@ -1693,7 +1713,6 @@
 				"HOST_NAME": "Ana bilgisayar adı",
 				"NODE_NAME": "Düğüm adı",
 				"CORES": "Çekirdekler",
-				"COMPLETED": "Tamamlanan işler",
 				"RUNNING": "Çalışan işler",
 				"QUEUED": "Kuyruktaki işler",
 				"MAINTENANCE": "Bakım",
@@ -1704,6 +1723,7 @@
 		"SERVICES": {
 			"TABLE": {
 				"CAPTION": "Hizmetler",
+				"ONLINE": "Online",
 				"STATUS": "Durum",
 				"NAME": "Hizmet adı",
 				"HOST_NAME": "Ana bilgisayar adı",
@@ -1974,6 +1994,8 @@
 	"TABLE_EDIT": "Düzenle",
 	"TABLE_NEXT": "Next page",
 	"TABLE_PREVIOUS": "Previous page",
+	"TABLE_CURRENT": "Current page {{pageNumber}}",
+	"TABLE_NUMBERED": "Go to page {{pageNumber}}",
 	"DASHBOARD": {
 		"RUNNING": "Çalışıyor",
 		"FINISHED": "Tamamlandı",
@@ -1981,7 +2003,8 @@
 		"FAILED": "Başarısız",
 		"FINISHED_WITH_COMMENTS": "Yapılacaklar",
 		"SCHEDULED": "Zamanlandı",
-		"RECORDING": "Kayıt ediliyor"
+		"RECORDING": "Kayıt ediliyor",
+		"BUTTON_TOOLTIP": "Apply filter {{filterName}} to the table"
 	},
 	"HOTKEYS": {
 		"CHEAT_SHEET": {
@@ -2077,9 +2100,8 @@
 	"STATISTICS": {
 		"NOT_AVAILABLE": "İstatistiklere şu anda erişilemiyor. Lütfen daha sonra tekrar deneyin.",
 		"UNSUPPORTED_TYPE": "Üzgünüz, Opencast bu tür istatistiksel veriyi oluşturamıyor.",
-		"FROM": "den",
-		"TO": "Kime",
 		"TOTAL": "Toplam",
+		"TIMERANGE": "Time Range",
 		"GRANULARITY": "Ayrıntı Düzeyi",
 		"NAVIGATION": {
 			"ORGANIZATION": "Organization"

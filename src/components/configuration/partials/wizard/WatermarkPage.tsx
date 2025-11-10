@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import cn from "classnames";
 import { FormikProps } from "formik";
@@ -7,6 +6,7 @@ import WizardNavigationButtons from "../../../shared/wizard/WizardNavigationButt
 import FileUpload from "../../../shared/wizard/FileUpload";
 import Notifications from "../../../shared/Notifications";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
+import BaseButton from "../../../shared/BaseButton";
 
 /**
  * This component renders the watermark page for new themes in the new themes wizard
@@ -23,7 +23,7 @@ const WatermarkPage = <T extends RequiredFormProps>({
 	formik,
 	nextPage,
 	previousPage,
-	isEdit
+	isEdit,
 }: {
 	formik: FormikProps<T>,
 	nextPage?: (values: T) => void,
@@ -87,7 +87,7 @@ const WatermarkPage = <T extends RequiredFormProps>({
 							</div>
 						</div>
 
-						{/*if file uploaded, then render buttons for choice of position*/}
+						{/* if file uploaded, then render buttons for choice of position*/}
 						{formik.values.watermarkFile && (
 							<div className="obj">
 								<header>
@@ -95,68 +95,68 @@ const WatermarkPage = <T extends RequiredFormProps>({
 								</header>
 								<div className="obj-container padded">
 									<div className="video-container">
-										<div className="watermark-config">
+										<div>
 											<div className="position-selection">
-												<button
+												<BaseButton
 													className={cn(
 														"position-button position-top-left",
 														{
 															active:
 																formik.values.watermarkPosition ===
 																"topLeft",
-														}
+														},
 													)}
 													onClick={() => handleButtonClick("topLeft")}
 												>
 													{t(
-														"CONFIGURATION.THEMES.DETAILS.WATERMARK.TOP_LEFT"
+														"CONFIGURATION.THEMES.DETAILS.WATERMARK.TOP_LEFT",
 													)}
-												</button>
-												<button
+												</BaseButton>
+												<BaseButton
 													className={cn(
 														"position-button position-top-right",
 														{
 															active:
 																formik.values.watermarkPosition ===
 																"topRight",
-														}
+														},
 													)}
 													onClick={() => handleButtonClick("topRight")}
 												>
 													{t(
-														"CONFIGURATION.THEMES.DETAILS.WATERMARK.TOP_RIGHT"
+														"CONFIGURATION.THEMES.DETAILS.WATERMARK.TOP_RIGHT",
 													)}
-												</button>
-												<button
+												</BaseButton>
+												<BaseButton
 													className={cn(
 														"position-button position-bottom-left",
 														{
 															active:
 																formik.values.watermarkPosition ===
 																"bottomLeft",
-														}
+														},
 													)}
 													onClick={() => handleButtonClick("bottomLeft")}
 												>
 													{t(
-														"CONFIGURATION.THEMES.DETAILS.WATERMARK.BOTTOM_LEFT"
+														"CONFIGURATION.THEMES.DETAILS.WATERMARK.BOTTOM_LEFT",
 													)}
-												</button>
-												<button
+												</BaseButton>
+												<BaseButton
 													className={cn(
 														"position-button position-bottom-right",
 														{
 															active:
 																formik.values.watermarkPosition ===
 																"bottomRight",
-														}
+														},
 													)}
 													onClick={() => handleButtonClick("bottomRight")}
 												>
 													{t(
-														"CONFIGURATION.THEMES.DETAILS.WATERMARK.BOTTOM_RIGHT"
+														"CONFIGURATION.THEMES.DETAILS.WATERMARK.BOTTOM_RIGHT",
 													)}
-												</button>
+												</BaseButton>
 											</div>
 										</div>
 									</div>
@@ -168,7 +168,7 @@ const WatermarkPage = <T extends RequiredFormProps>({
 			</ModalContentTable>
 			{/* Show navigation buttons only if page is used for a new theme*/}
 			{!isEdit && (
-				//Button for navigation to next page
+				// Button for navigation to next page
 				<WizardNavigationButtons
 					formik={formik}
 					previousPage={previousPage}

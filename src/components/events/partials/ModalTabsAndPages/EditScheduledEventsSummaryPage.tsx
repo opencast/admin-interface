@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import WizardNavigationButtons from "../../../shared/wizard/WizardNavigationButtons";
 import { getMetadataCollectionFieldName } from "../../../../utils/resourceUtils";
@@ -8,6 +8,7 @@ import { FormikProps } from "formik";
 import { EditedEvents } from "../../../../slices/eventSlice";
 import { ParseKeys } from "i18next";
 import ModalContent from "../../../shared/modals/ModalContent";
+import { LuTriangleAlert } from "react-icons/lu";
 
 /**
  * This component renders the summary page of the edit scheduled bulk action
@@ -48,11 +49,11 @@ const EditScheduledEventsSummaryPage = <T extends RequiredFormProps>({
 	}, []);
 
 	const checkForChanges = () => {
-		let changed: Change[] = [];
+		const changed: Change[] = [];
 
 		// Loop through each event selected for editing and compare original values and changed values
 		for (const event of formik.values.editedEvents) {
-			let eventChanges: Change = {
+			const eventChanges: Change = {
 				eventId: event.eventId,
 				title: event.title,
 				changes: [],
@@ -70,19 +71,19 @@ const EditScheduledEventsSummaryPage = <T extends RequiredFormProps>({
 					previous: getMetadataCollectionFieldName(
 						{ collection: seriesOptions },
 						{ value: event.series },
-						t
+						t,
 					),
 					next: getMetadataCollectionFieldName(
 						{ collection: seriesOptions },
 						{ value: event.changedSeries },
-						t
+						t,
 					),
 				});
 			}
 			if (
 				isChanged(
 					event.startTimeHour + ":" + event.startTimeMinutes,
-					event.changedStartTimeHour + ":" + event.changedStartTimeMinutes
+					event.changedStartTimeHour + ":" + event.changedStartTimeMinutes,
 				)
 			) {
 				eventChanges.changes.push({
@@ -95,7 +96,7 @@ const EditScheduledEventsSummaryPage = <T extends RequiredFormProps>({
 			if (
 				isChanged(
 					event.endTimeHour + ":" + event.endTimeMinutes,
-					event.changedEndTimeHour + ":" + event.changedEndTimeMinutes
+					event.changedEndTimeHour + ":" + event.changedEndTimeMinutes,
 				)
 			) {
 				eventChanges.changes.push({
@@ -133,7 +134,7 @@ const EditScheduledEventsSummaryPage = <T extends RequiredFormProps>({
 				// Keep ids of changed events (used later)
 				formik.setFieldValue(
 					"changedEvent",
-					formik.values.changedEvents.push(event.eventId)
+					formik.values.changedEvents.push(event.eventId),
 				);
 			}
 		}
@@ -149,29 +150,29 @@ const EditScheduledEventsSummaryPage = <T extends RequiredFormProps>({
 
 	return (
 		<>
-			<ModalContent modalContentClassName="modal-content active">
+			<ModalContent modalContentClassName="modal-content">
 				{changes.length > 0 ? (
 					<div className="full-col">
-						{/*Repeat for each changed event*/}
+						{/* Repeat for each changed event*/}
 						{changes.map((event, key) => (
 							<div key={key} className="obj tbl-list">
 								<header>
 									{t(
 										"BULK_ACTIONS.EDIT_EVENTS.SUMMARY.SINGLE_EVENT_CAPTION",
-										{ title: event.title }
+										{ title: event.title },
 									)}
 								</header>
 								<div className="obj-container">
 									<table className="main-tbl">
 										<thead>
 											<tr>
-												<th className="fit">
+												<th>
 													{t("BULK_ACTIONS.EDIT_EVENTS.SUMMARY.TYPE")}
 												</th>
-												<th className="fit">
+												<th>
 													{t("BULK_ACTIONS.EDIT_EVENTS.SUMMARY.PREVIOUS")}
 												</th>
-												<th className="fit">
+												<th>
 													{t("BULK_ACTIONS.EDIT_EVENTS.SUMMARY.NEXT")}
 												</th>
 											</tr>
@@ -195,6 +196,7 @@ const EditScheduledEventsSummaryPage = <T extends RequiredFormProps>({
 					<div className="row">
 						{/* Show only if there no changes*/}
 						<div className="alert sticky warning">
+							<LuTriangleAlert className="warning-symbol-warning"/>
 							<p>{t("BULK_ACTIONS.EDIT_EVENTS.GENERAL.NOCHANGES")}</p>
 						</div>
 					</div>

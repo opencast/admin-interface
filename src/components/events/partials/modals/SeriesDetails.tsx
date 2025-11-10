@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import cn from "classnames";
 import {
@@ -11,7 +11,7 @@ import {
 	hasStatistics as seriesHasStatistics,
 } from "../../../../selectors/seriesDetailsSelectors";
 import { getOrgProperties, getUserInformation } from "../../../../selectors/userInfoSelectors";
-import { hasAccess } from "../../../../utils/utils";
+import { confirmUnsaved, hasAccess } from "../../../../utils/utils";
 import SeriesDetailsAccessTab from "../ModalTabsAndPages/SeriesDetailsAccessTab";
 import SeriesDetailsThemeTab from "../ModalTabsAndPages/SeriesDetailsThemeTab";
 import SeriesDetailsStatisticTab from "../ModalTabsAndPages/SeriesDetailsStatisticTab";
@@ -28,6 +28,16 @@ import DetailsTobiraTab from "../ModalTabsAndPages/DetailsTobiraTab";
 import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
 import { removeNotificationWizardTobira } from "../../../../slices/notificationSlice";
 import { ParseKeys } from "i18next";
+import { FormikProps } from "formik";
+
+export enum SeriesDetailsPage {
+	Metadata,
+	ExtendedMetadata,
+	AccessPolicy,
+	Theme,
+	Tobira,
+	Statistics,
+}
 
 /**
  * This component manages the tabs of the series details modal
@@ -36,10 +46,12 @@ const SeriesDetails = ({
 	seriesId,
 	policyChanged,
 	setPolicyChanged,
+	formikRef,
 }: {
 	seriesId: string
 	policyChanged: boolean
 	setPolicyChanged: (policyChanged: boolean) => void
+	formikRef: React.RefObject<FormikProps<any> | null>
 }) => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
@@ -64,7 +76,7 @@ const SeriesDetails = ({
 
 	const user = useAppSelector(state => getUserInformation(state));
 	const orgProperties = useAppSelector(state => getOrgProperties(state));
-	const themesEnabled = (orgProperties['admin.themes.enabled'] || 'false').toLowerCase() === 'true';
+	const themesEnabled = (orgProperties["admin.themes.enabled"] || "false").toLowerCase() === "true";
 
 	// information about each tab
 	const tabs: {
@@ -93,7 +105,7 @@ const SeriesDetails = ({
 			tabNameTranslation: "EVENTS.SERIES.DETAILS.TABS.THEME",
 			accessRole: "ROLE_UI_SERIES_DETAILS_THEMES_VIEW",
 			name: "theme",
-			hidden: !theme && !themesEnabled
+			hidden: !theme && !themesEnabled,
 		},
 		{
 			tabNameTranslation: "EVENTS.SERIES.DETAILS.TABS.TOBIRA",
@@ -110,7 +122,15 @@ const SeriesDetails = ({
 	];
 
 	const openTab = (tabNr: number) => {
-		setPage(tabNr);
+		let isUnsavedChanges = false;
+		isUnsavedChanges = policyChanged;
+		if (formikRef.current && formikRef.current.dirty !== undefined && formikRef.current.dirty) {
+			isUnsavedChanges = true;
+		}
+
+		if (!isUnsavedChanges || confirmUnsaved(t)) {
+			setPage(tabNr);
+		}
 	};
 
 	return (
@@ -120,7 +140,7 @@ const SeriesDetails = ({
 				{tabs.map((tab, index) => !tab.hidden && hasAccess(tab.accessRole, user) && (
 					<ButtonLikeAnchor
 						key={tab.name}
-						extraClassName={cn({ active: page === index })}
+						className={cn({ active: page === index })}
 						onClick={() => openTab(index)}
 					>
 						{t(tab.tabNameTranslation)}
@@ -136,6 +156,7 @@ const SeriesDetails = ({
 						metadata={[metadataFields]}
 						updateResource={updateSeriesMetadata}
 						editAccessRole="ROLE_UI_SERIES_DETAILS_METADATA_EDIT"
+						formikRef={formikRef}
 						header={tabs[page].tabNameTranslation}
 					/>
 				)}
@@ -145,6 +166,7 @@ const SeriesDetails = ({
 						metadata={extendedMetadata}
 						updateResource={updateExtendedSeriesMetadata}
 						editAccessRole="ROLE_UI_SERIES_DETAILS_METADATA_EDIT"
+						formikRef={formikRef}
 					/>
 				)}
 				{page === 2 && (

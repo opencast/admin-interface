@@ -4,7 +4,7 @@
 const ModalContent = ({
 	modalContentChildren,
 	modalContentClassName,
-	children
+	children,
 }: {
 	modalContentChildren?: React.ReactNode
 	modalContentClassName?: string

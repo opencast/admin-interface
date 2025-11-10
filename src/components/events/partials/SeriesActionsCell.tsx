@@ -1,12 +1,12 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import ConfirmModal from "../../shared/ConfirmModal";
-import SeriesDetailsModal from "./modals/SeriesDetailsModal";
 import {
 	fetchSeriesDetailsThemeNames,
 	fetchSeriesDetailsAcls,
 	fetchSeriesDetailsMetadata,
 	fetchSeriesDetailsTheme,
 	fetchSeriesDetailsTobira,
+	openModal,
 } from "../../../slices/seriesDetailsSlice";
 import {
 	getSeriesHasEvents,
@@ -18,9 +18,10 @@ import {
 	checkForEventsDeleteSeriesModal,
 	deleteSeries,
 } from "../../../slices/seriesSlice";
-import { IconButton } from "../../shared/IconButton";
-
 import { ModalHandle } from "../../shared/modals/Modal";
+import ButtonLikeAnchor from "../../shared/ButtonLikeAnchor";
+import { LuCircleX, LuFileText } from "react-icons/lu";
+import { SeriesDetailsPage } from "./modals/SeriesDetails";
 
 /**
  * This component renders the action cells of series in the table view
@@ -33,7 +34,6 @@ const SeriesActionsCell = ({
 	const dispatch = useAppDispatch();
 
 	const deleteConfirmationModalRef = useRef<ModalHandle>(null);
-	const detailsModalRef = useRef<ModalHandle>(null);
 
 	const hasEvents = useAppSelector(state => getSeriesHasEvents(state));
 	const deleteAllowed = useAppSelector(state => isSeriesDeleteAllowed(state));
@@ -53,38 +53,38 @@ const SeriesActionsCell = ({
 	};
 
 	const showSeriesDetailsModal = async () => {
-		await dispatch(fetchSeriesDetailsMetadata(row.id));
-		await dispatch(fetchSeriesDetailsAcls(row.id));
-		await dispatch(fetchSeriesDetailsTheme(row.id));
-		await dispatch(fetchSeriesDetailsThemeNames());
-		await dispatch(fetchSeriesDetailsTobira(row.id));
+		await Promise.all([
+			dispatch(fetchSeriesDetailsMetadata(row.id)),
+			dispatch(fetchSeriesDetailsAcls(row.id)),
+			dispatch(fetchSeriesDetailsTheme(row.id)),
+			dispatch(fetchSeriesDetailsThemeNames()),
+			dispatch(fetchSeriesDetailsTobira(row.id)),
+		]);
 
-		detailsModalRef.current?.open();
+		dispatch(openModal(SeriesDetailsPage.Metadata, row));
 	};
 
 	return (
 		<>
 			{/* series details */}
-			<IconButton
-				callback={() => showSeriesDetailsModal()}
-				iconClassname={"more-series"}
+			<ButtonLikeAnchor
+				onClick={() => showSeriesDetailsModal()}
+				className={"action-cell-button more-series"}
 				editAccessRole={"ROLE_UI_SERIES_DETAILS_VIEW"}
-				tooltipText={"EVENTS.SERIES.TABLE.TOOLTIP.DETAILS"}
-			/>
-
-			<SeriesDetailsModal
-				seriesId={row.id}
-				seriesTitle={row.title}
-				modalRef={detailsModalRef}
-			/>
+				// tooltipText={"EVENTS.SERIES.TABLE.TOOLTIP.DETAILS"} // Disabled due to performance concerns
+			>
+				<LuFileText />
+			</ButtonLikeAnchor>
 
 			{/* delete series */}
-			<IconButton
-				callback={() => showDeleteConfirmation()}
-				iconClassname={"remove"}
+			<ButtonLikeAnchor
+				onClick={() => showDeleteConfirmation()}
+				className={"action-cell-button remove"}
 				editAccessRole={"ROLE_UI_SERIES_DELETE"}
-				tooltipText={"EVENTS.SERIES.TABLE.TOOLTIP.DELETE"}
-			/>
+				// tooltipText={"EVENTS.SERIES.TABLE.TOOLTIP.DELETE"} // Disabled due to performance concerns
+			>
+				<LuCircleX />
+			</ButtonLikeAnchor>
 
 			<ConfirmModal
 				close={hideDeleteConfirmation}
@@ -93,12 +93,11 @@ const SeriesActionsCell = ({
 				resourceId={row.id}
 				deleteMethod={deletingSeries}
 				deleteAllowed={deleteAllowed}
-				showCautionMessage={hasEvents}
 				deleteNotAllowedMessage={
 					"CONFIRMATIONS.ERRORS.SERIES_HAS_EVENTS"
 				} /* The highlighted series cannot be deleted as they still contain events */
 				deleteWithCautionMessage={
-					"CONFIRMATIONS.WARNINGS.SERIES_HAS_EVENTS"
+					hasEvents ? "CONFIRMATIONS.WARNINGS.SERIES_HAS_EVENTS" : undefined
 				} /* This series does contain events. Deleting the series will not delete the events. */
 				modalRef={deleteConfirmationModalRef}
 			/>

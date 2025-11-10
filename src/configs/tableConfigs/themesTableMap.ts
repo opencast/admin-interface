@@ -1,4 +1,5 @@
 import ThemesActionsCell from "../../components/configuration/partials/ThemesActionsCell";
+import ThemesDateTimeCell from "../../components/configuration/partials/ThemesDateTimeCell";
 
 /**
  * This map contains the mapping between the template strings above and the corresponding react component.
@@ -7,4 +8,5 @@ import ThemesActionsCell from "../../components/configuration/partials/ThemesAct
  */
 export const themesTemplateMap = {
 	ThemesActionsCell: ThemesActionsCell,
+	ThemesDateTimeCell: ThemesDateTimeCell,
 };

@@ -16,7 +16,6 @@ export const serversTableConfig: TableConfig = {
 			template: "ServersStatusCell",
 			name: "online",
 			label: "SYSTEMS.SERVERS.TABLE.STATUS",
-			sortable: true,
 		},
 		{
 			name: "hostname",
@@ -31,11 +30,6 @@ export const serversTableConfig: TableConfig = {
 		{
 			name: "cores",
 			label: "SYSTEMS.SERVERS.TABLE.CORES",
-			sortable: true,
-		},
-		{
-			name: "completed",
-			label: "SYSTEMS.SERVERS.TABLE.COMPLETED",
 			sortable: true,
 		},
 		{

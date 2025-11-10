@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import Notifications from "../../../shared/Notifications";
 import {
 	getAssets,
@@ -34,6 +34,7 @@ import EventDetailsAssetPublicationDetails from "./EventDetailsAssetPublicationD
 import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
 import { ParseKeys } from "i18next";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
+import { LuChevronRight } from "react-icons/lu";
 
 /**
  * This component manages the main assets tab of event details modal
@@ -62,43 +63,24 @@ const EventDetailsAssetsTab = ({
 		{
 			tabNameTranslation: "EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.TITLE",
 			tabHierarchies: ["asset-attachments", "attachment-details"],
-			open: () => openSubTab("asset-attachments", "attachment"),
+			open: () => openSubTab("asset-attachments"),
 		},
 		{
 			tabNameTranslation: "EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.TITLE",
 			tabHierarchies: ["asset-catalogs", "catalog-details"],
-			open: () => openSubTab("asset-catalogs", "catalog"),
+			open: () => openSubTab("asset-catalogs"),
 		},
 		{
 			tabNameTranslation: "EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.TITLE",
 			tabHierarchies: ["asset-media", "media-details"],
-			open: () => openSubTab("asset-media", "media"),
+			open: () => openSubTab("asset-media"),
 		},
 		{
 			tabNameTranslation: "EVENTS.EVENTS.DETAILS.ASSETS.PUBLICATIONS.TITLE",
 			tabHierarchies: ["asset-publications", "publication-details"],
-			open: () => openSubTab("asset-publications", "publication"),
+			open: () => openSubTab("asset-publications"),
 		},
 	];
-
-	const assetsNavStyle = {
-		borderBottom: "1px solid #d6d6d6",
-		lineHeight: "35px",
-		paddingLeft: "15px",
-	};
-
-	const assetsTabActive = {
-		padding: "14px 5px",
-		fontWeight: "600",
-		minWidth: "100px",
-		color: "#5d7589",
-	};
-
-	const assetsTabInactive = {
-		padding: "14px 5px",
-		minWidth: "100px",
-		color: "#92a0ab",
-	};
 
 	useEffect(() => {
 		dispatch(removeNotificationWizardForm());
@@ -108,7 +90,6 @@ const EventDetailsAssetsTab = ({
 
 	const openSubTab = (
 		subTabName: AssetTabHierarchy,
-		newassetupload: string,
 	) => {
 		dispatch(removeNotificationWizardForm());
 		if (subTabName === "asset-attachments") {
@@ -126,11 +107,11 @@ const EventDetailsAssetsTab = ({
 	return (
 		<>
 			{/* Assets tabs */}
-			<nav style={assetsNavStyle}>
+			<nav>
 				{assetsTabs.map((tab, key) => (
 					<ButtonLikeAnchor
 						key={key}
-						style={tab.tabHierarchies.includes(assetsTabHierarchy) ? assetsTabActive : assetsTabInactive}
+						className={tab.tabHierarchies.includes(assetsTabHierarchy) ? "active" : "inactive"}
 						onClick={tab.open}
 					>
 						{t(tab.tabNameTranslation)}
@@ -166,18 +147,16 @@ const EventDetailsAssetsTab = ({
 													!transactionsReadOnly &&
 													hasAccess(
 														"ROLE_UI_EVENTS_DETAILS_ASSETS_EDIT",
-														user
+														user,
 													) && (
 														<ButtonLikeAnchor
-															extraClassName="details-link"
+															className="details-link"
 															onClick={() =>
-																openSubTab(
-																	"add-asset",
-																	"newassetupload",
-																)
+																openSubTab("add-asset")
 															}
 														>
 															{t("EVENTS.EVENTS.NEW.UPLOAD_ASSET.ADD")}
+															<LuChevronRight className="details-link-icon"/>
 														</ButtonLikeAnchor>
 													)}
 											</th>
@@ -188,7 +167,7 @@ const EventDetailsAssetsTab = ({
 											<td>
 												{
 													t(
-														"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.CAPTION"
+														"EVENTS.EVENTS.DETAILS.ASSETS.ATTACHMENTS.CAPTION",
 													) /* Attachments */
 												}
 											</td>
@@ -196,16 +175,17 @@ const EventDetailsAssetsTab = ({
 											<td>
 												{assets.attachments > 0 && (
 													<ButtonLikeAnchor
-														extraClassName="details-link"
+														className="details-link"
 														onClick={() =>
-															openSubTab("asset-attachments", "attachment")
+															openSubTab("asset-attachments")
 														}
 													>
 														{
 															t(
-																"EVENTS.EVENTS.DETAILS.ASSETS.DETAILS"
+																"EVENTS.EVENTS.DETAILS.ASSETS.DETAILS",
 															) /* Details */
 														}
+														<LuChevronRight className="details-link-icon"/>
 													</ButtonLikeAnchor>
 												)}
 											</td>
@@ -214,7 +194,7 @@ const EventDetailsAssetsTab = ({
 											<td>
 												{
 													t(
-														"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.CAPTION"
+														"EVENTS.EVENTS.DETAILS.ASSETS.CATALOGS.CAPTION",
 													) /* Catalogs */
 												}
 											</td>
@@ -222,16 +202,17 @@ const EventDetailsAssetsTab = ({
 											<td>
 												{assets.catalogs > 0 && (
 													<ButtonLikeAnchor
-														extraClassName="details-link"
+														className="details-link"
 														onClick={() =>
-															openSubTab("asset-catalogs", "catalog")
+															openSubTab("asset-catalogs")
 														}
 													>
 														{
 															t(
-																"EVENTS.EVENTS.DETAILS.ASSETS.DETAILS"
+																"EVENTS.EVENTS.DETAILS.ASSETS.DETAILS",
 															) /* Details */
 														}
+														<LuChevronRight className="details-link-icon"/>
 													</ButtonLikeAnchor>
 												)}
 											</td>
@@ -240,7 +221,7 @@ const EventDetailsAssetsTab = ({
 											<td>
 												{
 													t(
-														"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.CAPTION"
+														"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.CAPTION",
 													) /* Media */
 												}
 											</td>
@@ -248,14 +229,15 @@ const EventDetailsAssetsTab = ({
 											<td>
 												{assets.media > 0 && (
 													<ButtonLikeAnchor
-														extraClassName="details-link"
-														onClick={() => openSubTab("asset-media", "media")}
+														className="details-link"
+														onClick={() => openSubTab("asset-media")}
 													>
 														{
 															t(
-																"EVENTS.EVENTS.DETAILS.ASSETS.DETAILS"
+																"EVENTS.EVENTS.DETAILS.ASSETS.DETAILS",
 															) /* Details */
 														}
+														<LuChevronRight className="details-link-icon"/>
 													</ButtonLikeAnchor>
 												)}
 											</td>
@@ -264,7 +246,7 @@ const EventDetailsAssetsTab = ({
 											<td>
 												{
 													t(
-														"EVENTS.EVENTS.DETAILS.ASSETS.PUBLICATIONS.CAPTION"
+														"EVENTS.EVENTS.DETAILS.ASSETS.PUBLICATIONS.CAPTION",
 													) /* Publications */
 												}
 											</td>
@@ -272,16 +254,17 @@ const EventDetailsAssetsTab = ({
 											<td>
 												{assets.publications > 0 && (
 													<ButtonLikeAnchor
-														extraClassName="details-link"
+														className="details-link"
 														onClick={() =>
-															openSubTab("asset-publications", "publication")
+															openSubTab("asset-publications")
 														}
 													>
 														{
 															t(
-																"EVENTS.EVENTS.DETAILS.ASSETS.DETAILS"
+																"EVENTS.EVENTS.DETAILS.ASSETS.DETAILS",
 															) /* Details */
 														}
+														<LuChevronRight className="details-link-icon"/>
 													</ButtonLikeAnchor>
 												)}
 											</td>

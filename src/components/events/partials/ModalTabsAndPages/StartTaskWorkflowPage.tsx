@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import RenderWorkflowConfig from "../wizards/RenderWorkflowConfig";
 import { getWorkflowDef } from "../../../../selectors/workflowSelectors";
@@ -49,9 +49,9 @@ const StartTaskWorkflowPage = <T extends RequiredFormProps>({
 	}, [workflowDef]);
 
 	const setDefaultValues = (value: string) => {
-		let workflowId = value;
+		const workflowId = value;
 		// fill values with default configuration of chosen workflow
-		let defaultConfiguration = setDefaultConfig(workflowDef, workflowId);
+		const defaultConfiguration = setDefaultConfig(workflowDef, workflowId);
 
 		// set default configuration in formik
 		formik.setFieldValue("configuration", defaultConfiguration);
@@ -72,22 +72,22 @@ const StartTaskWorkflowPage = <T extends RequiredFormProps>({
 									value={formik.values.workflow}
 									text={
 										workflowDef.find(
-											(workflowDef) =>
-												workflowDef.id === formik.values.workflow
+											workflowDef =>
+												workflowDef.id === formik.values.workflow,
 										)?.title ?? ""
 									}
 									options={formatWorkflowsForDropdown(workflowDef)}
 									required={true}
-									handleChange={(element) => {
+									handleChange={element => {
 										if (element) {
-											setDefaultValues(element.value)
+											setDefaultValues(element.value);
 										}
 									}}
 									placeholder={t(
-										"EVENTS.EVENTS.DETAILS.PUBLICATIONS.SELECT_WORKFLOW"
+										"EVENTS.EVENTS.DETAILS.PUBLICATIONS.SELECT_WORKFLOW",
 									)}
 									tabIndex={99}
-									customCSS={{width: "100%"}}
+									customCSS={{ width: "100%" }}
 								/>
 							</div>
 						)}

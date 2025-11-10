@@ -6,33 +6,33 @@ on:
   workflow_dispatch:
 
 jobs:
-  update-translations:
+  download-translations:
     if: github.repository_owner == 'opencast'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - name: prepare git
+      - name: Prepare git
         run: |
           git config --global user.email 'crowdin-bot@opencast.org'
           git config --global user.name 'Crowdin Bot'
 
-      - name: prepare crowdin client
+      - name: Prepare crowdin client
         run: |
           wget --quiet https://artifacts.crowdin.com/repo/deb/crowdin3.deb -O crowdin.deb
           sudo dpkg -i crowdin.deb
 
-      - name: download translations
+      - name: Download translations
         env:
           CROWDIN_TOKEN: ${{ secrets.CROWDIN_TOKEN }}
         run: |
           crowdin download --config .crowdin.yaml -b main
 
-      - name: add new translations
+      - name: Add new translations
         run: |
           git add src/i18n/org/opencastproject/adminui/languages/
 
-      - name: upload translations
+      - name: Upload translations
         run: |
           if git commit -m "Automatically update translation keys"; then
             git push

@@ -2,7 +2,7 @@ import { ParseKeys } from "i18next";
 
 // states contains the different states and their configurations of the adapter registration modal
 export const states: {
-	[key in "information" | "form" | "save" | "update" | "delete_submit" | "delete" | "summary" | "thank_you" | "error" | "skip" | "legal_info"]: {
+	[key in "information" | "form" | "save" | "update" | "deleteSubmit" | "delete" | "summary" | "thankYou" | "error" | "skip" | "legalInfo"]: {
 		nextState: { [key: number]: string }
 		buttons: {
 			submit: boolean,
@@ -32,9 +32,9 @@ export const states: {
 		nextState: {
 			0: "close",
 			1: "summary",
-			2: "legal_info",
+			2: "legalInfo",
 			3: "update",
-			4: "delete_submit",
+			4: "deleteSubmit",
 			5: "information",
 		},
 		buttons: {
@@ -48,7 +48,7 @@ export const states: {
 	},
 	save: {
 		nextState: {
-			0: "thank_you",
+			0: "thankYou",
 			1: "error",
 		},
 		buttons: {
@@ -70,9 +70,9 @@ export const states: {
 			close: false,
 		},
 	},
-	delete_submit: {
+	deleteSubmit: {
 		nextState: {
-			0: "thank_you",
+			0: "thankYou",
 			1: "error",
 			5: "form",
 		},
@@ -98,7 +98,7 @@ export const states: {
 	},
 	summary: {
 		nextState: {
-			0: "thank_you",
+			0: "thankYou",
 			1: "error",
 			5: "form",
 		},
@@ -110,7 +110,7 @@ export const states: {
 			submitButtonText: "ADOPTER_REGISTRATION.MODAL.SUBMIT",
 		},
 	},
-	thank_you: {
+	thankYou: {
 		nextState: {
 			0: "close",
 			1: "error",
@@ -146,7 +146,7 @@ export const states: {
 			close: true,
 		},
 	},
-	legal_info: {
+	legalInfo: {
 		nextState: {
 			0: "close",
 			1: "error",

@@ -105,7 +105,8 @@
 			"SELECTED_COLUMNS": "Selected columns",
 			"FOOTER_TEXT": "The order and selection will be saved automatically. Press \"{{resetTranslation}}\" to restore the default view.",
 			"ADD_COLUMN": "Add column",
-			"REMOVE_COLUMN": "Remove column"
+			"REMOVE_COLUMN": "Remove column",
+			"DRAG_HANDLE_USAGE_INSTRUCTIONS": "Press space bar to start a drag. When dragging you can use the arrow keys to move the item around and escape to cancel. Some screen readers may require you to be in focus mode or to use your pass through key"
 		}
 	},
 	"CONFIRMATIONS": {
@@ -152,6 +153,12 @@
 		"HOTKEY_CHEAT_SHEET": "Keyboard Shortcuts",
 		"ADOPTER_REGISTRATION": "Adopter Registration"
 	},
+	"EMBEDDING_CODE": {
+		"DESCRIPTION": "Generate an embed code of the desired size by clicking on the respective button",
+		"GENERATE_TOOLTIP": "Generate an embed code of size {{ size }}",
+		"EMBEDD_CODE_TEXTAREA_ARIA": "This text field holds a generated embed code for copying.",
+		"COPY_BUTTON_TOOLTIP": "Copies a generated embed code to your clipboard."
+	},
 	"NOTIFICATIONS": {
 		"ACL_ADDED": "The access policy has been created",
 		"ACL_NOT_SAVED": "The access policy could not be saved",
@@ -177,7 +184,7 @@
 		"SERIES_PATH_NOT_UPDATED": "The series path could not be updated",
 		"SERIES_PATH_NOT_REMOVED": "The series path could not be removed",
 		"EVENTS_CREATED": "The event has been created",
-		"EVENTS_UPLOAD_STARTED": "The event is being uploaded… {{ progress }}%",
+		"EVENTS_UPLOAD_STARTED": "The event \"{{ title }}\" is being uploaded… {{ progress }}%",
 		"EVENTS_NOT_CREATED": "The event could not be created",
 		"EVENTS_UPDATED": "The event has been successfully updated",
 		"EVENTS_UPDATED_ALL": "All events have been successfully updated",
@@ -186,6 +193,8 @@
 		"EVENTS_NOT_UPDATED_ALL": "None of the events could be saved",
 		"EVENTS_PROCESSING_DELETE_WORKFLOW": "Deleted Workflow.",
 		"EVENTS_PROCESSING_DELETE_WORKFLOW_FAILED": "Workflow could not be deleted.",
+		"EVENTS_PROCESSING_ACTION_STOP": "The event processing has been stopped.",
+		"EVENTS_PROCESSING_ACTION_NON_STOP": "The event processing could not be stopped.",
 		"SERIES_NOT_UPDATED": "The series could not be saved",
 		"EVENT_DELETED": "The event has been deleted.",
 		"EVENT_WILL_BE_DELETED": "The event is being deleted",
@@ -208,6 +217,8 @@
 		"SERIES_THEME_REPROCESS_EXISTING_EVENTS": "The existing events in this series will need to be reprocessed",
 		"SERIES_ACL_LOCKED": "Editing Access Policies is not allowed when operations are running on an event that is part of the series",
 		"EVENT_ACL_MISSING_READWRITE_ROLE": "The Access Policy requires at least one role with Read and Write permissions.",
+		"METADATA_SAVED": "The metadata has been saved.",
+		"METADATA_NOT_SAVED": "The metadata has NOT been saved!",
 		"THEME_NAME_EMPTY": "The name cannot be empty",
 		"BUMPER_UPLOAD_ERROR": "Error while uploading media",
 		"THEME_CREATED": "The theme has been created",
@@ -895,7 +906,11 @@
 						"ADDITIONAL_ACTIONS": "Additional Actions",
 						"ACTION": "Actions",
 						"NEW": "New policy",
-						"DETAILS": "Details"
+						"NON_USER_ROLES": "Roles and Groups authorized for the event",
+						"USER": "User",
+						"USERS": "Users who are authorized for the event",
+						"NEW_USER": "New user",
+						"SANITIZATION_NOTE": "User role sanitization is enabled in your Opencast, therefore user roles are displayed alongside other roles. This does not impact role functionality in any way."
 					},
 					"ROLES": {
 						"LABEL": "Select or create a role"
@@ -982,7 +997,6 @@
 					"ACTIONS": "Actions",
 					"DETAILS": "Details",
 					"DESCRIPTION": "Description",
-					"MORE_INFO": "More Information",
 					"ID": "ID",
 					"TYPE": "Type",
 					"TITLE": "Title",
@@ -1022,11 +1036,13 @@
 				},
 				"WORKFLOW_DETAILS": {
 					"TITLE": "Workflow details",
-					"CONFIGURATION": "Workflow configuration"
+					"CONFIGURATION": "Workflow configuration",
+					"OPERATIONS": "Operations",
+					"CURRENT_OPERATION": "Current workflow operation"
 				},
 				"WORKFLOW_OPERATIONS": {
 					"TITLE": "Workflow operations",
-					"DETAILS_LINK": "Operations",
+					"DETAILS_LINK": "All operations",
 					"TABLE_HEADERS": {
 						"TITLE": "Title",
 						"STATUS": "Status",
@@ -1086,7 +1102,8 @@
 						"DATE": "Date",
 						"HOST": "Processing host",
 						"TYPE": "Service type",
-						"TECHNICAL_DETAILS": "Technical details"
+						"TECHNICAL_DETAILS": "Technical details",
+						"OPERATION": "Operation the error occured in"
 					}
 				}
 			}
@@ -1174,7 +1191,10 @@
 				"TOOLTIP": {
 					"SERIES": "Filter events for this series",
 					"DETAILS": "Open series details",
-					"DELETE": "Delete series"
+					"DELETE": "Delete series",
+					"CREATION": "Filter for this creation date",
+					"ORGANIZER": "Filter for this organizer",
+					"CONTRIBUTORS": "Filter for this contributor"
 				}
 			},
 			"DETAILS": {
@@ -1205,7 +1225,10 @@
 						"ADDITIONAL_ACTIONS": "Additional Actions",
 						"ACTION": "Actions",
 						"NEW": "New policy",
-						"DETAILS": "Details",
+						"NON_USER_ROLES": "Roles and Groups authorized for the series",
+						"USER": "User",
+						"USERS": "Users who are authorized for the series",
+						"NEW_USER": "New user",
 						"REPLACE_EVENT_ACLS": "Update series permissions",
 						"REPLACE_EVENT_ACLS_HINT": "Ensure all events of this series have these permissions in effect",
 						"LOAD_MORE_LIMIT": "policies shown.",
@@ -1335,6 +1358,7 @@
 				"PROVIDER": "Provider",
 				"ACTION": "Actions",
 				"TOOLTIP": {
+					"ROLES": "Filter for this role",
 					"DELETE": "Delete user",
 					"DETAILS": "Open user details"
 				}
@@ -1464,8 +1488,11 @@
 						"ADDITIONAL_ACTIONS": "Additional Actions",
 						"ACTION": "Actions",
 						"NEW": "New policy",
-						"DETAILS": "Details",
-						"DESCRIPTION": "Please choose a pre-configured set of policies or add custom policies below"
+						"NON_USER_ROLES": "Roles and Groups authorized for the access policy",
+						"DESCRIPTION": "Please choose a pre-configured set of policies or add custom policies below",
+						"USER": "User",
+						"USERS": "Users who are authorized for the access policy",
+						"NEW_USER": "New user"
 					},
 					"ROLES": {
 						"LABEL": "Select a role",
@@ -1696,7 +1723,6 @@
 				"HOST_NAME": "Host name",
 				"NODE_NAME": "Node name",
 				"CORES": "Cores",
-				"COMPLETED": "Jobs completed",
 				"RUNNING": "Jobs running",
 				"QUEUED": "Jobs queued",
 				"MAINTENANCE": "Maintenance",
@@ -1707,6 +1733,7 @@
 		"SERVICES": {
 			"TABLE": {
 				"CAPTION": "Services",
+				"ONLINE": "Online",
 				"STATUS": "Status",
 				"NAME": "Service name",
 				"HOST_NAME": "Host name",
@@ -1977,6 +2004,8 @@
 	"TABLE_EDIT": "Edit",
 	"TABLE_NEXT": "Next page",
 	"TABLE_PREVIOUS": "Previous page",
+	"TABLE_CURRENT": "Current page {{pageNumber}}",
+	"TABLE_NUMBERED": "Go to page {{pageNumber}}",
 	"DASHBOARD": {
 		"RUNNING": "Running",
 		"FINISHED": "Finished",
@@ -1984,7 +2013,8 @@
 		"FAILED": "Failed",
 		"FINISHED_WITH_COMMENTS": "Todo",
 		"SCHEDULED": "Scheduled",
-		"RECORDING": "Recording"
+		"RECORDING": "Recording",
+		"BUTTON_TOOLTIP": "Apply filter {{filterName}} to the table"
 	},
 	"HOTKEYS": {
 		"CHEAT_SHEET": {
@@ -2080,9 +2110,8 @@
 	"STATISTICS": {
 		"NOT_AVAILABLE": "Statistics cannot be displayed at the moment. Please try again later.",
 		"UNSUPPORTED_TYPE": "Sorry, Opencast cannot render this type of statistical data.",
-		"FROM": "From",
-		"TO": "To",
 		"TOTAL": "Total",
+		"TIMERANGE": "Time Range",
 		"GRANULARITY": "Granularity",
 		"NAVIGATION": {
 			"ORGANIZATION": "Organization"
@@ -2132,5 +2161,10 @@
 		"IMPRINT": "Imprint",
 		"PRIVACY": "Privacy statement",
 		"NOCONTENT": "Content not available"
+	},
+	"TERMS": {
+		"TITLE": "Terms of use",
+		"NOCONTENT": "Content not available",
+		"AGREE": "I have read and agree to the terms of use"
 	}
 }

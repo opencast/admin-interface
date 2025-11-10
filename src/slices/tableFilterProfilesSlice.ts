@@ -1,5 +1,5 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit'
-import { FilterData } from './tableFilterSlice'
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { FilterData } from "./tableFilterSlice";
 
 /**
  * This file contains redux reducer for actions affecting the state of table filter profiles
@@ -18,38 +18,38 @@ type TableFilterProfilesState = {
 
 // Initial state of filter profiles in redux store
 const initialState: TableFilterProfilesState = {
-	profiles: []
+	profiles: [],
 };
 
 const tableFilterProfileSlice = createSlice({
-	name: 'tableFilterProfiles',
+	name: "tableFilterProfiles",
 	initialState,
 	reducers: {
 		createFilterProfile(state, action: PayloadAction<
 			FilterProfile
 		>) {
 			const filterProfile = action.payload;
-			state.profiles = state.profiles.concat(filterProfile)
+			state.profiles = state.profiles.concat(filterProfile);
 		},
 		editFilterProfile(state, action: PayloadAction<
 			FilterProfile
 		>) {
 			const updatedFilterProfile = action.payload;
-			state.profiles = state.profiles.map((filterProfile) => {
+			state.profiles = state.profiles.map(filterProfile => {
 				if (filterProfile.name === updatedFilterProfile.name) {
 					return updatedFilterProfile;
 				}
 				return filterProfile;
-			})
+			});
 		},
 		removeFilterProfile(state, action: PayloadAction<
 			FilterProfile
 		>) {
 			const filterProfileToRemove = action.payload;
 			state.profiles = state.profiles.filter(
-									(filterProfile) => filterProfile.name !== filterProfileToRemove.name
-								)
-		}
+									filterProfile => filterProfile.name !== filterProfileToRemove.name,
+								);
+		},
 	},
 });
 

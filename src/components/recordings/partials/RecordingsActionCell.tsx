@@ -1,11 +1,12 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { useAppDispatch } from "../../../store";
 import { Recording, deleteRecording } from "../../../slices/recordingSlice";
 import { fetchRecordingDetails } from "../../../slices/recordingDetailsSlice";
 import { ActionCellDelete } from "../../shared/ActionCellDelete";
-import { IconButton } from "../../shared/IconButton";
 import { ModalHandle } from "../../shared/modals/Modal";
 import RecordingDetailsModal from "./modal/RecordingDetailsModal";
+import ButtonLikeAnchor from "../../shared/ButtonLikeAnchor";
+import { LuFileText } from "react-icons/lu";
 
 /**
  * This component renders the action cells of recordings in the table view
@@ -22,7 +23,7 @@ const RecordingsActionCell = ({
 	const showRecordingDetails = async () => {
 		await dispatch(fetchRecordingDetails(row.name));
 
-		recordingDetailsModalRef.current?.open()
+		recordingDetailsModalRef.current?.open();
 	};
 
 	const deletingRecording = (id: string) => {
@@ -32,12 +33,14 @@ const RecordingsActionCell = ({
 	return (
 		<>
 			{/* view details location/recording */}
-			<IconButton
-				callback={() => showRecordingDetails()}
-				iconClassname={"more"}
+			<ButtonLikeAnchor
+				onClick={() => showRecordingDetails()}
+				className={"action-cell-button"}
 				editAccessRole={"ROLE_UI_LOCATIONS_DETAILS_VIEW"}
-				tooltipText={"RECORDINGS.RECORDINGS.TABLE.TOOLTIP.DETAILS"}
-			/>
+				// tooltipText={"RECORDINGS.RECORDINGS.TABLE.TOOLTIP.DETAILS"} // Disabled due to performance concerns
+			>
+				<LuFileText />
+			</ButtonLikeAnchor>
 
 			<RecordingDetailsModal
 				recordingId={row.name}
@@ -47,7 +50,7 @@ const RecordingsActionCell = ({
 			{/* delete location/recording */}
 			<ActionCellDelete
 				editAccessRole={"ROLE_UI_LOCATIONS_DELETE"}
-				tooltipText={"RECORDINGS.RECORDINGS.TABLE.TOOLTIP.DELETE"}
+				// tooltipText={"RECORDINGS.RECORDINGS.TABLE.TOOLTIP.DELETE"} // Disabled due to performance concerns
 				resourceId={row.name}
 				resourceName={row.name}
 				resourceType={"LOCATION"}

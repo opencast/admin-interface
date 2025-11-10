@@ -54,15 +54,16 @@ i18n
 	.init<HttpBackendOptions>({
 		resources,
 		fallbackLng: "en-US",
-		debug: true,
+		debug: false,
 
 		interpolation: {
 			escapeValue: false,
-			format: function (value, format, lng) {
+			format: function (value, format, _lng) {
 				if (value instanceof Date) {
 					return moment(value).format(format);
 				}
 
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 				return value;
 			},
 		},

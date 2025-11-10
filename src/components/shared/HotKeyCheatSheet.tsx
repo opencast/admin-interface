@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { availableHotkeys } from "../../configs/hotkeysConfig";
 import { useHotkeysContext } from "react-hotkeys-hook";
-import { Hotkey } from "react-hotkeys-hook/dist/types";
+import { Hotkey } from "react-hotkeys-hook/packages/react-hotkeys-hook/dist/types";
 import { Modal, ModalHandle } from "./modals/Modal";
 import { ParseKeys } from "i18next";
 import ModalContentTable from "./modals/ModalContentTable";
@@ -28,7 +28,7 @@ const HotKeyCheatSheet = ({
 		}
 
 		return false;
-	}
+	};
 
 	return (
 		<Modal
@@ -36,7 +36,7 @@ const HotKeyCheatSheet = ({
 			classId=""
 			ref={modalRef}
 		>
-			<ModalContentTable modalContentClassName="modal-content active">
+			<ModalContentTable modalContentClassName="modal-content">
 				<p className="hint">{t("HOTKEYS.CHEAT_SHEET.HINT")}</p>
 				{/* Repeat table for each key */}
 				{Object.keys(availableHotkeys).map((hotkeyGroup, key) => (
@@ -49,7 +49,7 @@ const HotKeyCheatSheet = ({
 								{/* Repeat row for each hotkey in group*/}
 								{Object.keys(availableHotkeys[hotkeyGroup]).map(
 									(hotkey, key) => (
-										<tr key={key} style={{ opacity: !(hotkeys && checkHotkeys(hotkeys, availableHotkeys[hotkeyGroup][hotkey].sequence)) ? "50%" : "100%"}}>
+										<tr key={key} className={!(hotkeys && checkHotkeys(hotkeys, availableHotkeys[hotkeyGroup][hotkey].sequence)) ? "disabled" : ""}>
 											<td className="hotkey">
 												<p className="combo">
 													<span className="chord">
@@ -63,7 +63,7 @@ const HotKeyCheatSheet = ({
 																		{t(
 																			"HOTKEYS.KEYS." +
 																				comboKey.toUpperCase(),
-																			comboKey
+																			comboKey,
 																		)}
 																	</span>
 																</span>
@@ -83,11 +83,11 @@ const HotKeyCheatSheet = ({
 											<td>
 												{t(
 													availableHotkeys[hotkeyGroup][hotkey]
-														.description
+														.description,
 												)}
 											</td>
 										</tr>
-									)
+									),
 								)}
 							</tbody>
 						</table>

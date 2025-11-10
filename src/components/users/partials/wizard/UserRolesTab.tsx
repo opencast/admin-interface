@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Role, fetchRolesWithTarget } from "../../../../slices/aclSlice";
 import SelectContainer from "../../../shared/wizard/SelectContainer";
 import { FormikProps } from "formik";
+import { NotificationComponent } from "../../../shared/Notifications";
 import ModalContent from "../../../shared/modals/ModalContent";
 
 /**
@@ -12,7 +13,7 @@ interface RequiredFormProps {
 }
 
 const UserRolesTab = <T extends RequiredFormProps>({
-	formik
+	formik,
 }: {
 	formik: FormikProps<T>
 }) => {
@@ -35,8 +36,17 @@ const UserRolesTab = <T extends RequiredFormProps>({
 
 	return (
 		<ModalContent>
+			{!formik.values.manageable && (
+				<NotificationComponent
+					notification={{
+						type: "warning",
+						message: "NOTIFICATIONS.USER_NOT_MANAGEABLE",
+						id: 0,
+					}}
+				/>
+			)}
 			<div className="form-container">
-				{/*Select container for roles*/}
+				{/* Select container for roles*/}
 				{!loading && (
 					<SelectContainer
 						resource={{
@@ -44,7 +54,7 @@ const UserRolesTab = <T extends RequiredFormProps>({
 							label: "USERS.USERS.DETAILS.ROLES",
 							items: roles,
 						}}
-						formikField="roles"
+						formikField="assignedRoles"
 						manageable={formik.values.manageable}
 					/>
 				)}

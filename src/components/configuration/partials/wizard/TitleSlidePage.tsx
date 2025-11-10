@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { FormikProps } from "formik";
 import { Field } from "../../../shared/Field";
@@ -19,7 +18,7 @@ const TitleSlidePage = <T extends RequiredFormProps>({
 	formik,
 	nextPage,
 	previousPage,
-	isEdit
+	isEdit,
 }: {
 	formik: FormikProps<T>,
 	nextPage?: (values: T) => void,
@@ -93,7 +92,7 @@ const TitleSlidePage = <T extends RequiredFormProps>({
 									</div>
 								</div>
 							</div>
-							{/*If title slide mode upload is chosen, use component for file upload */}
+							{/* If title slide mode upload is chosen, use component for file upload */}
 							{formik.values.titleSlideMode === "upload" && (
 								<FileUpload
 									acceptableTypes="image/*"
@@ -111,7 +110,7 @@ const TitleSlidePage = <T extends RequiredFormProps>({
 			</ModalContentTable>
 			{/* Show navigation buttons only if page is used for a new theme*/}
 			{!isEdit && (
-				//Button for navigation to next page
+				// Button for navigation to next page
 				<WizardNavigationButtons
 					formik={formik}
 					previousPage={previousPage}

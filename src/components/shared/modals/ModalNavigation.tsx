@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import cn from "classnames";
 import ButtonLikeAnchor from "../ButtonLikeAnchor";
@@ -27,12 +26,12 @@ const ModalNavigation = ({
 				(tab, key) =>
 					<ButtonLikeAnchor
 						key={key}
-						extraClassName={cn({ active: page === key })}
+						className={cn({ active: page === key })}
 						onClick={() => openTab(key)}
 						editAccessRole={tab.accessRole}
 					>
 						{t(tab.tabTranslation)}
-					</ButtonLikeAnchor>
+					</ButtonLikeAnchor>,
 			)}
 		</nav>
 	);

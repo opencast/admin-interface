@@ -6,6 +6,8 @@ import { useAppDispatch } from "../../../store";
 import { addNotification } from "../../../slices/notificationSlice";
 import { FormikProps } from "formik";
 import { ParseKeys } from "i18next";
+import BaseButton from "../BaseButton";
+import { LuX } from "react-icons/lu";
 
 /**
  * This component renders a custom file upload button in wizards.
@@ -50,7 +52,7 @@ const FileUpload = <T extends RequiredFormProps>({
 	// values). Therefore, this useEffect gets manually triggered, causing an
 	// additional rerender which then triggers formik validation.
 	useEffect(() => {
-		formik.validateForm()
+		formik.validateForm();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [formik.values.fileId, formik.values.fileName, loaded]);
 
@@ -71,27 +73,26 @@ const FileUpload = <T extends RequiredFormProps>({
 				headers: {
 					"Content-Type": "multipart/form-data",
 				},
-				onUploadProgress: (ProgressEvent) => {
+				onUploadProgress: ProgressEvent => {
 					// update loaded with current progress
 					setLoaded(ProgressEvent.total ? (ProgressEvent.loaded / ProgressEvent.total) * 100 : 0);
 				},
 			})
-			.then((res) => {
+			.then(res => {
 				if (res.status === 201) {
 					// set information about file later needed for POST request and summary
 					formik.setFieldValue(fileId, res.data);
-					formik.setFieldValue(fileName, file.name)
+					formik.setFieldValue(fileName, file.name);
 					// Purely for triggering useEffect. The state change does not matter.
-					setLoaded(1337)
+					setLoaded(1337);
 				}
 			})
-			.catch((res) => {
+			.catch(() => {
 				dispatch(addNotification({
 					type: "error",
 					key: "NOTIFICATIONS.BUMPER_UPLOAD_ERROR",
 					duration: -1,
-					parameter: undefined,
-					context: NOTIFICATION_CONTEXT
+					context: NOTIFICATION_CONTEXT,
 				}));
 			});
 	};
@@ -121,36 +122,32 @@ const FileUpload = <T extends RequiredFormProps>({
 						{/* else render button for upload */}
 						{!!formik.values[fileId] && file ? (
 							<div className="upload-file-info">
-								<p
-									style={
-										isEdit ? { padding: "0px 10px" } : { padding: "4px 10px" }
-									}
-								>
+								<p className={isEdit ? "edit" : ""}>
 									<a href={URL.createObjectURL(file)} target="_blank" rel="noreferrer">
 										{formik.values[fileName] as string}
 									</a>
 								</p>
 								<div className="button-container">
-									<button
+									<BaseButton
 										id="remove-file-1"
 										className="remove-file-button"
 										onClick={() => handleDelete()}
 									>
-										<div className="remove-icon" />
-									</button>
+										<LuX className="remove-icon remove-file-button-icon"/>
+									</BaseButton>
 								</div>
 							</div>
 						) : (
 							<>
-								<button className="upload-button" onClick={() => handleClick()}>
+								<BaseButton className="upload-button" onClick={() => handleClick()}>
 									{t(buttonKey)}
-								</button>
+								</BaseButton>
 								<input
 									type="file"
 									style={{ display: "none" }}
 									accept={acceptableTypes}
 									ref={hiddenFileInput}
-									onChange={(e) => {
+									onChange={e => {
 										handleChange(e);
 									}}
 								/>

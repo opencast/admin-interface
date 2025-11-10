@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import {
 	getSeriesExtendedMetadata,
@@ -19,7 +18,7 @@ import ModalContentTable from "../../../shared/modals/ModalContentTable";
  */
 interface RequiredFormProps {
 	theme: string,
-	acls: TransformedAcl[],
+	policies: TransformedAcl[],
 	selectedPage?: TobiraPage,
 }
 
@@ -39,12 +38,12 @@ const NewSeriesSummary = <T extends RequiredFormProps>({
 	const seriesThemes = useAppSelector(state => getSeriesThemes(state));
 
 	// Get additional information about chosen series theme
-	const theme = seriesThemes.find((theme) => theme.id === formik.values.theme);
+	const theme = seriesThemes.find(theme => theme.id === formik.values.theme);
 
 	return (
 		<>
 			<ModalContentTable>
-						{/*Summary metadata*/}
+						{/* Summary metadata*/}
 						<MetadataSummaryTable
 							metadataCatalogs={[metadataSeries]}
 							// @ts-expect-error TS(7006):
@@ -52,7 +51,7 @@ const NewSeriesSummary = <T extends RequiredFormProps>({
 							header={"EVENTS.SERIES.NEW.METADATA.CAPTION"}
 						/>
 
-						{/*Summary metadata extended*/}
+						{/* Summary metadata extended*/}
 						{!metaDataExtendedHidden ? (
 							<MetadataSummaryTable
 								metadataCatalogs={extendedMetadata}
@@ -63,16 +62,16 @@ const NewSeriesSummary = <T extends RequiredFormProps>({
 							/>
 						) : null}
 
-				{/*Summary access configuration*/}
+				{/* Summary access configuration*/}
 				<AccessSummaryTable
-					policies={formik.values.acls}
+					policies={formik.values.policies}
 					header={"EVENTS.SERIES.NEW.ACCESS.CAPTION"}
 				/>
 
-				{/*Summary themes*/}
+				{/* Summary themes*/}
 				{!!formik.values.theme && (
 					<div className="obj tbl-list">
-						<header className="no-expand">
+						<header>
 							{t("EVENTS.SERIES.NEW.THEME.CAPTION")}
 						</header>
 						<table className="main-tbl">
@@ -86,10 +85,10 @@ const NewSeriesSummary = <T extends RequiredFormProps>({
 					</div>
 				)}
 
-				{/*Summary Tobira*/}
+				{/* Summary Tobira*/}
 				{!!formik.values.selectedPage && (
 					<div className="obj tbl-list">
-						<header className="no-expand">
+						<header>
 							{t("EVENTS.SERIES.NEW.TOBIRA.CAPTION")}
 						</header>
 						<table className="main-tbl">

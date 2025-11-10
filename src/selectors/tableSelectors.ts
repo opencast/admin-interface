@@ -1,6 +1,6 @@
 import { createSelector } from "reselect";
 import { RootState } from "../store";
-import { TableState } from "../slices/tableSlice";
+import { rowsSelectors, TableState } from "../slices/tableSlice";
 
 /**
  * This file contains selectors regarding the table view
@@ -21,11 +21,13 @@ export const getTableDirection = (state: RootState) => state.table.reverse[state
 export const getTableDirectionForResource = (state: RootState, resource: TableState["resource"]) => state.table.reverse[resource];
 export const getMultiSelect = (state: RootState) => state.table.multiSelect[state.table.resource];
 export const getTable = (state: RootState) => state.table;
+export const getTableStatus = (state: RootState) => state.table.status;
 export const getDeactivatedColumns = (state: RootState) =>
-	state.table.columns.filter((column) => column.deactivated);
+	state.table.columns.filter(column => column.deactivated);
 export const getActivatedColumns = (state: RootState) =>
-	state.table.columns.filter((column) => !column.deactivated);
+	state.table.columns.filter(column => !column.deactivated);
 
-export const getSelectedRows = createSelector(getTableRows, (rows) =>
-	rows.filter((row) => row.selected)
+export const getSelectedRows = createSelector(
+	rowsSelectors.selectAll,
+	rows => rows.filter(row => row.selected),
 );

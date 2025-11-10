@@ -1,25 +1,28 @@
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { renderValidDate } from "../../../utils/dateUtils";
-import { Series } from "../../../slices/seriesSlice";
+import { fetchSeries, Series } from "../../../slices/seriesSlice";
+import { loadSeriesIntoTable } from "../../../thunks/tableThunks";
+import DateTimeCell from "../../shared/DateTimeCell";
 
 /**
  * This component renders the creation date cells of series in the table view
  */
 const SeriesDateTimeCell = ({
-	row
+	row,
 }: {
 	row: Series
 }) => {
-	const { t } = useTranslation();
-
 	return (
-		// Link template for creation date of series
-		<span>
-			{t("dateFormats.date.short", {
-				date: row.creation_date ? renderValidDate(row.creation_date) : "",
-			})}
-		</span>
+		<>
+			{row.creation_date !== undefined &&
+				<DateTimeCell
+					resource="series"
+					date={row.creation_date}
+					filterName="CreationDate"
+					fetchResource={fetchSeries}
+					loadResourceIntoTable={loadSeriesIntoTable}
+					// tooltipText="EVENTS.SERIES.TABLE.TOOLTIP.CREATION" // Disabled due to performance concerns
+				/>
+			}
+		</>
 	);
 };
 

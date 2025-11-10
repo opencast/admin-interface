@@ -13,6 +13,11 @@ import { TableConfig } from "./aclsTableConfig";
 export const servicesTableConfig: TableConfig = {
 	columns: [
 		{
+			template: "ServersStatusCell",
+			name: "online",
+			label: "SYSTEMS.SERVICES.TABLE.ONLINE",
+		},
+		{
 			name: "status",
 			label: "SYSTEMS.SERVICES.TABLE.STATUS",
 			translate: true,

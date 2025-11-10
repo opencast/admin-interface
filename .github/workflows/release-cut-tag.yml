@@ -1,0 +1,36 @@
+name: Release » Create release tag
+
+on:
+  workflow_dispatch:
+
+jobs:
+  create-release-tag:
+    name: Create release tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Prepare git
+        run: |
+          git config --global user.email 'cloud@opencast.org'
+          git config --global user.name 'Release Bot'
+
+      - name: Tag and push
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          #Translate 'develop' to 18.x or whatever is appropriate
+          if [ "develop" = "${{ github.ref_name }}" ]; then
+            #NB normally we only clone just the head ref, but fetch-depth: 0 above gets *all* the history
+            export TEMP="$((`git branch -a | grep r/ | cut -f 4 -d '/' | sort | tail -n 1 | cut -f 1 -d '.'` + 1)).x"
+          else
+            export TEMP=${{ github.ref_name }}
+          fi
+          export TAG=${TEMP#r\/}-`date +%Y-%m-%d`
+          git tag $TAG
+          git push origin $TAG
+          sleep 2
+          gh workflow run release-build.yml -r $TAG

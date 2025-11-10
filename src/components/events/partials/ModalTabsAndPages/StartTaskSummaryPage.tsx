@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import WizardNavigationButtons from "../../../shared/wizard/WizardNavigationButtons";
 import { getWorkflowDef } from "../../../../selectors/workflowSelectors";
@@ -30,7 +29,7 @@ const StartTaskSummaryPage = <T extends RequiredFormProps>({
 
 	return (
 		<>
-			<ModalContentTable modalContentClassName="modal-content active">
+			<ModalContentTable modalContentClassName="modal-content">
 				<div className="obj list-obj">
 					<header>{t("BULK_ACTIONS.SCHEDULE_TASK.SUMMARY.CAPTION")}</header>
 					<div className="obj-container">
@@ -43,7 +42,7 @@ const StartTaskSummaryPage = <T extends RequiredFormProps>({
 								<p>
 									{t("BULK_ACTIONS.SCHEDULE_TASK.SUMMARY.EVENTS_SUMMARY", {
 										numberOfEvents: formik.values.events.filter(
-											(e) => e.selected === true
+											e => e.selected === true,
 										).length,
 									})}
 								</p>
@@ -55,8 +54,8 @@ const StartTaskSummaryPage = <T extends RequiredFormProps>({
 								<p>
 									{
 										workflowDef.find(
-											(workflow) =>
-												formik.values.workflow === workflow.id
+											workflow =>
+												formik.values.workflow === workflow.id,
 										)?.title ?? ""
 										}
 								</p>
@@ -71,7 +70,7 @@ const StartTaskSummaryPage = <T extends RequiredFormProps>({
 											{config} :{" "}
 											{formik.values.configuration[config].toString()}
 										</p>
-									)
+									),
 								)}
 							</li>
 						</ul>

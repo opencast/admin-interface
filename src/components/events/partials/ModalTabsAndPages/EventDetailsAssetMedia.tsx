@@ -1,4 +1,3 @@
-import React from "react";
 import Notifications from "../../../shared/Notifications";
 import {
 	getAssetMedia,
@@ -10,6 +9,7 @@ import { AssetTabHierarchy } from "../modals/EventDetails";
 import { useTranslation } from "react-i18next";
 import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
+import { LuChevronRight } from "react-icons/lu";
 
 /**
  * This component manages the media sub-tab for assets tab of event details modal
@@ -27,7 +27,7 @@ const EventDetailsAssetMedia = ({
 
 	const openSubTab = (subTabName: AssetTabHierarchy, mediaId = "") => {
 		if (subTabName === "media-details") {
-			dispatch(fetchAssetMediaDetails({eventId, mediaId})).then();
+			dispatch(fetchAssetMediaDetails({ eventId, mediaId })).then();
 		}
 		dispatch(setModalAssetsTabHierarchy(subTabName));
 	};
@@ -54,7 +54,7 @@ const EventDetailsAssetMedia = ({
 								<th>
 									{
 										t(
-											"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.MIMETYPE"
+											"EVENTS.EVENTS.DETAILS.ASSETS.MEDIA.MIMETYPE",
 										) /* Mimetype */
 									}
 								</th>
@@ -80,14 +80,15 @@ const EventDetailsAssetMedia = ({
 										</td>
 										<td>
 											<ButtonLikeAnchor
-												extraClassName="details-link"
+												className="details-link"
 												onClick={() => openSubTab("media-details", item.id)}
 											>
 												{
 													t(
-														"EVENTS.EVENTS.DETAILS.ASSETS.DETAILS"
+														"EVENTS.EVENTS.DETAILS.ASSETS.DETAILS",
 													) /* Details */
 												}
+												<LuChevronRight className="details-link-icon"/>
 											</ButtonLikeAnchor>
 										</td>
 									</tr>

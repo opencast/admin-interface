@@ -1,7 +1,9 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Modal, ModalHandle } from "./modals/Modal";
+import { NotificationComponent } from "./Notifications";
 import { ParseKeys } from "i18next";
+import BaseButton from "./BaseButton";
 
 export type ResourceType = "EVENT" | "SERIES" | "LOCATION" | "USER" | "GROUP" | "ACL" | "THEME" | "TOBIRA_PATH";
 
@@ -12,7 +14,6 @@ const ConfirmModal = <T, >({
 	resourceId,
 	deleteMethod,
 	deleteAllowed = true,
-	showCautionMessage = false,
 	deleteNotAllowedMessage,
 	deleteWithCautionMessage,
 	modalRef,
@@ -23,7 +24,6 @@ const ConfirmModal = <T, >({
 	resourceId: T,
 	deleteMethod: (id: T) => void,
 	deleteAllowed?: boolean,
-	showCautionMessage?: boolean,
 	deleteNotAllowedMessage?: ParseKeys,
 	deleteWithCautionMessage?: ParseKeys,
 	modalRef: React.RefObject<ModalHandle | null>
@@ -47,15 +47,19 @@ const ConfirmModal = <T, >({
 		>
 			{deleteAllowed ? (
 				<div>
-					{showCautionMessage && (
-						<div className="modal-alert warning">
-							<p>{deleteWithCautionMessage ? t(deleteWithCautionMessage) : undefined}</p>
-						</div>
+					{deleteWithCautionMessage && (
+						<NotificationComponent
+							notification={{
+								type: "warning",
+								message: deleteWithCautionMessage,
+								id: 0,
+							}}
+						/>
 					)}
 
 					<div>
 						<p>
-							<span style={{ padding: "0px 4px"}}>
+							<span>
 								{t(`CONFIRMATIONS.METADATA.NOTICE.${resourceType}`)}
 							</span>
 						</p>
@@ -69,32 +73,38 @@ const ConfirmModal = <T, >({
 					<p>{t("CONFIRMATIONS.CONTINUE_ACTION")}</p>
 
 					<div className="btn-container">
-						<button
+						<BaseButton
 							className="cancel-btn close-modal"
 							onClick={() => handleClose()}
 						>
 							<i>{t("CANCEL")}</i>
-						</button>
-						<button
+						</BaseButton>
+						<BaseButton
 							className="danger-btn"
 							onClick={() => handleConfirmation()}
 						>
 							<i>{t("CONFIRM")}</i>
-						</button>
+						</BaseButton>
 					</div>
 				</div>
 			) : (
 				<div>
-					<div className="modal-alert danger">
-						<p>{deleteNotAllowedMessage ? t(deleteNotAllowedMessage) : undefined}</p>
-					</div>
+					{deleteNotAllowedMessage && (
+						<NotificationComponent
+							notification={{
+								type: "error",
+								message: deleteNotAllowedMessage,
+								id: 0,
+							}}
+						/>
+					)}
 					<div className="btn-container">
-						<button
+						<BaseButton
 							className="cancel-btn close-modal"
 							onClick={() => handleClose()}
 						>
 							<i>{t("CANCEL")}</i>
-						</button>
+						</BaseButton>
 					</div>
 				</div>
 			)}

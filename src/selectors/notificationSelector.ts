@@ -8,14 +8,14 @@ export const getGlobalPositions = (state: RootState) =>
 
 
 export const getNotificationById = (id: OurNotification["id"]) =>
-	createSelector(getNotifications, (notifications) =>
-		notifications.filter((notification) => notification.id === id)
+	createSelector(getNotifications, notifications =>
+		notifications.filter(notification => notification.id === id),
 	);
 
 export const getLastAddedNotification = createSelector(
 	getNotifications,
-	(notifications) =>
+	notifications =>
 		notifications.reduce((prev, current) =>
-			prev.id > current.id ? prev : current
-		)
+			prev.id > current.id ? prev : current,
+		),
 );

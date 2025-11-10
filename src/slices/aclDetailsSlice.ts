@@ -1,9 +1,10 @@
-import { PayloadAction, SerializedError, createSlice } from '@reduxjs/toolkit'
-import axios from 'axios';
-import { prepareAccessPolicyRulesForPost } from '../utils/resourceUtils';
-import { addNotification } from './notificationSlice';
-import { createAppAsyncThunk } from '../createAsyncThunkWithTypes';
-import { Acl } from './aclSlice';
+import { PayloadAction, SerializedError, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+import { prepareAccessPolicyRulesForPost } from "../utils/resourceUtils";
+import { addNotification } from "./notificationSlice";
+import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
+import { Acl } from "./aclSlice";
+import { AppThunk } from "../store";
 
 /**
  * This file contains redux reducer for actions affecting the state of details of an ACL
@@ -13,10 +14,15 @@ export type TransformedAcl = {
 	role: string,
 	read: boolean,
 	write: boolean
+	user?: {
+		username: string,
+		name: string,
+		email?: string,
+	}
 }
 
 type AclDetailsState = {
-	status: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	status: "uninitialized" | "loading" | "succeeded" | "failed",
 	error: SerializedError | null,
   organizationId: string,
 	id: number,
@@ -26,7 +32,7 @@ type AclDetailsState = {
 
 // initial redux state
 const initialState: AclDetailsState = {
-	status: 'uninitialized',
+	status: "uninitialized",
 	error: null,
 	organizationId: "",
 	id: 0,
@@ -35,19 +41,26 @@ const initialState: AclDetailsState = {
 };
 
 // fetch details about a certain acl from server
-export const fetchAclDetails = createAppAsyncThunk('aclDetails/fetchAclDetails', async (aclId: AclDetailsState["id"]) => {
-	const res = await axios.get(`/admin-ng/acl/${aclId}`);
+export const fetchAclDetails = createAppAsyncThunk("aclDetails/fetchAclDetails", async (aclId: AclDetailsState["id"]) => {
+	type FetchAclDetails = {
+		organizationId: string,
+		id: number,
+		name: string,
+		acl: Acl,
+	}
 
-	let aclDetails = res.data;
+	const res = await axios.get<FetchAclDetails>(`/admin-ng/acl/${aclId}`);
 
-	let acl: Acl = aclDetails.acl;
+	const aclDetails = res.data;
+
+	const acl = aclDetails.acl;
 	let transformedAcls: TransformedAcl[] = [];
 
 	// transform policies for further use
   // We do this in order to prepare the information for the acl tab in the details modals,
 	// because we render the information differently from how it is usually structured in an ACL
 	for (let i = 0; acl.ace.length > i; i++) {
-		if (transformedAcls.find((rule) => rule.role === acl.ace[i].role)) {
+		if (transformedAcls.find(rule => rule.role === acl.ace[i].role)) {
 			for (let j = 0; transformedAcls.length > j; j++) {
 				// only update entry for policy if already added with other action
 				if (transformedAcls[j].role === acl.ace[i].role) {
@@ -111,53 +124,53 @@ export const fetchAclDetails = createAppAsyncThunk('aclDetails/fetchAclDetails',
 		}
 	}
 
-	aclDetails = {
+	const newDetails = {
 		...aclDetails,
 		acl: transformedAcls,
 	};
 
-	return aclDetails;
+	return newDetails;
 });
 
 // update details of a certain acl
-export const updateAclDetails = createAppAsyncThunk('aclDetails/updateAclDetails', async (params: {
+export const updateAclDetails = (params: {
 	values: {
 		name: string,
-		acls: TransformedAcl[],
+		policies: TransformedAcl[],
 	},
 	aclId: number,
-}, {dispatch}) => {
-	const { values, aclId } = params
+}): AppThunk => dispatch => {
+	const { values, aclId } = params;
 	// transform ACLs back to structure used by backend
-	let acls = prepareAccessPolicyRulesForPost(values.acls);
+	const acls = prepareAccessPolicyRulesForPost(values.policies);
 
 	// set params for request body
-	let data = new URLSearchParams();
+	const data = new URLSearchParams();
 	data.append("name", values.name);
 	data.append("acl", JSON.stringify(acls));
 
 	// PUT request
 	axios
 		.put(`/admin-ng/acl/${aclId}`, data)
-		.then((response) => {
+		.then(response => {
 			console.info(response);
-			dispatch(addNotification({type: "success", key: "ACL_UPDATED"}));
+			dispatch(addNotification({ type: "success", key: "ACL_UPDATED" }));
 		})
-		.catch((response) => {
+		.catch(response => {
 			console.error(response);
-			dispatch(addNotification({type: "error", key: "ACL_NOT_SAVED"}));
+			dispatch(addNotification({ type: "error", key: "ACL_NOT_SAVED" }));
 		});
-});
+};
 
 const aclDetailsSlice = createSlice({
-	name: 'aclDetails',
+	name: "aclDetails",
 	initialState,
 	reducers: {},
 	// These are used for thunks
 	extraReducers: builder => {
 		builder
-			.addCase(fetchAclDetails.pending, (state) => {
-				state.status = 'loading';
+			.addCase(fetchAclDetails.pending, state => {
+				state.status = "loading";
 			})
 			.addCase(fetchAclDetails.fulfilled, (state, action: PayloadAction<{
 				organizationId: AclDetailsState["organizationId"],
@@ -165,7 +178,7 @@ const aclDetailsSlice = createSlice({
 				name: AclDetailsState["name"],
 				acl: AclDetailsState["acl"],
 			}>) => {
-				state.status = 'succeeded';
+				state.status = "succeeded";
 				const acls = action.payload;
 				state.organizationId = acls.organizationId;
 				state.id = acls.id;
@@ -173,14 +186,14 @@ const aclDetailsSlice = createSlice({
 				state.acl = acls.acl;
 			})
 			.addCase(fetchAclDetails.rejected, (state, action) => {
-				state.status = 'failed';
+				state.status = "failed";
         state.organizationId = "";
         state.id = 0;
         state.name = "";
         state.acl = [];
 				state.error = action.error;
 			});
-	}
+	},
 });
 
 // export const {} = aclDetailsSlice.actions;

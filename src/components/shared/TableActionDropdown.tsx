@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import cn from "classnames";
 import { hasAccess } from "../../utils/utils";
 import { useTranslation } from "react-i18next";
-import { useAppSelector } from "../../store";
+import { RootState, useAppSelector } from "../../store";
 import { getUserInformation } from "../../selectors/userInfoSelectors";
 import { ParseKeys } from "i18next";
 import ButtonLikeAnchor from "./ButtonLikeAnchor";
+import { LuChevronDown } from "react-icons/lu";
 
 // References for detecting a click outside of the container of the dropdown menu
 const containerAction = React.createRef<HTMLDivElement>();
@@ -16,14 +17,15 @@ const containerAction = React.createRef<HTMLDivElement>();
  */
 const TableActionDropdown = ({
 	actions,
-	disabled = true,
+	isShowActions,
 }: {
 	actions: React.ComponentProps<typeof Action>[]
-	disabled: boolean
+	isShowActions: (state: RootState) => boolean
 }) => {
 	const { t } = useTranslation();
 
 	const [displayActionMenu, setActionMenu] = useState(false);
+	const disabled = !useAppSelector(state => isShowActions(state));
 
 	useEffect(() => {
 		// Function for handling clicks outside of an open dropdown menu
@@ -52,10 +54,12 @@ const TableActionDropdown = ({
 	return (
 		<div
 			className={cn("drop-down-container", { disabled: disabled })}
-			onClick={(e) => handleActionMenu(e)}
+			aria-disabled={disabled}
+			onClick={e => handleActionMenu(e)}
 			ref={containerAction}
 		>
 			<span>{t("BULK_ACTIONS.CAPTION")}</span>
+			<LuChevronDown className="chevron-down"/>
 			{/* show dropdown if actions is clicked*/}
 			{displayActionMenu && (
 				<ul className="dropdown-ul">
@@ -63,12 +67,12 @@ const TableActionDropdown = ({
 						<Action
 							key={key}
 							{...action}
-						/>
+						/>,
 					)}
 				</ul>
 			)}
 		</div>
-	)
+	);
 };
 
 const Action = ({
@@ -85,14 +89,14 @@ const Action = ({
 
 	return (
 		!!handleOnClick &&
-		accessRole.every((accessRole) => hasAccess(accessRole, user)) && (
+		accessRole.every(accessRole => hasAccess(accessRole, user)) && (
 			<li>
 				<ButtonLikeAnchor onClick={handleOnClick}>
 					{t(text)}
 				</ButtonLikeAnchor>
 			</li>
 		)
-	)
-}
+	);
+};
 
 export default TableActionDropdown;

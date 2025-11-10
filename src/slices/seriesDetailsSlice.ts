@@ -1,57 +1,67 @@
-import { PayloadAction, SerializedError, createSlice } from '@reduxjs/toolkit'
-import axios from 'axios';
+import { PayloadAction, SerializedError, createSlice } from "@reduxjs/toolkit";
+import axios, { AxiosError } from "axios";
 import _ from "lodash";
 import {
 	getSeriesDetailsExtendedMetadata,
-	getSeriesDetailsThemeNames,
 	getStatistics,
 } from "../selectors/seriesDetailsSelectors";
 import { addNotification } from "./notificationSlice";
 import {
-	createPolicy,
 	transformMetadataCollection,
 	transformMetadataForUpdate,
 } from "../utils/resourceUtils";
 import { transformToIdValueArray } from "../utils/utils";
 import { NOTIFICATION_CONTEXT, NOTIFICATION_CONTEXT_TOBIRA } from "../configs/modalConfig";
-import { createAppAsyncThunk } from '../createAsyncThunkWithTypes';
-import { Ace, Acl } from './aclSlice';
-import { DataResolution, Statistics, TimeMode, fetchStatistics, fetchStatisticsValueUpdate } from './statisticsSlice';
-import { TransformedAcl } from './aclDetailsSlice';
-import { MetadataCatalog } from './eventSlice';
-import { Series, TobiraPage } from './seriesSlice';
-import { TobiraTabHierarchy } from '../components/events/partials/ModalTabsAndPages/DetailsTobiraTab';
-import { TobiraFormProps } from '../components/events/partials/ModalTabsAndPages/NewTobiraPage';
-import { handleTobiraError } from './shared/tobiraErrors';
+import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
+import { Acl } from "./aclSlice";
+import { DataResolution, Statistics, TimeMode, fetchStatistics, fetchStatisticsValueUpdate } from "./statisticsSlice";
+import { TransformedAcl } from "./aclDetailsSlice";
+import { MetadataCatalog } from "./eventSlice";
+import { Series, TobiraPage } from "./seriesSlice";
+import { TobiraTabHierarchy } from "../components/events/partials/ModalTabsAndPages/DetailsTobiraTab";
+import { TobiraFormProps } from "../components/events/partials/ModalTabsAndPages/NewTobiraPage";
+import { handleTobiraError } from "./shared/tobiraErrors";
+import { AppThunk } from "../store";
+import { AppDispatch } from "../store";
+import { SeriesDetailsPage } from "../components/events/partials/modals/SeriesDetails";
 
 
 /**
  * This file contains redux reducer for actions affecting the state of a series
  */
+type SeriesDetailsModal = {
+	show: boolean,
+	page: SeriesDetailsPage,
+	series: { id: string, title: string } | null,
+}
+
 export type TobiraData = {
 	baseURL: string,
+	id: string,
 	hostPages: TobiraPage[],
 };
 
 type SeriesDetailsState = {
-	statusMetadata: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusMetadata: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorMetadata: SerializedError | null,
-	statusAcl: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusAcl: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorAcl: SerializedError | null,
-	statusTheme: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusTheme: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorTheme: SerializedError | null,
-	statusThemeNames: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusThemeNames: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorThemeNames: SerializedError | null,
-	statusStatistics: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusStatistics: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorStatistics: SerializedError | null,
-	statusStatisticsValue: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusStatisticsValue: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorStatisticsValue: SerializedError | null,
-	statusTobiraData: 'uninitialized' | 'loading' | 'succeeded' | 'failed',
+	statusTobiraData: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorTobiraData: SerializedError | null,
-  	metadata: MetadataCatalog,
+	modal: SeriesDetailsModal,
+	metadata: MetadataCatalog,
 	extendedMetadata: MetadataCatalog[],
 	acl: TransformedAcl[],
-	theme: string,
+	policyTemplateId: number,
+	theme: { id: string, value: string } | null,
 	themeNames: { id: string, value: string }[],
 	fetchingStatisticsInProgress: boolean,
 	statistics: Statistics[],
@@ -62,20 +72,25 @@ type SeriesDetailsState = {
 
 // Initial state of series details in redux store
 const initialState: SeriesDetailsState = {
-	statusMetadata: 'uninitialized',
+	statusMetadata: "uninitialized",
 	errorMetadata: null,
-	statusAcl: 'uninitialized',
+	statusAcl: "uninitialized",
 	errorAcl: null,
-	statusTheme: 'uninitialized',
+	statusTheme: "uninitialized",
 	errorTheme: null,
-	statusThemeNames: 'uninitialized',
+	statusThemeNames: "uninitialized",
 	errorThemeNames: null,
-	statusStatistics: 'uninitialized',
+	statusStatistics: "uninitialized",
 	errorStatistics: null,
-	statusStatisticsValue: 'uninitialized',
+	statusStatisticsValue: "uninitialized",
 	errorStatisticsValue: null,
-	statusTobiraData: 'uninitialized',
+	statusTobiraData: "uninitialized",
 	errorTobiraData: null,
+		modal: {
+			show: false,
+			page: SeriesDetailsPage.Metadata,
+			series: null,
+		},
 	metadata: {
 		title: "",
 		flavor: "",
@@ -83,7 +98,8 @@ const initialState: SeriesDetailsState = {
 	},
 	extendedMetadata: [],
 	acl: [],
-	theme: "",
+	policyTemplateId: 0,
+	theme: null,
 	themeNames: [],
 	fetchingStatisticsInProgress: false,
 	statistics: [],
@@ -91,18 +107,19 @@ const initialState: SeriesDetailsState = {
 	tobiraTab: "main",
 	tobiraData: {
 		baseURL: "",
+		id: "",
 		hostPages: [],
 	},
 };
 
 // fetch metadata of certain series from server
-export const fetchSeriesDetailsMetadata = createAppAsyncThunk('seriesDetails/fetchSeriesDetailsMetadata', async (id: Series["id"], { rejectWithValue }) => {
-	const res = await axios.get(`/admin-ng/series/${id}/metadata.json`);
+export const fetchSeriesDetailsMetadata = createAppAsyncThunk("seriesDetails/fetchSeriesDetailsMetadata", async (id: Series["id"], { rejectWithValue }) => {
+	const res = await axios.get<MetadataCatalog[]>(`/admin-ng/series/${id}/metadata.json`);
 	const metadataResponse = res.data;
 
 	const mainCatalog = "dublincore/series";
 	let seriesMetadata: SeriesDetailsState["metadata"] | undefined = undefined;
-	let extendedMetadata: SeriesDetailsState["extendedMetadata"] = [];
+	const extendedMetadata: SeriesDetailsState["extendedMetadata"] = [];
 
 	for (const catalog of metadataResponse) {
 		if (catalog.flavor === mainCatalog) {
@@ -114,96 +131,83 @@ export const fetchSeriesDetailsMetadata = createAppAsyncThunk('seriesDetails/fet
 
 	if (!seriesMetadata) {
 		console.error("Main metadata catalog is missing");
-		return rejectWithValue("Main metadata catalog is missing")
+		return rejectWithValue("Main metadata catalog is missing");
 	}
 
-	return { seriesMetadata, extendedMetadata }
+	return { seriesMetadata, extendedMetadata };
 });
 
 // fetch acls of certain series from server
-export const fetchSeriesDetailsAcls = createAppAsyncThunk('seriesDetails/fetchSeriesDetailsAcls', async (id: Series["id"], {dispatch}) => {
-	const res = await axios.get(`/admin-ng/series/${id}/access.json`);
+export const fetchSeriesDetailsAcls = createAppAsyncThunk("seriesDetails/fetchSeriesDetailsAcls", async (id: Series["id"], { dispatch }) => {
+	type FetchSeriesDetailsAcl = {
+		series_access: {
+			acl: Omit<TransformedAcl, "user">[]
+			current_acl: number
+			locked: boolean
+		},
+	}
+	const res = await axios.get<FetchSeriesDetailsAcl>(`/admin-ng/series/${id}/access.json`);
 	const response = res.data;
 
-	if (!!response.series_access.locked) {
+	if (response.series_access.locked) {
 		dispatch(
 			addNotification({
 				type: "warning",
 				key: "SERIES_ACL_LOCKED",
 				duration: -1,
-				parameter: undefined,
 				context: NOTIFICATION_CONTEXT,
-				noDuplicates: true
-			})
+				noDuplicates: true,
+			}),
 		);
 	}
 
-	let seriesAcls: TransformedAcl[] = [];
-	if (!!response.series_access) {
-		const json = JSON.parse(response.series_access.acl).acl.ace;
-		let policies: { [key: string]: TransformedAcl } = {};
-		let policyRoles: string[] = [];
-		json.forEach((policy: Ace) => {
-			if (!policies[policy.role]) {
-				policies[policy.role] = createPolicy(policy.role);
-				policyRoles.push(policy.role);
-			}
-			if (policy.action === "read" || policy.action === "write") {
-				policies[policy.role][policy.action] = policy.allow;
-			} else if (policy.allow === true) { //|| policy.allow === "true") {
-				policies[policy.role].actions.push(policy.action);
-			}
-		});
-		seriesAcls = policyRoles.map((role) => policies[role]);
-	}
-
-	return seriesAcls;
+	return { acl: response.series_access.acl, currentAcl: response.series_access.current_acl };
 });
 
 // fetch theme of certain series from server
-export const fetchSeriesDetailsTheme = createAppAsyncThunk('seriesDetails/fetchSeriesDetailsTheme', async (id: Series["id"]) => {
-	const res = await axios.get(`/admin-ng/series/${id}/theme.json`);
+export const fetchSeriesDetailsTheme = createAppAsyncThunk("seriesDetails/fetchSeriesDetailsTheme", async (id: Series["id"]) => {
+	const res = await axios.get<{ [key: string]: string }>(`/admin-ng/series/${id}/theme.json`);
 	const themeResponse = res.data;
 
-	let seriesTheme = "";
+	let seriesTheme: SeriesDetailsState["theme"] = null;
 
 	// check if series has a theme
 	if (!_.isEmpty(themeResponse)) {
 		// transform response for further use
-		seriesTheme = transformToIdValueArray(themeResponse)[0].value;
+		seriesTheme = transformToIdValueArray(themeResponse)[0];
 	}
 
 	return seriesTheme;
 });
 
 // fetch names of possible themes from server
-export const fetchSeriesDetailsThemeNames = createAppAsyncThunk('seriesDetails/fetchSeriesDetailsThemeNames', async () => {
-	const res = await axios.get("/admin-ng/resources/THEMES.NAME.json");
+export const fetchSeriesDetailsThemeNames = createAppAsyncThunk("seriesDetails/fetchSeriesDetailsThemeNames", async () => {
+	const res = await axios.get<{ [key: string]: string }>("/admin-ng/resources/THEMES.NAME.json");
 	const response = res.data;
 
 	// transform response for further use
-	let themeNames = transformToIdValueArray(response);
+	const themeNames = transformToIdValueArray(response);
 
 	return themeNames;
 });
 
 // update series with new metadata
-export const updateSeriesMetadata = createAppAsyncThunk('seriesDetails/updateSeriesMetadata', async (params: {
+export const updateSeriesMetadata = createAppAsyncThunk("seriesDetails/updateSeriesMetadata", async (params: {
 	id: Series["id"],
 	values: { [key: string]: MetadataCatalog["fields"][0]["value"] }
 	catalog: MetadataCatalog,
-}, {dispatch, getState}) => {
+}, { dispatch }) => {
 	const { id, values, catalog } = params;
 
 	const { fields, data, headers } = transformMetadataForUpdate(
 		catalog,
-		values
+		values,
 	);
 
 	await axios.put(`/admin-ng/series/${id}/metadata`, data, headers);
 
 	// updated metadata in series details redux store
-	let seriesMetadata = {
+	const seriesMetadata = {
 		flavor: catalog.flavor,
 		title: catalog.title,
 		fields: fields,
@@ -212,29 +216,29 @@ export const updateSeriesMetadata = createAppAsyncThunk('seriesDetails/updateSer
 });
 
 // update series with new metadata
-export const updateExtendedSeriesMetadata = createAppAsyncThunk('seriesDetails/updateExtendedSeriesMetadata', async (params: {
+export const updateExtendedSeriesMetadata = createAppAsyncThunk("seriesDetails/updateExtendedSeriesMetadata", async (params: {
 	id: Series["id"],
 	values: { [key: string]: MetadataCatalog["fields"][0]["value"] }
 	catalog: MetadataCatalog,
-}, {dispatch, getState}) => {
+}, { dispatch, getState }) => {
 	const { id, values, catalog } = params;
 
 	const { fields, data, headers } = transformMetadataForUpdate(
 		catalog,
-		values
+		values,
 	);
 
 	await axios.put(`/admin-ng/series/${id}/metadata`, data, headers);
 
 	// updated metadata in series details redux store
-	let seriesMetadata = {
+	const seriesMetadata = {
 		flavor: catalog.flavor,
 		title: catalog.title,
 		fields: fields,
 	};
 
 	const oldExtendedMetadata = getSeriesDetailsExtendedMetadata(getState());
-	let newExtendedMetadata = [];
+	const newExtendedMetadata = [];
 
 	for (const catalog of oldExtendedMetadata) {
 		if (
@@ -250,16 +254,20 @@ export const updateExtendedSeriesMetadata = createAppAsyncThunk('seriesDetails/u
 	dispatch(setSeriesDetailsExtendedMetadata(newExtendedMetadata));
 });
 
-export const updateSeriesAccess = createAppAsyncThunk('seriesDetails/updateSeriesAccess', async (params: {
-	id: Series["id"],
-	policies: { acl: Acl }
-}, {dispatch}) => {
-	const { id, policies } = params;
+export const updateSeriesAccess = createAppAsyncThunk("seriesDetails/updateSeriesAccess", async (
+	params: {
+		id: Series["id"],
+		policies: { acl: Acl },
+		override?: boolean
+	}, { dispatch }) => {
+	const { id, policies, override } = params;
 
-	let data = new URLSearchParams();
+	const data = new URLSearchParams();
+
+	const overrideString = override ? String(true) : String(false);
 
 	data.append("acl", JSON.stringify(policies));
-	data.append("override", String(true));
+	data.append("override", overrideString);
 
 	return axios
 		.post(`/admin-ng/series/${id}/access`, data, {
@@ -267,107 +275,91 @@ export const updateSeriesAccess = createAppAsyncThunk('seriesDetails/updateSerie
 				"Content-Type": "application/x-www-form-urlencoded",
 			},
 		})
-		.then((res) => {
+		.then(res => {
 			console.info(res);
 			dispatch(
 				addNotification({
 					type: "info",
 					key: "SAVED_ACL_RULES",
 					duration: -1,
-					parameter: undefined,
-					context: NOTIFICATION_CONTEXT
-				})
+					context: NOTIFICATION_CONTEXT,
+				}),
 			);
 			return true;
 		})
-		.catch((res) => {
+		.catch(res => {
 			console.error(res);
 			dispatch(
 				addNotification({
 					type: "error",
 					key: "ACL_NOT_SAVED",
 					duration: -1,
-					parameter: undefined,
-					context: NOTIFICATION_CONTEXT
-				})
+					context: NOTIFICATION_CONTEXT,
+				}),
 			);
 			return false;
 		});
 });
 
-export const updateSeriesTheme = createAppAsyncThunk('seriesDetails/updateSeriesTheme', async (params: {
+export const updateSeriesTheme = (params: {
 	id: string,
 	values: { theme: SeriesDetailsState["theme"] },
-}, {dispatch, getState}) => {
+}): AppThunk => dispatch => {
 	const { id, values } = params;
 
-	let themeNames = getSeriesDetailsThemeNames(getState());
+	const themeId = values.theme?.id;
 
-	let themeId = themeNames.find((theme) => theme.value === values.theme)?.id;
+	if (!themeId || themeId === "") {
+		axios
+			.delete(`/admin-ng/series/${id}/theme`)
+			.then(() => {
+				dispatch(setSeriesDetailsTheme(values.theme));
+				dispatch(
+					addNotification({
+						type: "warning",
+						key: "SERIES_THEME_REPROCESS_EXISTING_EVENTS",
+						duration: 10,
+						context: NOTIFICATION_CONTEXT,
+					}),
+				);
+			})
+			.catch(response => {
+				console.error(response);
+			});
+	} else {
+		const data = new URLSearchParams();
+		data.append("themeId", themeId);
 
-	if (!values.theme) {
-        axios
-            .delete(`/admin-ng/series/${id}/theme`)
-            .then((response) => {
-                dispatch(
-                    addNotification({
-                        type: "warning",
-                        key: "SERIES_THEME_REPROCESS_EXISTING_EVENTS",
-                        duration: 10,
-                        parameter: undefined,
-                        context: NOTIFICATION_CONTEXT
-                    })
-                );
-            })
-            .catch((response) => {
-                console.error(response);
-            });
-	} else if (!themeId) {
-        console.error("Can't update series theme. " + values.theme + " not found");
-        dispatch(
-            addNotification({
-                type: "error",
-                key: "SERIES_NOT_SAVED",
-                duration: 10,
-                parameter: undefined,
-                context: NOTIFICATION_CONTEXT
-            })
-        );
-    } else {
-        let data = new URLSearchParams();
-        data.append("themeId", themeId);
+		axios
+			.put<{ [key: string]: string }>(`/admin-ng/series/${id}/theme`, data)
+			.then(response => {
+				const themeResponse = response.data;
 
-        axios
-            .put(`/admin-ng/series/${id}/theme`, data)
-            .then((response) => {
-                let themeResponse = response.data;
+				const seriesTheme = transformToIdValueArray(themeResponse)[0];
 
-                let seriesTheme = transformToIdValueArray(themeResponse)[0].value;
-
-                dispatch(setSeriesDetailsTheme(seriesTheme));
-                dispatch(
-                    addNotification({
-                        type: "warning",
-                        key: "SERIES_THEME_REPROCESS_EXISTING_EVENTS",
-                        duration: 10,
-                        parameter: undefined,
-                        context: NOTIFICATION_CONTEXT
-                    })
-                );
-            })
-            .catch((response) => {
-                console.error(response);
-            });
-    }
-});
+				dispatch(setSeriesDetailsTheme(seriesTheme));
+				dispatch(
+					addNotification({
+						type: "warning",
+						key: "SERIES_THEME_REPROCESS_EXISTING_EVENTS",
+						duration: 10,
+						context: NOTIFICATION_CONTEXT,
+					}),
+				);
+			})
+			.catch(response => {
+				console.error(response);
+			});
+	}
+};
 
 // fetch Tobira data of certain series from server
-export const fetchSeriesDetailsTobira = createAppAsyncThunk('seriesDetails/fetchSeriesDetailsTobira', async (
+export const fetchSeriesDetailsTobira = createAppAsyncThunk("seriesDetails/fetchSeriesDetailsTobira", async (
 	id: Series["id"],
-	{ dispatch }
+	{ dispatch },
 ) => {
-	const res = await axios.get(`/admin-ng/series/${id}/tobira/pages`)
-		.catch(response => handleTobiraError(response, dispatch));
+	const res = await axios.get<SeriesDetailsState["tobiraData"]>(`/admin-ng/series/${id}/tobira/pages`)
+		.catch((error: AxiosError) => handleTobiraError(error, dispatch));
 
 	if (!res) {
 		throw new Error();
@@ -377,7 +369,7 @@ export const fetchSeriesDetailsTobira = createAppAsyncThunk('seriesDetails/fetch
 	return data;
 });
 
-export const updateSeriesTobiraPath = createAppAsyncThunk('series/updateSeriesTobiraData', async (
+export const updateSeriesTobiraPath = createAppAsyncThunk("series/updateSeriesTobiraData", async (
 	params: TobiraFormProps & { seriesId: Series["id"] },
 	{ dispatch },
 ) => {
@@ -403,16 +395,16 @@ export const updateSeriesTobiraPath = createAppAsyncThunk('series/updateSeriesTo
 	}
 
 	try {
-		const response = await axios.post(`/admin-ng/series/${params.seriesId}/tobira/path`, tobiraParams.toString(), {
+		const response = await axios.post<unknown>(`/admin-ng/series/${params.seriesId}/tobira/path`, tobiraParams.toString(), {
 			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded',
+				"Content-Type": "application/x-www-form-urlencoded",
 			},
 		});
 
 		console.info(response);
 		dispatch(addNotification({
-			type: 'success',
-			key: 'SERIES_PATH_UPDATED',
+			type: "success",
+			key: "SERIES_PATH_UPDATED",
 			context: NOTIFICATION_CONTEXT_TOBIRA,
 		}));
 
@@ -420,29 +412,29 @@ export const updateSeriesTobiraPath = createAppAsyncThunk('series/updateSeriesTo
 	} catch (error) {
 		console.error(error);
 		dispatch(addNotification({
-			type: 'error',
-			key: 'SERIES_PATH_NOT_UPDATED',
+			type: "error",
+			key: "SERIES_PATH_NOT_UPDATED",
 			context: NOTIFICATION_CONTEXT_TOBIRA,
 		}));
 		throw error;
 	}
 });
 
-export const removeSeriesTobiraPath = createAppAsyncThunk('series/removeSeriesTobiraData', async (
-	params: Required<Pick<TobiraFormProps, 'currentPath'>> & { seriesId: Series["id"] },
+export const removeSeriesTobiraPath = createAppAsyncThunk("series/removeSeriesTobiraData", async (
+	params: Required<Pick<TobiraFormProps, "currentPath">> & { seriesId: Series["id"] },
 	{ dispatch },
 ) => {
 	const path = encodeURIComponent(params.currentPath);
 
 	try {
-		const response = await axios.delete(
+		const response = await axios.delete<unknown>(
 			`/admin-ng/series/${params.seriesId}/tobira/${path}`,
 		);
 
 		console.info(response);
 		dispatch(addNotification({
-			type: 'success',
-			key: 'SERIES_PATH_REMOVED',
+			type: "success",
+			key: "SERIES_PATH_REMOVED",
 			context: NOTIFICATION_CONTEXT_TOBIRA,
 		}));
 
@@ -450,8 +442,8 @@ export const removeSeriesTobiraPath = createAppAsyncThunk('series/removeSeriesTo
 	} catch (error) {
 		console.error(error);
 		dispatch(addNotification({
-			type: 'error',
-			key: 'SERIES_PATH_NOT_REMOVED',
+			type: "error",
+			key: "SERIES_PATH_NOT_REMOVED",
 			context: NOTIFICATION_CONTEXT_TOBIRA,
 		}));
 		throw error;
@@ -459,7 +451,7 @@ export const removeSeriesTobiraPath = createAppAsyncThunk('series/removeSeriesTo
 });
 
 // thunks for statistics
-export const fetchSeriesStatistics = createAppAsyncThunk('seriesDetails/fetchSeriesStatistics', async (seriesId: Series["id"], {getState}) => {
+export const fetchSeriesStatistics = createAppAsyncThunk("seriesDetails/fetchSeriesStatistics", async (seriesId: Series["id"], { getState }) => {
 	// get prior statistics
 	const state = getState();
 	const statistics = getStatistics(state);
@@ -473,15 +465,15 @@ export const fetchSeriesStatistics = createAppAsyncThunk('seriesDetails/fetchSer
 	);
 });
 
-export const fetchSeriesStatisticsValueUpdate = createAppAsyncThunk('seriesDetails/fetchSeriesStatisticsValueUpdate', async (params: {
+export const fetchSeriesStatisticsValueUpdate = createAppAsyncThunk("seriesDetails/fetchSeriesStatisticsValueUpdate", async (params: {
 	id: Series["id"],
 	providerId: string,
 	from: string | Date,
 	to: string | Date,
 	dataResolution: DataResolution,
 	timeMode: TimeMode
-}, {getState}) => {
-	const {id, providerId, from, to, dataResolution, timeMode } = params;
+}, { getState }) => {
+	const { id, providerId, from, to, dataResolution, timeMode } = params;
 
 	// get prior statistics
 	const state = getState();
@@ -501,11 +493,48 @@ export const fetchSeriesStatisticsValueUpdate = createAppAsyncThunk('seriesDetai
 	);
 });
 
+/**
+ * Open series details modal externally
+ *
+ * @param page modal page
+ * @param series series to show
+ */
+export const openModal = (
+	page: SeriesDetailsPage,
+	series: SeriesDetailsModal["series"],
+) => (dispatch: AppDispatch) => {
+	dispatch(setModalSeries(series));
+	dispatch(openModalTab(page));
+	dispatch(setShowModal(true));
+};
+
+export const openModalTab = (
+	page: SeriesDetailsPage,
+) => (dispatch: AppDispatch) => {
+	dispatch(setModalPage(page));
+	dispatch(setTobiraTabHierarchy("main"));
+};
+
 // Reducer for series details
 const seriesDetailsSlice = createSlice({
-	name: 'seriesDetails',
+	name: "seriesDetails",
 	initialState,
 	reducers: {
+		setShowModal(state, action: PayloadAction<
+			SeriesDetailsState["modal"]["show"]
+		>) {
+			state.modal.show = action.payload;
+		},
+		setModalPage(state, action: PayloadAction<
+			SeriesDetailsState["modal"]["page"]
+		>) {
+			state.modal.page = action.payload;
+		},
+		setModalSeries(state, action: PayloadAction<
+			SeriesDetailsState["modal"]["series"]
+		>) {
+			state.modal.series = action.payload;
+		},
 		setSeriesDetailsTheme(state, action: PayloadAction<
 			SeriesDetailsState["theme"]
 		>) {
@@ -536,125 +565,126 @@ const seriesDetailsSlice = createSlice({
 		>) {
 			state.tobiraTab = action.payload;
 		},
-		setDoNothing(state) {
-
-		}
 	},
 	// These are used for thunks
 	extraReducers: builder => {
 		builder
-			.addCase(fetchSeriesDetailsMetadata.pending, (state) => {
-				state.statusMetadata = 'loading';
+			.addCase(fetchSeriesDetailsMetadata.pending, state => {
+				state.statusMetadata = "loading";
 			})
 			.addCase(fetchSeriesDetailsMetadata.fulfilled, (state, action: PayloadAction<{
 				seriesMetadata: SeriesDetailsState["metadata"],
 				extendedMetadata: SeriesDetailsState["extendedMetadata"],
 			}>) => {
-				state.statusMetadata = 'succeeded';
+				state.statusMetadata = "succeeded";
 				const seriesDetails = action.payload;
 				state.metadata = seriesDetails.seriesMetadata;
 				state.extendedMetadata = seriesDetails.extendedMetadata;
 			})
 			.addCase(fetchSeriesDetailsMetadata.rejected, (state, action) => {
-				state.statusMetadata = 'failed';
+				state.statusMetadata = "failed";
 				state.errorMetadata = action.error;
 			})
-			.addCase(fetchSeriesDetailsAcls.pending, (state) => {
-				state.statusAcl = 'loading';
+			.addCase(fetchSeriesDetailsAcls.pending, state => {
+				state.statusAcl = "loading";
 			})
-			.addCase(fetchSeriesDetailsAcls.fulfilled, (state, action: PayloadAction<
-				SeriesDetailsState["acl"]
-			>) => {
-				state.statusAcl = 'succeeded';
+			.addCase(fetchSeriesDetailsAcls.fulfilled, (state, action: PayloadAction<{
+				acl: SeriesDetailsState["acl"],
+				currentAcl: SeriesDetailsState["policyTemplateId"]
+			}>) => {
+				state.statusAcl = "succeeded";
 				const seriesDetailsAcls = action.payload;
-				state.acl = seriesDetailsAcls;
+				state.acl = seriesDetailsAcls.acl;
+				state.policyTemplateId = seriesDetailsAcls.currentAcl;
 			})
 			.addCase(fetchSeriesDetailsAcls.rejected, (state, action) => {
-				state.statusAcl = 'failed';
+				state.statusAcl = "failed";
 				state.errorAcl = action.error;
 			})
-			.addCase(fetchSeriesDetailsTheme.pending, (state) => {
-				state.statusTheme = 'loading';
+			.addCase(fetchSeriesDetailsTheme.pending, state => {
+				state.statusTheme = "loading";
 			})
 			.addCase(fetchSeriesDetailsTheme.fulfilled, (state, action: PayloadAction<
 				SeriesDetailsState["theme"]
 			>) => {
-				state.statusTheme = 'succeeded';
+				state.statusTheme = "succeeded";
 				const seriesDetailsTheme = action.payload;
 				state.theme = seriesDetailsTheme;
 			})
 			.addCase(fetchSeriesDetailsTheme.rejected, (state, action) => {
-				state.statusTheme = 'failed';
+				state.statusTheme = "failed";
 				state.errorTheme = action.error;
 			})
-			.addCase(fetchSeriesDetailsThemeNames.pending, (state) => {
-				state.statusThemeNames = 'loading';
+			.addCase(fetchSeriesDetailsThemeNames.pending, state => {
+				state.statusThemeNames = "loading";
 			})
 			.addCase(fetchSeriesDetailsThemeNames.fulfilled, (state, action: PayloadAction<
 				SeriesDetailsState["themeNames"]
 			>) => {
-				state.statusThemeNames = 'succeeded';
+				state.statusThemeNames = "succeeded";
 				const seriesDetailsThemeNames = action.payload;
 				state.themeNames = seriesDetailsThemeNames;
 			})
 			.addCase(fetchSeriesDetailsThemeNames.rejected, (state, action) => {
-				state.statusThemeNames = 'failed';
+				state.statusThemeNames = "failed";
 				state.errorThemeNames = action.error;
 			})
-			.addCase(fetchSeriesDetailsTobira.pending, (state) => {
-				state.statusTobiraData = 'loading';
+			.addCase(fetchSeriesDetailsTobira.pending, state => {
+				state.statusTobiraData = "loading";
 			})
 			.addCase(fetchSeriesDetailsTobira.fulfilled, (state, action: PayloadAction<
 				SeriesDetailsState["tobiraData"]
 			>) => {
 				state.errorTobiraData = null;
-				state.statusTobiraData = 'succeeded';
+				state.statusTobiraData = "succeeded";
 				state.tobiraData = action.payload;
 			})
 			.addCase(fetchSeriesDetailsTobira.rejected, (state, action) => {
-				state.statusTobiraData = 'failed';
+				state.statusTobiraData = "failed";
 				state.errorTobiraData = action.error;
 			})
-			.addCase(fetchSeriesStatistics.pending, (state) => {
-				state.statusStatistics = 'loading';
+			.addCase(fetchSeriesStatistics.pending, state => {
+				state.statusStatistics = "loading";
 			})
 			.addCase(fetchSeriesStatistics.fulfilled, (state, action: PayloadAction<{
 				statistics: SeriesDetailsState["statistics"],
 				hasError: SeriesDetailsState["hasStatisticsError"]
 			}>) => {
-				state.statusStatistics = 'succeeded';
+				state.statusStatistics = "succeeded";
 				const seriesDetailsStatistics = action.payload;
 				state.statistics = seriesDetailsStatistics.statistics;
 				state.hasStatisticsError = seriesDetailsStatistics.hasError;
 			})
 			.addCase(fetchSeriesStatistics.rejected, (state, action) => {
-				state.statusStatistics = 'failed';
+				state.statusStatistics = "failed";
 				state.errorStatistics = action.error;
 			})
-			.addCase(fetchSeriesStatisticsValueUpdate.pending, (state) => {
-				state.statusStatisticsValue = 'loading';
+			.addCase(fetchSeriesStatisticsValueUpdate.pending, state => {
+				state.statusStatisticsValue = "loading";
 			})
 			.addCase(fetchSeriesStatisticsValueUpdate.fulfilled, (state, action: PayloadAction<
-				any
+				SeriesDetailsState["statistics"]
 			>) => {
-				state.statusStatisticsValue = 'succeeded';
+				state.statusStatisticsValue = "succeeded";
 				state.statistics = action.payload;
 			})
 			.addCase(fetchSeriesStatisticsValueUpdate.rejected, (state, action) => {
-				state.statusStatisticsValue = 'failed';
+				state.statusStatisticsValue = "failed";
 				state.errorStatisticsValue = action.error;
-			})
-	}
+			});
+	},
 });
 
 export const {
+	setShowModal,
+	setModalPage,
+	setModalSeries,
 	setSeriesDetailsTheme,
 	setSeriesDetailsMetadata,
 	setSeriesDetailsExtendedMetadata,
 	setSeriesStatisticsError,
 	setSeriesStatistics,
 	setTobiraTabHierarchy,
-	setDoNothing,
 } = seriesDetailsSlice.actions;
 
 // Export the slice reducer as the default export

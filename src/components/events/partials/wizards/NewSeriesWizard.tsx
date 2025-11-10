@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Formik } from "formik";
 import NewThemePage from "../ModalTabsAndPages/NewThemePage";
 import NewSeriesSummary from "./NewSeriesSummary";
@@ -10,12 +10,12 @@ import {
 } from "../../../../selectors/seriesSeletctor";
 import NewMetadataExtendedPage from "../ModalTabsAndPages/NewMetadataExtendedPage";
 import NewAccessPage from "../ModalTabsAndPages/NewAccessPage";
-import WizardStepper from "../../../shared/wizard/WizardStepper";
+import WizardStepper, { WizardStep } from "../../../shared/wizard/WizardStepper";
 import { initialFormValuesNewSeries } from "../../../../configs/modalConfig";
 import { MetadataSchema, NewSeriesSchema } from "../../../../utils/validate";
 import { getInitialMetadataFieldValues } from "../../../../utils/resourceUtils";
 import { useAppDispatch, useAppSelector } from "../../../../store";
-import { TobiraPage, fetchSeriesDetailsTobiraNew, postNewSeries } from "../../../../slices/seriesSlice";
+import { fetchSeriesDetailsTobiraNew, postNewSeries } from "../../../../slices/seriesSlice";
 import { MetadataCatalog } from "../../../../slices/eventSlice";
 import NewTobiraPage from "../ModalTabsAndPages/NewTobiraPage";
 import { getOrgProperties, getUserInformation } from "../../../../selectors/userInfoSelectors";
@@ -24,15 +24,16 @@ import { TransformedAcl } from "../../../../slices/aclDetailsSlice";
 import { removeNotificationWizardForm } from "../../../../slices/notificationSlice";
 import NewMetadataCommonPage from "../ModalTabsAndPages/NewMetadataCommonPage";
 import { hasAccess } from "../../../../utils/utils";
-import { ParseKeys } from "i18next";
+import { getAclDefaultActions, getAclDefaultTemplate } from "../../../../selectors/aclSelectors";
+import { AclTemplate } from "../../../../slices/aclSlice";
 
 /**
  * This component manages the pages of the new series wizard and the submission of values
  */
-const NewSeriesWizard: React.FC<{
-	close: () => void
-}> = ({
+const NewSeriesWizard = ({
 	close,
+}: {
+	close: () => void
 }) => {
 	const dispatch = useAppDispatch();
 
@@ -42,20 +43,14 @@ const NewSeriesWizard: React.FC<{
 	const tobiraError = useAppSelector(state => getSeriesTobiraPageError(state));
 	const user = useAppSelector(state => getUserInformation(state));
 	const orgProperties = useAppSelector(state => getOrgProperties(state));
+	const aclDefaultActions = useAppSelector(state => getAclDefaultActions(state));
+	const aclDefaultTemplate = useAppSelector(state => getAclDefaultTemplate(state));
 
 	useEffect(() => {
 		dispatch(removeNotificationWizardForm());
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
-	const themesEnabled = (orgProperties['admin.themes.enabled'] || 'false').toLowerCase() === 'true';
-
-	const initialValues = getInitialValues(metadataFields, extendedMetadata, user);
-
-	const [page, setPage] = useState(0);
-	const [snapshot, setSnapshot] = useState(initialValues);
-	const [pageCompleted, setPageCompleted] = useState<{ [key: number]: boolean }>({});
 
 	useEffect(() => {
 		// This should set off a web request that will intentionally fail, in order
@@ -64,105 +59,95 @@ const NewSeriesWizard: React.FC<{
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	// Caption of steps used by Stepper
-	const steps: {
-		translation: ParseKeys,
-		name: string,
+	const themesEnabled = (orgProperties["admin.themes.enabled"] || "false").toLowerCase() === "true";
+
+	const initialValues = getInitialValues(
+		metadataFields,
+		extendedMetadata,
+		user,
+		aclDefaultActions,
+		aclDefaultTemplate,
+	);
+
+	const [page, setPage] = useState(0);
+	const [pageCompleted, setPageCompleted] = useState<{ [key: number]: boolean }>({});
+
+
+	type StepName = "metadata" | "metadata-extended" | "access" | "theme" | "tobira" | "summary";
+	type Step = WizardStep & {
+		name: StepName,
 		hidden: boolean,
-	}[] = [
-		{
-			translation: "EVENTS.SERIES.NEW.METADATA.CAPTION",
-			name: "metadata",
-			hidden: false,
-		},
-		{
-			translation: "EVENTS.EVENTS.DETAILS.TABS.EXTENDED-METADATA",
-			name: "metadata-extended",
-			hidden: !(!!extendedMetadata && extendedMetadata.length > 0),
-		},
-		{
-			translation: "EVENTS.SERIES.NEW.ACCESS.CAPTION",
-			name: "access",
-			hidden: false,
-		},
-		{
-			translation: "EVENTS.SERIES.NEW.THEME.CAPTION",
-			name: "theme",
-			hidden: !themesEnabled,
-		},
-		{
-			translation: "EVENTS.SERIES.NEW.TOBIRA.CAPTION",
-			name: "tobira",
-			hidden: !hasAccess("ROLE_UI_SERIES_DETAILS_TOBIRA_EDIT", user) || !!(tobiraStatus === "failed" && tobiraError?.message?.includes("503")),
-		},
-		{
-			translation: "EVENTS.SERIES.NEW.SUMMARY.CAPTION",
-			name: "summary",
-			hidden: false,
-		},
-	];
+	}
+
+	// Caption of steps used by Stepper
+	const filterSteps = (): Omit<Step, "hidden">[] => {
+		const steps: Step[] = [
+			{
+				translation: "EVENTS.SERIES.NEW.METADATA.CAPTION",
+				name: "metadata",
+				hidden: false,
+			},
+			{
+				translation: "EVENTS.EVENTS.DETAILS.TABS.EXTENDED-METADATA",
+				name: "metadata-extended",
+				hidden: !(!!extendedMetadata && extendedMetadata.length > 0),
+			},
+			{
+				translation: "EVENTS.SERIES.NEW.ACCESS.CAPTION",
+				name: "access",
+				hidden: false,
+			},
+			{
+				translation: "EVENTS.SERIES.NEW.THEME.CAPTION",
+				name: "theme",
+				hidden: !themesEnabled,
+			},
+			{
+				translation: "EVENTS.SERIES.NEW.TOBIRA.CAPTION",
+				name: "tobira",
+				hidden: !hasAccess("ROLE_UI_SERIES_DETAILS_TOBIRA_EDIT", user) || !!(tobiraStatus === "failed" && tobiraError?.message?.includes("503")),
+			},
+			{
+				translation: "EVENTS.SERIES.NEW.SUMMARY.CAPTION",
+				name: "summary",
+				hidden: false,
+			},
+		];
+		return steps.filter(step => !step.hidden);
+	};
+
+	const steps = filterSteps();
 
 	// Validation schema of current page
 	let currentValidationSchema;
 	if (page === 0 || page === 1) {
 		currentValidationSchema = MetadataSchema(metadataFields);
 	} else {
-		currentValidationSchema = NewSeriesSchema[page];
+		currentValidationSchema = NewSeriesSchema[steps[page].name];
 	}
 
-	const nextPage = (
-		values: {
-			acls: TransformedAcl[];
-			theme: string;
-			breadcrumbs: TobiraPage[];
-			selectedPage?: TobiraPage;
-		}
-	) => {
-		setSnapshot(values);
-
+	const nextPage = () => {
 		// set page as completely filled out
-		let updatedPageCompleted = pageCompleted;
+		const updatedPageCompleted = pageCompleted;
 		updatedPageCompleted[page] = true;
 		setPageCompleted(updatedPageCompleted);
 
-		let newPage = page;
-		do {
-			newPage = newPage + 1;
-		} while(steps[newPage] && steps[newPage].hidden);
-		if (steps[newPage]) {
-			setPage(newPage)
-		}
+		setPage(page + 1);
 	};
 
-	const previousPage = (
-		values: {
-			acls: TransformedAcl[];
-			theme: string;
-			breadcrumbs: TobiraPage[];
-			selectedPage?: TobiraPage;
-		},
-		twoPagesBack?: boolean
-	) => {
-		setSnapshot(values);
-
-		let newPage = page;
-		do {
-			newPage = newPage - 1;
-		} while(steps[newPage] && steps[newPage].hidden);
-		if (steps[newPage]) {
-			setPage(newPage)
-		}
+	const previousPage = () => {
+		setPage(page - 1);
 	};
 
 	const handleSubmit = (
 		values:
 			{
 				[key: string]: any;
-				acls: TransformedAcl[];
+				policies: TransformedAcl[];
 				theme: string;
-			}
+			},
 	) => {
-		const response = dispatch(postNewSeries({values, metadataInfo: metadataFields, extendedMetadata}));
+		const response = dispatch(postNewSeries({ values, metadataInfo: metadataFields, extendedMetadata }));
 		console.info(response);
 		close();
 	};
@@ -171,12 +156,12 @@ const NewSeriesWizard: React.FC<{
 		<>
 			{/* Initialize overall form */}
 			<Formik
-				initialValues={snapshot}
+				initialValues={initialValues}
 				validationSchema={currentValidationSchema}
-				onSubmit={(values) => handleSubmit(values)}
+				onSubmit={values => handleSubmit(values)}
 			>
 				{/* Render wizard pages depending on current value of page variable */}
-				{(formik) => {
+				{formik => {
 					// eslint-disable-next-line react-hooks/rules-of-hooks
 					useEffect(() => {
 						formik.validateForm().then();
@@ -188,15 +173,15 @@ const NewSeriesWizard: React.FC<{
 							{/* Stepper that shows each step of wizard as header */}
 							<WizardStepper
 								steps={steps}
-								page={page}
-								setPage={setPage}
+								activePageIndex={page}
+								setActivePage={setPage}
 								completed={pageCompleted}
 								setCompleted={setPageCompleted}
-								formik={formik}
-								hasAccessPage
+								acls={formik.values.policies}
+								isValid={formik.isValid}
 							/>
 							<div>
-								{page === 0 && (
+								{steps[page].name === "metadata" && (
 									<NewMetadataCommonPage
 										nextPage={nextPage}
 										formik={formik}
@@ -204,7 +189,7 @@ const NewSeriesWizard: React.FC<{
 										header={steps[page].translation}
 									/>
 								)}
-								{page === 1 && (
+								{steps[page].name === "metadata-extended" && (
 									<NewMetadataExtendedPage
 										nextPage={nextPage}
 										previousPage={previousPage}
@@ -212,26 +197,26 @@ const NewSeriesWizard: React.FC<{
 										extendedMetadataFields={extendedMetadata}
 									/>
 								)}
-								{page === 2 && (
+								{steps[page].name === "access" && (
 									<NewAccessPage
-									// @ts-expect-error TS(7006):
 										nextPage={nextPage}
-										// @ts-expect-error TS(7006):
 										previousPage={previousPage}
 										// @ts-expect-error TS(7006):
 										formik={formik}
 										editAccessRole="ROLE_UI_SERIES_DETAILS_ACL_EDIT"
+										viewUsersAccessRole="ROLE_UI_SERIES_DETAILS_ACL_USER_ROLES_VIEW"
+										viewNonUsersAccessRole="ROLE_UI_SERIES_DETAILS_ACL_NONUSER_ROLES_VIEW"
 										initEventAclWithSeriesAcl={false}
 									/>
 								)}
-								{page === 3 && (
+								{steps[page].name === "theme" && (
 									<NewThemePage
 										nextPage={nextPage}
 										previousPage={previousPage}
 										formik={formik}
 									/>
 								)}
-								{page === 4 && (
+								{steps[page].name === "tobira" && (
 									<NewTobiraPage
 										mode={{ mount: true }}
 										formik={formik}
@@ -239,11 +224,11 @@ const NewSeriesWizard: React.FC<{
 										previousPage={previousPage}
 									/>
 								)}
-								{page === 5 && (
+								{steps[page].name === "summary" && (
 									<NewSeriesSummary
 										previousPage={previousPage}
 										formik={formik}
-										metaDataExtendedHidden={steps[1].hidden}
+										metaDataExtendedHidden={!steps.some(step => step.name === "metadata-extended")}
 									/>
 								)}
 							</div>
@@ -259,6 +244,8 @@ const getInitialValues = (
 	metadataFields: MetadataCatalog,
 	extendedMetadata: MetadataCatalog[],
 	user: UserInfoState,
+	aclDefaultActions: string[],
+	aclDefaultTemplate?: AclTemplate,
 ) => {
 	let initialValues = initialFormValuesNewSeries;
 
@@ -268,21 +255,28 @@ const getInitialValues = (
 	);
 
 	for (const catalog of extendedMetadata) {
-		metadataInitialValues = {...metadataInitialValues, ...getInitialMetadataFieldValues(
-			catalog
-		)};
+		metadataInitialValues = { ...metadataInitialValues, ...getInitialMetadataFieldValues(
+			catalog,
+		) };
 	}
 
 	initialValues = { ...initialValues, ...metadataInitialValues };
 
-	initialValues["acls"] = [
+	initialValues["policies"] = [
 		{
 			role: user.userRole,
 			read: true,
 			write: true,
-			actions: [],
+			actions: aclDefaultActions ? aclDefaultActions : [],
+			user: user.user,
 		},
 	];
+
+
+	if (aclDefaultTemplate) {
+		initialValues["aclTemplate"] = aclDefaultTemplate.id.toString();
+		initialValues["policies"] = [...aclDefaultTemplate.acl, ...initialValues["policies"]];
+	}
 
 	return initialValues;
 };
