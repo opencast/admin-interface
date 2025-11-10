@@ -1,22 +1,22 @@
-import {getFilters, getTextFilter} from "../selectors/tableFilterSelectors";
+import { getFilters, getTextFilter } from "../selectors/tableFilterSelectors";
 import {
 	getPageLimit,
 	getPageOffset,
 	getTableDirectionForResource,
 	getTableSortingForResource,
 } from "../selectors/tableSelectors";
-import {TransformedAcl} from "../slices/aclDetailsSlice";
-import {Acl} from "../slices/aclSlice";
-import {NewUser} from "../slices/userSlice";
-import {Recording} from "../slices/recordingSlice";
-import {UserInfoState} from "../slices/userInfoSlice";
-import {hasAccess, isJson} from "./utils";
-import {RootState} from "../store";
-import {MetadataCatalog, MetadataField} from "../slices/eventSlice";
-import {initialFormValuesNewGroup} from '../configs/modalConfig';
-import {UpdateUser} from '../slices/userDetailsSlice';
-import {ParseKeys, TFunction} from 'i18next';
-import {TableState} from "../slices/tableSlice";
+import { TransformedAcl } from "../slices/aclDetailsSlice";
+import { Acl } from "../slices/aclSlice";
+import { NewUser } from "../slices/userSlice";
+import { Recording } from "../slices/recordingSlice";
+import { UserInfoState } from "../slices/userInfoSlice";
+import { hasAccess, isJson } from "./utils";
+import { RootState } from "../store";
+import { MetadataCatalog, MetadataField } from "../slices/eventSlice";
+import { initialFormValuesNewGroup } from '../configs/modalConfig';
+import { UpdateUser } from '../slices/userDetailsSlice';
+import { ParseKeys, TFunction } from 'i18next';
+import { TableState } from "../slices/tableSlice";
 
 /**
  * This file contains methods that are needed in more than one resource thunk
@@ -200,7 +200,8 @@ export const transformMetadataForUpdate = (
 		])
 	);
 	const headers = getHttpHeaders();
-	return {fields, data, headers};
+
+	return { fields, data, headers };
 };
 
 // Prepare metadata for post of new events or series

@@ -69,7 +69,6 @@ export const fetchUsers = createAppAsyncThunk('users/fetchUsers', async (_, { ge
 	// This will automatically dispatch a `pending` action first,
 	// and then `fulfilled` or `rejected` actions based on the promise.
 	const res = await axios.get("/admin-ng/users/users.json", { params: params });
-	console.log("this is the response", res);
 	return res.data;
 });
 
