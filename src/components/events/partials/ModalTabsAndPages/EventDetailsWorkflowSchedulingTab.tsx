@@ -65,17 +65,38 @@ const EventDetailsWorkflowSchedulingTab = ({
 		return true;
 	};
 
-	const setInitialValues = () => {
-		let initialConfig = undefined;
-
-		if (baseWorkflow.configuration) {
-			initialConfig = parseBooleanInObject(baseWorkflow.configuration);
+	const extractDefaultValuesFromWorkflowDefinition = (workflowId: string) => {
+		const defaultValues: Record<string, any> = {};
+		const workflowDefinition = workflowDefinitions.find(def => def.id === workflowId);
+		if (workflowDefinition) {
+			const panel = workflowDefinition.configurationPanelJson;
+			if (Array.isArray(panel)) {
+				const fieldset = panel[0].fieldset;
+				if (fieldset !== undefined) {
+					fieldset.forEach(function (field) {
+						defaultValues[field.name] = field.value;
+					});
+				}
+			}
 		}
+		if (defaultValues.length == 0) {
+			console.warn("No default values extracted from workflow definition: ", workflowId);
+		}
+		return defaultValues;
+	};
 
-		return {
-			workflowDefinition: "workflowId" in workflow && !!workflow.workflowId
+	const setInitialValues = () => {
+		let configFromDatabase = undefined;
+		if (baseWorkflow.configuration) {
+			configFromDatabase = parseBooleanInObject(baseWorkflow.configuration);
+		}
+		const workflowId = "workflowId" in workflow && !!workflow.workflowId
 				? workflow.workflowId
-				: baseWorkflow.workflowId,
+				: baseWorkflow.workflowId;
+		const initialConfigValuesFromWorkflowDef = extractDefaultValuesFromWorkflowDefinition(workflowId);
+		const initialConfig = { ...initialConfigValuesFromWorkflowDef, ...configFromDatabase };
+		return {
+			workflowDefinition: workflowId,
 			configuration: initialConfig,
 		};
 	};
