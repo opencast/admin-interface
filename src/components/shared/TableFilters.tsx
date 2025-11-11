@@ -67,6 +67,7 @@ const TableFilters = ({
 	const [endDate, setEndDate] = useState<Date | undefined>(undefined);
 
 	const filter = filterMap.find(({ name }) => name === selectedFilter);
+
 	// Remove all selected filters, no filter should be "active" anymore
 	const removeFilters = async () => {
 		// Clear state

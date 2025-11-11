@@ -14,7 +14,7 @@ const RedirectCell = ({
 	filterValue,
 	tooltipText,
 	children,
-    resetBeforeRedirect = false,
+	resetBeforeRedirect = false,
 }: {
 	path: string
 	filterName: string
@@ -28,8 +28,8 @@ const RedirectCell = ({
 
 	const redirectToResource = async (filterValue: string) => {
 		if (resetBeforeRedirect) {
-        dispatch(resetFilterValues());
-        }
+			dispatch(resetFilterValues());
+		}
 		// Set filter before redirecting
 		await dispatch(setSpecificEventFilter({ filter: filterName, filterValue }));
 		navigate(path);

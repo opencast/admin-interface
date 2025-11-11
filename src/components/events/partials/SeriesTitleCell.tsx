@@ -15,7 +15,7 @@ const SeriesTitleCell = ({
 			filterName={"series"}
 			filterValue={row.id}
 			// tooltipText={"EVENTS.SERIES.TABLE.TOOLTIP.SERIES"} // Disabled due to performance concerns
-			 resetBeforeRedirect
+			resetBeforeRedirect
 		>
 			{row.title}
 		</RedirectCell>
