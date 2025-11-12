@@ -371,53 +371,57 @@ const Schedule = <T extends {
 	const { t } = useTranslation();
 	const currentLanguage = getCurrentLanguageInformation();
 	const getEndDateForSchedulingTime = () => {
-  	const {
-    scheduleStartDate,
-    scheduleStartHour,
-    scheduleStartMinute,
-    scheduleEndDate,
-    scheduleEndHour,
-    scheduleEndMinute,
-    sourceMode,
-	scheduleDurationHours,
-  	} = formik.values;
+	  const {
+	    scheduleStartDate,
+	    scheduleStartHour,
+	    scheduleStartMinute,
+	    scheduleEndDate,
+	    scheduleEndHour,
+	    scheduleEndMinute,
+	    scheduleDurationHours,
+	    sourceMode,
+	  } = formik.values;
 
-	// Parse hours as numbers (fallback to 0)
-  	const durationHours = Number(scheduleDurationHours) || 0;
+	  const durationHours = Number(scheduleDurationHours) || 0;
 
- 	// If duration is zero, do not show "+1 day" or end date
-  	if (durationHours === 0) {
-   	return undefined;
-  	}
+	  if (durationHours === 0) {
+	    return undefined;
+	  }
 
-  	const startDateTime = new Date(scheduleStartDate);
-  	startDateTime.setHours(parseInt(scheduleStartHour, 10), parseInt(scheduleStartMinute, 10), 0, 0);
+	  const startDateTime = new Date(scheduleStartDate);
+	  startDateTime.setHours(
+	    parseInt(scheduleStartHour, 10),
+	    parseInt(scheduleStartMinute, 10),
+	    0,
+	    0,
+	  );
 
-  	if (sourceMode === "SCHEDULE_MULTIPLE") {
-	// For SCHEDULE_SINGLE or others, use the original logic:
- 	if (!scheduleEndDate) {
-    return undefined;
-  	}
+	  let endDateTime: Date;
 
-    const nextDay = new Date(startDateTime);
-    nextDay.setDate(nextDay.getDate() + 1);
-    nextDay.setHours(parseInt(scheduleEndHour, 10), parseInt(scheduleEndMinute, 10), 0, 0);
+	  if (sourceMode === "SCHEDULE_MULTIPLE") {
+	    endDateTime = new Date(startDateTime);
+	    endDateTime.setHours(endDateTime.getHours() + durationHours);
+	  } else {
+	    if (!scheduleEndDate) {
+	      return undefined;
+	    }
+	    endDateTime = new Date(scheduleEndDate);
+	    endDateTime.setHours(
+	      parseInt(scheduleEndHour, 10),
+	      parseInt(scheduleEndMinute, 10),
+	      0,
+	      0,
+	    );
+	  }
 
-    return "+1 day";
-  	}
-
-  	const endDateTime = new Date(scheduleEndDate);
-  	endDateTime.setHours(parseInt(scheduleEndHour, 10), parseInt(scheduleEndMinute, 10), 0, 0);
-
-  	// For single schedule, show end date only if different from start date
-  	if (
-    endDateTime.getDate() !== startDateTime.getDate() ||
-    endDateTime.getMonth() !== startDateTime.getMonth() ||
-    endDateTime.getFullYear() !== startDateTime.getFullYear()
-  	) {
-     return `${endDateTime.getFullYear()}.${String(endDateTime.getMonth() + 1).padStart(2, "0")}.${String(endDateTime.getDate()).padStart(2, "0")}`;
-  	}
-  	return undefined;
+	  if (
+	    endDateTime.getDate() !== startDateTime.getDate() ||
+	    endDateTime.getMonth() !== startDateTime.getMonth() ||
+	    endDateTime.getFullYear() !== startDateTime.getFullYear()
+	  ) {
+	    return "+1 day";
+	  }
+	  return undefined;
 	};
 
 

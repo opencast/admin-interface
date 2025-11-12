@@ -211,7 +211,7 @@
 		"CONFLICT_ALREADY_ENDED": "Scheduling error: The event has already ended.",
 		"CONFLICT_END_BEFORE_START": "Scheduling error: Schedule end has to be later than the start.",
 		"CONFLICT_IN_THE_PAST": "The schedule could not be updated: You cannot schedule an event to be in the past.",
-		"CONFLICT_RANGE_DAYS":"The repeat days must be within the scheduled date range.",
+		"CONFLICT_RANGE_DAYS":"At least one repeat day must be within the scheduled date range.",
 		"INVALID_ACL_RULES": "Rules have to contain a valid role and read or/and write right(s).",
 		"MISSING_ACL_RULES": "At least one role with Read and Write permissions is required!",
 		"SAVED_ACL_RULES": "The access rules have been saved.",

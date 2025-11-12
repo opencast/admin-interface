@@ -939,7 +939,7 @@ export const checkConflicts = (values: {
 		);
 
 		// If start date of event is smaller than today --> Event is in past
-		if (values.sourceMode === "SCHEDULE_SINGLE" && startDate < new Date()) {
+		if ((values.sourceMode === "SCHEDULE_SINGLE" && startDate < new Date()) || (values.sourceMode === "SCHEDULE_MULTIPLE" && startDate < new Date())) {
 			dispatch(
 				addNotification({
 					type: "error",
@@ -954,20 +954,6 @@ export const checkConflicts = (values: {
 		const endDate = new Date(values.scheduleEndDate);
 		// NOTE: if time zone issues still occur during further testing, try to set times to UTC (-offset)
 		endDate.setHours(parseInt(values.scheduleEndHour), parseInt(values.scheduleEndMinute), 0, 0);
-
-		// If end date of event is smaller than today --> Event is in past
-		// but  multiple event can be started in the past yet!!
-		if (values.sourceMode === "SCHEDULE_MULTIPLE" && endDate < new Date()) {
-			dispatch(
-				addNotification({
-					type: "error",
-					key: "CONFLICT_ALREADY_ENDED",
-					duration: -1,
-					context: NOTIFICATION_CONTEXT,
-				}),
-			);
-			check = false;
-		}
 
 		// if start date is higher than end date --> end date is before start date
 		if (startDate > endDate) {
