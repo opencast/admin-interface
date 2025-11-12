@@ -10,6 +10,7 @@ import { ActionCellDelete } from "../../shared/ActionCellDelete";
 import { Modal, ModalHandle } from "../../shared/modals/Modal";
 import { useTranslation } from "react-i18next";
 import ButtonLikeAnchor from "../../shared/ButtonLikeAnchor";
+import { LuFileText } from "react-icons/lu";
 
 /**
  * This component renders the action cells of themes in the table view
@@ -46,10 +47,12 @@ const ThemesActionsCell = ({
 			{/* edit themes */}
 			<ButtonLikeAnchor
 				onClick={() => showThemeDetails()}
-				className={"more"}
+				className={"action-cell-button"}
 				editAccessRole={"ROLE_UI_THEMES_EDIT"}
-				tooltipText={"CONFIGURATION.THEMES.TABLE.TOOLTIP.DETAILS"}
-			/>
+				// tooltipText={"CONFIGURATION.THEMES.TABLE.TOOLTIP.DETAILS"} // Disabled due to performance concerns
+			>
+				<LuFileText />
+			</ButtonLikeAnchor>
 
 			{/* themes details modal */}
 			<Modal
@@ -64,7 +67,7 @@ const ThemesActionsCell = ({
 			{/* delete themes */}
 			<ActionCellDelete
 				editAccessRole={"ROLE_UI_THEMES_DELETE"}
-				tooltipText={"CONFIGURATION.THEMES.TABLE.TOOLTIP.DELETE"}
+				// tooltipText={"CONFIGURATION.THEMES.TABLE.TOOLTIP.DELETE"} // Disabled due to performance concerns
 				resourceId={row.id}
 				resourceName={row.name}
 				resourceType={"THEME"}

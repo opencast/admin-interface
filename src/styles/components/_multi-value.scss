@@ -1,0 +1,28 @@
+@use "../base/variables";
+
+.multi-value {
+  display: inline-block;
+  padding: 0px 5px;
+  margin: 1px 5px 1px 0;
+  font-size: 11px;
+  background: variables.$l-blue;
+  color: variables.$white;
+  border-radius: 4px;
+
+  button {
+    color: variables.$white;
+    font-weight: bold;
+
+    > svg {
+      vertical-align: middle;
+    }
+  }
+
+  &-green {
+    background: #4bcc8f;
+  }
+
+  &-red {
+    background: #ff0000;
+  }
+}

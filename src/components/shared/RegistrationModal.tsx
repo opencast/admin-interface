@@ -17,6 +17,7 @@ import ModalContent from "./modals/ModalContent";
 import { Modal, ModalHandle } from "./modals/Modal";
 import { ParseKeys } from "i18next";
 import BaseButton from "./BaseButton";
+import { LuLoaderCircle, LuMessageCircleQuestion } from "react-icons/lu";
 
 /**
  * This component renders the adopter registration modal. This modal has various states.
@@ -33,6 +34,10 @@ const RegistrationModal = ({
 			header={t("ADOPTER_REGISTRATION.MODAL.CAPTION")}
 			classId="registration-modal"
 			className="modal active modal-open modal-animation"
+			closeCallback={() => {
+			localStorage.setItem("adopterModalDismissed", Date.now().toString());
+  			return true;
+			}}
 			ref={modalRef}
 		>
 			<RegistrationModalContent />
@@ -124,22 +129,13 @@ const RegistrationModalContent = () => {
 			});
 	};
 
-	// style of label when input has content
-	const styleWithContent = {
-		fontSize: "70%",
-		fontWeight: "700",
-		transform: "translate3d(0, -35%, 0)",
-		opacity: 1,
-	};
-
 	return (
 	<>
 		{/* shows information about the registration*/}
 		{state === "information" && (
-			<ModalContent modalContentClassName="modal-content active">
+			<ModalContent modalContentClassName="modal-content">
 				<div
 					className="registration-header"
-					style={{ padding: "5px 0 15px 0" }}
 				>
 					<h2>
 						{t("ADOPTER_REGISTRATION.MODAL.INFORMATION_STATE.HEADER")}
@@ -165,7 +161,7 @@ const RegistrationModalContent = () => {
 
 		{/* shows terms of use */}
 		{state === "legalInfo" && (
-			<ModalContent modalContentClassName="modal-content active">
+			<ModalContent modalContentClassName="modal-content">
 				<div>
 					<div className="row">
 						<div className="scrollbox">
@@ -178,7 +174,7 @@ const RegistrationModalContent = () => {
 
 		{/* shows state after skipping the registration */}
 		{state === "skip" && (
-			<ModalContent modalContentClassName="modal-content active">
+			<ModalContent modalContentClassName="modal-content">
 				<div className="registration-header">
 					<h2>{t("ADOPTER_REGISTRATION.MODAL.SKIP_STATE.HEADER")}</h2>
 				</div>
@@ -197,7 +193,7 @@ const RegistrationModalContent = () => {
 
 		{/* shows delete confirmation */}
 		{state === "deleteSubmit" && (
-			<ModalContent modalContentClassName="modal-content active">
+			<ModalContent modalContentClassName="modal-content">
 				<p>
 					<span>
 						{t("ADOPTER_REGISTRATION.MODAL.DELETE_SUBMIT_STATE.TEXT")}
@@ -208,10 +204,10 @@ const RegistrationModalContent = () => {
 
 		{/* shows spinner while API requests are processed */}
 		{(state === "save" || state === "delete" || state === "update") && (
-			<ModalContent modalContentClassName="modal-content active">
+			<ModalContent modalContentClassName="modal-content">
 				<div>
 					<div className="row spinner-container">
-						<i className="fa fa-spinner fa-spin fa-4x fa-fw" />
+						<LuLoaderCircle className="fa-spin"/>
 					</div>
 				</div>
 			</ModalContent>
@@ -219,7 +215,7 @@ const RegistrationModalContent = () => {
 
 		{/* shows thank you after registration */}
 		{state === "thankYou" && (
-			<ModalContent modalContentClassName="modal-content active">
+			<ModalContent modalContentClassName="modal-content">
 				<div className="registration-header">
 					<h2>
 						{t("ADOPTER_REGISTRATION.MODAL.THANK_YOU_STATE.HEADER")}
@@ -236,7 +232,7 @@ const RegistrationModalContent = () => {
 							<b>
 								(<span>{t("HELP.HELP")}</span>)
 								{" "}
-								<span className="fa fa-question-circle" />
+								<LuMessageCircleQuestion style={{ position: "relative", top: 1 }}/>
 								{" > "}
 								<span>{t("HELP.ADOPTER_REGISTRATION")}</span>
 							</b>
@@ -254,7 +250,7 @@ const RegistrationModalContent = () => {
 
 		{/* shows error */}
 		{state === "error" && (
-			<ModalContent modalContentClassName="modal-content active">
+			<ModalContent modalContentClassName="modal-content">
 				<div className="registration-header">
 					<h2>{t("ADOPTER_REGISTRATION.MODAL.ERROR.HEADER")}</h2>
 				</div>
@@ -278,7 +274,7 @@ const RegistrationModalContent = () => {
 			{formik => (
 				<>
 					{state === "form" && (
-						<ModalContent modalContentClassName="modal-content active">
+						<ModalContent modalContentClassName="modal-content">
 							<div>
 								<fieldset>
 									<legend>
@@ -296,13 +292,8 @@ const RegistrationModalContent = () => {
 													className="form-control"
 												/>
 												<label
-													className="form-control-placeholder"
+													className={cn("form-control-placeholder", { styleWithContent: formik.values.organisationName })}
 													htmlFor="adopter_organisation"
-													style={
-														formik.values.organisationName
-															? styleWithContent
-															: {}
-													}
 												>
 													{t(
 														"ADOPTER_REGISTRATION.MODAL.FORM_STATE.ORGANISATION",
@@ -319,13 +310,8 @@ const RegistrationModalContent = () => {
 													className="form-control"
 												/>
 												<label
-													className="form-control-placeholder"
+													className={cn("form-control-placeholder", { styleWithContent: formik.values.departmentName })}
 													htmlFor="adopter_department"
-													style={
-														formik.values.departmentName
-															? styleWithContent
-															: {}
-													}
 												>
 													{t(
 														"ADOPTER_REGISTRATION.MODAL.FORM_STATE.DEPARTMENT",
@@ -344,11 +330,8 @@ const RegistrationModalContent = () => {
 													className="form-control"
 												/>
 												<label
-													className="form-control-placeholder"
+													className={cn("form-control-placeholder", { styleWithContent: formik.values.street })}
 													htmlFor="adopter_street"
-													style={
-														formik.values.street ? styleWithContent : {}
-													}
 												>
 													{t(
 														"ADOPTER_REGISTRATION.MODAL.FORM_STATE.STREET",
@@ -365,11 +348,8 @@ const RegistrationModalContent = () => {
 													className="form-control"
 												/>
 												<label
-													className="form-control-placeholder"
+													className={cn("form-control-placeholder", { styleWithContent: formik.values.streetNo })}
 													htmlFor="adopter_streetnumber"
-													style={
-														formik.values.streetNo ? styleWithContent : {}
-													}
 												>
 													{t(
 														"ADOPTER_REGISTRATION.MODAL.FORM_STATE.NUMBER",
@@ -382,7 +362,7 @@ const RegistrationModalContent = () => {
 										<div className="col">
 											<div className="form-group">
 												<Field
-													style={{ color: "#666", fontWeight: "600" }}
+													type="text"
 													id="adopter_country"
 													name="country"
 													as="select"
@@ -396,11 +376,8 @@ const RegistrationModalContent = () => {
 													))}
 												</Field>
 												<label
-													className="form-control-placeholder"
+													className={cn("form-control-placeholder", { styleWithContent: formik.values.country })}
 													htmlFor="adopter_country"
-													style={
-														formik.values.country ? styleWithContent : {}
-													}
 												>
 													{t(
 														"ADOPTER_REGISTRATION.MODAL.FORM_STATE.COUNTRY",
@@ -418,13 +395,8 @@ const RegistrationModalContent = () => {
 														className="form-control"
 													/>
 													<label
-														className="form-control-placeholder"
+														className={cn("form-control-placeholder", { styleWithContent: formik.values.postalCode })}
 														htmlFor="adopter_postalcode"
-														style={
-															formik.values.postalCode
-																? styleWithContent
-																: {}
-														}
 													>
 														{t(
 															"ADOPTER_REGISTRATION.MODAL.FORM_STATE.POSTAL_CODE",
@@ -439,11 +411,8 @@ const RegistrationModalContent = () => {
 														className="form-control"
 													/>
 													<label
-														className="form-control-placeholder"
+														className={cn("form-control-placeholder", { styleWithContent: formik.values.city })}
 														htmlFor="adopter_city"
-														style={
-															formik.values.city ? styleWithContent : {}
-														}
 													>
 														{t(
 															"ADOPTER_REGISTRATION.MODAL.FORM_STATE.CITY",
@@ -470,13 +439,8 @@ const RegistrationModalContent = () => {
 													className="form-control"
 												/>
 												<label
-													className="form-control-placeholder"
+													className={cn("form-control-placeholder", { styleWithContent: formik.values.firstName })}
 													htmlFor="adopter_firstname"
-													style={
-														formik.values.firstName
-															? styleWithContent
-															: {}
-													}
 												>
 													{t(
 														"ADOPTER_REGISTRATION.MODAL.FORM_STATE.FIRST_NAME",
@@ -493,11 +457,8 @@ const RegistrationModalContent = () => {
 													className="form-control"
 												/>
 												<label
-													className="form-control-placeholder"
+													className={cn("form-control-placeholder", { styleWithContent: formik.values.lastName })}
 													htmlFor="adopter_lastname"
-													style={
-														formik.values.lastName ? styleWithContent : {}
-													}
 												>
 													{t(
 														"ADOPTER_REGISTRATION.MODAL.FORM_STATE.LAST_NAME",
@@ -516,11 +477,8 @@ const RegistrationModalContent = () => {
 													className="form-control"
 												/>
 												<label
-													className="form-control-placeholder"
+													className={cn("form-control-placeholder", { styleWithContent: formik.values.email })}
 													htmlFor="adopter_emailadr"
-													style={
-														formik.values.email ? styleWithContent : {}
-													}
 												>
 													{t(
 														"ADOPTER_REGISTRATION.MODAL.FORM_STATE.MAIL",
@@ -554,7 +512,6 @@ const RegistrationModalContent = () => {
 									<div className="row">
 										<div className="form-group">
 											<Field
-												style={{ color: "#666", fontWeight: "600" }}
 												id="system_type"
 												name="systemType"
 												as="select"
@@ -568,11 +525,8 @@ const RegistrationModalContent = () => {
 												))}
 											</Field>
 											<label
-												className="form-control-placeholder"
+												className={cn("form-control-placeholder", { styleWithContent: formik.values.systemType })}
 												htmlFor="system_type"
-												style={
-													formik.values.systemType ? styleWithContent : {}
-												}
 											>
 												{t(
 													"ADOPTER_REGISTRATION.MODAL.FORM_STATE.SYSTEM_TYPE",
@@ -657,7 +611,7 @@ const RegistrationModalContent = () => {
 
 					{/* shows summary of information */}
 					{state === "summary" && (
-						<ModalContent modalContentClassName="modal-content active">
+						<ModalContent modalContentClassName="modal-content">
 							<p>{t("ADOPTER_REGISTRATION.MODAL.SUMMARY_STATE.HEADER")}</p>
 							<p>{t("ADOPTER_REGISTRATION.MODAL.SUMMARY_STATE.GENERAL_HEADER")}</p>
 							<div className="scrollbox">

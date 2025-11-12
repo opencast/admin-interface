@@ -7,6 +7,7 @@ import { Modal, ModalHandle } from "../../shared/modals/Modal";
 import UserDetails from "./modal/UserDetails";
 import { ActionCellDelete } from "../../shared/ActionCellDelete";
 import ButtonLikeAnchor from "../../shared/ButtonLikeAnchor";
+import { LuFileText } from "react-icons/lu";
 
 /**
  * This component renders the action cells of users in the table view
@@ -40,10 +41,12 @@ const UsersActionCell = ({
 			{/* edit/show user details */}
 			<ButtonLikeAnchor
 				onClick={() => showUserDetails()}
-				className={"more"}
+				className={"action-cell-button"}
 				editAccessRole={"ROLE_UI_USERS_EDIT"}
-				tooltipText={"USERS.USERS.TABLE.TOOLTIP.DETAILS"}
-			/>
+				// tooltipText={"USERS.USERS.TABLE.TOOLTIP.DETAILS"} // Disabled due to performance concerns
+			>
+				<LuFileText />
+			</ButtonLikeAnchor>
 
 			{/* user details modal */}
 			<Modal
@@ -58,7 +61,7 @@ const UsersActionCell = ({
 			{(row.manageable || (row.provider !== "opencast" && row.provider !== "system")) &&
 				<ActionCellDelete
 					editAccessRole={"ROLE_UI_USERS_DELETE"}
-					tooltipText={"USERS.USERS.TABLE.TOOLTIP.DELETE"}
+					// tooltipText={"USERS.USERS.TABLE.TOOLTIP.DELETE"} // Disabled due to performance concerns
 					resourceId={row.username}
 					resourceName={row.name}
 					resourceType={"USER"}

@@ -1,5 +1,3 @@
-@use "../base/fontawesome/fa-mixins";
-@use "../base/fontawesome/variables" as variables2;
 @use "../base/variables";
 @use "../mixins/triangle-point";
 
@@ -30,7 +28,7 @@
 #roll-up-menu {
     float: left;
     width: 80px;
-    background: #fff;
+    background: variables.$white;
     border: variables.$thin-border-stroke #c3cbd0;
     border-top: none;
     border-bottom-left-radius: 4px;
@@ -59,23 +57,19 @@
         line-height: $height;
         margin: 0 auto;
         text-align: center;
-        vertical-align: middle;
         display: block;
 
-        > i {
-            display: inline-block;
-            margin: 0 auto;
+        > .main-nav-icon {
+            height: 100%;
+            font-size: 29px;
             vertical-align: middle;
-            position: relative;
-            line-height: 50px;
             transition: all .2s;
             color: #818181;
         }
 
-        &:hover > i,
-        &:active > i {
-            color: #24425c;
-            @include fa-mixins.fa-icon-color(before, "#24425c");
+        &:hover > .main-nav-icon,
+        &:active > .main-nav-icon {
+            color: variables.$d-blue;
         }
 
         @keyframes fadeIn {
@@ -88,30 +82,6 @@
             100% {
                 opacity: 0.9;
             }
-        }
-
-        .events {
-            @include fa-mixins.fa-icon(variables2.$fa-var-calendar-check-o, before, block, -3px 0 0 0, 0, inherit, 29px, normal, inherit);
-        }
-
-        .systems {
-            @include fa-mixins.fa-icon(variables2.$fa-var-server, before, block, -3px 0 0 0, 0, inherit, 29px, normal, inherit);
-        }
-
-        .recordings {
-            @include fa-mixins.fa-icon(variables2.$fa-var-video-camera, before, block, -3px 0 0 0, 0, inherit, 29px, normal, inherit);
-        }
-
-        .users {
-            @include fa-mixins.fa-icon(variables2.$fa-var-user, before, block, -3px 0 0 0, 0, inherit, 29px, normal, inherit);
-        }
-
-        .statistics {
-            @include fa-mixins.fa-icon(variables2.$fa-var-signal, before, block, -3px 0 0 0, 0, inherit, 29px, normal, inherit);
-        }
-
-        .configuration {
-            @include fa-mixins.fa-icon(variables2.$fa-var-cogs, before, block, -3px 0 0 0, 0, inherit, 29px, normal, inherit);
         }
     }
 }

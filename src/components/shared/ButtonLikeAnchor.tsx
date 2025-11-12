@@ -30,7 +30,7 @@ const ButtonLikeAnchor = React.forwardRef<HTMLButtonElement, ButtonLikeAnchorPro
 		<BaseButton
 			ref={ref}
 			tooltipText={tooltipText}
-			// tooltipParams={tooltipParams}
+			tooltipParams={tooltipParams}
 			{...rest}
 			className={cn("button-like-anchor", rest.className)}
 		>

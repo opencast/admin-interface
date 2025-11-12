@@ -71,7 +71,7 @@ const NewSeriesSummary = <T extends RequiredFormProps>({
 				{/* Summary themes*/}
 				{!!formik.values.theme && (
 					<div className="obj tbl-list">
-						<header className="no-expand">
+						<header>
 							{t("EVENTS.SERIES.NEW.THEME.CAPTION")}
 						</header>
 						<table className="main-tbl">
@@ -88,7 +88,7 @@ const NewSeriesSummary = <T extends RequiredFormProps>({
 				{/* Summary Tobira*/}
 				{!!formik.values.selectedPage && (
 					<div className="obj tbl-list">
-						<header className="no-expand">
+						<header>
 							{t("EVENTS.SERIES.NEW.TOBIRA.CAPTION")}
 						</header>
 						<table className="main-tbl">

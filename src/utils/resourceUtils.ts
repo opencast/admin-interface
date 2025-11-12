@@ -177,23 +177,50 @@ export const transformMetadataFields = (metadata: MetadataField[]) => {
 	return metadata;
 };
 
-// transform metadata catalog for update via post request
-export const transformMetadataForUpdate = (catalog: MetadataCatalog, values: { [key: string]: MetadataCatalog["fields"][0]["value"] }) => {
-	const fields: MetadataCatalog["fields"] = [];
-	const updatedFields: MetadataCatalog["fields"] = [];
+export const transformListProvider = (collection: { [key: string]: string }) => {
+	return Object.entries(collection)
+		.map(([key, value]) => {
+			if (isJson(value)) {
+				// TODO: Handle JSON parsing errors
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+				const collectionParsed: { [key: string]: string } = JSON.parse(value);
+				return {
+					label: collectionParsed.label || value,
+					value: key,
+					...collectionParsed,
+				};
+			} else {
+				return {
+					label: value,
+					value: key,
+				};
+			}
+		});
+};
 
+// transform metadata catalog for update via post request
+export const transformMetadataForUpdate = (
+	catalog: MetadataCatalog,
+	values: { [key: string]: MetadataCatalog["fields"][0]["value"] },
+) => {
+	const fields: MetadataCatalog["fields"] = [];
+	const updatedFields: { id: string; value: unknown }[] = [];
 	catalog.fields.forEach(field => {
-		if (field.value !== values[field.id]) {
-			const updatedField = {
-				...field,
-				value: values[field.id],
-			};
-			updatedFields.push(updatedField);
-			fields.push(updatedField);
-		} else {
-			fields.push({ ...field });
+		const newValue = values[field.id];
+
+		// update UI state with full field (optional)
+		const fullField = { ...field, value: newValue };
+		fields.push(fullField);
+
+		// only include minimal clean data for backend if value changed
+		if (field.value !== newValue) {
+			updatedFields.push({
+				id: field.id,
+				value: newValue,
+			});
 		}
 	});
+
 	const data = new URLSearchParams();
 	data.append(
 		"metadata",
@@ -259,7 +286,11 @@ export const prepareMetadataFieldsForPost = (
 };
 
 // returns the name for a field value from the collection
-export const getMetadataCollectionFieldName = (metadataField: { collection?: { [key: string]: unknown }[] }, field: { value: unknown }, t: TFunction): string => {
+export const getMetadataCollectionFieldName = (
+	metadataField: { collection?: { [key: string]: unknown }[] },
+	field: { value: unknown },
+	t: TFunction,
+) => {
 	try {
 		if (metadataField.collection) {
 			const collectionField = metadataField.collection.find(
@@ -285,8 +316,8 @@ export const getMetadataCollectionFieldName = (metadataField: { collection?: { [
 // Prepare rules of access policies for post of new events or series
 export const prepareAccessPolicyRulesForPost = (policies: TransformedAcl[]) => {
 	// access policies for post request
-	const access : {
-		acl : Acl
+	const access: {
+		acl: Acl
 	} = {
 		acl: {
 			ace: [],

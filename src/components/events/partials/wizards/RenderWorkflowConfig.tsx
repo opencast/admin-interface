@@ -36,28 +36,11 @@ const RenderWorkflowConfig = <T extends RequiredFormProps>({
 		? workflowDef.description
 		: "";
 
-	const descriptionBoxStyle = {
-		margin: "15px 0 0 0",
-		position: "relative" as const,
-		border: "solid #c9d0d3",
-		borderWidth: "1px",
-		backgroundColor: "#fafafa",
-		overflow: "hidden",
-		borderRadius: "4px",
-	};
-
-	const descriptionTextStyle = {
-		margin: "10px",
-		fontFamily: '"Open sans", Helvetica,sans-serif',
-		fontSize: "12px",
-		whiteSpace: "pre-line" as const,
-	};
-
 	return (
 		<>
 			{displayDescription && description.length > 0 && (
-				<div className="collapsible-box" style={descriptionBoxStyle}>
-					<div style={descriptionTextStyle}>{description.trim()}</div>
+				<div id="workflow-configuration-description-box">
+					<div id="workflow-configuration-description-text">{description.trim()}</div>
 				</div>
 			)}
 

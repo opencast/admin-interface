@@ -1,6 +1,3 @@
-@use "../mixins/mixins-bourbon";
-@use "../base/fontawesome/fa-mixins";
-@use "../base/fontawesome/variables" as variables2;
 @use "../base/variables";
 @use "../mixins/button";
 
@@ -27,7 +24,7 @@
 
 
 .multi-select-container {
-    @include mixins-bourbon.clearfix;
+    display: flex;
 
     select[multiple] {
         margin-top: 10px;
@@ -72,9 +69,6 @@
 
     .multi-select-col {
         width: 45%;
-        display: block;
-        float: left;
-        vertical-align: top;
     }
 }
 
@@ -84,17 +78,13 @@
 }
 
 // Used to indicate the correlation between multiple select columns
-.exchange-icon:after {
-    width: 10%;
+.exchange-icon {
+    width: 6%;
     display: block;
     float: left;
     position: relative;
-    top: 60px;
-    content: "\f0ec";
-    font-family: FontAwesome;
     font-size: 18px;
     color: variables.$medium-prim-color;
-    text-align: center;
 }
 
 // Extra Input Offset
@@ -102,12 +92,12 @@
 .multi-select-container {
 
     $icon-top-margin: 90px;
-    $multiple-select-expanded-height: 152px;
+    $multiple-select-expanded-height: 133px;
 
     &.offset-col-1,
     &.offset-col-2 {
 
-        .exchange-icon:after {
+        .exchange-icon {
             top: $icon-top-margin;
         }
     }
@@ -116,7 +106,34 @@
         height: $multiple-select-expanded-height;
     }
 
+    &.offset-col-2 .multi-select-col:last-child .row:first-child  {
+       margin-top: 50px;
+    }
+
     &.offset-col-2 .multi-select-col:last-child select[multiple] {
         height: $multiple-select-expanded-height;
+    }
+}
+
+.effective-roles-container {
+    select[multiple] {
+        height: 26em;
+        margin-top: 10px;
+        font-size: 12px;
+        padding: 5px;
+
+        option {
+            padding: 3px 0px;
+        }
+    }
+
+    select {
+        width: 100%;
+    }
+
+    p {
+        font-size: 12px;
+        color: variables.$medium-prim-color;
+        line-height: 22px;
     }
 }

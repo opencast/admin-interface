@@ -14,11 +14,11 @@ const ThemesDateTimeCell = ({
 
 	return (
 		// Link template for creation date of themes
-		<span>
+		<>
 			{t("dateFormats.date.short", {
 				date: row.creationDate ? renderValidDate(row.creationDate) : "",
 			})}
-		</span>
+		</>
 	);
 };
 

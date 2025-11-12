@@ -1,5 +1,3 @@
-@use "../base/fontawesome/fa-mixins";
-@use "../base/fontawesome/variables" as variables2;
 @use "../base/variables";
 
 // controlling element of the popover
@@ -79,7 +77,6 @@
 }
 
 .popover__list-item {
-    @include fa-mixins.fa-icon(variables2.$fa-var-play-circle-o, before, inline-block, 0, 0, #37c180, 20px, normal, inherit);
     background-position-y: center;
     margin: 6px 0;
     padding-left: 30px;
@@ -90,17 +87,9 @@
     > span {
         vertical-align: top;
     }
-}
 
-.popover__list-item-disabled {
-    @include fa-mixins.fa-icon(variables2.$fa-var-play-circle-o, before, inline-block, 0, 0, inherit, 20px, normal, inherit);
-    margin: 6px 0;
-    padding-left: 30px;
-    line-height: 22px;
-    background-repeat: no-repeat;
-    display: block;
-
-    > span {
-        vertical-align: top;
+    .play-circle-icon {
+        color: variables.$primary-color-green;
+        font-size: 20px;
     }
 }

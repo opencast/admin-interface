@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../../../store";
 import { fetchEventPublications } from "../../../../slices/eventDetailsSlice";
 import { ParseKeys } from "i18next";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
+import { LuCirclePlay } from "react-icons/lu";
 
 const EventDetailsPublicationTab = ({
 	eventId,
@@ -16,12 +17,6 @@ const EventDetailsPublicationTab = ({
 	const dispatch = useAppDispatch();
 
 	const publications = useAppSelector(state => getPublications(state));
-
-	const styleSpan = {
-		display: "inline-block",
-		float: "right" as const,
-		marginLeft: "auto",
-	};
 
 	useEffect(() => {
 		dispatch(fetchEventPublications(eventId)).then(r => console.info(r));
@@ -58,7 +53,7 @@ const EventDetailsPublicationTab = ({
 															}}
 														/>
 													) : (
-														<i className="video-icon" />
+														<LuCirclePlay className="video-icon"/>
 													)}
 												</span>
 												<div>
@@ -71,9 +66,11 @@ const EventDetailsPublicationTab = ({
 												</div>
 
 												{publication.enabled ? (
-													<a className="play" href={publication.url} target="_blank" rel="noreferrer"/>
+													<a className="play" href={publication.url} target="_blank" rel="noreferrer">
+														<LuCirclePlay />
+													</a>
 												) : (
-													<span style={styleSpan}>
+													<span className="no-play-text">
 														{t(
 															"EVENTS.EVENTS.DETAILS.PUBLICATIONS.LIVE_EVENT_NOT_IN_PROGRESS",
 														)}

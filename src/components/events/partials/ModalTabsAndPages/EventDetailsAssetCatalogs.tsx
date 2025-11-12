@@ -9,6 +9,7 @@ import { AssetTabHierarchy } from "../modals/EventDetails";
 import { useTranslation } from "react-i18next";
 import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
+import { LuChevronRight } from "react-icons/lu";
 
 /**
  * This component manages the catalogs sub-tab for assets tab of event details modal
@@ -99,6 +100,7 @@ const EventDetailsAssetCatalogs = ({
 														"EVENTS.EVENTS.DETAILS.ASSETS.DETAILS",
 													) /* Details */
 												}
+												<LuChevronRight className="details-link-icon"/>
 											</ButtonLikeAnchor>
 										</td>
 									</tr>

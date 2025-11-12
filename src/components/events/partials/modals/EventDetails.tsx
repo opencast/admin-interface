@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import cn from "classnames";
-import { hasAccess } from "../../../../utils/utils";
+import { confirmUnsaved, hasAccess } from "../../../../utils/utils";
 import EventDetailsCommentsTab from "../ModalTabsAndPages/EventDetailsCommentsTab";
 import EventDetailsAccessPolicyTab from "../ModalTabsAndPages/EventDetailsAccessPolicyTab";
 import EventDetailsWorkflowTab from "../ModalTabsAndPages/EventDetailsWorkflowTab";
@@ -49,6 +49,7 @@ import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
 import { NOTIFICATION_CONTEXT } from "../../../../configs/modalConfig";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { ParseKeys } from "i18next";
+import EventDetailsWorkflowSchedulingTab from "../ModalTabsAndPages/EventDetailsWorkflowSchedulingTab";
 
 export enum EventDetailsPage {
 	Metadata,
@@ -217,8 +218,16 @@ const EventDetails = ({
 	];
 
 	const openTab = (tabNr: EventDetailsPage) => {
-		dispatch(removeNotificationWizardForm());
-		dispatch(openModalTab(tabNr, "workflow-details", "entry"));
+		let isUnsavedChanges = false;
+		isUnsavedChanges = policyChanged;
+		if (formikRef.current && formikRef.current.dirty !== undefined && formikRef.current.dirty) {
+			isUnsavedChanges = true;
+		}
+
+		if (!isUnsavedChanges || confirmUnsaved(t)) {
+			dispatch(removeNotificationWizardForm());
+		        dispatch(openModalTab(tabNr, "workflow-details", "entry"));
+		}
 	};
 
 	return (
@@ -267,11 +276,10 @@ const EventDetails = ({
 						formikRef={formikRef}
 					/>
 				)}
-				{page === EventDetailsPage.Workflow &&
+				{page === EventDetailsPage.Workflow && !hasSchedulingProperties &&
 					((workflowTabHierarchy === "workflows" && (
 						<EventDetailsWorkflowTab
 							eventId={eventId}
-							formikRef={formikRef}
 						/>
 					)) ||
 						(workflowTabHierarchy === "workflow-details" && (
@@ -292,6 +300,12 @@ const EventDetails = ({
 								eventId={eventId}
 							/>
 						)))}
+				{page === EventDetailsPage.Workflow && hasSchedulingProperties &&
+					<EventDetailsWorkflowSchedulingTab
+						eventId={eventId}
+						formikRef={formikRef}
+					/>
+				}
 				{page === EventDetailsPage.AccessPolicy && (
 					<EventDetailsAccessPolicyTab
 						eventId={eventId}

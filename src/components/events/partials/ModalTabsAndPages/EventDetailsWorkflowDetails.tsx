@@ -27,6 +27,7 @@ import { ParseKeys } from "i18next";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
 import EventDetailsWorkflowErrors from "./EventDetailsWorkflowErrors";
 import { WorfklowOperationsTableBody } from "./EventDetailsWorkflowOperations";
+import { LuChevronRight } from "react-icons/lu";
 
 /**
  * This component manages the workflow details for the workflows tab of the event details modal
@@ -104,7 +105,7 @@ const EventDetailsWorkflowDetails = ({
 									}
 								</header>
 								<div className="obj-container">
-									<table className="main-tbl vertical-headers">
+									<table className="main-tbl">
 										<tbody>
 											<tr>
 												<td>
@@ -259,7 +260,7 @@ const EventDetailsWorkflowDetails = ({
 									}
 								</header>
 								<div className="obj-container">
-									<table className="main-tbl vertical-headers">
+									<table className="main-tbl">
 										<tbody>
 											<tr />
 										</tbody>
@@ -277,7 +278,7 @@ const EventDetailsWorkflowDetails = ({
 									}
 								</header>
 								<div className="obj-container">
-									<table className="main-tbl vertical-headers">
+									<table className="main-tbl">
 										<tbody>
 											<tr />
 										</tbody>
@@ -375,7 +376,7 @@ const OperationsPreview = ({
 					}
 					openSubTab={openDetailsSubTab}
 				/>
-				<hr style={{ height: "1px", border: 0, borderTop: "1px solid #ccc", margin: "0", padding: "0" }} />
+				<hr/>
 			</>}
 
 			{/* links to 'Operations' or 'Errors & Warnings' sub-Tabs */}
@@ -390,6 +391,7 @@ const OperationsPreview = ({
 							onClick={() => openSubTab("workflow-operations")}
 						>
 							{t("EVENTS.EVENTS.DETAILS.WORKFLOWS.DETAILS") /* Details */}
+							<LuChevronRight className="details-link-icon"/>
 						</ButtonLikeAnchor>
 					</li>
 				</ul>

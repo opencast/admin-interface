@@ -1,5 +1,5 @@
 import React from "react";
-import { styleNavClosed, styleNavOpen } from "../utils/componentsUtils";
+import cn from "classnames";
 
 /**
  * Component that renders the main view
@@ -7,8 +7,7 @@ import { styleNavClosed, styleNavOpen } from "../utils/componentsUtils";
 const MainView: React.FC<{ open: boolean, children: React.ReactNode }> = ({ open, children }) => {
 	return (
 		<main
-			className="main-view"
-			style={open ? styleNavOpen : styleNavClosed}
+			className={cn("main-view", { open: open })}
 			role="main"
 		>
 			{children}

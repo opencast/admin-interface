@@ -44,11 +44,11 @@ import { AppDispatch, AppThunk, RootState } from "../store";
 export const loadEventsIntoTable = (): AppThunk => (dispatch, getState) => {
 	const { events, table } = getState();
 	const total = events.total;
-
 	const pagination = table.pagination;
+	let isNewEventAdded = false;
 	// check which events are currently selected
 	const resource = events.results.map(result => {
-		const current = table.rows.find(row => "id" in row && row.id === result.id);
+		const current = table.rows.entities[result.id];
 
 		if (!!current && table.resource === "events") {
 			return {
@@ -56,6 +56,7 @@ export const loadEventsIntoTable = (): AppThunk => (dispatch, getState) => {
 				selected: current.selected,
 			};
 		} else {
+			isNewEventAdded = true;
 			return {
 				...result,
 				selected: false,
@@ -74,8 +75,11 @@ export const loadEventsIntoTable = (): AppThunk => (dispatch, getState) => {
 		sortBy: table.sortBy["events"],
 		reverse: table.reverse["events"],
 		totalItems: total,
+		isNewEventAdded: isNewEventAdded,
+		flags: {
+    	isNewEventAdded,
+  		},
 	};
-
 	dispatch(loadResourceIntoTable(tableData));
 };
 
@@ -84,10 +88,9 @@ export const loadSeriesIntoTable = (): AppThunk => (dispatch, getState) => {
 	const { series, table } = getState();
 	const total = series.total;
 	const pagination = table.pagination;
-
 	// check which events are currently selected
 	const resource = series.results.map(result => {
-		const current = table.rows.find(row => "id" in row && row.id === result.id);
+		const current = table.rows.entities[result.id];
 
 		if (!!current && table.resource === "series") {
 			return {
@@ -556,7 +559,7 @@ export const changeColumnSelection = (updatedColumns: TableConfig["columns"]) =>
 };
 
 // Select certain row
-export const changeRowSelection = (id: number | string): AppThunk => (dispatch, getState) => {
+export const changeRowSelection = (id: string): AppThunk => (dispatch, getState) => {
 	dispatch(selectRow(id));
 
 	const state = getState();

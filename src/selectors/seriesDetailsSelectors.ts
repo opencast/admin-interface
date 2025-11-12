@@ -3,6 +3,11 @@ import { RootState } from "../store";
 /**
  * This file contains selectors regarding details of a certain series
  */
+/* selectors for modal */
+export const showModal = (state: RootState) => state.seriesDetails.modal.show;
+export const getModalPage = (state: RootState) => state.seriesDetails.modal.page;
+export const getModalSeries = (state: RootState) => state.seriesDetails.modal.series;
+
 export const getSeriesDetailsMetadata = (state: RootState) => state.seriesDetails.metadata;
 export const getSeriesDetailsExtendedMetadata = (state: RootState) => state.seriesDetails.extendedMetadata;
 export const getSeriesDetailsAcl = (state: RootState) => state.seriesDetails.acl;

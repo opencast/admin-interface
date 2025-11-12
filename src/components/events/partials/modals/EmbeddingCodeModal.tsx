@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { getSourceURL } from "../../../../utils/embeddedCodeUtils";
 import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
 import BaseButton from "../../../shared/BaseButton";
+import { ParseKeys } from "i18next";
 
 /**
  * This component renders the embedding code modal
@@ -80,11 +81,20 @@ const EmbeddingCodeModal = ({
 	return (
 		<>
 			{/* embed size buttons */}
+			<div className="list-obj">
+				<div className="obj-container">
+					<span>
+						{t("EMBEDDING_CODE.DESCRIPTION")}
+					</span>
+				</div>
+			</div>
 			<div className="embedded-code-boxes">
 				<ButtonLikeAnchor
 					id="620x349"
 					className="embedSizeButton size_620x349"
 					onClick={e => updateTextArea(e)}
+					tooltipText={t("EMBEDDING_CODE.GENERATE_TOOLTIP", { size: "620x349" }) as ParseKeys}
+					aria-label={t("EMBEDDING_CODE.GENERATE_TOOLTIP", { size: "620x349" }) as ParseKeys}
 				>
 					<span className="span-embedded-code">620x349</span>
 				</ButtonLikeAnchor>
@@ -92,6 +102,8 @@ const EmbeddingCodeModal = ({
 					id="540x304"
 					className="embedSizeButton size_540x304"
 					onClick={e => updateTextArea(e)}
+					tooltipText={t("EMBEDDING_CODE.GENERATE_TOOLTIP", { size: "540x304" }) as ParseKeys}
+					aria-label={t("EMBEDDING_CODE.GENERATE_TOOLTIP", { size: "540x304" }) as ParseKeys}
 				>
 					<span className="span-embedded-code">540x304</span>
 				</ButtonLikeAnchor>
@@ -99,6 +111,8 @@ const EmbeddingCodeModal = ({
 					id="460x259"
 					className="embedSizeButton size_460x259"
 					onClick={e => updateTextArea(e)}
+					tooltipText={t("EMBEDDING_CODE.GENERATE_TOOLTIP", { size: "460x259" }) as ParseKeys}
+					aria-label={t("EMBEDDING_CODE.GENERATE_TOOLTIP", { size: "460x259" }) as ParseKeys}
 				>
 					<span className="span-embedded-code">460x259</span>
 				</ButtonLikeAnchor>
@@ -106,6 +120,8 @@ const EmbeddingCodeModal = ({
 					id="380x214"
 					className="embedSizeButton size_380x214"
 					onClick={e => updateTextArea(e)}
+					tooltipText={t("EMBEDDING_CODE.GENERATE_TOOLTIP", { size: "380x214" }) as ParseKeys}
+					aria-label={t("EMBEDDING_CODE.GENERATE_TOOLTIP", { size: "380x214" }) as ParseKeys}
 				>
 					<span className="span-embedded-code">380x214</span>
 				</ButtonLikeAnchor>
@@ -113,6 +129,8 @@ const EmbeddingCodeModal = ({
 					id="300x169"
 					className="embedSizeButton size_300x169"
 					onClick={e => updateTextArea(e)}
+					tooltipText={t("EMBEDDING_CODE.GENERATE_TOOLTIP", { size: "300x169" }) as ParseKeys}
+					aria-label={t("EMBEDDING_CODE.GENERATE_TOOLTIP", { size: "300x169" }) as ParseKeys}
 				>
 					<span className="span-embedded-code">300x169</span>
 				</ButtonLikeAnchor>
@@ -130,6 +148,7 @@ const EmbeddingCodeModal = ({
 					rows={2}
 					value={textAreaContent}
 					cols={1}
+					aria-label={t("EMBEDDING_CODE.EMBEDD_CODE_TEXTAREA_ARIA")}
 				/>
 			</div>
 
@@ -144,15 +163,14 @@ const EmbeddingCodeModal = ({
 
 			{/* copy button */}
 			<div className="embedded-code-copy-to-clipboard">
-				<div className="btn-container" style={{ marginBottom: "20px" }}>
-					<BaseButton
-						className="cancel-btn"
-						style={{ fontSize: "14px" }}
-						onClick={() => copy()}
-					>
-						{t("COPY")}
-					</BaseButton>
-				</div>
+				<BaseButton
+					className="cancel-btn"
+					onClick={() => copy()}
+					tooltipText="EMBEDDING_CODE.COPY_BUTTON_TOOLTIP"
+					aria-label={t("EMBEDDING_CODE.COPY_BUTTON_TOOLTIP")}
+				>
+					{t("COPY")}
+				</BaseButton>
 			</div>
 		</>
 	);

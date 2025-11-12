@@ -70,7 +70,7 @@ const MetadataSummaryTable = ({
 
 	return (
 		<div className="obj tbl-list">
-			<header className="no-expand">{t(header)}</header>
+			<header>{t(header)}</header>
 			<div className="obj-container">
 				{catalogs.map((catalog, key) => (
 					<table key={key} className="main-tbl">

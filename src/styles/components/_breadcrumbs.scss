@@ -1,6 +1,4 @@
 @use "sass:color";
-@use "../base/fontawesome/fa-mixins";
-@use "../base/fontawesome/variables" as variables2;
 @use "../base/variables";
 
 /**
@@ -53,8 +51,6 @@
                 color: variables.$modal-nav-link-color;
             }
         }
-
-        @include fa-mixins.fa-icon(variables2.$fa-var-chevron-right, after, inline-block, 0, 0, inherit, 9px);
 
         &:after {
             position: relative;

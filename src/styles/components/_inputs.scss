@@ -1,6 +1,4 @@
 @use "sass:color";
-@use "../base/fontawesome/fa-mixins";
-@use "../base/fontawesome/variables" as variables2;
 @use "../base/variables";
 @use "../mixins/button";
 
@@ -38,7 +36,7 @@ textarea {
     width: 130px;
     font-family: variables.$font-stack;
 
-    background: #fff;
+    background: variables.$white;
     border: variables.$thin-border-stroke variables.$main-border-color;
     border-radius: variables.$main-border-radius;
     margin: 0 auto;
@@ -66,24 +64,6 @@ textarea {
         color: variables.$red;
     }
 
-    // Input icons
-    // ----------------------------------------
-
-    &#email {
-       background-image: url("#{variables.$img-path}/user-input-icon.png");
-       background-size: 23px 20px;
-       background-repeat: no-repeat;
-       background-position: 14px center;
-    }
-
-    &#password {
-        background-image: url("#{variables.$img-path}/key-icon.png");
-        background-size: 16px 20px;
-        background-repeat: no-repeat;
-        background-position: 19px center;
-    }
-
-
     &.small {
         padding: 15px;
         height: 30px;
@@ -95,8 +75,13 @@ textarea {
     height: auto;
 }
 
+select[type="text"] {
+    font-weight: 600;
+    color: variables.$medium-prim-color;
+}
+
 select[multiple] {
-    background: #fff;
+    background: variables.$white;
     border: variables.$thin-border-stroke variables.$main-border-color;
     border-radius: variables.$main-border-radius;
     padding: 10px;
@@ -113,7 +98,7 @@ select[multiple] {
 input[type="checkbox"].ios,
 input[type="radio"].ios {
 
-    $white: #fff;
+    $white: variables.$white;
     $grey: #d3d3d3;
     $transition-duration: 250ms;
 
@@ -158,18 +143,10 @@ input[type="radio"].ios {
     }
 }
 
-// Select chosen
-.chosen-results {
-    width: 100%;
-}
-
-
 .search-container {
     width: 100% !important;
     height: 40px;
     position: relative;
-
-    @include fa-mixins.fa-icon(variables2.$fa-var-search, after, inline, 0, 0, inherit, 13px);
 
     outline: variables.$thin-border-stroke color.adjust(variables.$main-border-color, $lightness: -2%);
     border-radius: variables.$main-border-radius;
@@ -196,7 +173,7 @@ input[type="radio"].ios {
 
 
     &:focus-within {
-        outline: 3px solid #378dd4;
+        outline: 3px solid variables.$l-blue;
     }
 
     &.expand {
@@ -214,18 +191,20 @@ input[type="radio"].ios {
         width: 46px;
         float: right;
         @include button.btn(white);
-        @include fa-mixins.fa-icon(variables2.$fa-var-times, before, block, 0, 0.45em 0.45em 0.55em 0.45em, inherit, 14px);
         opacity: 1 !important;
+
+        display: flex;
+        align-items: center;
 
         &, &:hover, &:focus, &:active {
             background: none;
-            background-color: #fff;
+            background-color: variables.$white;
             border: 0;
             box-shadow: none;
         }
 
         &.disabled, &.disabled:hover, &.disabled:focus, &.disabled:active {
-            background-color: #eeeff0,
+            background-color: variables.$modal-nav-bg-color,
         }
 
         &+input.search {
@@ -235,10 +214,14 @@ input[type="radio"].ios {
 
     }
 
-    &:after {
+    .search-icon {
+        color: inherit;
+        font-size: 13px;
+
         position: absolute;
         top: 13px;
         left: 10px;
+        z-index: 1;
     }
 
 }

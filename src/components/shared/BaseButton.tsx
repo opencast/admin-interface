@@ -29,7 +29,7 @@ const BaseButton = React.forwardRef<HTMLButtonElement, BaseButtonProps>(({
 
 	if (tooltipText) {
 		return (
-			<Tooltip title={tooltipParams ? t(tooltipText) : t(tooltipText, tooltipParams)}>
+			<Tooltip title={tooltipParams ? t(tooltipText, tooltipParams) : t(tooltipText)}>
 				{buttonComponent}
 			</Tooltip>
 		);

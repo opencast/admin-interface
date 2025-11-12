@@ -24,6 +24,8 @@ import { hasAccess } from "../../../../utils/utils";
 import { removeNotificationWizardForm } from "../../../../slices/notificationSlice";
 import NewMetadataCommonPage from "../ModalTabsAndPages/NewMetadataCommonPage";
 import WizardStepper, { WizardStep } from "../../../shared/wizard/WizardStepper";
+import { getAclDefaultActions, getAclDefaultTemplate } from "../../../../selectors/aclSelectors";
+import { AclTemplate } from "../../../../slices/aclSlice";
 
 /**
  * This component manages the pages of the new event wizard and the submission of values
@@ -41,6 +43,8 @@ const NewEventWizard = ({
 	const extendedMetadata = useAppSelector(state => getExtendedEventMetadata(state));
 	const user = useAppSelector(state => getUserInformation(state));
 	const orgProperties = useAppSelector(state => getOrgProperties(state));
+	const aclDefaultActions = useAppSelector(state => getAclDefaultActions(state));
+	const aclDefaultTemplate = useAppSelector(state => getAclDefaultTemplate(state));
 
 	useEffect(() => {
 		dispatch(removeNotificationWizardForm());
@@ -60,10 +64,11 @@ const NewEventWizard = ({
 		extendedMetadata,
 		uploadSourceOptions,
 		user,
+		aclDefaultActions,
+		aclDefaultTemplate,
 	);
 
 	const [page, setPage] = useState(0);
-	const [snapshot, setSnapshot] = useState(initialValues);
 	const [pageCompleted, setPageCompleted] = useState<{ [key: number]: boolean }>({});
 
 	type StepName = "metadata" | "metadata-extended" | "source" | "upload-asset" | "processing" | "access" | "summary";
@@ -126,8 +131,6 @@ const NewEventWizard = ({
 	}
 
 	const nextPage = (values: typeof initialValues) => {
-		setSnapshot(values);
-
 		// set page as completely filled out
 		const updatedPageCompleted = pageCompleted;
 		updatedPageCompleted[page] = true;
@@ -145,8 +148,6 @@ const NewEventWizard = ({
 	};
 
 	const previousPage = (values: typeof initialValues) => {
-		setSnapshot(values);
-
 		let newPage = page;
 		newPage = newPage - 1;
 		// Skip asset upload step when scheduling
@@ -166,7 +167,7 @@ const NewEventWizard = ({
 	return (
 		<>
 			<Formik
-				initialValues={snapshot}
+				initialValues={initialValues}
 				validationSchema={currentValidationSchema}
 				onSubmit={values => handleSubmit(values)}
 			>
@@ -265,6 +266,8 @@ const getInitialValues = (
 	extendedMetadata: MetadataCatalog[],
 	uploadSourceOptions: UploadOption[],
 	user: UserInfoState,
+	aclDefaultActions?: string[],
+	aclDefaultTemplate?: AclTemplate,
 ) => {
 	let initialValues = initialFormValuesNewEvents;
 
@@ -335,10 +338,15 @@ const getInitialValues = (
 			role: user.userRole,
 			read: true,
 			write: true,
-			actions: [],
+			actions: aclDefaultActions ? aclDefaultActions : [],
 			user: user.user,
 		},
 	];
+
+	if (aclDefaultTemplate) {
+		initialValues["aclTemplate"] = aclDefaultTemplate.id.toString();
+		initialValues["policies"] = [...aclDefaultTemplate.acl, ...initialValues["policies"]];
+	}
 
 	return initialValues;
 };

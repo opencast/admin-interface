@@ -37,14 +37,13 @@ const EditScheduledEventsModal = ({
 	const initialValues = initialFormValuesEditScheduledEvents;
 
 	const {
-		snapshot,
 		page,
 		nextPage,
 		previousPage,
 		setPage,
 		pageCompleted,
 		setPageCompleted,
-	} = usePageFunctions(0, initialValues);
+	} = usePageFunctions(0);
 
 	// for edit page: conflicts with other events
 	const [conflicts, setConflicts] = useState<Conflict[]>([]);
@@ -120,7 +119,7 @@ const EditScheduledEventsModal = ({
 		<>
 			{/* Initialize overall form */}
 			<Formik
-				initialValues={snapshot}
+				initialValues={initialValues}
 				validate={values => validateFormik(values)}
 				onSubmit={values => handleSubmit(values)}
 			>

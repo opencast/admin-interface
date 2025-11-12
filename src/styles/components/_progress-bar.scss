@@ -28,7 +28,7 @@
     height: 25px;
     margin-top: 5px;
     margin-bottom: 10px;
-    background-color: #fff;
+    background-color: variables.$white;
     border-radius: variables.$main-border-radius;
     border: 1px solid color.adjust(#388ed6, $lightness: -10%);
 
@@ -43,7 +43,7 @@
     height: 100%;
     font-size: 12px;
     line-height: 24px;
-    color: #fff;
+    color: variables.$white;
     text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.2);
     text-align: center;
     background-color: variables.$progress-bar-color;
@@ -64,9 +64,23 @@
         box-shadow: none;
     }
 
-    .sr-only {
-        visibility: hidden;
-        opacity: 0;
+    &.bad {
+        background: variables.$white;
+    }
+    &.veryweak {
+        background: variables.$red;
+    }
+    &.weak {
+        background: variables.$orange;
+    }
+    &.good {
+        background: variables.$yellow;
+    }
+    &.strong {
+        background: #388ed6;
+    }
+    &.verystrong {
+        background: linear-gradient(variables.$primary-color-green, variables.$primary-color-green-dark-1);
     }
 }
 
@@ -74,4 +88,8 @@
     border-color: lightgray !important;
     height: 8px !important;
     margin-top: 10px !important;
+}
+
+.pw-label {
+    text-align: left;
 }

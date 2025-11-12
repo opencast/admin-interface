@@ -37,36 +37,6 @@
             margin-right: 10px;
         }
 
-        .fa-calendar-o,
-        .fa-plus-circle {
-            font-size: 14px;
-            margin: 0;
-            margin-left: 5px;
-            display: inline-block;
-            float: none;
-
-            &:hover {
-                color: variables.$l-blue;
-            }
-        }
-
-        .fa-plus-circle {
-            color: variables.$primary-color-green;
-
-            &:hover {
-                color: variables.$primary-color-green-light-1;
-            }
-        }
-
-        // Show and Hide sections
-        .source-type-content {
-            display: none;
-
-            &.active {
-                display: block;
-            }
-        }
-        
         .scheduling-conflict {
           @include alerts.alert-variant(variables.$state-danger-bg, variables.$state-danger-border, variables.$state-danger-text);
           margin-bottom: 15px;
@@ -81,7 +51,7 @@
 td > button.tobira-button-disabled {
     cursor: default;
     opacity: .8;
-    color: #666666;
+    color: variables.$global-text-color;
 }
 
 .tobira-path {

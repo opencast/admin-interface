@@ -48,6 +48,7 @@ import SchedulingLocation from "../wizards/scheduling/SchedulingLocation";
 import SchedulingInputs from "../wizards/scheduling/SchedulingInputs";
 import SchedulingConflicts from "../wizards/scheduling/SchedulingConflicts";
 import { ParseKeys } from "i18next";
+import { LuCircleX } from "react-icons/lu";
 
 /**
  * This component renders the source page for new events in the new event wizard.
@@ -118,7 +119,7 @@ const NewSourcePage = <T extends RequiredFormProps>({
 				}
 
 				<div className="obj list-obj">
-					<header className="no-expand">
+					<header>
 						{t("EVENTS.EVENTS.NEW.SOURCE.SELECT_SOURCE")}
 					</header>
 					{/* Radio buttons for choosing source mode */}
@@ -268,7 +269,7 @@ const Upload = <T extends RequiredFormPropsUpload>({
 									formik.values.uploadAssetsTrack.map((asset, key) => (
 										<tr key={key}>
 											<td>
-												<span style={{ fontWeight: "bold" }}>
+												<span className="title">
 													{translateOverrideFallback(asset, t, "SHORT")}
 												</span>
 												<p>
@@ -291,10 +292,10 @@ const Upload = <T extends RequiredFormPropsUpload>({
 													/>
 												</div>
 											</td>
-											<td className="fit">
+											<td>
 												<ButtonLikeAnchor
 													style={{ visibility: asset.file ? "visible" : "hidden" }}
-													className="remove"
+													className="action-cell-button remove"
 													onClick={() => {
 														formik.setFieldValue(
 															`uploadAssetsTrack.${key}.file`,
@@ -302,7 +303,9 @@ const Upload = <T extends RequiredFormPropsUpload>({
 														);
 														(document.getElementById(asset.id) as HTMLInputElement).value = "";
 													}}
-												/>
+												>
+													<LuCircleX />
+												</ButtonLikeAnchor>
 											</td>
 										</tr>
 									))
@@ -313,7 +316,7 @@ const Upload = <T extends RequiredFormPropsUpload>({
 				</div>
 			</div>
 			<div className="obj list-obj">
-				<header className="no-expand">
+				<header>
 					{t("EVENTS.EVENTS.NEW.SOURCE.UPLOAD.RECORDING_METADATA")}
 				</header>
 				<div className="obj-container">
@@ -322,7 +325,8 @@ const Upload = <T extends RequiredFormPropsUpload>({
 							{/* One row for each metadata field*/}
 							{sourceMetadata.UPLOAD && sourceMetadata.UPLOAD.metadata.map((field, key) => (
 								<tr key={key}>
-									<td>
+									{/* Set fixed width to prevent date picker from opening twice */}
+									<td style={{ width: "20%" }}>
 										<span>{t(field.label as ParseKeys)}</span>
 										{field.required && <i className="required">*</i>}
 									</td>
@@ -476,8 +480,7 @@ const Schedule = <T extends {
 									yearDropdownItemNumber={2}
 									dateFormat="P"
 									popperClassName="datepicker-custom"
-									className="datepicker-custom-input"
-									portalId="root"
+									wrapperClassName="datepicker-custom-wrapper"
 									locale={currentLanguage?.dateLocale}
 									strictParsing
 								/>
@@ -508,7 +511,7 @@ const Schedule = <T extends {
 											dateFormat="P"
 											popperClassName="datepicker-custom"
 											className="datepicker-custom-input"
-											portalId="root"
+											wrapperClassName="datepicker-custom-wrapper"
 											locale={currentLanguage?.dateLocale}
 											strictParsing
 										/>

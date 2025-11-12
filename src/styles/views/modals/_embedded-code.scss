@@ -1,3 +1,5 @@
+@use "../../base/variables";
+
 /**
  * Licensed to The Apereo Foundation under one or more contributor license
  * agreements. See the NOTICE file distributed with this work for additional
@@ -22,7 +24,7 @@
 .embedSizeButton {
     display: inline-block;
     background-color: #e2e1e1;
-    border: 1px solid #ccc;
+    border: 1px solid variables.$color-silver;
     border-radius: 10px;
     cursor: pointer;
     margin-right: 5px;
@@ -33,7 +35,7 @@
 }
 
 .embedSizeButtonSelected {
-    border: 3px solid #24425c;
+    border: 3px solid variables.$d-blue;
 }
 
 .copyConfirm {
@@ -105,6 +107,10 @@
 .embedded-code-copy-to-clipboard {
     display:inline-block;
     text-align: center;
-    margin: 20px 0px 10px 0px;
+    margin: 20px 0px 30px 0px;
     width: 100%;
+
+    > button {
+        font-size: 14px;
+    }
 }

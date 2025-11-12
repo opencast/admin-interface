@@ -16,9 +16,13 @@ import About from "./components/About";
 import { useAppDispatch } from "./store";
 import { fetchOcVersion, fetchUserInfo } from "./slices/userInfoSlice";
 import { subscribeToAuthEvents } from "./utils/broadcastSync";
+import { useTableFilterStateValidation } from "./hooks/useTableFilterStateValidation";
 
 function App() {
 	const dispatch = useAppDispatch();
+
+	useTableFilterStateValidation();
+
 	useEffect(() => {
 		// Load information about current user on mount
 		dispatch(fetchUserInfo());
@@ -33,7 +37,7 @@ function App() {
 			dispatch(fetchUserInfo());
 		});
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (

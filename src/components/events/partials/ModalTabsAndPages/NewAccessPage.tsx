@@ -24,7 +24,7 @@ import ModalContentTable from "../../../shared/modals/ModalContentTable";
  * This component renders the access page for new events and series in the wizards.
  */
 interface RequiredFormProps {
-	isPartOf: string,
+	"dublincore/episode_isPartOf": string,
 	policies: TransformedAcl[],
 	aclTemplate: string,
 	// theme: string,
@@ -76,15 +76,16 @@ const NewAccessPage = <T extends RequiredFormProps>({
 
 	// If we have to use series ACL, fetch it
 	useEffect(() => {
-		if (initEventAclWithSeriesAcl && formik.values.isPartOf) {
-			dispatch(fetchSeriesDetailsAcls(formik.values.isPartOf));
+		if (initEventAclWithSeriesAcl && formik.values["dublincore/episode_isPartOf"]) {
+			dispatch(fetchSeriesDetailsAcls(formik.values["dublincore/episode_isPartOf"]));
 		}
-	}, [formik.values.isPartOf, initEventAclWithSeriesAcl, dispatch]);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [formik.values["dublincore/episode_isPartOf"], initEventAclWithSeriesAcl, dispatch]);
 
 	// If we have to use series ACL, overwrite existing rules
 	useEffect(() => {
-		if (initEventAclWithSeriesAcl && formik.values.isPartOf && seriesAcl) {
-			formik.setFieldValue("acls", seriesAcl);
+		if (initEventAclWithSeriesAcl && formik.values["dublincore/episode_isPartOf"] && seriesAcl) {
+			formik.setFieldValue("policies", seriesAcl);
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [initEventAclWithSeriesAcl, seriesAcl]);
@@ -98,7 +99,7 @@ const NewAccessPage = <T extends RequiredFormProps>({
 					<ul>
 						<li>
 							<div className="obj list-obj">
-								<header className="no-expand">
+								<header>
 									{t("EVENTS.SERIES.NEW.ACCESS.ACCESS_POLICY.TITLE")}
 								</header>
 

@@ -65,12 +65,12 @@ export const handleTemplateChange = async <T extends { policies: TransformedAcl[
 	defaultUser?: UserInfoState,
 ) => {
 	// fetch information about chosen template from backend
-	let template = await fetchAclTemplateById(templateId);
+	const template = await fetchAclTemplateById(templateId);
 	// fetch user info
-	const users = await fetchUsersForTemplate(template.map(role => role.role));
+	const users = await fetchUsersForTemplate(template.acl.map(role => role.role));
 
 	// Add user info to applicable roles
-	template = template.map(acl => {
+	template.acl = template.acl.map(acl => {
 		if (users && users[acl.role]) {
 			acl.user = {
 				username: users[acl.role].username,
@@ -84,11 +84,11 @@ export const handleTemplateChange = async <T extends { policies: TransformedAcl[
 
 	// always add current user to acl since template could lock the user out
 	if (defaultUser) {
-		template = template.concat({
+		template.acl = template.acl.concat({
 			role: defaultUser.userRole,
 			read: true,
 			write: true,
-			actions: [],
+			actions: aclDefaults && aclDefaults["default_actions"] ? aclDefaults["default_actions"].split(",") : [],
 			user: {
 				username: defaultUser.user.username,
 				name: defaultUser.user.name,
@@ -102,13 +102,13 @@ export const handleTemplateChange = async <T extends { policies: TransformedAcl[
 		const prefixString = aclDefaults["keep_on_template_switch_role_prefixes"];
 		const prefixes = prefixString.split(",");
 		for (const policy of formik.values.policies) {
-			if (prefixes.some(prefix => policy.role.startsWith(prefix)) && !template.find(acl => acl.role === policy.role)) {
-				template.push(policy);
+			if (prefixes.some(prefix => policy.role.startsWith(prefix)) && !template.acl.find(acl => acl.role === policy.role)) {
+				template.acl.push(policy);
 			}
 		}
 	}
 
-	formik.setFieldValue("policies", template);
+	formik.setFieldValue("policies", template.acl);
 	formik.setFieldValue("aclTemplate", templateId);
 	// Is this necessary?
 	dispatch(checkAcls(formik.values.policies));

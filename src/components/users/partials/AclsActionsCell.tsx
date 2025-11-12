@@ -7,6 +7,7 @@ import AclDetails from "./modal/AclDetails";
 import { ActionCellDelete } from "../../shared/ActionCellDelete";
 import { useTranslation } from "react-i18next";
 import ButtonLikeAnchor from "../../shared/ButtonLikeAnchor";
+import { LuFileText } from "react-icons/lu";
 
 /**
  * This component renders the action cells of acls in the table view
@@ -40,10 +41,12 @@ const AclsActionsCell = ({
 			{/* edit/show ACL details */}
 			<ButtonLikeAnchor
 				onClick={showAclDetails}
-				className={"more"}
+				className={"action-cell-button"}
 				editAccessRole={"ROLE_UI_ACLS_EDIT"}
-				tooltipText={"USERS.ACLS.TABLE.TOOLTIP.DETAILS"}
-			/>
+				// tooltipText={"USERS.ACLS.TABLE.TOOLTIP.DETAILS"} // Disabled due to performance concerns
+			>
+				<LuFileText />
+			</ButtonLikeAnchor>
 
 			{/* ACL details modal */}
 			<Modal
@@ -58,7 +61,7 @@ const AclsActionsCell = ({
 			{/* delete ACL */}
 			<ActionCellDelete
 				editAccessRole={"ROLE_UI_ACLS_DELETE"}
-				tooltipText={"USERS.ACLS.TABLE.TOOLTIP.DELETE"}
+				// tooltipText={"USERS.ACLS.TABLE.TOOLTIP.DELETE"} // Disabled due to performance concerns
 				resourceId={row.id}
 				resourceName={row.name}
 				resourceType={"ACL"}

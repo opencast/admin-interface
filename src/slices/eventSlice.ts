@@ -438,7 +438,7 @@ export const postNewEvent = (params: {
 	values: {
 		policies: TransformedAcl[],
 		configuration: { [key: string]: unknown },
-		deviceInputs?: string[],
+		inputs?: string[],
 		processingWorkflow: string,
 		repeatOn: string[],
 		scheduleDurationHours: string,
@@ -457,7 +457,6 @@ export const postNewEvent = (params: {
 	extendedMetadata: MetadataCatalog[],
 }): AppThunk => (dispatch, getState) => {
 	const { values, metadataInfo, extendedMetadata } = params;
-
 	// get asset upload options from redux store
 	const state = getState();
 	const uploadAssetOptions = getAssetUploadOptions(state);
@@ -545,7 +544,7 @@ export const postNewEvent = (params: {
 			metadata: {
 				start: startDate,
 				device: values.location,
-				inputs: values.deviceInputs ? values.deviceInputs.join(",") : "",
+				inputs: values.inputs ? values.inputs.join(",") : "",
 				end: endDate,
 				duration: duration.toString(),
 			},

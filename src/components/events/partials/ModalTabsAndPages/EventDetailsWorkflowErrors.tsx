@@ -16,6 +16,7 @@ import { renderValidDate } from "../../../../utils/dateUtils";
 import { WorkflowTabHierarchy } from "../modals/EventDetails";
 import { useTranslation } from "react-i18next";
 import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
+import { LuChevronRight } from "react-icons/lu";
 
 /**
  * This component manages the workflow errors for the workflows tab of the event details modal
@@ -132,6 +133,7 @@ const EventDetailsWorkflowErrors = ({
 														}
 													>
 														{t("EVENTS.EVENTS.DETAILS.MEDIA.DETAILS") /*  Details */}
+														<LuChevronRight className="details-link-icon"/>
 													</ButtonLikeAnchor>
 												</td>
 											</tr>

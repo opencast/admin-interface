@@ -1,10 +1,7 @@
-import { getFilters } from "../../../selectors/tableFilterSelectors";
-import { editFilterValue } from "../../../slices/tableFilterSlice";
 import { loadEventsIntoTable } from "../../../thunks/tableThunks";
-import { useAppDispatch, useAppSelector } from "../../../store";
 import { fetchEvents } from "../../../slices/eventSlice";
 import { Event } from "../../../slices/eventSlice";
-import ButtonLikeAnchor from "../../shared/ButtonLikeAnchor";
+import FilterCell from "../../shared/FilterCell";
 
 /**
  * This component renders the location cells of events in the table view
@@ -14,29 +11,22 @@ const EventsLocationCell = ({
 }: {
 	row: Event
 }) => {
-	const dispatch = useAppDispatch();
-
-	const filterMap = useAppSelector(state => getFilters(state, "events"));
-
-	// Filter with value of current cell
-	const addFilter = (location: string) => {
-		const filter = filterMap.find(({ name }) => name === "location");
-		if (filter) {
-			dispatch(editFilterValue({ filterName: filter.name, value: location, resource: "events" }));
-			dispatch(fetchEvents());
-			dispatch(loadEventsIntoTable());
-		}
-	};
-
 	return (
-		// Link template for location of event
-		<ButtonLikeAnchor
-			onClick={() => addFilter(row.location)}
-			className={"crosslink"}
-			tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.LOCATION"}
-		>
-			{row.location}
-		</ButtonLikeAnchor>
+		<>
+			{ row.location &&
+				<FilterCell
+					resource={"events"}
+					filterName={"location"}
+					filterItems={[{
+						filterValue: row.location,
+						children: row.location,
+						// cellTooltipText: "EVENTS.EVENTS.TABLE.TOOLTIP.LOCATION", // Disabled due to performance concerns
+					}]}
+					fetchResource={fetchEvents}
+					loadResourceIntoTable={loadEventsIntoTable}
+				/>
+			}
+		</>
 	);
 };
 

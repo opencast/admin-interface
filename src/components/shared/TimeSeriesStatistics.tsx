@@ -18,6 +18,7 @@ import { AsyncThunk } from "@reduxjs/toolkit";
 import { useAppDispatch } from "../../store";
 import { DataResolution, Statistics, TimeMode } from "../../slices/statisticsSlice";
 import { ParseKeys } from "i18next";
+import { LuChevronLeft, LuChevronRight, LuDownload } from "react-icons/lu";
 
 
 /**
@@ -58,13 +59,6 @@ const TimeSeriesStatistics = ({
 }) => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
-
-	// Style for radio buttons
-	const radioButtonStyle = {
-		backgroundColor: "whitesmoke",
-		backgroundImage: "linear-gradient(whitesmoke, #dedddd)",
-		color: "#666666",
-	};
 
 	// available modes of choosing statistic timeframe
 	const timeModes = statisticTimeModes;
@@ -191,10 +185,11 @@ const TimeSeriesStatistics = ({
 					{/* download link for a statistic file */}
 					<div className="download">
 						<a
-							className="download-icon"
 							href={exportUrl}
 							download={exportFileName(statTitle)}
-						/>
+						>
+							<LuDownload className="download-icon"/>
+						</a>
 					</div>
 
 					{/* statistics total value */}
@@ -208,16 +203,11 @@ const TimeSeriesStatistics = ({
 						{timeModes.map((mode, key) => (
 							<label
 								htmlFor={providerId + "-mode-" + key}
-								style={
-									formik.values.timeMode === mode.value
-										? radioButtonStyle
-										: {}
-								}
+								className={formik.values.timeMode === mode.value ? "selected" : ""}
 								key={key}
 							>
 								<Field
 									type="radio"
-									style={{ display: "none" }}
 									name="timeMode"
 									value={mode.value}
 									id={providerId + "-mode-" + key}
@@ -243,7 +233,7 @@ const TimeSeriesStatistics = ({
 						/* year/month selection for statistic via previous and next buttons */
 						<span className="preset">
 							<a
-								className="navigation prev"
+								className="navigation"
 								onClick={() =>
 									selectPrevious(
 										formik.setFieldValue,
@@ -252,7 +242,9 @@ const TimeSeriesStatistics = ({
 										formik.values.dataResolution,
 									)
 								}
-							/>
+							>
+								<LuChevronLeft />
+							</a>
 							<div>
 								{formatSelectedTimeframeName(
 									formik.values.fromDate,
@@ -269,7 +261,9 @@ const TimeSeriesStatistics = ({
 										formik.values.dataResolution,
 									)
 								}
-							/>
+							>
+								<LuChevronRight />
+							</a>
 						</span>
 					)}
 

@@ -7,6 +7,7 @@ import { addNotification } from "../../../slices/notificationSlice";
 import { FormikProps } from "formik";
 import { ParseKeys } from "i18next";
 import BaseButton from "../BaseButton";
+import { LuX } from "react-icons/lu";
 
 /**
  * This component renders a custom file upload button in wizards.
@@ -121,11 +122,7 @@ const FileUpload = <T extends RequiredFormProps>({
 						{/* else render button for upload */}
 						{!!formik.values[fileId] && file ? (
 							<div className="upload-file-info">
-								<p
-									style={
-										isEdit ? { padding: "0px 10px" } : { padding: "4px 10px" }
-									}
-								>
+								<p className={isEdit ? "edit" : ""}>
 									<a href={URL.createObjectURL(file)} target="_blank" rel="noreferrer">
 										{formik.values[fileName] as string}
 									</a>
@@ -136,7 +133,7 @@ const FileUpload = <T extends RequiredFormProps>({
 										className="remove-file-button"
 										onClick={() => handleDelete()}
 									>
-										<div className="remove-icon" />
+										<LuX className="remove-icon remove-file-button-icon"/>
 									</BaseButton>
 								</div>
 							</div>

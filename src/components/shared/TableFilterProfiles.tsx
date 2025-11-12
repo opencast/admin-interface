@@ -19,6 +19,7 @@ import { AsyncThunk } from "@reduxjs/toolkit";
 import ButtonLikeAnchor from "./ButtonLikeAnchor";
 import { ParseKeys } from "i18next";
 import { Resource } from "../../slices/tableSlice";
+import { LuSettings, LuX } from "react-icons/lu";
 
 /**
  * This component renders the table filter profiles in the upper right corner when clicked on settings icon of the
@@ -154,7 +155,9 @@ const TableFiltersProfiles = ({
 								<ButtonLikeAnchor
 									className="icon close"
 									onClick={closeFilterSetting}
-								/>
+								>
+									<LuX className="icon close"/>
+								</ButtonLikeAnchor>
 								<h4>{t("TABLE_FILTERS.PROFILES.FILTERS_HEADER")}</h4>
 							</header>
 							<ul>
@@ -174,15 +177,17 @@ const TableFiltersProfiles = ({
 											{/* Settings icon to edit profile */}
 											<ButtonLikeAnchor
 												onClick={() => editFilterProfile(profile)}
-												className="icon edit"
 												tooltipText="TABLE_FILTERS.PROFILES.EDIT"
-											/>
+											>
+												<LuSettings className="icon edit"/>
+											</ButtonLikeAnchor>
 											{/* Remove icon to remove profile */}
 											<ButtonLikeAnchor
 												onClick={() => dispatch(removeFilterProfile(profile))}
-												className="icon remove"
 												tooltipText="TABLE_FILTERS.PROFILES.REMOVE"
-											/>
+											>
+												<LuX className="icon remove"/>
+											</ButtonLikeAnchor>
 										</li>
 									))
 								)}
@@ -206,9 +211,10 @@ const TableFiltersProfiles = ({
 						<div className="filter-details">
 							<header>
 								<ButtonLikeAnchor
-									className="icon close"
 									onClick={closeFilterSetting}
-								/>
+								>
+									<LuX className="icon close"/>
+								</ButtonLikeAnchor>
 								<h4>{t("TABLE_FILTERS.PROFILES.FILTER_HEADER")}</h4>
 							</header>
 							{/* Input form for save/editing profile*/}

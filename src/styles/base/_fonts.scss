@@ -53,7 +53,3 @@
 
 @include font-face('Open Sans', 'OpenSans-ExtraBold-webfont', 800, normal);
 @include font-face('Open Sans', 'OpenSans-ExtraBoldItalic-webfont', 800, italic);
-
-@include font-face('FontAwesome', 'fontawesome-webfont', normal, normal);
-
-@include meta.load-css("fontawesome/fontawesome-config");

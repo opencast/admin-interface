@@ -1,0 +1,45 @@
+@use "../../base/variables";
+
+// Workflow Definition Configuration Panel
+.modal .obj {
+
+    #workflow-configuration-description-box {
+        margin: 15px 0 0 0;
+        position: relative;
+        border: solid variables.$main-border-color;
+        border-width: 1px;
+        background-color: variables.$off-white;
+        overflow: hidden;
+        border-radius: 4px;
+    }
+
+    #workflow-configuration-description-text {
+        margin: 10px;
+        font-family: "Open Sans", Helvetica, sans-serif;
+        font-size: 12px;
+        white-space: pre-line;
+    }
+
+    #workflow-configuration {
+        legend {
+            padding-top: 20px;
+            padding-bottom: 5px
+        }
+        li {
+            padding: 2px 20px;
+        }
+        input {
+            vertical-align: sub;
+        }
+        input[type=checkbox] {
+            padding: 0px 5px;
+        }
+        label {
+            display: inline-block;
+            padding: 0px
+        }
+        input:disabled+label {
+            opacity: 0.5;
+        }
+    }
+}
