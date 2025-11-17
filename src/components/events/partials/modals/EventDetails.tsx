@@ -232,7 +232,7 @@ const EventDetails = ({
 		}
 	};
 	const wizardTabs = tabs.filter(tab =>
-	  !tab.hidden && tab.page !== EventDetailsPage.Tobira && tab.page !== EventDetailsPage.Statistics,
+	  !tab.hidden,
 	);
 
 	const goNextStep = () => {
