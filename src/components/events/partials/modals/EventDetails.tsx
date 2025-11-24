@@ -250,26 +250,22 @@ const EventDetails = ({
 	};
 	// NEXT STEP
 	useHotkeys(
-	  availableHotkeys.general.NEXT_PANEL.sequence,
-	  event => {
-	    const target = event.target as HTMLElement;
-	    if (!["INPUT", "TEXTAREA"].includes(target.tagName)) {
-	      goNextStep();
-	    }
-	  },
-	  [goNextStep],
+		availableHotkeys.general.NEXT_PANEL.sequence,
+		() => {
+				goNextStep();
+		},
+		{ enableOnFormTags: ["INPUT", "TEXTAREA"] },
+		[goNextStep],
 	);
 
 	// PREVIOUS STEP
 	useHotkeys(
-	  availableHotkeys.general.PREVIOUS_PANEL.sequence,
-	  event => {
-	    const target = event.target as HTMLElement;
-	    if (!["INPUT", "TEXTAREA"].includes(target.tagName)) {
-	      goPrevStep();
-	    }
-	  },
-	  [goPrevStep],
+		availableHotkeys.general.PREVIOUS_PANEL.sequence,
+		() => {
+				goPrevStep();
+		},
+		{ enableOnFormTags: ["INPUT", "TEXTAREA"] },
+		[goPrevStep],
 	);
 
 	return (
