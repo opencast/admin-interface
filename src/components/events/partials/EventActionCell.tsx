@@ -83,7 +83,7 @@ const EventActionCell = ({
 				onClick={onClickEventDetails}
 				className={"action-cell-button"}
 				editAccessRole={"ROLE_UI_EVENTS_DETAILS_VIEW"}
-				// tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.DETAILS"} // Disabled due to performance concerns
+				tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.DETAILS"}
 			>
 				<LuFileText />
 			</ButtonLikeAnchor>
@@ -94,7 +94,7 @@ const EventActionCell = ({
 					onClick={onClickSeriesDetails}
 					className={"action-cell-button more-series"}
 					editAccessRole={"ROLE_UI_SERIES_DETAILS_VIEW"}
-					// tooltipText={"EVENTS.SERIES.TABLE.TOOLTIP.DETAILS"} // Disabled due to performance concerns
+					tooltipText={"EVENTS.SERIES.TABLE.TOOLTIP.DETAILS"}
 				>
 					<LuFileSymlink />
 				</ButtonLikeAnchor>
@@ -103,7 +103,7 @@ const EventActionCell = ({
 			{/* Delete an event */}
 			<ActionCellDelete
 				editAccessRole={"ROLE_UI_EVENTS_DELETE"}
-				// tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.DELETE"} // Disabled due to performance concerns
+				tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.DELETE"}
 				resourceId={row.id}
 				resourceName={row.title}
 				resourceType={"EVENT"}
@@ -112,29 +112,23 @@ const EventActionCell = ({
 
 			{/* If the event has an preview then the editor can be opened and status if it needs to be cut is shown */}
 			{!!row.has_preview && hasAccess("ROLE_UI_EVENTS_EDITOR_VIEW", user) && (
-				// <Tooltip // Disabled due to performance concerns
-				// 	title={
-				// 		row.needs_cutting
-				// 			? t("EVENTS.EVENTS.TABLE.TOOLTIP.EDITOR_NEEDS_CUTTING")
-				// 			: t("EVENTS.EVENTS.TABLE.TOOLTIP.EDITOR")
-				// 	}
-				// >
-					<a
-						href={`/editor-ui/index.html?id=${row.id}`}
-						className="action-cell-button cut"
-						target="_blank" rel="noreferrer"
-					>
-						<LuScissors />
-						{row.needs_cutting && <span id="badge" className="badge" />}
-					</a>
-				// </Tooltip>
+				<a
+					href={`/editor-ui/index.html?id=${row.id}`}
+					className="action-cell-button cut"
+					target="_blank" rel="noreferrer"
+					data-tooltip-id="my-tooltip"
+					data-tooltip-content={row.needs_cutting ? t("EVENTS.EVENTS.TABLE.TOOLTIP.EDITOR_NEEDS_CUTTING") : t("EVENTS.EVENTS.TABLE.TOOLTIP.EDITOR")}
+				>
+					<LuScissors />
+					{row.needs_cutting && <span id="badge" className="badge" />}
+				</a>
 			)}
 
 			{/* If the event has comments and no open comments then the comment tab of event details can be opened directly */}
 			{row.has_comments && !row.has_open_comments && (
 				<ButtonLikeAnchor
 					onClick={() => onClickComments()}
-					// tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.COMMENTS"} // Disabled due to performance concerns
+					tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.COMMENTS"}
 					className={"action-cell-button comments"}
 				>
 					<LuMessageCircle className="blue"/>
@@ -145,7 +139,7 @@ const EventActionCell = ({
 			{row.has_comments && row.has_open_comments && (
 				<ButtonLikeAnchor
 					onClick={() => onClickComments()}
-					// tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.COMMENTS"} // Disabled due to performance concerns
+					tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.COMMENTS"}
 					className={"action-cell-button comments-open"}
 				>
 					<LuMessageCircle className="blue"/>
@@ -158,7 +152,7 @@ const EventActionCell = ({
 				<ButtonLikeAnchor
 					onClick={() => onClickWorkflow()}
 					editAccessRole={"ROLE_UI_EVENTS_DETAILS_WORKFLOWS_EDIT"}
-					// tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.PAUSED_WORKFLOW"} // Disabled due to performance concerns
+					tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.PAUSED_WORKFLOW"}
 					className={"action-cell-button"}
 				>
 					<LuTriangleAlert className="darkgrey"/>
@@ -169,7 +163,7 @@ const EventActionCell = ({
 			<ButtonLikeAnchor
 				onClick={() => onClickAssets()}
 				editAccessRole={"ROLE_UI_EVENTS_DETAILS_ASSETS_VIEW"}
-				// tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.ASSETS"} // Disabled due to performance concerns
+				tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.ASSETS"}
 				className={"action-cell-button"}
 				>
 					<LuFolderOpen className="darkgrey"/>
@@ -179,7 +173,7 @@ const EventActionCell = ({
 			<ButtonLikeAnchor
 				onClick={() => showEmbeddingCodeModal()}
 				editAccessRole={"ROLE_UI_EVENTS_EMBEDDING_CODE_VIEW"}
-				// tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.EMBEDDING_CODE"} // Disabled due to performance concerns
+				tooltipText={"EVENTS.EVENTS.TABLE.TOOLTIP.EMBEDDING_CODE"}
 				className={"action-cell-button"}
 				>
 					<LuLink className="darkgrey"/>

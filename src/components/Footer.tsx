@@ -6,7 +6,6 @@ import {
 import { useAppSelector } from "../store";
 import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
-import { Tooltip } from "./shared/Tooltip";
 
 /**
  * Component that renders the footer
@@ -35,14 +34,14 @@ const Footer: React.FC = () => {
 					{user.ocVersion && (
 						<li>
 							{"Opencast "}
-							<Tooltip title={t("BUILD.VERSION")}><span>{version}</span></Tooltip>
+							<span data-tooltip-id="my-tooltip" data-tooltip-content={t("BUILD.VERSION")}>{version}</span>
 							{user.isAdmin && (
 								<span>
 								{user.ocVersion.buildNumber && (
-									<>{" – "} <Tooltip title={t("BUILD.COMMIT")}><span>{user.ocVersion.buildNumber}</span></Tooltip></>
+									<>{" – "} <span data-tooltip-id="my-tooltip" data-tooltip-content={t("BUILD.COMMIT")}>{user.ocVersion.buildNumber}</span></>
 								)}
 								{lastModified && (
-									<>{" – "} <Tooltip title={t("BUILD.DATE_DESC")}><span>{t("BUILD.BUILT_ON")} {lastModified}</span></Tooltip></>
+									<>{" – "} <span data-tooltip-id="my-tooltip" data-tooltip-content={t("BUILD.DATE_DESC")}>{t("BUILD.BUILT_ON")} {lastModified}</span></>
 								)}
 								</span>
 							)}

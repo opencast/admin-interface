@@ -71,7 +71,7 @@ const SeriesActionsCell = ({
 				onClick={() => showSeriesDetailsModal()}
 				className={"action-cell-button more-series"}
 				editAccessRole={"ROLE_UI_SERIES_DETAILS_VIEW"}
-				// tooltipText={"EVENTS.SERIES.TABLE.TOOLTIP.DETAILS"} // Disabled due to performance concerns
+				tooltipText={"EVENTS.SERIES.TABLE.TOOLTIP.DETAILS"}
 			>
 				<LuFileText />
 			</ButtonLikeAnchor>
@@ -81,7 +81,7 @@ const SeriesActionsCell = ({
 				onClick={() => showDeleteConfirmation()}
 				className={"action-cell-button remove"}
 				editAccessRole={"ROLE_UI_SERIES_DELETE"}
-				// tooltipText={"EVENTS.SERIES.TABLE.TOOLTIP.DELETE"} // Disabled due to performance concerns
+				tooltipText={"EVENTS.SERIES.TABLE.TOOLTIP.DELETE"}
 			>
 				<LuCircleX />
 			</ButtonLikeAnchor>

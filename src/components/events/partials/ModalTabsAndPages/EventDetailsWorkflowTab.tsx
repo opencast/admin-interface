@@ -25,7 +25,6 @@ import { ParseKeys } from "i18next";
 import ModalContent from "../../../shared/modals/ModalContent";
 import EventDetailsTabHierarchyNavigation from "./EventDetailsTabHierarchyNavigation";
 import { LuChevronRight, LuCircleStop, LuCircleX, LuHand, LuRefreshCw } from "react-icons/lu";
-import { Tooltip } from "../../../shared/Tooltip";
 
 /**
  * This component manages the workflows tab of the event details modal
@@ -153,9 +152,7 @@ const EventDetailsWorkflowTab = ({
 													<td>{item.id}</td>
 													<td>{item.title}</td>
 													<td>
-														<Tooltip title={item.submitterName}>
-															<span>{item.submitter}</span>
-														</Tooltip>
+														<span data-tooltip-id="my-tooltip" data-tooltip-content={item.submitterName}>{item.submitter}</span>
 													</td>
 													<td>
 														{t("dateFormats.dateTime.medium", {

@@ -43,7 +43,7 @@ const UsersActionCell = ({
 				onClick={() => showUserDetails()}
 				className={"action-cell-button"}
 				editAccessRole={"ROLE_UI_USERS_EDIT"}
-				// tooltipText={"USERS.USERS.TABLE.TOOLTIP.DETAILS"} // Disabled due to performance concerns
+				tooltipText={"USERS.USERS.TABLE.TOOLTIP.DETAILS"}
 			>
 				<LuFileText />
 			</ButtonLikeAnchor>
@@ -61,7 +61,7 @@ const UsersActionCell = ({
 			{(row.manageable || (row.provider !== "opencast" && row.provider !== "system")) &&
 				<ActionCellDelete
 					editAccessRole={"ROLE_UI_USERS_DELETE"}
-					// tooltipText={"USERS.USERS.TABLE.TOOLTIP.DELETE"} // Disabled due to performance concerns
+					tooltipText={"USERS.USERS.TABLE.TOOLTIP.DELETE"}
 					resourceId={row.username}
 					resourceName={row.name}
 					resourceType={"USER"}

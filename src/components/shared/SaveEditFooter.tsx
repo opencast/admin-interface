@@ -1,5 +1,4 @@
 import { useTranslation } from "react-i18next";
-import { Tooltip } from "./Tooltip";
 import { ParseKeys } from "i18next";
 import BaseButton from "./BaseButton";
 
@@ -38,16 +37,15 @@ export const SaveEditFooter: React.FC<SaveEditFooterProps> = ({
             }`}
         >{t(saveButtonText)}</BaseButton>
         {additionalButton && (
-            <Tooltip title={t(additionalButton.hint)}>
-                <BaseButton
-                    onClick={additionalButton.onClick}
-                    disabled={!isValid || !active}
-                    aria-disabled={!isValid || !active}
-                    className={`save green ${
-                        !isValid || !active ? "disabled" : ""
-                    }`}
-                >{t(additionalButton.label)}</BaseButton>
-            </Tooltip>
+            <BaseButton
+                onClick={additionalButton.onClick}
+                disabled={!isValid || !active}
+                aria-disabled={!isValid || !active}
+                tooltipText={additionalButton.hint}
+                className={`save green ${
+                    !isValid || !active ? "disabled" : ""
+                }`}
+            >{t(additionalButton.label)}</BaseButton>
         )}
         {active && isValid && (
             <BaseButton

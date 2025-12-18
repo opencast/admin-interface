@@ -17,6 +17,7 @@ import { useAppDispatch } from "./store";
 import { fetchOcVersion, fetchUserInfo } from "./slices/userInfoSlice";
 import { subscribeToAuthEvents } from "./utils/broadcastSync";
 import { useTableFilterStateValidation } from "./hooks/useTableFilterStateValidation";
+import { Tooltip } from "react-tooltip";
 
 function App() {
 	const dispatch = useAppDispatch();
@@ -74,6 +75,13 @@ function App() {
 					element={<Navigate to={"/events/events"} replace />}
 				/>
 			</Routes>
+			<Tooltip
+				id="my-tooltip"
+				clickable
+				className="my-tooltip"
+				delayShow={100}
+				delayHide={150}
+			/>
 		</HashRouter>
 	);
 }

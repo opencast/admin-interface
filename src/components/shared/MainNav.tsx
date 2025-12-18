@@ -9,7 +9,6 @@ import { hasAccess } from "../../utils/utils";
 import { useHotkeys } from "react-hotkeys-hook";
 import { availableHotkeys } from "../../configs/hotkeysConfig";
 import { useAppSelector } from "../../store";
-import { Tooltip } from "./Tooltip";
 import ButtonLikeAnchor from "./ButtonLikeAnchor";
 import { ParseKeys } from "i18next";
 import {
@@ -187,10 +186,8 @@ const MainNav = ({
 
 	return (
 		<div className="menu-top" >
-			<ButtonLikeAnchor onClick={() => toggleMenu()}>
-				<Tooltip title={t("HOTKEYS.DESCRIPTIONS.GENERAL.MAIN_MENU")} placement={"right"}>
-					<LuMenu />
-				</Tooltip>
+			<ButtonLikeAnchor tooltipText={"HOTKEYS.DESCRIPTIONS.GENERAL.MAIN_MENU"} onClick={() => toggleMenu()}>
+				<LuMenu />
 			</ButtonLikeAnchor>
 			{isOpen && (
 				<nav id="roll-up-menu">
@@ -266,9 +263,7 @@ const MainNavLink = ({
 	return (
 		<NavLink to={path}
 			className={({ isActive }) => isActive ? "roll-up-menu-active" : ""}>
-			<Tooltip title={t(tooltipTitle)} placement={"right"}>
-				<Icon className="main-nav-icon"/>
-			</Tooltip>
+			<Icon className="main-nav-icon" data-tooltip-id="my-tooltip" data-tooltip-content={t(tooltipTitle)} data-tooltip-place="right"/>
 		</NavLink>
 	);
 };

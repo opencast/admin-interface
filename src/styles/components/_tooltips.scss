@@ -1,5 +1,9 @@
-div.MuiTooltip-tooltip {
-	font-size: 0.9rem;
-	outline: 2px solid transparent;
-	line-height: 2;
+@use "../base/variables";
+
+.react-tooltip.my-tooltip {
+	z-index: 1500;
+	color: variables.$white;
+	background-color: variables.$color-gray;
+	opacity: 1;
+	font-size: 1em;
 }

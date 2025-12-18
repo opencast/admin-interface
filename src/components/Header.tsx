@@ -20,7 +20,6 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { useAppDispatch, useAppSelector } from "../store";
 import { HealthStatus, fetchHealthStatus } from "../slices/healthSlice";
 import { UserInfoState } from "../slices/userInfoSlice";
-import { Tooltip } from "./shared/Tooltip";
 import { HiOutlineTranslate } from "react-icons/hi";
 import ButtonLikeAnchor from "./shared/ButtonLikeAnchor";
 import { ModalHandle } from "./shared/modals/Modal";
@@ -160,11 +159,9 @@ const Header = () => {
 				<nav className="header-nav nav-dd-container" id="nav-dd-container">
 					{/* Select language */}
 					<div className="nav-dd lang-dd" id="lang-dd" ref={containerLang}>
-						<Tooltip active={!displayMenuLang} title={t("LANGUAGE")}>
-							<BaseButton className="lang nav-dd-element" onClick={() => setMenuLang(!displayMenuLang)}>
-									<HiOutlineTranslate className="header-icon"/>
-							</BaseButton>
-						</Tooltip>
+						<BaseButton className="lang nav-dd-element" onClick={() => setMenuLang(!displayMenuLang)} tooltipText={"LANGUAGE"} data-tooltip-hidden={displayMenuLang}>
+							<HiOutlineTranslate className="header-icon"/>
+						</BaseButton>
 						{displayMenuLang && <MenuLang handleChangeLanguage={handleChangeLanguage}/>}
 					</div>
 
@@ -175,28 +172,26 @@ const Header = () => {
 					{!!orgProperties &&
 						!!orgProperties["org.opencastproject.admin.mediamodule.url"] && (
 							<div className="nav-dd">
-								<Tooltip title={t("MEDIAMODULE")}>
-									<a
-										href={
-											orgProperties["org.opencastproject.admin.mediamodule.url"]
-										}
-										target="_blank" rel="noreferrer"
-										className="nav-dd-element"
-									>
-										<LuCirclePlay className="header-icon"/>
-									</a>
-								</Tooltip>
+								<a
+									href={
+										orgProperties["org.opencastproject.admin.mediamodule.url"]
+									}
+									target="_blank" rel="noreferrer"
+									className="nav-dd-element"
+									data-tooltip-id="my-tooltip"
+									data-tooltip-content={t("MEDIAMODULE")}
+								>
+									<LuCirclePlay className="header-icon"/>
+								</a>
 							</div>
 						)}
 
 					{/* Opencast Studio */}
 					{hasAccess("ROLE_STUDIO", user) && (
 						<div className="nav-dd">
-							<Tooltip title={t("STUDIO")}>
-								<a href={studioURL} target="_blank" rel="noreferrer" className="nav-dd-element">
-									<LuVideo className="header-icon"/>
-								</a>
-							</Tooltip>
+							<a href={studioURL} target="_blank" rel="noreferrer" className="nav-dd-element" data-tooltip-id="my-tooltip" data-tooltip-content={t("STUDIO")}>
+								<LuVideo className="header-icon"/>
+							</a>
 						</div>
 					)}
 
@@ -207,16 +202,14 @@ const Header = () => {
 							id="info-dd"
 							ref={containerNotify}
 						>
-							<Tooltip active={!displayMenuNotify} title={t("SYSTEM_NOTIFICATIONS")}>
-								<BaseButton onClick={() => setMenuNotify(!displayMenuNotify)} className="nav-dd-element">
-									<LuBell className="header-icon"/>
-									{errorCounter !== 0 && (
-										<span id="error-count" className="badge">
-											{errorCounter}
-										</span>
-									)}
-								</BaseButton>
-							</Tooltip>
+							<BaseButton onClick={() => setMenuNotify(!displayMenuNotify)} className="nav-dd-element" tooltipText={"SYSTEM_NOTIFICATIONS"} data-tooltip-hidden={displayMenuNotify}>
+								<LuBell className="header-icon"/>
+								{errorCounter !== 0 && (
+									<span id="error-count" className="badge">
+										{errorCounter}
+									</span>
+								)}
+							</BaseButton>
 							{/* Click on the bell icon, a dropdown menu with all services in serviceList and their status opens */}
 							{displayMenuNotify && (
 								<MenuNotify
@@ -242,14 +235,14 @@ const Header = () => {
 								id="help-dd"
 								ref={containerHelp}
 							>
-								<Tooltip active={!displayMenuHelp} title={t("HELP.HELP")}>
-									<BaseButton
-										onClick={() => setMenuHelp(!displayMenuHelp)}
-										className="nav-dd-element"
-									>
-										<LuMessageCircleQuestion className="header-icon"/>
-									</BaseButton>
-								</Tooltip>
+								<BaseButton
+									onClick={() => setMenuHelp(!displayMenuHelp)}
+									className="nav-dd-element"
+									tooltipText={"HELP.HELP"}
+									data-tooltip-hidden={displayMenuHelp}
+								>
+									<LuMessageCircleQuestion className="header-icon"/>
+								</BaseButton>
 								{/* Click on the help icon, a dropdown menu with documentation, REST-docs and shortcuts (if available) opens */}
 								{displayMenuHelp && (
 									<MenuHelp

@@ -80,11 +80,9 @@ const PublishCell = ({
 			{ publications.length > 0 &&
 				<div className="popover-wrapper">
 					{onlyEngage && (
-						// <Tooltip title={t("EVENTS.EVENTS.TABLE.TOOLTIP.PLAYER")}> // Disabled due to performance concerns
-							<a className="crosslink" href={publications[0].url} rel="noreferrer" target="_blank">
-								{t("YES")}
-							</a>
-						// </Tooltip>
+						<a className="crosslink" href={publications[0].url} rel="noreferrer" target="_blank" data-tooltip-id="my-tooltip" data-tooltip-content={t("EVENTS.EVENTS.TABLE.TOOLTIP.PLAYER")}>
+							{t("YES")}
+						</a>
 					)}
 					{!onlyEngage &&
 						<>

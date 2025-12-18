@@ -43,7 +43,7 @@ const AclsActionsCell = ({
 				onClick={showAclDetails}
 				className={"action-cell-button"}
 				editAccessRole={"ROLE_UI_ACLS_EDIT"}
-				// tooltipText={"USERS.ACLS.TABLE.TOOLTIP.DETAILS"} // Disabled due to performance concerns
+				tooltipText={"USERS.ACLS.TABLE.TOOLTIP.DETAILS"}
 			>
 				<LuFileText />
 			</ButtonLikeAnchor>
@@ -61,7 +61,7 @@ const AclsActionsCell = ({
 			{/* delete ACL */}
 			<ActionCellDelete
 				editAccessRole={"ROLE_UI_ACLS_DELETE"}
-				// tooltipText={"USERS.ACLS.TABLE.TOOLTIP.DELETE"} // Disabled due to performance concerns
+				tooltipText={"USERS.ACLS.TABLE.TOOLTIP.DELETE"}
 				resourceId={row.id}
 				resourceName={row.name}
 				resourceType={"ACL"}

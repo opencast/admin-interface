@@ -14,7 +14,7 @@ const RecordingsNameCell = ({
 			path={"/events/events"}
 			filterName={"location"}
 			filterValue={row.name}
-			// tooltipText={"RECORDINGS.RECORDINGS.TABLE.TOOLTIP.NAME"} // Disabled due to performance concerns
+			tooltipText={"RECORDINGS.RECORDINGS.TABLE.TOOLTIP.NAME"}
 		>
 			{row.name}
 		</RedirectCell>

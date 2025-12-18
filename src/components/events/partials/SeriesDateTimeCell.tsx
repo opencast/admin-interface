@@ -19,7 +19,7 @@ const SeriesDateTimeCell = ({
 					filterName="CreationDate"
 					fetchResource={fetchSeries}
 					loadResourceIntoTable={loadSeriesIntoTable}
-					// tooltipText="EVENTS.SERIES.TABLE.TOOLTIP.CREATION" // Disabled due to performance concerns
+					tooltipText="EVENTS.SERIES.TABLE.TOOLTIP.CREATION"
 				/>
 			}
 		</>

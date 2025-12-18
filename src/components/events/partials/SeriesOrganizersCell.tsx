@@ -17,7 +17,7 @@ const SeriesOrganizersCell = ({
 				filterName="organizers"
 				fetchResource={fetchSeries}
 				loadResourceIntoTable={loadSeriesIntoTable}
-				// tooltipText="EVENTS.SERIES.TABLE.TOOLTIP.ORGANIZER" // Disabled due to performance concerns
+				tooltipText="EVENTS.SERIES.TABLE.TOOLTIP.ORGANIZER"
 			/>
 		);
 };

@@ -41,7 +41,7 @@ const GroupsActionsCell = ({
 				onClick={() => showGroupDetails()}
 				className={"action-cell-button"}
 				editAccessRole={"ROLE_UI_GROUPS_EDIT"}
-				// tooltipText={"USERS.GROUPS.TABLE.TOOLTIP.DETAILS"} // Disabled due to performance concerns
+				tooltipText={"USERS.GROUPS.TABLE.TOOLTIP.DETAILS"}
 			>
 				<LuFileText />
 			</ButtonLikeAnchor>
@@ -56,7 +56,7 @@ const GroupsActionsCell = ({
 			{/* delete group */}
 			<ActionCellDelete
 				editAccessRole={"ROLE_UI_GROUPS_DELETE"}
-				// tooltipText={"USERS.GROUPS.TABLE.TOOLTIP.DELETE"} // Disabled due to performance concerns
+				tooltipText={"USERS.GROUPS.TABLE.TOOLTIP.DELETE"}
 				resourceId={row.id}
 				resourceName={row.name}
 				resourceType={"GROUP"}

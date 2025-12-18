@@ -19,7 +19,7 @@ const EventsSeriesCell = ({
 				filterItems={[{
 					filterValue: row.series.id,
 					children: row.series.title,
-					// cellTooltipText: "EVENTS.EVENTS.TABLE.TOOLTIP.SERIES", // Disabled due to performance concerns
+					cellTooltipText: "EVENTS.EVENTS.TABLE.TOOLTIP.SERIES",
 				}]}
 				fetchResource={fetchEvents}
 				loadResourceIntoTable={loadEventsIntoTable}

@@ -20,7 +20,7 @@ const EventsLocationCell = ({
 					filterItems={[{
 						filterValue: row.location,
 						children: row.location,
-						// cellTooltipText: "EVENTS.EVENTS.TABLE.TOOLTIP.LOCATION", // Disabled due to performance concerns
+						cellTooltipText: "EVENTS.EVENTS.TABLE.TOOLTIP.LOCATION",
 					}]}
 					fetchResource={fetchEvents}
 					loadResourceIntoTable={loadEventsIntoTable}

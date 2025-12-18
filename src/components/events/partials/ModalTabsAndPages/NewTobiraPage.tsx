@@ -9,7 +9,6 @@ import { TobiraPage, fetchSeriesDetailsTobiraNew, setErrorTobiraPage, setTobiraP
 import { getSeriesTobiraPage, getSeriesTobiraPageError } from "../../../../selectors/seriesSeletctor";
 import { NOTIFICATION_CONTEXT_TOBIRA } from "../../../../configs/modalConfig";
 import { SaveEditFooter } from "../../../shared/SaveEditFooter";
-import { Tooltip } from "../../../shared/Tooltip";
 import ModalContent from "../../../shared/modals/ModalContent";
 import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
 import { LuChevronRight, LuCircleX } from "react-icons/lu";
@@ -253,20 +252,18 @@ const NewTobiraPage = <T extends TobiraFormProps>({
 							</thead>
 							<tbody>
 								{currentPage.children.map((page, key) => <tr key={key}>
-									<Tooltip
-										title={t("EVENTS.SERIES.NEW.TOBIRA.MOUNT_DISCLAIMER")}
-										active={!!page.blocks?.length}
-										placement="left"
-									>
 										<td>
 											<input
 												type="checkbox"
 												checked={checkboxActive(page, key)}
 												disabled={!!page.blocks?.length}
 												onChange={() => page.blocks?.length || select(page)}
+												data-tooltip-id="my-tooltip"
+												data-tooltip-content={t("EVENTS.SERIES.NEW.TOBIRA.MOUNT_DISCLAIMER")}
+												data-tooltip-hidden={!!page.blocks?.length}
+												data-tooltip-place="left"
 											/>
 										</td>
-									</Tooltip>
 									<td>
 										{page.new
 											? <input

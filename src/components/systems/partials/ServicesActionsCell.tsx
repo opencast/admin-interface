@@ -26,7 +26,7 @@ const ServicesActionCell = ({
 				onClick={() => onClickRestart()}
 				className={"action-cell-button"}
 				editAccessRole={"ROLE_UI_SERVICES_STATUS_EDIT"}
-				// tooltipText={"SYSTEMS.SERVICES.TABLE.SANITIZE"} // Disabled due to performance concerns
+				tooltipText={"SYSTEMS.SERVICES.TABLE.SANITIZE"}
 			>
 				<LuRotateCcw className="darkgrey"/>
 			</ButtonLikeAnchor>
