@@ -35,6 +35,7 @@ import { fetchRecordings, setRecordingsColumns } from "../slices/recordingSlice"
 import { setGroupColumns } from "../slices/groupSlice";
 import { fetchAcls, setAclColumns } from "../slices/aclSlice";
 import { AppDispatch, AppThunk, RootState } from "../store";
+import { fetchPlaylists, setPlaylistColumns } from "../slices/playlistSlice";
 
 /**
  * This file contains methods/thunks used to manage the table in the main view and its state changes
@@ -115,6 +116,44 @@ export const loadSeriesIntoTable = (): AppThunk => (dispatch, getState) => {
 		pages: pages,
 		sortBy: table.sortBy["series"],
 		reverse: table.reverse["series"],
+		totalItems: total,
+	};
+
+	dispatch(loadResourceIntoTable(tableData));
+};
+
+
+export const loadPlaylistsIntoTable = (): AppThunk => (dispatch, getState) => {
+	const { playlists, table } = getState();
+	const total = playlists.total;
+	const pagination = table.pagination;
+
+	const resource = playlists.results.map(result => {
+		const current = table.rows.entities[result.id];
+
+		if (!!current && table.resource === "playlists") {
+			return {
+				...result,
+				selected: current.selected,
+			};
+		} else {
+			return {
+				...result,
+				selected: false,
+			};
+		}
+	});
+
+	const pages = calculatePages(total / pagination.limit, pagination.offset);
+
+	const tableData = {
+		resource: "playlists" as const,
+		rows: resource,
+		columns: playlists.columns,
+		multiSelect: table.multiSelect["playlists"],
+		pages: pages,
+		sortBy: table.sortBy["playlists"],
+		reverse: table.reverse["playlists"],
 		totalItems: total,
 	};
 
@@ -338,6 +377,11 @@ export const goToPage = (pageNumber: number) => async (dispatch: AppDispatch, ge
 			dispatch(loadSeriesIntoTable());
 			break;
 		}
+		case "playlists": {
+			await dispatch(fetchPlaylists());
+			dispatch(loadPlaylistsIntoTable());
+			break;
+		}
 		case "recordings": {
 			await dispatch(fetchRecordings());
 			dispatch(loadRecordingsIntoTable());
@@ -409,6 +453,11 @@ export const updatePages = () => async (dispatch: AppDispatch, getState: () => R
 		case "recordings": {
 			await dispatch(fetchRecordings());
 			dispatch(loadRecordingsIntoTable());
+			break;
+		}
+		case "playlists": {
+			await dispatch(fetchPlaylists());
+			dispatch(loadPlaylistsIntoTable());
 			break;
 		}
 		case "jobs": {
@@ -513,6 +562,11 @@ export const changeColumnSelection = (updatedColumns: TableConfig["columns"]) =>
 			}
 
 			dispatch(loadSeriesIntoTable());
+			break;
+		}
+		case "playlists": {
+			dispatch(setPlaylistColumns(updatedColumns));
+			dispatch(loadPlaylistsIntoTable());
 			break;
 		}
 		case "recordings": {

@@ -17,6 +17,7 @@ import { useAppDispatch } from "./store";
 import { fetchOcVersion, fetchUserInfo } from "./slices/userInfoSlice";
 import { subscribeToAuthEvents } from "./utils/broadcastSync";
 import { useTableFilterStateValidation } from "./hooks/useTableFilterStateValidation";
+import Playlists from "./components/events/Playlists";
 
 function App() {
 	const dispatch = useAppDispatch();
@@ -46,6 +47,8 @@ function App() {
 				<Route path={"/events/events"} element={<Events />} />
 
 				<Route path={"/events/series"} element={<Series />} />
+
+				<Route path={"/events/playlists"} element={<Playlists />} />
 
 				<Route path={"/recordings/recordings"} element={<Recordings />} />
 

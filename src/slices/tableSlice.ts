@@ -9,9 +9,11 @@ import { Group } from "./groupSlice";
 import { AclResult } from "./aclSlice";
 import { ThemeDetailsType } from "./themeSlice";
 import { Series } from "./seriesSlice";
+import { Playlist } from "./playlistSlice";
 import { Event } from "./eventSlice";
 import { eventsTableConfig } from "../configs/tableConfigs/eventsTableConfig";
 import { seriesTableConfig } from "../configs/tableConfigs/seriesTableConfig";
+import { playlistsTableConfig } from "../configs/tableConfigs/playlistsTableConfig";
 import { recordingsTableConfig } from "../configs/tableConfigs/recordingsTableConfig";
 import { jobsTableConfig } from "../configs/tableConfigs/jobsTableConfig";
 import { serversTableConfig } from "../configs/tableConfigs/serversTableConfig";
@@ -69,7 +71,7 @@ export function isRowSelectable(row: Row) {
 	return false;
 }
 
-export function isEvent(row: Event | Series | Recording | Server | Job | Service | User | Group | AclResult | ThemeDetailsType): row is Event {
+export function isEvent(row: Row | Event | Series | Recording | Server | Job | Service | User | Group | AclResult | ThemeDetailsType): row is Event {
 	return (row as Event).event_status !== undefined;
 }
 
@@ -81,13 +83,14 @@ export function isSeries(row: Row | Event | Series | Recording | Server | Job | 
 export type Row = {
 	id: string, // For use with entityAdapter. Directly taken from event/series etc. if available
 	selected: boolean // If the row was marked in the ui by the user
-} & (Event | Series | Recording | Server | Job | Service | User | Group | AclResult | ThemeDetailsType)
+} & (Event | Series | Playlist | Recording | Server | Job | Service | User | Group | AclResult | ThemeDetailsType)
 
 export type SubmitRow = {
 	selected: boolean
-} & (Event | Series | Recording | Server | Job | Service | User | Group | AclResult | ThemeDetailsType)
+} & (Event | Series | Playlist | Recording | Server | Job | Service | User | Group | AclResult | ThemeDetailsType)
 
-export type Resource = "events" | "series" | "recordings" | "jobs" | "servers" | "services" | "users" | "groups" | "acls" | "themes"
+export type Resource = "events" | "series" | "playlists" | "recordings"
+	| "jobs" | "servers" | "services" | "users" | "groups" | "acls" | "themes";
 
 export type ReverseOptions = "ASC" | "DESC"
 
@@ -135,6 +138,7 @@ const initialState: TableState = {
 	multiSelect: {
 		events: eventsTableConfig.multiSelect,
 		series: seriesTableConfig.multiSelect,
+		playlists: playlistsTableConfig.multiSelect,
 		recordings: recordingsTableConfig.multiSelect,
 		jobs: jobsTableConfig.multiSelect,
 		servers: serversTableConfig.multiSelect,
@@ -150,6 +154,7 @@ const initialState: TableState = {
 	sortBy: {
 		events: "date",
 		series: "createdDateTime",
+		playlists: "updated",
 		recordings: "status",
 		jobs: "id",
 		servers: "online",
@@ -163,6 +168,7 @@ const initialState: TableState = {
 	reverse: {
 		events: "DESC",
 		series: "DESC",
+		playlists: "DESC",
 		recordings: "ASC",
 		jobs: "ASC",
 		servers: "ASC",

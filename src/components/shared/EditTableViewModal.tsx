@@ -13,6 +13,7 @@ import ButtonLikeAnchor from "./ButtonLikeAnchor";
 import { aclsTableConfig, TableColumn } from "../../configs/tableConfigs/aclsTableConfig";
 import { eventsTableConfig } from "../../configs/tableConfigs/eventsTableConfig";
 import { seriesTableConfig } from "../../configs/tableConfigs/seriesTableConfig";
+import { playlistsTableConfig } from "../../configs/tableConfigs/playlistsTableConfig";
 import { recordingsTableConfig } from "../../configs/tableConfigs/recordingsTableConfig";
 import { jobsTableConfig } from "../../configs/tableConfigs/jobsTableConfig";
 import { serversTableConfig } from "../../configs/tableConfigs/serversTableConfig";
@@ -126,6 +127,7 @@ const EditTableViewModalContent = ({
 		switch (resource) {
 			case "events": return eventsTableConfig;
 			case "series": return seriesTableConfig;
+			case "playlists": return playlistsTableConfig;
 			case "recordings": return recordingsTableConfig;
 			case "jobs": return jobsTableConfig;
 			case "servers": return serversTableConfig;
@@ -150,7 +152,7 @@ const EditTableViewModalContent = ({
 
 	const getTranslationForSubheading = (resource: Resource): ParseKeys | undefined => {
 		const resourceUC: Uppercase<Resource> = resource.toUpperCase() as Uppercase<Resource>;
-		if (resourceUC === "EVENTS" || resourceUC === "SERIES") {
+		if (resourceUC === "EVENTS" || resourceUC === "SERIES" || resourceUC === "PLAYLISTS") {
 			return `EVENTS.${resourceUC}.TABLE.CAPTION`;
 		}
 		if (resourceUC === "RECORDINGS") {
