@@ -1,5 +1,5 @@
 import { Service } from "../../../slices/serviceSlice";
-import moment from "moment";
+import { formatHMS } from "../../../utils/dateUtils";
 
 /**
  * This component renders the mean queue time cells of systems in the table view
@@ -12,7 +12,7 @@ const MeanQueueTimeCell = ({
 
 	return (
 		<span>
-			{ moment.utc(moment.duration(row.meanQueueTime * 1000).asMilliseconds()).format("HH:mm:ss") }
+			 {formatHMS(row.meanQueueTime)}
 		</span>
 	);
 };

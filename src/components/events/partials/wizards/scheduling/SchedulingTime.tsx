@@ -4,6 +4,7 @@ import { hours, minutes } from "../../../../../configs/modalConfig";
 import { formatTimeForDropdown } from "../../../../../utils/dropDownUtils";
 import { getCurrentLanguageInformation } from "../../../../../utils/utils";
 import { ParseKeys } from "i18next";
+import i18n from "../../../../../i18n/i18n";
 
 const SchedulingTime = ({
 	hour,
@@ -28,7 +29,7 @@ const SchedulingTime = ({
 }) => {
 	const { t } = useTranslation();
 	// Get info about the current language and its date locale
-	const currentLanguage = getCurrentLanguageInformation();
+	const currentLanguage = getCurrentLanguageInformation(i18n.language);
 
 	return (
 		<tr>

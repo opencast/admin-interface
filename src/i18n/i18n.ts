@@ -1,6 +1,5 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import moment from "moment";
 
 import HttpBackend, { HttpBackendOptions } from "i18next-http-backend";
 import LanguageDetector from "i18next-browser-languagedetector";
@@ -23,6 +22,8 @@ import svSETrans from "./org/opencastproject/adminui/languages/lang-sv_SE.json";
 import trTRTrans from "./org/opencastproject/adminui/languages/lang-tr_TR.json";
 import zhCNTrans from "./org/opencastproject/adminui/languages/lang-zh_CN.json";
 import zhTWTrans from "./org/opencastproject/adminui/languages/lang-zh_TW.json";
+import { getCurrentLanguageInformation } from "../utils/utils";
+import { format } from "date-fns/format";
 
 // Assignment of language code to translation file
 // !!! If translation file of a new language is added, please add assignment here, too !!!
@@ -58,9 +59,11 @@ i18n
 
 		interpolation: {
 			escapeValue: false,
-			format: function (value, format, _lng) {
-				if (value instanceof Date) {
-					return moment(value).format(format);
+			format: function (value, formatStr, lng) {
+				if (value instanceof Date && formatStr && lng) {
+					return format(value, formatStr, {
+						locale: getCurrentLanguageInformation(lng)?.dateLocale,
+					});
 				}
 
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-return

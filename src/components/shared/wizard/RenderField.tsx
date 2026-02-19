@@ -12,6 +12,7 @@ import { GroupBase, SelectInstance } from "react-select";
 import TextareaAutosize from "react-textarea-autosize";
 import { LuCheck, LuSquarePen } from "react-icons/lu";
 import axios from "axios";
+import i18n from "../../../i18n/i18n";
 
 /**
  * This component renders an editable field for single values depending on the type of the corresponding metadata
@@ -188,7 +189,7 @@ const EditableDateValue = ({
 				popperClassName="datepicker-custom"
 				className="datepicker-custom-input"
 				wrapperClassName="datepicker-custom-wrapper"
-				locale={getCurrentLanguageInformation()?.dateLocale}
+				locale={getCurrentLanguageInformation(i18n.language)?.dateLocale}
 				strictParsing
 				autoFocus={isFirstField}
 			/>
@@ -319,7 +320,7 @@ const EditableSingleValueTime = ({
 				popperClassName="datepicker-custom"
 				className="datepicker-custom-input"
 				wrapperClassName="datepicker-custom-wrapper"
-				locale={getCurrentLanguageInformation()?.dateLocale}
+				locale={getCurrentLanguageInformation(i18n.language)?.dateLocale}
 				strictParsing
 				autoFocus={isFirstField}
 			/>

@@ -1,8 +1,8 @@
-import moment from "moment";
-import "moment/min/locales.min";
 import { getCurrentLanguageInformation } from "./utils";
 import { DataResolution, TimeMode } from "../slices/statisticsSlice";
 import type { ChartOptions, TooltipItem } from "chart.js";
+import i18n from "../i18n/i18n";
+import { endOfDay, format, parseISO } from "date-fns";
 
 /**
  * This file contains functions that are needed for thunks for statistics
@@ -14,31 +14,32 @@ function createXAxisTickCallback(
 	dataResolution: DataResolution,
 	language: string,
 ) {
-	let formatString = "L";
+	let formatString = "P";
 	if (timeMode === "year") {
 		formatString = "MMMM";
 	} else if (timeMode === "month") {
-		formatString = "dddd, Do";
+		formatString = "EEEE, Do";
 	} else {
 		if (dataResolution === "yearly") {
-			formatString = "YYYY";
+			formatString = "yyyy";
 		} else if (dataResolution === "monthly") {
 			formatString = "MMMM";
 		} else if (dataResolution === "daily") {
 			if (language === "en-US" || language === "en-GB") {
-				formatString = "MMMM Do, YYYY";
+				formatString = "MMMM do, yyyy";
 			} else {
-				formatString = "Do MMMM YYYY";
+				formatString = "do MMMM yyyy";
 			}
 		} else if (dataResolution === "hourly") {
-			formatString = "LLL";
+			formatString = "PPp";
 		}
 	}
 
 	return function (tickValue: number | string) {
+		const locale = getCurrentLanguageInformation(language)?.dateLocale;
 		// @ts-expect-error: Typescript does not like "this", but the chart.js documentation insists we should do it this way
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-		return moment(this.getLabelForValue(tickValue)).locale(language).format(formatString);
+		return format(parseISO(this.getLabelForValue(tickValue)), formatString, { locale });
 	};
 };
 
@@ -50,36 +51,37 @@ const createTooltipCallback = (
 ) => {
 	let formatString;
 	if (timeMode === "year") {
-		formatString = "MMMM YYYY";
+		formatString = "MMMM yyyy";
 	} else if (timeMode === "month") {
 		if (language === "en-US" || language === "en-GB") {
-			formatString = "dddd, MMMM Do, YYYY";
+			formatString = "EEEE, MMMM do, yyyy";
 		} else {
-			formatString = "dddd, Do MMMM YYYY";
+			formatString = "EEEE, do MMMM yyyy";
 		}
 	} else {
 		if (dataResolution === "yearly") {
-			formatString = "YYYY";
+			formatString = "yyyy";
 		} else if (dataResolution === "monthly") {
-			formatString = "MMMM YYYY";
+			formatString = "MMMM yyyy";
 		} else if (dataResolution === "daily") {
 			if (language === "en-US" || language === "en-GB") {
-				formatString = "dddd, MMMM Do, YYYY";
+				formatString = "EEEE, MMMM do, yyyy";
 			} else {
-				formatString = "dddd, Do MMMM YYYY";
+				formatString = "EEEE, do MMMM yyyy";
 			}
 		} else {
 			if (language === "en-US" || language === "en-GB") {
-				formatString = "dddd, MMMM Do, YYYY HH:mm";
+				formatString = "EEEE, MMMM do, yyyy HH:mm";
 			} else {
-				formatString = "dddd, Do MMMM YYYY, HH:mm";
+				formatString = "EEEE, do MMMM yyyy, HH:mm";
 			}
 		}
 	}
 
 	return (tooltipItem: TooltipItem<"bar">) => {
 		const date = tooltipItem.label;
-		const finalDate = moment(date).locale(language).format(formatString);
+		const locale = getCurrentLanguageInformation(language)?.dateLocale;
+		const finalDate = format(parseISO(date), formatString, { locale });
 		return finalDate + ": " + tooltipItem.formattedValue;
 	};
 };
@@ -90,7 +92,7 @@ export const createChartOptions = (
 	dataResolution: DataResolution,
 ): ChartOptions<"bar"> => {
 	// Get info about the current language and its date locale
-	const currentLanguageInfo = getCurrentLanguageInformation();
+	const currentLanguageInfo = getCurrentLanguageInformation(i18n.language);
 	let currentLanguage = "";
 	if (currentLanguageInfo) {
 		currentLanguage = currentLanguageInfo.dateLocale.code;
@@ -149,8 +151,8 @@ export const createDownloadUrl = (
 		providerId: providerId,
 		resourceId: resourceId,
 		resourceType: resourceType,
-		from: moment(from).toJSON(),
-		to: moment(to).endOf("day").toJSON(),
+		from: from instanceof Date ? from.toISOString() : parseISO(from).toISOString(),
+		to: to instanceof Date ? endOfDay(to).toISOString() : endOfDay(parseISO(to)).toISOString(),
 	});
 
 	return "/admin-ng/statistics/export.csv?" + csvUrlSearchParams.toString();

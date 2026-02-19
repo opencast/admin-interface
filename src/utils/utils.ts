@@ -19,12 +19,12 @@ export const getTimezoneString = (offset: number) => {
 	return "UTC" + (offset < 0 ? "-" : "+") + offset;
 };
 
-export const getCurrentLanguageInformation = () => {
+export const getCurrentLanguageInformation = (languageCode: string) => {
 	// Get code, flag, name and date locale of the current language
-	let currentLang = languages.find(({ code }) => code === i18n.language);
+	let currentLang = languages.find(({ code }) => code === languageCode);
 	if (typeof currentLang === "undefined") {
 		// If detected language code, like "de-CH", isn't part of translations try 2-digit language code
-		currentLang = languages.find(({ code }) => code === i18n.language.split("-")[0]);
+		currentLang = languages.find(({ code }) => code === languageCode.split("-")[0]);
 		if (typeof currentLang === "undefined") {
 			currentLang = languages.find(({ code }) => code === "en-US");
 		}

@@ -2147,19 +2147,19 @@
 	},
 	"dateFormats": {
 		"dateTime": {
-			"short": "{{dateTime, HH:mm DD\/MM\/YY}}",
-			"medium": "{{dateTime, HH:mm:ss DD\/MM\/YYYY}}",
-			"full": "{{dateTime, HH:mm:ss z dddd D MMMM YYYY}}"
+			"short": "{{dateTime, Pp}}",
+			"medium": "{{dateTime, PPp}}",
+			"full": "{{dateTime, PPPPp}}"
 		},
 		"date": {
-			"short": "{{date, DD\/MM\/YY}}",
-			"medium": "{{date, DD\/MM\/YYYY}}",
-			"full": "{{date, dddd D MMMM YYYY}}"
+			"short": "{{date, P}}",
+			"medium": "{{date, PP}}",
+			"full": "{{date, PPPPP}}"
 		},
 		"time": {
-			"short": "{{time, HH:mm}}",
-			"medium": "{{time, HH:mm:ss}}",
-			"full": "{{time, HH:mm:ss z}}"
+			"short": "{{time, p}}",
+			"medium": "{{time, pp}}",
+			"full": "{{time, ppp}}"
 		}
 	},
 	"ABOUT": {

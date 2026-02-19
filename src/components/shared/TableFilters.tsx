@@ -23,7 +23,6 @@ import {
 import TableFilterProfiles from "./TableFilterProfiles";
 import { availableHotkeys } from "../../configs/hotkeysConfig";
 import { useHotkeys } from "react-hotkeys-hook";
-import moment from "moment";
 import { AppThunk, useAppDispatch, useAppSelector } from "../../store";
 import { renderValidDate } from "../../utils/dateUtils";
 import { getCurrentLanguageInformation } from "../../utils/utils";
@@ -35,6 +34,8 @@ import SearchContainer from "./SearchContainer";
 import { Resource } from "../../slices/tableSlice";
 import { HiFunnel } from "react-icons/hi2";
 import { LuSettings, LuX } from "react-icons/lu";
+import { isValid } from "date-fns";
+import i18n from "../../i18n/i18n";
 
 /**
  * This component renders the table filters in the upper right corner of the table
@@ -202,7 +203,7 @@ const TableFilters = ({
 	};
 
 	const submitDateFilter = async (start: Date | undefined | null, end: Date | undefined | null) => {
-		if (start && end && moment(start).isValid() && moment(end).isValid()) {
+		if (start && end && isValid(start) && isValid(end)) {
 			const filter = filterMap.find(({ name }) => name === selectedFilter);
 			if (filter) {
 				dispatch(editFilterValue({
@@ -488,7 +489,7 @@ const FilterSwitch = ({
 						popperPlacement="bottom"
 						popperClassName="datepicker-custom"
 						className="datepicker-custom-input"
-						locale={getCurrentLanguageInformation()?.dateLocale}
+						locale={getCurrentLanguageInformation(i18n.language)?.dateLocale}
 						strictParsing
 					/>
 				</div>

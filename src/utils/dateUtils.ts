@@ -1,6 +1,7 @@
-import moment from "moment";
 import { makeTwoDigits } from "./utils";
 import { FormikErrors } from "formik";
+import { TimeMode } from "../slices/statisticsSlice";
+import { addDays, addMonths, addYears, endOfDay, endOfMonth, endOfYear, format, parseISO, startOfDay, startOfMonth, startOfYear } from "date-fns";
 
 /**
  * This File contains methods concerning dates
@@ -13,18 +14,31 @@ export const renderValidDate = (date: string) => {
 
 // transform relative date to an absolute date
 export const relativeToAbsoluteDate = (relative: string, type: string, from: boolean) => {
-	const localMoment = moment();
+	const now = new Date();
+	const amount = Number(relative);
+	const assumedType = type as "year" | "month" | "day";
 
-	let absolute;
-	if (from) {
-		absolute = localMoment.startOf(type as moment.unitOfTime.StartOf);
-	} else {
-		absolute = localMoment.endOf(type as moment.unitOfTime.StartOf);
-	}
+	const startMap = {
+		year: startOfYear,
+		month: startOfMonth,
+		day: startOfDay,
+	};
 
-	absolute = absolute.add(relative, type as moment.unitOfTime.Base);
+	const endMap = {
+		year: endOfYear,
+		month: endOfMonth,
+		day: endOfDay,
+	};
 
-	return absolute.toDate();
+	const addMap = {
+		year: addYears,
+		month: addMonths,
+		day: addDays,
+	};
+
+	const base = (from ? startMap[assumedType] : endMap[assumedType])(now);
+
+	return addMap[assumedType](base, amount);
 };
 
 type RelativeDateSpanValue = {
@@ -763,7 +777,41 @@ export const changeDurationMinuteMultiple = (
 	setFieldValue("scheduleDurationMinutes", value);
 };
 
-// get localized time
-export const localizedMoment = (m: string, currentLanguageCode: string) => {
-	return moment(m).locale(currentLanguageCode);
+const getRangeDates = (dateStr: string, mode: TimeMode) => {
+	const base = parseISO(dateStr);
+
+	if (mode === "year") {
+		return {
+			from: startOfYear(base),
+			to: endOfYear(base),
+		};
+	}
+
+	if (mode === "month") {
+		return {
+			from: startOfMonth(base),
+			to: endOfMonth(base),
+		};
+	}
+
+	return {
+		from: base,
+		to: base,
+	};
+};
+
+export const formatRangeStart = (d: string, mode: TimeMode) =>
+	format(getRangeDates(d, mode).from, "yyyy-MM-dd");
+
+export const formatRangeEnd = (d: string, mode: TimeMode) =>
+	format(getRangeDates(d, mode).to, "yyyy-MM-dd");
+
+export const formatHMS = (totalSeconds: number): string => {
+	const hours = Math.floor(totalSeconds / 3600);
+	const minutes = Math.floor((totalSeconds % 3600) / 60);
+	const seconds = Math.floor(totalSeconds % 60);
+
+	return [hours, minutes, seconds]
+		.map(s => String(s).padStart(2, "0"))
+		.join(":");
 };

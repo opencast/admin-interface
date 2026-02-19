@@ -52,6 +52,7 @@ import SchedulingInputs from "../wizards/scheduling/SchedulingInputs";
 import SchedulingConflicts from "../wizards/scheduling/SchedulingConflicts";
 import { ParseKeys } from "i18next";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
+import i18n from "../../../../i18n/i18n";
 
 export type InitialValues = {
 	scheduleStartDate: string;
@@ -104,7 +105,7 @@ const EventDetailsSchedulingTab = ({
 	}, []);
 
 	// Get info about the current language and its date locale
-	const currentLanguage = getCurrentLanguageInformation();
+	const currentLanguage = getCurrentLanguageInformation(i18n.language);
 
 	// Get timezone offset; Checks should be performed on UTC times
 	const offset = getTimezoneOffset();

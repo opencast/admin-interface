@@ -1,12 +1,12 @@
 import { PayloadAction, SerializedError, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import moment from "moment";
 import {
 	createDownloadUrl,
 } from "../utils/statisticsUtils";
 import { getHttpHeaders } from "../utils/resourceUtils";
 import { getStatistics } from "../selectors/statisticsSelectors";
 import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
+import { endOfDay, endOfYear, format, parseISO, startOfYear } from "date-fns";
 
 /**
  * This file contains redux reducer for actions affecting the state of statistics
@@ -107,8 +107,9 @@ export const fetchStatistics = async (resourceId: string, resourceType: string, 
 		// default values to use, when statistics are viewed the first time
 		const originalDataResolution = "monthly";
 		const originalTimeMode = "year";
-		const originalFrom = moment().startOf(originalTimeMode);
-		const originalTo = moment().endOf(originalTimeMode);
+		const now = new Date();
+		const originalFrom = startOfYear(now);
+		const originalTo = endOfYear(now);
 
 		// iterate over statistics providers
 		for (let i = 0; i < response.data.length; i++) {
@@ -140,8 +141,8 @@ export const fetchStatistics = async (resourceId: string, resourceType: string, 
 					timeMode = statistics[i].timeMode;
 					dataResolution = statistics[i].dataResolution;
 				} else {
-					from = originalFrom.format("YYYY-MM-DD");
-					to = originalTo.format("YYYY-MM-DD");
+					from = format(originalFrom, "yyyy-MM-dd");
+					to = format(originalTo, "yyyy-MM-dd");
 					timeMode = originalTimeMode;
 					dataResolution = originalDataResolution;
 				}
@@ -172,8 +173,8 @@ export const fetchStatistics = async (resourceId: string, resourceType: string, 
 				// add settings for this statistic of this resource to value request
 				statisticsValueRequest.push({
 					dataResolution: dataResolution,
-					from: moment(from),
-					to: moment(to).endOf("day"),
+					from: parseISO(from),
+				  to: endOfDay(parseISO(to)),
 					resourceId: resourceId,
 					providerId: response.data[i].providerId,
 				});
@@ -242,8 +243,8 @@ export const fetchStatisticsValueUpdate = async (
 	const statisticsValueRequest = [
 		{
 			dataResolution: dataResolution,
-			from: moment(from),
-			to: moment(to).endOf("day"),
+			from: from instanceof Date ? from : parseISO(from),
+			to: to instanceof Date ? endOfDay(to) : endOfDay(parseISO(to)),
 			resourceId: resourceId,
 			providerId: providerId,
 		},

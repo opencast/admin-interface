@@ -42,6 +42,6 @@ export const availableCustomStatisticDataResolutions = [
 
 // date format strings
 export const statisticDateFormatStrings = {
-	month: "MMMM YYYY",
-	year: "YYYY",
+	month: "MMMM yyyy",
+	year: "yyyy",
 };

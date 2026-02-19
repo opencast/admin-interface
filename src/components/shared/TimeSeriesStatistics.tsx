@@ -1,5 +1,4 @@
 import { useState } from "react";
-import moment from "moment";
 import { getCurrentLanguageInformation } from "../../utils/utils";
 import DatePicker from "react-datepicker";
 import { Formik, FormikErrors } from "formik";
@@ -11,7 +10,7 @@ import {
 	statisticDateFormatStrings,
 	statisticTimeModes,
 } from "../../configs/statisticsConfig";
-import { localizedMoment } from "../../utils/dateUtils";
+import { formatRangeEnd, formatRangeStart } from "../../utils/dateUtils";
 import { useTranslation } from "react-i18next";
 import type { ChartOptions } from "chart.js";
 import { AsyncThunk } from "@reduxjs/toolkit";
@@ -19,6 +18,8 @@ import { useAppDispatch } from "../../store";
 import { DataResolution, Statistics, TimeMode } from "../../slices/statisticsSlice";
 import { ParseKeys } from "i18next";
 import { LuChevronLeft, LuChevronRight, LuDownload } from "react-icons/lu";
+import { add, format, parseISO, sub } from "date-fns";
+import i18n from "../../i18n/i18n";
 
 
 /**
@@ -73,11 +74,16 @@ const TimeSeriesStatistics = ({
 	const formatStrings = statisticDateFormatStrings;
 
 	// Get info about the current language and its date locale
-	const currentLanguage = getCurrentLanguageInformation();
+	const currentLanguage = getCurrentLanguageInformation(i18n.language);
 
 	// Set the date for the react-datepicker
 	const [startDatepicker, setStartDatepicker] = useState(fromDate ? new Date(fromDate) : null);
 	const [endDatepicker, setEndDatepicker] = useState(toDate ? new Date(toDate) : null);
+
+	const unitMap = {
+		year: "years",
+		month: "months",
+	} as const;
 
 	// change formik values and get new statistic values from API
 	const change = (
@@ -88,8 +94,8 @@ const TimeSeriesStatistics = ({
 		dataResolution: DataResolution,
 	) => {
 		if (timeMode === "year" || timeMode === "month") {
-			from = moment(from).clone().startOf(timeMode).format("YYYY-MM-DD");
-			to = moment(from).clone().endOf(timeMode).format("YYYY-MM-DD");
+			from = formatRangeStart(from, timeMode);
+			to = formatRangeEnd(from, timeMode);
 			setStartDatepicker(new Date(from));
 			setEndDatepicker(new Date(to));
 			setFormikValue("fromDate", from);
@@ -129,9 +135,8 @@ const TimeSeriesStatistics = ({
 		from: string,
 		timeMode: keyof typeof formatStrings,
 	) => {
-		return localizedMoment(from, currentLanguage ? currentLanguage.dateLocale.code : "en").format(
-			formatStrings[timeMode],
-		);
+		const locale = currentLanguage?.dateLocale;
+		return format(parseISO(from), formatStrings[timeMode], { locale });
 	};
 
 	// change to and from dates in formik to previous timeframe and get new values from API
@@ -141,10 +146,11 @@ const TimeSeriesStatistics = ({
 		timeMode: TimeMode,
 		dataResolution: DataResolution,
 	) => {
-		const newFrom = moment(from)
-			// According to the moment.js docs, string is supported as a second argument here
-			.subtract(1, timeMode + "s" as moment.unitOfTime.DurationConstructor)
-			.format("YYYY-MM-DD");
+		if (timeMode === "custom") { return; }
+
+		const date = parseISO(from);
+		const newFromDate = sub(date, { [unitMap[timeMode]]: 1 });
+		const newFrom = format(newFromDate, "yyyy-MM-dd");
 		const to = newFrom;
 		change(setFormikValue, timeMode, newFrom, to, dataResolution);
 	};
@@ -156,10 +162,11 @@ const TimeSeriesStatistics = ({
 		timeMode: TimeMode,
 		dataResolution: DataResolution,
 	) => {
-		const newFrom = moment(from)
-			// According to the moment.js docs, string is supported as a second argument here
-			.add(1, timeMode + "s" as moment.unitOfTime.DurationConstructor)
-			.format("YYYY-MM-DD");
+		if (timeMode === "custom") { return; }
+
+		const date = parseISO(from);
+		const newFromDate = add(date, { [unitMap[timeMode]]: 1 });
+		const newFrom = format(newFromDate, "yyyy-MM-dd");
 		const to = newFrom;
 		change(setFormikValue, timeMode, newFrom, to, dataResolution);
 	};
@@ -171,12 +178,8 @@ const TimeSeriesStatistics = ({
 			initialValues={{
 				timeMode: timeMode,
 				dataResolution: dataResolution,
-				// Typescript complains that the method "startOf" cannot take "custom" as a parameter, but in practice
-				// this does not seem to be a problem
-				// @ts-expect-error: timeMode should be assignable here
-				fromDate: moment(fromDate).startOf(timeMode).format("YYYY-MM-DD"),
-				// @ts-expect-error: timeMode should be assignable here
-				toDate: moment(toDate).endOf(timeMode).format("YYYY-MM-DD"),
+				fromDate: formatRangeStart(fromDate, timeMode),
+				toDate: formatRangeEnd(toDate, timeMode),
 			}}
 			onSubmit={() => {}}
 		>
@@ -282,8 +285,8 @@ const TimeSeriesStatistics = ({
 										const [startDate, endDate] = dates;
 										setStartDatepicker(startDate);
 										setEndDatepicker(endDate);
-										const newStartDate = startDate ? moment(startDate).format("YYYY-MM-DD") : formik.values.fromDate;
-										const newEndDate = endDate ? moment(endDate).format("YYYY-MM-DD") : formik.values.toDate;
+										const newStartDate = startDate ? format(startDate, "yyyy-MM-dd") : formik.values.fromDate;
+										const newEndDate = endDate ? format(endDate, "yyyy-MM-dd") : formik.values.toDate;
 										change(
 											formik.setFieldValue,
 											formik.values.timeMode,
@@ -304,7 +307,7 @@ const TimeSeriesStatistics = ({
 									popperPlacement="bottom"
 									popperClassName="datepicker-custom"
 									className="datepicker-custom-input"
-									locale={getCurrentLanguageInformation()?.dateLocale}
+									locale={getCurrentLanguageInformation(i18n.language)?.dateLocale}
 									strictParsing
 								/>
 							</div>
