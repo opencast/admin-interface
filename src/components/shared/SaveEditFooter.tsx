@@ -1,7 +1,9 @@
 import { useTranslation } from "react-i18next";
-import { Tooltip } from "./Tooltip";
 import { ParseKeys } from "i18next";
+
+import { Tooltip } from "./Tooltip";
 import BaseButton from "./BaseButton";
+
 
 type SaveEditFooterProps = {
     active: boolean;
@@ -17,44 +19,41 @@ type SaveEditFooterProps = {
 }
 
 export const SaveEditFooter: React.FC<SaveEditFooterProps> = ({
-    active,
-    reset,
-    submit,
-    isValid,
-    customSaveButtonText,
-    additionalButton,
+  active,
+  reset,
+  submit,
+  isValid,
+  customSaveButtonText,
+  additionalButton,
 }) => {
-    const { t } = useTranslation();
+  const { t } = useTranslation();
 
-    const saveButtonText = customSaveButtonText || "SAVE";
+  const saveButtonText = customSaveButtonText || "SAVE";
+  const disabled = !(isValid && active);
 
-    return <footer>
+  return <footer style={{}}>
+    <BaseButton
+      onClick={submit}
+      aria-disabled={!disabled}
+      disabled={disabled}
+      className={`save green ${disabled ? "disabled" : ""}`}
+    >{t(saveButtonText)}</BaseButton>
+    {additionalButton && (
+      <Tooltip title={t(additionalButton.hint)}>
         <BaseButton
-            onClick={submit}
-            aria-disabled={!isValid || !active}
-            disabled={!isValid || !active}
-            className={`save green ${
-                !isValid || !active ? "disabled" : ""
-            }`}
-        >{t(saveButtonText)}</BaseButton>
-        {additionalButton && (
-            <Tooltip title={t(additionalButton.hint)}>
-                <BaseButton
-                    onClick={additionalButton.onClick}
-                    disabled={!isValid || !active}
-                    aria-disabled={!isValid || !active}
-                    className={`save green ${
-                        !isValid || !active ? "disabled" : ""
-                    }`}
-                >{t(additionalButton.label)}</BaseButton>
-            </Tooltip>
-        )}
-        {active && isValid && (
-            <BaseButton
-                type="reset"
-                onClick={reset}
-                className="cancel"
-            >{t("CANCEL")}</BaseButton>
-        )}
-    </footer>;
+          onClick={additionalButton.onClick}
+          disabled={disabled}
+          aria-disabled={disabled}
+          className={`save green ${disabled ? "disabled" : ""}`}
+        >{t(additionalButton.label)}</BaseButton>
+      </Tooltip>
+    )}
+    <BaseButton
+      type="reset"
+      onClick={reset}
+      className={`cancel ${disabled ? "disabled" : ""}`}
+      disabled={disabled}
+      aria-disabled={disabled}
+    >{t("CANCEL")}</BaseButton>
+  </footer>;
 };
