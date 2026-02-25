@@ -5,7 +5,9 @@ import { NotificationComponent } from "./Notifications";
 import { ParseKeys } from "i18next";
 import BaseButton from "./BaseButton";
 
-export type ResourceType = "EVENT" | "SERIES" | "LOCATION" | "USER" | "GROUP" | "ACL" | "THEME" | "TOBIRA_PATH";
+export type ResourceType =
+  "EVENT" | "SERIES" | "PLAYLIST" | "LOCATION" | "USER" |
+  "GROUP" | "ACL" | "THEME" | "TOBIRA_PATH";
 
 const ConfirmModal = <T, >({
 	close,

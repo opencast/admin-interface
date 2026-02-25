@@ -2,6 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import NewEventWizard from "../events/partials/wizards/NewEventWizard";
 import NewSeriesWizard from "../events/partials/wizards/NewSeriesWizard";
+import NewPlaylistWizard from "../events/partials/wizards/NewPlaylistWizard";
 import NewThemeWizard from "../configuration/partials/wizard/NewThemeWizard";
 import NewAclWizard from "../users/partials/wizard/NewAclWizard";
 import NewGroupWizard from "../users/partials/wizard/NewGroupWizard";
@@ -14,6 +15,7 @@ import { Modal, ModalHandle } from "./modals/Modal";
 export type NewResource =
   | "events"
   | "series"
+  | "playlists"
   | "user"
   | "group"
   | "acl"
@@ -25,7 +27,7 @@ const NewResourceModal = ({
   modalRef,
 }: {
   handleClose: () => void;
-  resource: "events" | "series" | "user" | "group" | "acl" | "themes";
+  resource: NewResource;
   modalRef: React.RefObject<ModalHandle | null>;
 }) => {
   const { t } = useTranslation();
@@ -40,6 +42,8 @@ const NewResourceModal = ({
         return t("EVENTS.EVENTS.NEW.CAPTION");
       case "series":
         return t("EVENTS.SERIES.NEW.CAPTION");
+      case "playlists":
+        return t("EVENTS.PLAYLISTS.NEW.CAPTION");
       case "themes":
         return t("CONFIGURATION.THEMES.DETAILS.NEWCAPTION");
       case "acl":
@@ -65,6 +69,10 @@ const NewResourceModal = ({
       {resource === "series" && (
         // New Series Wizard
         <NewSeriesWizard close={close} />
+      )}
+      {resource === "playlists" && (
+        // New Playlist Wizard
+        <NewPlaylistWizard close={close} />
       )}
       {resource === "themes" && (
         // New Theme Wizard

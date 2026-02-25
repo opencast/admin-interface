@@ -3,8 +3,49 @@ import axios from "axios";
 
 import { TableConfig } from "../configs/tableConfigs/aclsTableConfig";
 import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
-import { getURLParams } from "../utils/resourceUtils";
+import { getURLParams, prepareAccessPolicyRulesForPost } from "../utils/resourceUtils";
 import { playlistsTableConfig } from "../configs/tableConfigs/playlistsTableConfig";
+import { addNotification } from "./notificationSlice";
+import { TransformedAcl } from "./aclDetailsSlice";
+import { MetadataCatalog } from "./eventSlice";
+import { AppThunk } from "../store";
+
+/**
+ * Build the metadata catalog for new playlist creation.
+ * Unlike series/events, playlists don't have a backend metadata endpoint —
+ * the fields are derived from the playlist model itself.
+ * The creator field is read-only and pre-filled with the current user's name.
+ */
+export const getNewPlaylistMetadataFields = (creatorName: string): MetadataCatalog => ({
+  title: "EVENTS.PLAYLISTS.NEW.METADATA.CAPTION",
+  flavor: "playlist/details",
+  fields: [
+    {
+      id: "title",
+      label: "EVENTS.PLAYLISTS.DETAILS.METADATA.TITLE",
+      readOnly: false,
+      required: true,
+      type: "text",
+      value: "",
+    },
+    {
+      id: "description",
+      label: "EVENTS.PLAYLISTS.DETAILS.METADATA.DESCRIPTION",
+      readOnly: false,
+      required: false,
+      type: "text_long",
+      value: "",
+    },
+    {
+      id: "creator",
+      label: "EVENTS.PLAYLISTS.DETAILS.METADATA.CREATOR",
+      readOnly: true,
+      required: false,
+      type: "text",
+      value: creatorName,
+    },
+  ],
+});
 
 
 export type Playlist = {
@@ -45,7 +86,6 @@ const initialColumns = playlistsTableConfig.columns.map(column => ({
   deactivated: false,
 }));
 
-
 const initialState: PlaylistState = {
   status: "uninitialized",
   error: null,
@@ -57,12 +97,12 @@ const initialState: PlaylistState = {
   limit: 0,
 };
 
-export type FetchPlaylists = {
-    offset: number,
-    limit: number,
-    results: Playlist[],
-};
 
+type FetchPlaylists = {
+  offset: number,
+  limit: number,
+  results: Playlist[],
+};
 
 export const fetchPlaylists = createAppAsyncThunk("playlists/fetchPlaylists", async (_, { getState }) => {
   const state = getState();
@@ -72,6 +112,66 @@ export const fetchPlaylists = createAppAsyncThunk("playlists/fetchPlaylists", as
 
   return res.data;
 });
+
+
+export const postNewPlaylist = (params: {
+  values: {
+    policies: TransformedAcl[],
+    metadata: { [key: string]: unknown },
+  },
+  metadataFields: { title: string, description: string, creator: string },
+}): AppThunk => dispatch => {
+  const { values, metadataFields } = params;
+
+  // Build payload from form values
+  const playlist: Record<string, unknown> = {
+    title: metadataFields.title,
+    description: metadataFields.description,
+    creator: metadataFields.creator,
+    entries: [],
+  };
+
+  // Build ACL
+  const access = prepareAccessPolicyRulesForPost(values.policies);
+  const accessControlEntries: { allow: boolean, role: string, action: string }[] = [];
+  if (access.acl?.ace) {
+    for (const ace of access.acl.ace) {
+      accessControlEntries.push({ allow: ace.allow, role: ace.role, action: ace.action });
+    }
+  }
+  playlist.accessControlEntries = accessControlEntries;
+
+  const data = new URLSearchParams();
+  data.append("playlist", JSON.stringify(playlist));
+
+  axios
+    .post("/admin-ng/playlists", data.toString(), {
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    })
+    .then(response => {
+      console.info(response);
+      dispatch(addNotification({ type: "success", key: "PLAYLIST_ADDED" }));
+    })
+    .catch(response => {
+      console.error(response);
+      dispatch(addNotification({ type: "error", key: "PLAYLIST_NOT_SAVED" }));
+    });
+};
+
+
+export const deletePlaylist = (id: Playlist["id"]): AppThunk => dispatch => {
+  axios
+    .delete(`/admin-ng/playlists/${id}`)
+    .then(res => {
+      console.info(res);
+      dispatch(addNotification({ type: "success", key: "PLAYLIST_DELETED" }));
+    })
+    .catch(res => {
+      console.error(res);
+      dispatch(addNotification({ type: "error", key: "PLAYLIST_NOT_DELETED" }));
+    });
+};
+
 
 const playlistSlice = createSlice({
   name: "playlist",
@@ -103,9 +203,6 @@ const playlistSlice = createSlice({
   },
 });
 
-export const {
-  setPlaylistColumns,
-} = playlistSlice.actions;
+export const { setPlaylistColumns } = playlistSlice.actions;
 
 export default playlistSlice.reducer;
-

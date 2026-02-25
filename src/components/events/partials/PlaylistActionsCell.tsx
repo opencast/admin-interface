@@ -2,9 +2,10 @@ import { LuFileText } from "react-icons/lu";
 
 import { fetchPlaylistDetails, openModal } from "../../../slices/playlistDetailsSlice";
 import { useAppDispatch } from "../../../store";
-import { Playlist } from "../../../slices/playlistSlice";
+import { deletePlaylist, Playlist } from "../../../slices/playlistSlice";
 import ButtonLikeAnchor from "../../shared/ButtonLikeAnchor";
 import { PlaylistDetailsPage } from "./modals/PlaylistDetails";
+import { ActionCellDelete } from "../../shared/ActionCellDelete";
 
 
 /**
@@ -32,6 +33,15 @@ const PlaylistActionsCell = ({
     >
       <LuFileText />
     </ButtonLikeAnchor>
+
+    {/* delete playlist */}
+    <ActionCellDelete
+      editAccessRole={"ROLE_UI_PLAYLISTS_DELETE"}
+      resourceId={row.id}
+      resourceName={row.title}
+      resourceType={"PLAYLIST"}
+      deleteMethod={id => dispatch(deletePlaylist(id))}
+    />
   </>;
 };
 

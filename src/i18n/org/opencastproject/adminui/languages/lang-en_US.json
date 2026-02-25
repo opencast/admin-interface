@@ -117,6 +117,7 @@
 				"UNKNOWN": "The following element will be deleted",
 				"EVENT": "The following event will be deleted",
 				"SERIES": "The following series will be deleted",
+				"PLAYLIST": "The following playlist will be deleted",
 				"ACL": "The following ACL will be deleted",
 				"GROUP": "The following group will be deleted",
 				"USER": "The following user will be deleted",
@@ -179,6 +180,10 @@
 		"GROUP_NOT_DELETED": "The group could not be deleted",
 		"SERIES_ADDED": "The series has been created",
 		"SERIES_NOT_SAVED": "The series could not be saved",
+		"PLAYLIST_ADDED": "The playlist has been created",
+		"PLAYLIST_NOT_SAVED": "The playlist could not be created",
+		"PLAYLIST_DELETED": "The playlist has been deleted",
+		"PLAYLIST_NOT_DELETED": "The playlist could not be deleted",
 		"SERIES_PATH_UPDATED": "The series path has been updated",
 		"SERIES_PATH_REMOVED": "The series path has been removed",
 		"SERIES_PATH_NOT_UPDATED": "The series path could not be updated",
@@ -630,6 +635,7 @@
 			"UPLOAD": "Upload",
 			"ADD_SERIES": "Add series",
 			"ADD_EVENT": "Add event",
+			"ADD_PLAYLIST": "Add playlist",
 			"TABLE": {
 				"CAPTION": "Events",
 				"TITLE": "Title",
@@ -1287,6 +1293,18 @@
 			}
 		},
 		"PLAYLISTS": {
+			"NEW": {
+				"CAPTION": "Add playlist",
+				"METADATA": {
+					"CAPTION": "Metadata"
+				},
+				"ACCESS": {
+					"CAPTION": "Access policy"
+				},
+				"SUMMARY": {
+					"CAPTION": "Summary"
+				}
+			},
 			"TABLE": {
 				"CAPTION": "Playlists",
 				"TITLE": "Title",

@@ -122,6 +122,23 @@ export const initialFormValuesNewSeries: {
 	metadata: {},
 };
 
+
+export const initialFormValuesNewPlaylist: {
+	policies: TransformedAcl[],
+	aclTemplate?: string,
+	metadata: { [key: string]: unknown }
+} = {
+	policies: [
+		{
+			role: "ROLE_USER_ADMIN",
+			read: true,
+			write: true,
+			actions: [],
+		},
+	],
+	metadata: {},
+};
+
 // All fields for new theme form that are fix and not depending on response of backend
 // InitialValues of Formik form (others computed dynamically depending on responses from backend)
 export const initialFormValuesNewThemes = {
