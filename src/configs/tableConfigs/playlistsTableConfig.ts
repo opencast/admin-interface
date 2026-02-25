@@ -32,6 +32,11 @@ export const playlistsTableConfig: TableConfig = {
       label: "EVENTS.PLAYLISTS.TABLE.UPDATED",
       sortable: true,
     },
+    {
+      template: "PlaylistActionsCell",
+      name: "actions",
+      label: "EVENTS.PLAYLISTS.TABLE.ACTION",
+    },
   ],
   caption: "EVENTS.PLAYLISTS.TABLE.CAPTION",
   resource: "playlists",

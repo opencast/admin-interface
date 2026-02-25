@@ -1293,7 +1293,40 @@
 				"DESCRIPTION": "Description",
 				"CREATOR": "Creator",
 				"UPDATED": "Updated",
-				"ACTION": "Action"
+				"ACTION": "Action",
+				"TOOLTIP": {
+					"DETAILS": "Open playlist details"
+				}
+			},
+			"DETAILS": {
+				"HEADER": "Playlist details - {{name}}",
+				"TABS": {
+					"METADATA": "Metadata",
+					"PERMISSIONS": "Access policy"
+				},
+				"METADATA": {
+					"TITLE": "Title",
+					"DESCRIPTION": "Description",
+					"CREATOR": "Creator",
+					"UPDATED": "Updated",
+					"ENTRIES": "Entries"
+				},
+				"ACCESS": {
+					"ACCESS_POLICY": {
+						"LABEL": "Select a template",
+						"DESCRIPTION": ""
+					},
+					"NON_USER_ROLES": "Roles and Groups authorized for the playlist",
+					"ROLE": "Role",
+					"READ": "Read",
+					"WRITE": "Write",
+					"ADDITIONAL_ACTIONS": "Additional Actions",
+					"NEW": "New policy",
+					"USERS": "Users who are authorized for the playlist",
+					"USER": "User",
+					"NEW_USER": "New user",
+					"EMPTY": "No access policies defined"
+				}
 			}
 		}
 	},
