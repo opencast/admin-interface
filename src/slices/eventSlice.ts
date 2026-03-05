@@ -451,6 +451,7 @@ export const postNewEvent = (params: {
 		scheduleStartHour: string,
 		scheduleStartMinute: string,
 		sourceMode: string,
+		location: string,
 		uploadAssetsTrack?: UploadAssetsTrack[],
 		metadata: { [key: string]: unknown },
 	},
@@ -544,7 +545,7 @@ export const postNewEvent = (params: {
 			type: values.sourceMode,
 			metadata: {
 				start: startDate,
-				device: values.metadata.location,
+				device: values.location,
 				inputs: values.inputs ? values.inputs.join(",") : "",
 				end: endDate,
 				duration: duration.toString(),
