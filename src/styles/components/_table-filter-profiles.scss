@@ -61,15 +61,6 @@
             font-size: 17px;
         }
     } // header
-    .footer-btn {
-        background: linear-gradient(variables.$off-white, #f0f2f5);
-        border-top: 1px solid color.adjust(#f0f2f5, $lightness: -10%);
-        border-bottom-left-radius: variables.$main-border-radius;
-        border-bottom-right-radius: variables.$main-border-radius;
-        display: block;
-        line-height: 30px;
-        text-align: center;
-    } // footer-btn
 }
 
 .df-profile-filters {
@@ -99,8 +90,8 @@
 
         li {
             display: flex;
-            border-top: 1px solid #e2e2e2;
-            border-bottom: 1px solid #e2e2e2;
+            border-top: 1px solid variables.$lighter-border-color;
+            border-bottom: 1px solid variables.$lighter-border-color;
             padding: 7px 10px;
 
             .remove {

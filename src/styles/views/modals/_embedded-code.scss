@@ -23,7 +23,7 @@
 
 .embedSizeButton {
     display: inline-block;
-    background-color: #e2e1e1;
+    background-color: variables.$table-highlight;
     border: 1px solid variables.$color-silver;
     border-radius: 10px;
     cursor: pointer;
@@ -45,7 +45,6 @@
     width: 100%;
     font-weight: bold;
     font-size: 15.4px;
-    color: #466DC3;
 }
 
 .size_620x349 {

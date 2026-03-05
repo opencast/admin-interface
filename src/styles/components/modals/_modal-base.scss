@@ -204,7 +204,7 @@
             box-sizing: border-box;
             height: $height;
             line-height: $height;
-            background: linear-gradient(to bottom, variables.$white, #f3f5f6);
+            background: linear-gradient(to bottom, variables.$white, color.adjust(variables.$off-white, $lightness: -3%));
             border-bottom: 1px solid variables.$main-border-color;
             border-top-left-radius: variables.$main-border-radius;
             border-top-right-radius: variables.$main-border-radius;

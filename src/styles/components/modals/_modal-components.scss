@@ -138,15 +138,15 @@
                     }
                 }
 
-                .active {
-                    background: #BDDAF1;
+                &.active {
+                    background: variables.$color-lightgray; //BDDAF1;
                 }
             }
         }
 
         .add-comment {
             background: variables.$off-white;
-            border-top: variables.$thin-border-stroke #e9e9e9;
+            border-top: variables.$thin-border-stroke variables.$lighter-border-color;
             border-bottom-left-radius: variables.$main-border-radius;
             border-bottom-right-radius: variables.$main-border-radius;
             height: 191px;

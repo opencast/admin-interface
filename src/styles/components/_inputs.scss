@@ -94,55 +94,6 @@ select[multiple] {
     }
 }
 
-// Input made by Joshua Hibbert | http://codepen.io/joshnh/pen/hjbuH
-input[type="checkbox"].ios,
-input[type="radio"].ios {
-
-    $white: variables.$white;
-    $grey: #d3d3d3;
-    $transition-duration: 250ms;
-
-    background-color: color.adjust($white, $lightness: -2%);
-    border: 1px solid $grey;
-    border-radius: 26px;
-    box-shadow: inset 0 0 0 1px $grey;
-    cursor: pointer;
-    height: 28px;
-    position: relative;
-    transition: border $transition-duration 150ms, box-shadow $transition-duration 300ms, padding $transition-duration;
-    width: 44px;
-    vertical-align: top;
-
-    &:after {
-        background-color: $white;
-        border: 1px solid $grey;
-        border-radius: 24px;
-        box-shadow: inset 0 -3px 3px hsla(0, 0%, 0%, 0.025), 0 1px 4px hsla(0, 0%, 0%, 0.15), 0 4px 4px hsla(0, 0%, 0%, 0.1);
-        content: '';
-        display: block;
-        height: 24px;
-        left: 0;
-        position: absolute;
-        right: 16px;
-        top: 0;
-        transition: border 250ms 150ms, left 250ms 100ms, right 150ms 175ms;
-    }
-
-    &:checked {
-        border-color: variables.$green;
-        box-shadow: inset 0 0 0 13px variables.$green;
-        padding-left: 18px;
-        transition: border 250ms, box-shadow 250ms, padding 250ms 150ms;
-
-        &:after {
-            border-color: variables.$green;
-            left: 16px;
-            right: 0;
-            transition: border 250ms, left 150ms 250ms, right 250ms 175ms;
-        }
-    }
-}
-
 .search-container {
     width: 100% !important;
     height: 40px;

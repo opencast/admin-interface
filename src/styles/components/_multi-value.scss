@@ -19,10 +19,10 @@
   }
 
   &-green {
-    background: #4bcc8f;
+    background: variables.$primary-color-green-light-1;
   }
 
   &-red {
-    background: #ff0000;
+    background: variables.$red;
   }
 }

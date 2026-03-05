@@ -99,8 +99,8 @@
                 line-height: 20px;
 
                 &:hover, &:focus {
-                    color: variables.$global-text-color;
-                    background: #f2f2f2;
+                    color: variables.$off-white;
+                    background: variables.$bright-blue;
                 }
 
                 &.more-link {
@@ -155,21 +155,12 @@
             z-index: variables.$max-z + 10;
 
             > li {
-                text-decoration: none;
-                text-shadow: 0 1px 0 variables.$white;
                 color: variables.$medium-prim-color;
                 font-size: 12px;
                 line-height: 20px;
                 font-weight: 600;
                 cursor: default;
                 display: block;
-                position: relative;
-                transition: all 200ms;
-
-                span {
-                    padding: 3px 15px 3px 45px;
-                    display: block;
-                }
 
                 span > span {
                     display: block;
@@ -181,21 +172,6 @@
                 button {
                     display: block;
                     padding: 4px 15px;
-
-                    &:hover, &:focus {
-                        color: variables.$global-text-color;
-                        background: #f2f2f2;
-                    }
-
-                    &.more-link {
-                        text-align: center;
-                        color: variables.$l-blue;
-                    }
-                }
-
-                &:last-child a {
-                    border-bottom-left-radius: variables.$main-border-radius;
-                    border-bottom-right-radius: variables.$main-border-radius;
                 }
             }
         }

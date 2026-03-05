@@ -78,7 +78,7 @@ const PublishCell = ({
 	return (
 		<>
 			{ publications.length > 0 &&
-				<div className="popover-wrapper">
+				<>
 					{onlyEngage && (
 						// <Tooltip title={t("EVENTS.EVENTS.TABLE.TOOLTIP.PLAYER")}> // Disabled due to performance concerns
 							<a className="crosslink" href={publications[0].url} rel="noreferrer" target="_blank">
@@ -88,7 +88,7 @@ const PublishCell = ({
 					)}
 					{!onlyEngage &&
 						<>
-							<ButtonLikeAnchor className="popover-wrapper__trigger">
+							<ButtonLikeAnchor className="crosslink">
 								<span onClick={() => setShowPopup(!showPopup)}>{t("YES")}</span>
 							</ButtonLikeAnchor>
 							{showPopup && (
@@ -123,7 +123,7 @@ const PublishCell = ({
 							)}
 						</>
 					}
-				</div>
+				</>
 			}
 		</>
 	);

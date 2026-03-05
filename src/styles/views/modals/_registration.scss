@@ -136,10 +136,6 @@
           font-weight: 700;
           transform: translate3d(0, -35%, 0);
           opacity: 1;
-          color: #4b4b4b
-        }
-
-        .form-control:focus + .form-control-placeholder {
           color: variables.$l-blue;
         }
 
@@ -148,7 +144,7 @@
         }
 
         .form-control:required + label:after {
-            color: #e32;
+            color: variables.$red;
             content: ' *';
             display:inline;
         }

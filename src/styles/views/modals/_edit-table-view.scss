@@ -71,7 +71,7 @@
         border-radius: variables.$main-border-radius;
         cursor: move;
         border: variables.$thin-border-stroke variables.$main-border-color;
-        background: linear-gradient(to bottom, variables.$white, #f3f5f6);
+        background: linear-gradient(to bottom, variables.$white, color.adjust(variables.$off-white, $lightness: -3%));
         color: color.adjust(variables.$grey, $lightness: -10%);
         font-weight: 600;
         text-shadow: 0px 1px 0px variables.$white;
@@ -89,12 +89,12 @@
         padding-left: 5px;
 
         &:hover {
-            background: linear-gradient(to bottom, variables.$white, color.adjust(#f3f5f6, $lightness: -2%));
+            background: linear-gradient(to bottom, variables.$white, color.adjust(variables.$off-white, $lightness: -5%));
         }
 
         &:active,
         &.being-dragged {
-            background: linear-gradient(to bottom, color.adjust(variables.$white, $lightness: -2%), color.adjust(#f3f5f6, $lightness: -3%));
+            background: linear-gradient(to bottom, color.adjust(variables.$white, $lightness: -2%), color.adjust(variables.$off-white, $lightness: -6%));
             cursor: move;
             border: variables.$thin-border-stroke color.adjust(variables.$main-border-color, $lightness: -5%);
             box-shadow: 0 0 4px rgba(0,0,0,0.1);

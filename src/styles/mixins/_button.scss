@@ -55,6 +55,9 @@
         }
     }
 
+    /**
+     * Currently goes unused. Kept to illustrate the intention behind this file
+     * for future readers.
     @else if $color == blue-dark-bg {
         box-shadow: inset 0px 1px 0px 0px #456c8e, 0px 2px 3px 1px rgba(0,0,0,.05);
 
@@ -77,6 +80,7 @@
             box-shadow: inset 0px 3px 10px 1px color.adjust(#2c9966, $lightness: -3%);
         }
     }
+    */
 
     @else if $color == green {
         box-shadow: inset 0px 1px 0px 0px variables.$primary-color-green-light-1, 0px 2px 3px 1px rgba(0,0,0,.05);
@@ -102,6 +106,9 @@
         }
     }
 
+    /**
+     * Currently goes unused. Kept to illustrate the intention behind this file
+     * for future readers.
     @else if $color == blue {
         box-shadow: inset 0px 1px 0px 0px #456c8e, 0px 2px 3px 1px rgba(0,0,0,.05);
 
@@ -124,47 +131,48 @@
             box-shadow: inset 0 3px 10px 1px color.adjust(#2c9966, $lightness: -3%);
         }
     }
+    */
 
     @else if $color == lightblue {
 
-        box-shadow: inset 0px 1px 0px 0px color.adjust(#388ed6, $lightness: 10%), 0px 2px 3px 1px rgba(0,0,0,.05);
+        box-shadow: inset 0px 1px 0px 0px color.adjust(variables.$l-blue, $lightness: 10%), 0px 2px 3px 1px rgba(0,0,0,.05);
 
-        background: linear-gradient(#388ed6, #2b77b9);
+        background: linear-gradient(variables.$l-blue, variables.$l-blue-gradient);
 
-        border: variables.$thin-border-stroke color.adjust(#2b77b9, $lightness: -5%);
+        border: variables.$thin-border-stroke color.adjust(variables.$l-blue-gradient, $lightness: -5%);
 
         &:hover {
             cursor: pointer;
-            background: linear-gradient(color.adjust(#388ed6, $lightness: 10%), color.adjust(#2b77b9, $lightness: -10%));
+            background: linear-gradient(color.adjust(variables.$l-blue, $lightness: 10%), color.adjust(variables.$l-blue-gradient, $lightness: -10%));
         }
 
         &:focus {
             cursor: pointer;
-            background: linear-gradient(color.adjust(#388ed6, $lightness: 10%), color.adjust(#2b77b9, $lightness: -10%));
+            background: linear-gradient(color.adjust(variables.$l-blue, $lightness: 10%), color.adjust(variables.$l-blue-gradient, $lightness: -10%));
         }
 
         &:active {
             cursor: pointer;
-            box-shadow: inset 0px 3px 10px 1px color.adjust(#2b77b9, $lightness: -5%);
+            box-shadow: inset 0px 3px 10px 1px color.adjust(variables.$l-blue-gradient, $lightness: -5%);
         }
     }
 
     @else if $color == brightblue {
 
-        box-shadow: inset 0px 1px 0px 0px color.adjust(#55cef2, $lightness: 10%), 0px 2px 3px 1px rgba(0,0,0,.05);
+        box-shadow: inset 0px 1px 0px 0px color.adjust(variables.$b-blue-gradient, $lightness: 10%), 0px 2px 3px 1px rgba(0,0,0,.05);
 
-        background: linear-gradient(#55cef2, variables.$bright-blue);
+        background: linear-gradient(variables.$b-blue-gradient, variables.$bright-blue);
 
         border: variables.$thin-border-stroke color.adjust(variables.$bright-blue, $lightness: -10%);
 
         &:hover {
             cursor: pointer;
-            background: linear-gradient(color.adjust(#55cef2, $lightness: 5%), color.adjust(variables.$bright-blue, $lightness: -10%));
+            background: linear-gradient(color.adjust(variables.$b-blue-gradient, $lightness: 5%), color.adjust(variables.$bright-blue, $lightness: -10%));
         }
 
         &:focus {
             cursor: pointer;
-            background: linear-gradient(color.adjust(#55cef2, $lightness: 5%), color.adjust(variables.$bright-blue, $lightness: -10%));
+            background: linear-gradient(color.adjust(variables.$b-blue-gradient, $lightness: 5%), color.adjust(variables.$bright-blue, $lightness: -10%));
         }
 
         &:active {
@@ -200,7 +208,7 @@
 
     @else if $color == white {
 
-        background: linear-gradient(variables.$white, #f7f7f7);
+        background: linear-gradient(variables.$white, variables.$color-lightgray);
         border: variables.$thin-border-stroke variables.$main-border-color;
         box-shadow: inset 0px 1px 0px 0px variables.$white, 0px 1px 2px rgba(0,0,0,.05);
         color: variables.$medium-prim-color;
@@ -209,14 +217,14 @@
         &:hover {
             cursor: pointer;
             border: variables.$thin-border-stroke color.adjust(variables.$main-border-color, $lightness: -2%);
-            background: linear-gradient(color.adjust(variables.$white, $lightness: -4%), color.adjust(#f7f7f7, $lightness: -10%));
+            background: linear-gradient(color.adjust(variables.$white, $lightness: -4%), color.adjust(variables.$color-lightgray, $lightness: -10%));
             color: variables.$medium-prim-color;
         }
 
         &:focus {
             cursor: pointer;
             border: variables.$thin-border-stroke color.adjust(variables.$main-border-color, $lightness: -2%);
-            background: linear-gradient(color.adjust(variables.$white, $lightness: -4%), color.adjust(#f7f7f7, $lightness: -10%));
+            background: linear-gradient(color.adjust(variables.$white, $lightness: -4%), color.adjust(variables.$color-lightgray, $lightness: -10%));
             color: variables.$medium-prim-color;
         }
 
@@ -251,7 +259,7 @@ button {
     font-weight: inherit;
     font-family: inherit;
 
-    color: #069;
+    color: variables.$ref-blue-button;
 }
 
 // Buttons

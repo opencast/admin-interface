@@ -40,7 +40,6 @@
     $point-position-from-right: 10px;
 
     // Link Properties (List Items)
-    $link-hover-color: rgba(variables.$black, 0.05);
     $link-padding: 8px 15px;
     $link-transition-property: background, color;
     $link-transition-duration: 250ms;
@@ -68,7 +67,8 @@
         text-align: left;
 
         &:hover, &:focus {
-            background: $link-hover-color;
+            color: variables.$off-white;
+            background: variables.$bright-blue;
         }
     }
 

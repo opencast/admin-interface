@@ -1,69 +1,12 @@
 @use "../base/variables";
 
-// controlling element of the popover
-.popover-wrapper {
-    position: relative;
-}
-
-.popover-wrapper__trigger {
-    color: #4D687E;
-
-    &:hover {
-        text-decoration: underline;
-    }
-}
-
 .popover {
     position: absolute;
     width: 250px;
-    background: #efefef;
+    background: variables.$table-highlight;
     border-radius: variables.$main-border-radius;
     border: variables.$thin-border-stroke variables.$main-border-color;
     z-index: 1;
-}
-
-.popover.popover-right {
-    &:after {
-        right: 100%;
-        top: 2px;
-        border: solid transparent;
-        content: " ";
-        height: 0;
-        width: 0;
-        position: absolute;
-        pointer-events: none;
-        border-color: transparent;
-        border-right-color: variables.$main-border-color;
-        border-width: 10px;
-        margin-top: 0;
-    }
-}
-@mixin popover-arrow() {
-    top: 0;
-    border: solid transparent;
-    content: " ";
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
-    border-color: transparent;
-    border-width: 10px;
-}
-
-.popover.popover-left {
-    &:after {
-        @include popover-arrow();
-        border-left-color: variables.$main-border-color;
-        left: 100%;
-    }
-}
-
-.popover.popover-right {
-    &:after {
-        @include popover-arrow();
-        right: 100%;
-        border-right-color: variables.$main-border-color;
-    }
 }
 
 .popover__header {

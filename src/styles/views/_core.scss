@@ -30,23 +30,6 @@ body {
     min-width: variables.$app-min-width;
 }
 
-.page-title {
-
-    h1 {
-        font-size: 23px;
-        font-weight: 100;
-        color: #46647e;
-        padding: 0 0 6px;
-        margin: 0;
-    }
-
-    h4 {
-        font-size: 11px;
-        color: variables.$medium-prim-color;
-    }
-}
-
-
 .main-view {
     box-sizing: border-box;
 
@@ -68,7 +51,7 @@ body {
         h1 {
             font-size: 23px;
             font-weight: 100;
-            color: #46647e;
+            color: variables.$table-title-color;
             padding: 0 0 6px;
             margin: 0;
         }
@@ -82,12 +65,10 @@ body {
     .controls-container {
         margin-bottom: 20px;
 
-        // ## Refactor out to .page-title (Start)
-
         > h1 {
             font-size: 23px;
             font-weight: 100;
-            color: #46647e;
+            color: variables.$table-title-color;
             padding: 0 0 6px;
             margin: 0;
         }
@@ -96,8 +77,6 @@ body {
             font-size: 11px;
             color: variables.$medium-prim-color;
         }
-
-        // ## (End)
 
         .filters-container {
             float: right;
@@ -151,10 +130,10 @@ body {
                 font-size: 12px;
                 font-weight: 600;
                 text-decoration: none;
-                color: #717171;
+                color: variables.$color-gray;
                 text-shadow: 0 1px 0 rgba(variables.$white, 1);
                 border: variables.$thin-border-stroke variables.$main-border-color;
-                background: linear-gradient(to bottom, variables.$color-lightgray, #e9e9e9);
+                background: linear-gradient(to bottom, variables.$off-white, variables.$color-lightgray);
 
                 // Pulled from Button Mixin (keep in sync with those styles)
                 background: linear-gradient(variables.$white, variables.$color-lightgray);
@@ -183,9 +162,9 @@ body {
                 padding: 7px 10px;
                 margin-right: 4px;
                 border: none;
-                background: #616161;
+                background: variables.$medium-prim-color;
                 box-shadow: inset 0 0 8px rgba(variables.$black, 0.5);
-                color: #f0f0f0;
+                color: variables.$off-white;
                 text-shadow: 0 0 3px rgba(variables.$black, 0.5);
             }
         }

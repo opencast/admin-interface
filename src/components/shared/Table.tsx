@@ -211,7 +211,7 @@ const TableHeadRows = ({ forceDeselectAll }: { forceDeselectAll: () => unknown }
 									className={cn("chevron-up", { active: reverse === "ASC" && column.name === sortBy })}
 								/>
 								<LuChevronDown
-									className={cn("chevron-down", { active: reverse === "ASC" && column.name === sortBy })}
+									className={cn("chevron-down", { active: reverse === "DESC" && column.name === sortBy })}
 								/>
 							</div>
 						</span>

@@ -4,7 +4,7 @@ import { StylesConfig, Theme } from "react-select";
 
 // colors
 const colorDropDownMain = "#aaa";
-const colorDropDownNormalFocus = "#5897fb";
+const colorDropDownNormalFocus = "#4da1f7";
 const colorDropDownDarkerFocus = "#2a62bc";
 
 export function dropDownStyle(customCss: {

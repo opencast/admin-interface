@@ -54,7 +54,7 @@
 }
 
 .main-tbl {
-    $border-color: #c7ced3;
+    $border-color: variables.$main-border-color;
     $col-padding: 7px;
 
     width: 100%;
@@ -68,8 +68,8 @@
         background: variables.$color-lightgray;
 
         > td {
-            border-top: 1px solid #e2e2e2;
-            border-bottom: 1px solid #e2e2e2;
+            border-top: 1px solid variables.$lighter-border-color;
+            border-bottom: 1px solid variables.$lighter-border-color;
 
             > .hidden-input {
                 background: variables.$color-lightgray;
@@ -86,7 +86,7 @@
         &.sortable {
             cursor: pointer;
             &:hover {
-                background: linear-gradient(to bottom, variables.$off-white, color.adjust(#f1f3f5, $lightness: -3%));
+                background: linear-gradient(to bottom, variables.$off-white, color.adjust(variables.$off-white, $lightness: -5%));
             }
             &:active {
                 box-shadow: inset 0 3px 10px 2px rgba(variables.$black, 0.05);
@@ -111,11 +111,11 @@
         }
 
         // Aesthetic Style
-        border-right: 1px solid #c9d0d6;
+        border-right: 1px solid variables.$main-border-color;
         border-left: 1px solid variables.$white;
         border-bottom: 1px solid $border-color;
         user-select: none;
-        background: linear-gradient(to bottom, color.adjust(variables.$off-white, $lightness: -1%), color.adjust(#f1f3f5, $lightness: -3%));
+        background: linear-gradient(to bottom, color.adjust(variables.$off-white, $lightness: -1%), color.adjust(variables.$off-white, $lightness: -5%));
 
         // Typography
         line-height: 35px;
@@ -131,7 +131,7 @@
 
         // Darken tbl when sorted on
         &.col-sort {
-            background: color.adjust(#f1f3f5, $lightness: -2%);
+            background: color.adjust(variables.$off-white, $lightness: -4%);
             box-shadow: inset 0 3px 10px 2px rgba(variables.$black, 0.05);
         }
 
@@ -195,7 +195,7 @@
                     color: variables.$grey;
                 }
                 .active {
-                    color: variables.$l-blue;
+                    color: variables.$color-darkgray;
                 }
             }
         }
@@ -274,7 +274,7 @@
         max-width: 800px;
         padding: $col-padding;
         color: variables.$medium-prim-color;
-        border-right: 1px solid #c9d0d6;
+        border-right: 1px solid variables.$main-border-color;
         line-height: 20px;
         vertical-align: middle;
 
@@ -287,6 +287,7 @@
             border-radius: inherit;
             color: variables.$ref-blue;
             padding: unset;
+            line-height: normal;
 
             &.action-cell-button {
                 width: 17px;
