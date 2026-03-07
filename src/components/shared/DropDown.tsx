@@ -4,10 +4,10 @@ import {
 	dropDownSpacingTheme,
 	dropDownStyle,
 } from "../../utils/componentStyles";
-import { GroupBase, MenuListProps, SelectInstance } from "react-select";
+import { GroupBase, MenuListProps, Props, SelectInstance, StylesConfig, Theme } from "react-select";
 import { isJson } from "../../utils/utils";
 import { ParseKeys } from "i18next";
-import { FixedSizeList as List, ListChildComponentProps } from "react-window";
+import { FixedSizeList as List } from "react-window";
 import AsyncSelect from "react-select/async";
 import AsyncCreatableSelect from "react-select/async-creatable";
 import Select from "react-select";
@@ -23,7 +23,7 @@ export type DropDownOption = {
  * This component renders a dropdown menu using react-select
  */
 const DropDown = <T, >({
-	ref = React.createRef<SelectInstance<any, boolean, GroupBase<any>>>(),
+	ref = React.createRef<SelectInstance<DropDownOption, false, GroupBase<DropDownOption>>>(),
 	value,
 	text,
 	options,
@@ -44,7 +44,7 @@ const DropDown = <T, >({
 	customCSS,
 	fetchOptions,
 }: {
-	ref?: React.RefObject<SelectInstance<any, boolean, GroupBase<any>> | null>
+	ref?: React.RefObject<SelectInstance<DropDownOption, false, GroupBase<DropDownOption>> | null>
 	value: T
 	text: string,
 	options?: DropDownOption[],
@@ -74,7 +74,7 @@ const DropDown = <T, >({
 
 	const selectRef = ref;
 
-	const style = dropDownStyle(customCSS ?? {});
+	const style = dropDownStyle(customCSS ?? {}) as StylesConfig<DropDownOption, false, GroupBase<any>>;
 
 	useEffect(() => {
 		// Ensure menu has focus when opened programmatically
@@ -146,22 +146,17 @@ const DropDown = <T, >({
 		return Array.isArray(children) ? (
 			<div style={{ paddingTop: 4 }}>
 				<List
-					height={maxHeight < (children.length * itemHeight) ? maxHeight : children.length * itemHeight}
+					height={Math.min(maxHeight, children.length * itemHeight)}
 					itemCount={children.length}
 					itemSize={itemHeight}
 					width="100%"
 					overscanCount={4}
-					itemData={children}
 				>
-					{VirtualRow}
+					{({ index, style }) => <div style={style}>{children[index]}</div>}
 				</List>
 			</div>
 		) : null;
 	};
-
-	const VirtualRow = ({ index, style, data }: ListChildComponentProps<React.ReactNode[]>) => (
-		<div style={style}>{data[index]}</div>
-	);
 
 	const loadOptions = useCallback((
 		inputValue: string,
@@ -173,19 +168,17 @@ const DropDown = <T, >({
 		}, 1000);
 	}, [fetchOptions, required, skipTranslate, i18n.resolvedLanguage]);
 
-	const baseProps = {
+	const baseProps: Props<DropDownOption, false, GroupBase<any>> = {
 		ref: selectRef,
 		tabIndex: tabIndex,
-		theme: theme => (dropDownSpacingTheme(theme)),
+		theme: (theme: Theme) => dropDownSpacingTheme(theme),
 		styles: style,
 		defaultMenuIsOpen: defaultOpen,
 		autoFocus: autoFocus,
 		isSearchable: true,
-		value: { value: value, label: text === "" ? placeholder : text },
-		defaultOptions: memoizedOptions ?? true,
-		cacheOptions: true,
+		value: { value, label: text === "" ? placeholder : text },
 		placeholder: placeholder,
-		onChange: element => handleChange(element as {value: T, label: string}),
+		onChange: (element: any) => handleChange(element || null),
 		menuIsOpen: menuIsOpen,
 		onMenuOpen: () => openMenu(true),
 		onMenuClose: () => openMenu(false),
@@ -198,7 +191,7 @@ const DropDown = <T, >({
 	if (isAsync) {
 		const asyncProps = {
 			...baseProps,
-			loadOptions: loadOptions,
+			loadOptions,
 			defaultOptions: true,
 			cacheOptions: true,
 		};
