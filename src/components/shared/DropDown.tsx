@@ -184,7 +184,8 @@ const DropDown = <T extends string | number | undefined, >({
 		isSearchable: true,
 		value: selectedValue,
 		placeholder,
-		onChange: element => handleChange(element || null),
+		onChange: (element: DropDownOption | null) => 
+			handleChange(element ? { value: element.value as T, label: element.label } : null),
 		menuIsOpen,
 		onMenuOpen: () => openMenu(true),
 		onMenuClose: () => openMenu(false),
