@@ -7,7 +7,7 @@ import {
 import { GroupBase, MenuListProps, Props, SelectInstance, StylesConfig, Theme } from "react-select";
 import { isJson } from "../../utils/utils";
 import { ParseKeys } from "i18next";
-import { FixedSizeList as List } from "react-window";
+import { List, RowComponentProps } from "react-window";
 import AsyncSelect from "react-select/async";
 import AsyncCreatableSelect from "react-select/async-creatable";
 import Select from "react-select";
@@ -17,7 +17,7 @@ export type DropDownOption = {
 	label: string,
 	value: string | number,
 	order?: number
-}
+};
 
 /**
  * This component renders a dropdown menu using react-select
@@ -73,20 +73,16 @@ const DropDown = <T extends string | number | undefined, >({
 	const { t, i18n } = useTranslation();
 
 	const selectRef = ref;
-
 	const style = dropDownStyle(customCSS ?? {}) as StylesConfig<DropDownOption, false>;
 
 	useEffect(() => {
-		// Ensure menu has focus when opened programmatically
 		if (menuIsOpen) {
 			selectRef.current?.focus();
 		}
 	}, [menuIsOpen, selectRef]);
 
 	const openMenu = (open: boolean) => {
-		if (handleMenuIsOpen !== undefined) {
-			handleMenuIsOpen(open);
-		}
+		handleMenuIsOpen?.(open);
 	};
 
 	const formatOptions = useCallback((
@@ -111,9 +107,7 @@ const DropDown = <T extends string | number | undefined, >({
 		}
 
 		const hasCustomOrder = formatted.every(item => {
-			if (!isJson(item.label)) {
-				return false;
-			}
+			if (!isJson(item.label)) return false;
 			try {
 				const parsed = JSON.parse(item.label);
 				return parsed && typeof parsed === "object" && "order" in parsed;
@@ -122,13 +116,9 @@ const DropDown = <T extends string | number | undefined, >({
 			}
 		});
 
-		if (hasCustomOrder) {
-			formatted = [...formatted].sort((a, b) => JSON.parse(a.label).order - JSON.parse(b.label).order);
-		} else {
-			formatted = [...formatted].sort((a, b) => a.label.localeCompare(b.label));
-		}
-
-		return formatted;
+		return hasCustomOrder
+			? [...formatted].sort((a, b) => JSON.parse(a.label).order - JSON.parse(b.label).order)
+			: [...formatted].sort((a, b) => a.label.localeCompare(b.label));
 	}, [skipTranslate, t]);
 
 	const isAsync = !!fetchOptions;
@@ -140,26 +130,36 @@ const DropDown = <T extends string | number | undefined, >({
 
 	const itemHeight = optionHeight;
 
-	/**
-	 * Custom component for list virtualization
-	 */
 	const MenuList = (props: MenuListProps<DropDownOption, false>) => {
 		const { children, maxHeight } = props;
 
 		return Array.isArray(children) ? (
 			<div style={{ paddingTop: 4 }}>
 				<List
-					height={maxHeight < (children.length * itemHeight) ? maxHeight : children.length * itemHeight}
-					itemCount={children.length}
-					itemSize={itemHeight}
-					width="100%"
+					rowComponent={MenuListRow}
+					rowCount={children.length}
+					rowHeight={itemHeight}
+					style={{
+						height: maxHeight < (children.length * itemHeight) ? maxHeight : children.length * itemHeight,
+						width: "100%",
+					}}
+					rowProps={{ children }}
 					overscanCount={4}
-				>
-					{({ index, style }) => <div style={style}>{children[index]}</div>}
-				</List>
+				/>
 			</div>
 		) : null;
 	};
+
+	function MenuListRow({
+		index,
+		children,
+		style,
+	}: RowComponentProps<{
+		children: React.ReactNode[];
+	}>) {
+		const child = children[index];
+		return <div style={style}>{child}</div>;
+	}
 
 	const loadOptions = useCallback((
 		inputValue: string,
@@ -176,20 +176,20 @@ const DropDown = <T extends string | number | undefined, >({
 		: null;
 
 	const baseProps: Props<DropDownOption, false, GroupBase<DropDownOption>> = {
-		tabIndex: tabIndex,
+		tabIndex,
 		theme: (theme: Theme) => dropDownSpacingTheme(theme),
 		styles: style,
 		defaultMenuIsOpen: defaultOpen,
-		autoFocus: autoFocus,
+		autoFocus,
 		isSearchable: true,
 		value: selectedValue,
-		placeholder: placeholder,
-		onChange: (element) => handleChange(element || null),
-		menuIsOpen: menuIsOpen,
+		placeholder,
+		onChange: element => handleChange(element || null),
+		menuIsOpen,
 		onMenuOpen: () => openMenu(true),
 		onMenuClose: () => openMenu(false),
 		isDisabled: disabled,
-		openMenuOnFocus: openMenuOnFocus,
+		openMenuOnFocus,
 		menuPlacement: menuPlacement ?? "auto",
 		components: { MenuList },
 		isMulti: false,
