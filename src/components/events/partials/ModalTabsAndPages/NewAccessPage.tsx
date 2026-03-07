@@ -76,15 +76,15 @@ const NewAccessPage = <T extends RequiredFormProps>({
 
 	// If we have to use series ACL, fetch it
 	useEffect(() => {
-		if (initEventAclWithSeriesAcl && formik.values["dublincore/episode_isPartOf"]) {
-			dispatch(fetchSeriesDetailsAcls(formik.values["dublincore/episode_isPartOf"]));
+		if (initEventAclWithSeriesAcl && formik.values.metadata["dublincore/episode_isPartOf"]) {
+			dispatch(fetchSeriesDetailsAcls(formik.values.metadata["dublincore/episode_isPartOf"]));
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [formik.values["dublincore/episode_isPartOf"], initEventAclWithSeriesAcl, dispatch]);
+	}, [formik.values.metadata["dublincore/episode_isPartOf"], initEventAclWithSeriesAcl, dispatch]);
 
 	// If we have to use series ACL, overwrite existing rules
 	useEffect(() => {
-		if (initEventAclWithSeriesAcl && formik.values["dublincore/episode_isPartOf"] && seriesAcl) {
+		if (initEventAclWithSeriesAcl && formik.values.metadata["dublincore/episode_isPartOf"] && seriesAcl) {
 			formik.setFieldValue("policies", seriesAcl);
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -121,7 +121,7 @@ const NewAccessPage = <T extends RequiredFormProps>({
 										{hasAccess(viewUsersAccessRole, user) &&
 											<AccessPolicyTable
 												isUserTable={true}
-												policiesFiltered={policiesFiltered(formik.values.policies, true)}
+												policiesFiltered={policiesFiltered(formik.values.metadata.policies, true)}
 												rolesFilteredbyPolicies={rolesFiltered(roles, true)}
 												header={"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.USERS"}
 												firstColumnHeader={"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.USER"}
@@ -138,7 +138,7 @@ const NewAccessPage = <T extends RequiredFormProps>({
 										{hasAccess(viewNonUsersAccessRole, user) &&
 											<AccessPolicyTable
 												isUserTable={false}
-												policiesFiltered={policiesFiltered(formik.values.policies, false)}
+												policiesFiltered={policiesFiltered(formik.values.metadata.policies, false)}
 												rolesFilteredbyPolicies={rolesFiltered(roles, false)}
 												header={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.NON_USER_ROLES"}
 												firstColumnHeader={"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.ROLE"}
@@ -158,7 +158,7 @@ const NewAccessPage = <T extends RequiredFormProps>({
 									<>
 										<AccessPolicyTable
 											isUserTable={false}
-											policiesFiltered={formik.values.policies}
+											policiesFiltered={formik.values.metadata.policies}
 											rolesFilteredbyPolicies={roles}
 											firstColumnHeader={"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.ROLE"}
 											createLabel={"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.NEW"}
@@ -186,8 +186,8 @@ const NewAccessPage = <T extends RequiredFormProps>({
 			<WizardNavigationButtons
 				formik={formik}
 				nextPage={() => {
-					if (dispatch(checkAcls(formik.values.policies))) {
-						nextPage(formik.values);
+					if (dispatch(checkAcls(formik.values.metadata.policies))) {
+						nextPage(formik.values.metadata);
 					}
 				}}
 				previousPage={previousPage}
