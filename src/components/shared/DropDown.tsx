@@ -7,7 +7,7 @@ import {
 import { GroupBase, MenuListProps, Props, SelectInstance, StylesConfig, Theme } from "react-select";
 import { isJson } from "../../utils/utils";
 import { ParseKeys } from "i18next";
-import { FixedSizeList as List } from "react-window";
+import { List, RowComponentProps } from "react-window";
 import AsyncSelect from "react-select/async";
 import AsyncCreatableSelect from "react-select/async-creatable";
 import Select from "react-select";
@@ -22,7 +22,7 @@ export type DropDownOption = {
 /**
  * This component renders a dropdown menu using react-select
  */
-const DropDown = <T, >({
+const DropDown = <T extends string | number, >({
 	ref = React.createRef<SelectInstance<DropDownOption, false, GroupBase<DropDownOption>>>(),
 	value,
 	text,
@@ -74,7 +74,7 @@ const DropDown = <T, >({
 
 	const selectRef = ref;
 
-	const style = dropDownStyle(customCSS ?? {}) as StylesConfig<DropDownOption, false, GroupBase<any>>;
+	const style = dropDownStyle(customCSS ?? {}) as StylesConfig<DropDownOption, false>;
 
 	useEffect(() => {
 		// Ensure menu has focus when opened programmatically
@@ -146,17 +146,31 @@ const DropDown = <T, >({
 		return Array.isArray(children) ? (
 			<div style={{ paddingTop: 4 }}>
 				<List
-					height={Math.min(maxHeight, children.length * itemHeight)}
-					itemCount={children.length}
-					itemSize={itemHeight}
-					width="100%"
+					rowComponent={MenuListRow}
+					rowCount={children.length}
+					rowHeight={itemHeight}
+					style={{
+						height: maxHeight < (children.length * itemHeight) ? maxHeight : children.length * itemHeight,
+						width: "100%",
+					}}
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+					rowProps={{ children }}
 					overscanCount={4}
-				>
-					{({ index, style }) => <div style={style}>{children[index]}</div>}
-				</List>
+				/>
 			</div>
 		) : null;
 	};
+
+	function MenuListRow({
+		index,
+		children,
+		style,
+	}: RowComponentProps<{
+		children: React.ReactNode[];
+	}>) {
+		const child = children[index];
+		return <div style={style}>{child}</div>;
+	}
 
 	const loadOptions = useCallback((
 		inputValue: string,
@@ -168,7 +182,7 @@ const DropDown = <T, >({
 		}, 1000);
 	}, [fetchOptions, required, skipTranslate, i18n.resolvedLanguage]);
 
-	const baseProps: Props<DropDownOption, false, GroupBase<any>> = {
+	const baseProps: Props<DropDownOption, false, GroupBase<DropDownOption>> = {
 		ref: selectRef,
 		tabIndex: tabIndex,
 		theme: (theme: Theme) => dropDownSpacingTheme(theme),
@@ -176,7 +190,7 @@ const DropDown = <T, >({
 		defaultMenuIsOpen: defaultOpen,
 		autoFocus: autoFocus,
 		isSearchable: true,
-		value: { value, label: text === "" ? placeholder : text },
+		value: { value, label: text === "" ? placeholder : text } as DropDownOption,
 		placeholder: placeholder,
 		onChange: (element: any) => handleChange(element || null),
 		menuIsOpen: menuIsOpen,
