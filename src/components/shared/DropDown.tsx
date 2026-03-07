@@ -212,9 +212,11 @@ const DropDown = <T extends string | number | undefined, >({
 			cacheOptions: true,
 		};
 
+		// @ts-expect-error: React-Select typing mismatch with generics and isMulti
 		return creatable ? (
 			<AsyncCreatableSelect ref={selectRef} {...asyncProps} />
 		) : (
+			// @ts-expect-error: React-Select typing mismatch with generics and isMulti
 			<AsyncSelect
 				ref={selectRef}
 				{...asyncProps}
@@ -229,9 +231,11 @@ const DropDown = <T extends string | number | undefined, >({
 		options: memoizedOptions ?? [],
 	};
 
+	// @ts-expect-error: React-Select typing mismatch with generics and isMulti
 	return creatable ? (
 		<CreatableSelect ref={selectRef} {...syncProps} />
 	) : (
+		// @ts-expect-error: React-Select typing mismatch with generics and isMulti
 		<Select ref={selectRef} {...syncProps} />
 	);
 };
