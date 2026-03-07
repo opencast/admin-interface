@@ -7,7 +7,7 @@ import {
 import { GroupBase, MenuListProps, Props, SelectInstance, StylesConfig, Theme } from "react-select";
 import { isJson } from "../../utils/utils";
 import { ParseKeys } from "i18next";
-import { List, RowComponentProps } from "react-window";
+import { FixedSizeList as List } from "react-window";
 import AsyncSelect from "react-select/async";
 import AsyncCreatableSelect from "react-select/async-creatable";
 import Select from "react-select";
@@ -89,13 +89,16 @@ const DropDown = <T extends string | number | undefined, >({
 		}
 	};
 
-	const formatOptions = (
+	const formatOptions = useCallback((
 		unformattedOptions: DropDownOption[],
 		required: boolean,
 	): DropDownOption[] => {
 		let formatted = skipTranslate
 			? [...unformattedOptions]
-			: unformattedOptions.map(option => ({ ...option, label: t(option.label as ParseKeys) }));
+			: unformattedOptions.map(option => ({
+				...option,
+				label: t(option.label as ParseKeys),
+			  }));
 
 		if (!required) {
 			formatted = [
@@ -126,14 +129,14 @@ const DropDown = <T extends string | number | undefined, >({
 		}
 
 		return formatted;
-	};
+	}, [skipTranslate, t]);
 
 	const isAsync = !!fetchOptions;
 
 	const memoizedOptions = useMemo(() => {
 		if (isAsync || !options) return undefined;
 		return formatOptions(options, required);
-	}, [options, required, skipTranslate, i18n.resolvedLanguage, isAsync]);
+	}, [options, required, isAsync, formatOptions]);
 
 	const itemHeight = optionHeight;
 
@@ -146,31 +149,17 @@ const DropDown = <T extends string | number | undefined, >({
 		return Array.isArray(children) ? (
 			<div style={{ paddingTop: 4 }}>
 				<List
-					rowComponent={MenuListRow}
-					rowCount={children.length}
-					rowHeight={itemHeight}
-					style={{
-						height: maxHeight < (children.length * itemHeight) ? maxHeight : children.length * itemHeight,
-						width: "100%",
-					}}
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-					rowProps={{ children }}
+					height={maxHeight < (children.length * itemHeight) ? maxHeight : children.length * itemHeight}
+					itemCount={children.length}
+					itemSize={itemHeight}
+					width="100%"
 					overscanCount={4}
-				/>
+				>
+					{({ index, style }) => <div style={style}>{children[index]}</div>}
+				</List>
 			</div>
 		) : null;
 	};
-
-	function MenuListRow({
-		index,
-		children,
-		style,
-	}: RowComponentProps<{
-		children: React.ReactNode[];
-	}>) {
-		const child = children[index];
-		return <div style={style}>{child}</div>;
-	}
 
 	const loadOptions = useCallback((
 		inputValue: string,
@@ -180,9 +169,11 @@ const DropDown = <T extends string | number | undefined, >({
 			const raw = await fetchOptions!(inputValue);
 			callback(formatOptions(raw || [], required));
 		}, 1000);
-	}, [fetchOptions, required, skipTranslate, i18n.resolvedLanguage]);
+	}, [fetchOptions, required, formatOptions]);
 
-	const selectedValue = value != null ? { value, label: text === "" ? placeholder : text } as DropDownOption : null;
+	const selectedValue = value != null
+		? { value, label: text === "" ? placeholder : text } as DropDownOption
+		: null;
 
 	const baseProps: Props<DropDownOption, false, GroupBase<DropDownOption>> = {
 		tabIndex: tabIndex,
@@ -193,7 +184,7 @@ const DropDown = <T extends string | number | undefined, >({
 		isSearchable: true,
 		value: selectedValue,
 		placeholder: placeholder,
-		onChange: (element: any) => handleChange(element || null),
+		onChange: (element) => handleChange(element || null),
 		menuIsOpen: menuIsOpen,
 		onMenuOpen: () => openMenu(true),
 		onMenuClose: () => openMenu(false),
