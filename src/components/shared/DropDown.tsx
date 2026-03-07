@@ -22,8 +22,8 @@ export type DropDownOption = {
 /**
  * This component renders a dropdown menu using react-select
  */
-const DropDown = <T extends string | number, >({
-	ref = React.createRef<SelectInstance<DropDownOption, false, GroupBase<DropDownOption>>>(),
+const DropDown = <T extends string | number | undefined, >({
+	ref = React.createRef<SelectInstance<any, boolean, GroupBase<any>>>(),
 	value,
 	text,
 	options,
@@ -44,8 +44,8 @@ const DropDown = <T extends string | number, >({
 	customCSS,
 	fetchOptions,
 }: {
-	ref?: React.RefObject<SelectInstance<DropDownOption, false, GroupBase<DropDownOption>> | null>
-	value: T
+	ref?: React.RefObject<SelectInstance<any, boolean, GroupBase<any>> | null>
+	value?: T
 	text: string,
 	options?: DropDownOption[],
 	required: boolean,
@@ -182,15 +182,16 @@ const DropDown = <T extends string | number, >({
 		}, 1000);
 	}, [fetchOptions, required, skipTranslate, i18n.resolvedLanguage]);
 
+	const selectedValue = value != null ? { value, label: text === "" ? placeholder : text } as DropDownOption : null;
+
 	const baseProps: Props<DropDownOption, false, GroupBase<DropDownOption>> = {
-		ref: selectRef,
 		tabIndex: tabIndex,
 		theme: (theme: Theme) => dropDownSpacingTheme(theme),
 		styles: style,
 		defaultMenuIsOpen: defaultOpen,
 		autoFocus: autoFocus,
 		isSearchable: true,
-		value: { value, label: text === "" ? placeholder : text } as DropDownOption,
+		value: selectedValue,
 		placeholder: placeholder,
 		onChange: (element: any) => handleChange(element || null),
 		menuIsOpen: menuIsOpen,
@@ -211,9 +212,10 @@ const DropDown = <T extends string | number, >({
 		};
 
 		return creatable ? (
-			<AsyncCreatableSelect {...asyncProps} />
+			<AsyncCreatableSelect ref={selectRef} {...asyncProps} />
 		) : (
 			<AsyncSelect
+				ref={selectRef}
 				{...asyncProps}
 				openMenuOnFocus={false}
 				noOptionsMessage={() => t("SELECT_NO_MATCHING_RESULTS")}
@@ -227,9 +229,9 @@ const DropDown = <T extends string | number, >({
 	};
 
 	return creatable ? (
-		<CreatableSelect {...syncProps} />
+		<CreatableSelect ref={selectRef} {...syncProps} />
 	) : (
-		<Select {...syncProps} />
+		<Select ref={selectRef} {...syncProps} />
 	);
 };
 
