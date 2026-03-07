@@ -70,7 +70,7 @@ const DropDown = <T extends string | number | undefined, >({
 	},
 	fetchOptions?: (inputValue: string) => Promise<{ label: string, value: string }[]>
 }) => {
-	const { t, i18n } = useTranslation();
+	const { t } = useTranslation();
 
 	const selectRef = ref;
 	const style = dropDownStyle(customCSS ?? {}) as StylesConfig<DropDownOption, false>;
@@ -82,7 +82,9 @@ const DropDown = <T extends string | number | undefined, >({
 	}, [menuIsOpen, selectRef]);
 
 	const openMenu = (open: boolean) => {
-		handleMenuIsOpen?.(open);
+		if (handleMenuIsOpen !== undefined) {
+			handleMenuIsOpen(open);
+		}
 	};
 
 	const formatOptions = useCallback((
@@ -106,8 +108,10 @@ const DropDown = <T extends string | number | undefined, >({
 			];
 		}
 
-		const hasCustomOrder = formatted.every(item => {
-			if (!isJson(item.label)) return false;
+		const hasCustomOrder = formatted.every((item) => {
+			if (!isJson(item.label)) {
+				return false;
+			}
 			try {
 				const parsed = JSON.parse(item.label);
 				return parsed && typeof parsed === "object" && "order" in parsed;
@@ -116,15 +120,23 @@ const DropDown = <T extends string | number | undefined, >({
 			}
 		});
 
-		return hasCustomOrder
-			? [...formatted].sort((a, b) => JSON.parse(a.label).order - JSON.parse(b.label).order)
-			: [...formatted].sort((a, b) => a.label.localeCompare(b.label));
+		if (hasCustomOrder) {
+			return [...formatted].sort((a, b) => {
+				const orderA: number = JSON.parse(a.label).order;
+				const orderB: number = JSON.parse(b.label).order;
+				return orderA - orderB;
+			});
+		}
+
+		return [...formatted].sort((a, b) => a.label.localeCompare(b.label));
 	}, [skipTranslate, t]);
 
 	const isAsync = !!fetchOptions;
 
 	const memoizedOptions = useMemo(() => {
-		if (isAsync || !options) return undefined;
+		if (isAsync || !options) {
+			return undefined;
+		}
 		return formatOptions(options, required);
 	}, [options, required, isAsync, formatOptions]);
 
@@ -140,7 +152,9 @@ const DropDown = <T extends string | number | undefined, >({
 					rowCount={children.length}
 					rowHeight={itemHeight}
 					style={{
-						height: maxHeight < (children.length * itemHeight) ? maxHeight : children.length * itemHeight,
+						height: maxHeight < (children.length * itemHeight)
+							? maxHeight
+							: children.length * itemHeight,
 						width: "100%",
 					}}
 					rowProps={{ children }}
@@ -184,8 +198,9 @@ const DropDown = <T extends string | number | undefined, >({
 		isSearchable: true,
 		value: selectedValue,
 		placeholder,
-		onChange: (element: DropDownOption | null) => 
-			handleChange(element ? { value: element.value as T, label: element.label } : null),
+		onChange: (element: DropDownOption | null) => {
+			handleChange(element ? { value: element.value as T, label: element.label } : null);
+		},
 		menuIsOpen,
 		onMenuOpen: () => openMenu(true),
 		onMenuClose: () => openMenu(false),
@@ -196,7 +211,7 @@ const DropDown = <T extends string | number | undefined, >({
 		isMulti: false,
 	};
 
-	const forwardedRef = selectRef as any;
+	const forwardedRef = selectRef as React.Ref<unknown>;
 
 	if (isAsync) {
 		const asyncProps = {
