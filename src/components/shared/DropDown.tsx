@@ -23,7 +23,7 @@ export type DropDownOption = {
  * This component renders a dropdown menu using react-select
  */
 const DropDown = <T extends string | number | undefined, >({
-	ref = React.createRef<SelectInstance<any, boolean, GroupBase<any>>>(),
+	ref = React.createRef<SelectInstance<DropDownOption, false, GroupBase<DropDownOption>>>(),
 	value,
 	text,
 	options,
@@ -44,7 +44,7 @@ const DropDown = <T extends string | number | undefined, >({
 	customCSS,
 	fetchOptions,
 }: {
-	ref?: React.RefObject<SelectInstance<any, boolean, GroupBase<any>> | null>
+	ref?: React.RefObject<SelectInstance<DropDownOption, false, GroupBase<DropDownOption>> | null>
 	value?: T
 	text: string,
 	options?: DropDownOption[],
@@ -201,6 +201,7 @@ const DropDown = <T extends string | number | undefined, >({
 		openMenuOnFocus: openMenuOnFocus,
 		menuPlacement: menuPlacement ?? "auto",
 		components: { MenuList },
+		isMulti: false,
 	};
 
 	if (isAsync) {
