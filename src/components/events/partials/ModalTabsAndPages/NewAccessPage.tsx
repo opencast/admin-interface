@@ -24,10 +24,13 @@ import ModalContentTable from "../../../shared/modals/ModalContentTable";
  * This component renders the access page for new events and series in the wizards.
  */
 interface RequiredFormProps {
-	"dublincore/episode_isPartOf": string,
-	policies: TransformedAcl[],
-	aclTemplate: string,
-	// theme: string,
+  metadata: {
+    "dublincore/episode_isPartOf": string,
+    // other metadata fields as needed
+  },
+  policies: TransformedAcl[],
+  aclTemplate: string,
+  // theme: string,
 }
 
 const NewAccessPage = <T extends RequiredFormProps>({
@@ -121,7 +124,7 @@ const NewAccessPage = <T extends RequiredFormProps>({
 										{hasAccess(viewUsersAccessRole, user) &&
 											<AccessPolicyTable
 												isUserTable={true}
-												policiesFiltered={policiesFiltered(formik.values.metadata.policies, true)}
+												policiesFiltered={policiesFiltered(formik.values.policies, true)}
 												rolesFilteredbyPolicies={rolesFiltered(roles, true)}
 												header={"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.USERS"}
 												firstColumnHeader={"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.USER"}
@@ -138,7 +141,7 @@ const NewAccessPage = <T extends RequiredFormProps>({
 										{hasAccess(viewNonUsersAccessRole, user) &&
 											<AccessPolicyTable
 												isUserTable={false}
-												policiesFiltered={policiesFiltered(formik.values.metadata.policies, false)}
+												policiesFiltered={policiesFiltered(formik.values.policies, false)}
 												rolesFilteredbyPolicies={rolesFiltered(roles, false)}
 												header={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.NON_USER_ROLES"}
 												firstColumnHeader={"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.ROLE"}
@@ -158,7 +161,7 @@ const NewAccessPage = <T extends RequiredFormProps>({
 									<>
 										<AccessPolicyTable
 											isUserTable={false}
-											policiesFiltered={formik.values.metadata.policies}
+											policiesFiltered={formik.values.policies}
 											rolesFilteredbyPolicies={roles}
 											firstColumnHeader={"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.ROLE"}
 											createLabel={"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.NEW"}
@@ -186,8 +189,8 @@ const NewAccessPage = <T extends RequiredFormProps>({
 			<WizardNavigationButtons
 				formik={formik}
 				nextPage={() => {
-					if (dispatch(checkAcls(formik.values.metadata.policies))) {
-						nextPage(formik.values.metadata);
+					if (dispatch(checkAcls(formik.values.policies))) {
+						nextPage(formik.values);
 					}
 				}}
 				previousPage={previousPage}
