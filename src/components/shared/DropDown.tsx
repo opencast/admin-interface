@@ -4,14 +4,12 @@ import {
 	dropDownSpacingTheme,
 	dropDownStyle,
 } from "../../utils/componentStyles";
-import { GroupBase, MenuListProps, Props, SelectInstance, StylesConfig, Theme } from "react-select";
+import { GroupBase, MenuListProps, Props, SelectInstance } from "react-select";
 import { isJson } from "../../utils/utils";
 import { ParseKeys } from "i18next";
 import { List, RowComponentProps } from "react-window";
 import AsyncSelect from "react-select/async";
 import AsyncCreatableSelect from "react-select/async-creatable";
-import Select from "react-select";
-import CreatableSelect from "react-select/creatable";
 
 export type DropDownOption = {
 	label: string,
@@ -22,7 +20,7 @@ export type DropDownOption = {
 /**
  * This component renders a dropdown menu using react-select
  */
-const DropDown = <T extends string | number | undefined, >({
+const DropDown = <T, >({
 	ref = React.createRef<SelectInstance<any, boolean, GroupBase<any>>>(),
 	value,
 	text,
@@ -45,7 +43,7 @@ const DropDown = <T extends string | number | undefined, >({
 	fetchOptions,
 }: {
 	ref?: React.RefObject<SelectInstance<any, boolean, GroupBase<any>> | null>
-	value?: T
+	value: T
 	text: string,
 	options?: DropDownOption[],
 	required: boolean,
@@ -73,7 +71,8 @@ const DropDown = <T extends string | number | undefined, >({
 	const { t } = useTranslation();
 
 	const selectRef = ref;
-	const style = dropDownStyle(customCSS ?? {}) as StylesConfig<DropDownOption, false>;
+
+	const style = dropDownStyle(customCSS ?? {});
 
 	useEffect(() => {
 		if (menuIsOpen) {
@@ -93,10 +92,7 @@ const DropDown = <T extends string | number | undefined, >({
 	): DropDownOption[] => {
 		let formatted = skipTranslate
 			? [...unformattedOptions]
-			: unformattedOptions.map(option => ({
-				...option,
-				label: t(option.label as ParseKeys),
-			  }));
+			: unformattedOptions.map(option => ({ ...option, label: t(option.label as ParseKeys) }));
 
 		if (!required) {
 			formatted = [
@@ -108,10 +104,8 @@ const DropDown = <T extends string | number | undefined, >({
 			];
 		}
 
-		const hasCustomOrder = formatted.every((item) => {
-			if (!isJson(item.label)) {
-				return false;
-			}
+		const hasCustomOrder = formatted.every(item => {
+			if (!isJson(item.label)) return false;
 			try {
 				const parsed = JSON.parse(item.label);
 				return parsed && typeof parsed === "object" && "order" in parsed;
@@ -120,25 +114,14 @@ const DropDown = <T extends string | number | undefined, >({
 			}
 		});
 
-		if (hasCustomOrder) {
-			return [...formatted].sort((a, b) => {
-				const orderA: number = JSON.parse(a.label).order;
-				const orderB: number = JSON.parse(b.label).order;
-				return orderA - orderB;
-			});
-		}
-
-		return [...formatted].sort((a, b) => a.label.localeCompare(b.label));
+		return hasCustomOrder
+			? [...formatted].sort((a, b) => JSON.parse(a.label).order - JSON.parse(b.label).order)
+			: [...formatted].sort((a, b) => a.label.localeCompare(b.label));
 	}, [skipTranslate, t]);
 
-	const isAsync = !!fetchOptions;
-
-	const memoizedOptions = useMemo(() => {
-		if (isAsync || !options) {
-			return undefined;
-		}
-		return formatOptions(options, required);
-	}, [options, required, isAsync, formatOptions]);
+	const memoizedDefaultOptions = useMemo(() => 
+		options ? formatOptions(options, required) : true
+	, [options, required, formatOptions]);
 
 	const itemHeight = optionHeight;
 
@@ -152,12 +135,10 @@ const DropDown = <T extends string | number | undefined, >({
 					rowCount={children.length}
 					rowHeight={itemHeight}
 					style={{
-						height: maxHeight < (children.length * itemHeight)
-							? maxHeight
-							: children.length * itemHeight,
+						height: maxHeight < (children.length * itemHeight) ? maxHeight : children.length * itemHeight,
 						width: "100%",
 					}}
-					rowProps={{ children }}
+					rowProps={{ names: children }}
 					overscanCount={4}
 				/>
 			</div>
@@ -166,13 +147,13 @@ const DropDown = <T extends string | number | undefined, >({
 
 	function MenuListRow({
 		index,
-		children,
+		names,
 		style,
 	}: RowComponentProps<{
-		children: React.ReactNode[];
+		names: React.ReactNode[];
 	}>) {
-		const child = children[index];
-		return <div style={style}>{child}</div>;
+		const name = names[index];
+		return <div style={style}>{name}</div>;
 	}
 
 	const loadOptions = useCallback((
@@ -180,68 +161,49 @@ const DropDown = <T extends string | number | undefined, >({
 		callback: (options: DropDownOption[]) => void,
 	) => {
 		setTimeout(async () => {
-			const raw = await fetchOptions!(inputValue);
-			callback(formatOptions(raw || [], required));
+			const result = fetchOptions 
+				? await fetchOptions(inputValue)
+				: options?.filter(option => 
+					option.label.toLowerCase().includes(inputValue.toLowerCase())
+				  ) || [];
+			callback(formatOptions(result, required));
 		}, 1000);
-	}, [fetchOptions, required, formatOptions]);
+	}, [fetchOptions, options, required, formatOptions]);
 
-	const selectedValue = value != null
-		? { value, label: text === "" ? placeholder : text } as DropDownOption
-		: null;
-
-	const baseProps: Props<DropDownOption, false, GroupBase<DropDownOption>> = {
-		tabIndex,
-		theme: (theme: Theme) => dropDownSpacingTheme(theme),
+	const commonProps: Props = {
+		tabIndex: tabIndex,
+		theme: theme => (dropDownSpacingTheme(theme)),
 		styles: style,
 		defaultMenuIsOpen: defaultOpen,
-		autoFocus,
+		autoFocus: autoFocus,
 		isSearchable: true,
-		value: selectedValue,
-		placeholder,
-		onChange: (element: DropDownOption | null) => {
-			handleChange(element ? { value: element.value as T, label: element.label } : null);
-		},
-		menuIsOpen,
+		value: { value: value, label: text === "" ? placeholder : text },
+		defaultOptions: memoizedDefaultOptions,
+		cacheOptions: true,
+		loadOptions: loadOptions,
+		placeholder: placeholder,
+		onChange: element => handleChange(element as {value: T, label: string}),
+		menuIsOpen: menuIsOpen,
 		onMenuOpen: () => openMenu(true),
 		onMenuClose: () => openMenu(false),
 		isDisabled: disabled,
-		openMenuOnFocus,
+		openMenuOnFocus: openMenuOnFocus,
 		menuPlacement: menuPlacement ?? "auto",
 		components: { MenuList },
-		isMulti: false,
-	};
-
-	const forwardedRef = selectRef as React.Ref<unknown>;
-
-	if (isAsync) {
-		const asyncProps = {
-			...baseProps,
-			loadOptions,
-			defaultOptions: true,
-			cacheOptions: true,
-		};
-
-		return creatable ? (
-			<AsyncCreatableSelect ref={forwardedRef} {...asyncProps} />
-		) : (
-			<AsyncSelect
-				ref={forwardedRef}
-				{...asyncProps}
-				openMenuOnFocus={false}
-				noOptionsMessage={() => t("SELECT_NO_MATCHING_RESULTS")}
-			/>
-		);
-	}
-
-	const syncProps = {
-		...baseProps,
-		options: memoizedOptions ?? [],
 	};
 
 	return creatable ? (
-		<CreatableSelect ref={forwardedRef} {...syncProps} />
+		<AsyncCreatableSelect
+			ref={selectRef}
+			{...commonProps}
+		/>
 	) : (
-		<Select ref={forwardedRef} {...syncProps} />
+		<AsyncSelect
+			ref={selectRef}
+			{...commonProps}
+			openMenuOnFocus={false}
+			noOptionsMessage={() => t("SELECT_NO_MATCHING_RESULTS")}
+		/>
 	);
 };
 
