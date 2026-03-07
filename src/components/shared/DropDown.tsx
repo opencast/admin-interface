@@ -1,15 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import {
 	dropDownSpacingTheme,
 	dropDownStyle,
 } from "../../utils/componentStyles";
-import { GroupBase, MenuListProps, Props, SelectInstance } from "react-select";
+import { GroupBase, MenuListProps, SelectInstance } from "react-select";
 import { isJson } from "../../utils/utils";
 import { ParseKeys } from "i18next";
-import { List, RowComponentProps } from "react-window";
+import { FixedSizeList as List, ListChildComponentProps } from "react-window";
 import AsyncSelect from "react-select/async";
 import AsyncCreatableSelect from "react-select/async-creatable";
+import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 
 export type DropDownOption = {
 	label: string,
@@ -68,7 +70,7 @@ const DropDown = <T, >({
 	},
 	fetchOptions?: (inputValue: string) => Promise<{ label: string, value: string }[]>
 }) => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 
 	const selectRef = ref;
 
@@ -90,50 +92,51 @@ const DropDown = <T, >({
 	const formatOptions = (
 		unformattedOptions: DropDownOption[],
 		required: boolean,
-	) => {
-		// Translate
-		// Translating is expensive, skip it if it is not required
-		if (!skipTranslate) {
-			unformattedOptions = unformattedOptions.map(option => ({ ...option, label: t(option.label as ParseKeys) }));
-		}
+	): DropDownOption[] => {
+		let formatted = skipTranslate
+			? [...unformattedOptions]
+			: unformattedOptions.map(option => ({ ...option, label: t(option.label as ParseKeys) }));
 
-		// Add "No value" option
 		if (!required) {
-			unformattedOptions.push({
-				value: "",
-				label: `-- ${t("SELECT_NO_OPTION_SELECTED")} --`,
-			});
+			formatted = [
+				...formatted,
+				{
+					value: "",
+					label: `-- ${t("SELECT_NO_OPTION_SELECTED")} --`,
+				},
+			];
 		}
 
-		// Sort
-		/**
-		 * This is used to determine whether any entry of the passed `unformattedOptions`
-		 * contains an `order` field, indicating that a custom ordering for that list
-		 * exists and the list therefore should not be ordered alphabetically.
-		 */
-		const hasCustomOrder = unformattedOptions.every(item => {
+		const hasCustomOrder = formatted.every(item => {
 			if (!isJson(item.label)) {
 				return false;
 			}
-			// TODO: Handle JSON parsing errors
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-			const parsed = JSON.parse(item.label);
-			return parsed && typeof parsed === "object" && "order" in parsed;
+			try {
+				const parsed = JSON.parse(item.label);
+				return parsed && typeof parsed === "object" && "order" in parsed;
+			} catch {
+				return false;
+			}
 		});
 
 		if (hasCustomOrder) {
-			// Apply custom ordering.
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-			unformattedOptions.sort((a, b) => JSON.parse(a.label).order - JSON.parse(b.label).order);
+			formatted = [...formatted].sort((a, b) => JSON.parse(a.label).order - JSON.parse(b.label).order);
 		} else {
-			// Apply alphabetical ordering.
-			unformattedOptions.sort((a, b) => a.label.localeCompare(b.label));
+			formatted = [...formatted].sort((a, b) => a.label.localeCompare(b.label));
 		}
 
-		return unformattedOptions;
+		return formatted;
 	};
 
+	const isAsync = !!fetchOptions;
+
+	const memoizedOptions = useMemo(() => {
+		if (isAsync || !options) return undefined;
+		return formatOptions(options, required);
+	}, [options, required, skipTranslate, i18n.resolvedLanguage, isAsync]);
+
 	const itemHeight = optionHeight;
+
 	/**
 	 * Custom component for list virtualization
 	 */
@@ -143,59 +146,35 @@ const DropDown = <T, >({
 		return Array.isArray(children) ? (
 			<div style={{ paddingTop: 4 }}>
 				<List
-					rowComponent={MenuListRow}
-					rowCount={children.length}
-					rowHeight={itemHeight}
-					style={{
-						height: maxHeight < (children.length * itemHeight) ? maxHeight : children.length * itemHeight,
-						width: "100%",
-					}}
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-					rowProps={{ names: children }}
+					height={maxHeight < (children.length * itemHeight) ? maxHeight : children.length * itemHeight}
+					itemCount={children.length}
+					itemSize={itemHeight}
+					width="100%"
 					overscanCount={4}
-				/>
+					itemData={children}
+				>
+					{VirtualRow}
+				</List>
 			</div>
 		) : null;
 	};
 
-	function MenuListRow({
-		index,
-		names,
-		style,
-	}: RowComponentProps<{
-		names: string[];
-	}>) {
-		const name = names[index];
-		return <div style={style}>{name}</div>;
-	}
+	const VirtualRow = ({ index, style, data }: ListChildComponentProps<React.ReactNode[]>) => (
+		<div style={style}>{data[index]}</div>
+	);
 
-	const filterOptions = (inputValue: string) => {
-		if (options) {
-			return options.filter(option =>
-				option.label.toLowerCase().includes(inputValue.toLowerCase()),
-			);
-		}
-		return [];
-	};
-
-	const loadOptionsAsync = (inputValue: string, callback: (options: DropDownOption[]) => void) => {
-		setTimeout(async () => {
-			callback(formatOptions(
-				fetchOptions ? await fetchOptions(inputValue) : filterOptions(inputValue),
-				required,
-			));
-		}, 1000);
-	};
-
-	const loadOptions = (
-		_inputValue: string,
+	const loadOptions = useCallback((
+		inputValue: string,
 		callback: (options: DropDownOption[]) => void,
 	) => {
-		callback(formatOptions(filterOptions(_inputValue), required));
-	};
+		setTimeout(async () => {
+			const raw = await fetchOptions!(inputValue);
+			callback(formatOptions(raw || [], required));
+		}, 1000);
+	}, [fetchOptions, required, skipTranslate, i18n.resolvedLanguage]);
 
-
-  const commonProps: Props = {
+	const baseProps = {
+		ref: selectRef,
 		tabIndex: tabIndex,
 		theme: theme => (dropDownSpacingTheme(theme)),
 		styles: style,
@@ -203,14 +182,8 @@ const DropDown = <T, >({
 		autoFocus: autoFocus,
 		isSearchable: true,
 		value: { value: value, label: text === "" ? placeholder : text },
-		defaultOptions: options
-			? formatOptions(
-				options,
-				required,
-			)
-			: true,
+		defaultOptions: memoizedOptions ?? true,
 		cacheOptions: true,
-		loadOptions: fetchOptions ? loadOptionsAsync : loadOptions,
 		placeholder: placeholder,
 		onChange: element => handleChange(element as {value: T, label: string}),
 		menuIsOpen: menuIsOpen,
@@ -219,23 +192,37 @@ const DropDown = <T, >({
 		isDisabled: disabled,
 		openMenuOnFocus: openMenuOnFocus,
 		menuPlacement: menuPlacement ?? "auto",
-
-		// @ts-expect-error: React-Select typing does not account for the typing of option it itself requires
 		components: { MenuList },
 	};
 
+	if (isAsync) {
+		const asyncProps = {
+			...baseProps,
+			loadOptions: loadOptions,
+			defaultOptions: true,
+			cacheOptions: true,
+		};
+
+		return creatable ? (
+			<AsyncCreatableSelect {...asyncProps} />
+		) : (
+			<AsyncSelect
+				{...asyncProps}
+				openMenuOnFocus={false}
+				noOptionsMessage={() => t("SELECT_NO_MATCHING_RESULTS")}
+			/>
+		);
+	}
+
+	const syncProps = {
+		...baseProps,
+		options: memoizedOptions ?? [],
+	};
+
 	return creatable ? (
-		<AsyncCreatableSelect
-			ref={selectRef}
-			{...commonProps}
-		/>
+		<CreatableSelect {...syncProps} />
 	) : (
-		<AsyncSelect
-			ref={selectRef}
-			{...commonProps}
-			openMenuOnFocus={false}
-			noOptionsMessage={() => t("SELECT_NO_MATCHING_RESULTS")}
-		/>
+		<Select {...syncProps} />
 	);
 };
 
