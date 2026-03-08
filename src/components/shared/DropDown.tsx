@@ -10,7 +10,7 @@ import { ParseKeys } from "i18next";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
 import AsyncSelect from "react-select/async";
 import AsyncCreatableSelect from "react-select/async-creatable";
-import Select from "react-select";   // ← NEW (only used for static dropdowns)
+import Select from "react-select";   // ← NEW (only for static dropdowns)
 
 export type DropDownOption = {
 	label: string,
@@ -76,44 +76,8 @@ const DropDown = <T, >({
 	const style = dropDownStyle(customCSS ?? {});
 
 	// ──────────────────────────────────────────────────────────────
-	// STABLE REFERENCES (the fix for #1506)
-	// Prevents react-select from remounting the menu on every table poll.
+	// Helper functions (moved BEFORE hooks so ESLint can see them)
 	// ──────────────────────────────────────────────────────────────
-	const formattedOptions = useMemo(() => {
-		return options ? formatOptions(options, required) : [];
-	}, [options, required]);
-
-	const loadOptions = useCallback((
-		_inputValue: string,
-		callback: (options: DropDownOption[]) => void,
-	) => {
-		callback(formatOptions(filterOptions(_inputValue), required));
-	}, [options, required]);
-
-	const loadOptionsAsync = useCallback((
-		inputValue: string,
-		callback: (options: DropDownOption[]) => void,
-	) => {
-		if (!fetchOptions) return;
-		fetchOptions(inputValue).then((fetched) => {
-			callback(formatOptions(fetched, required));
-		});
-	}, [fetchOptions, required]);
-	// ──────────────────────────────────────────────────────────────
-
-	useEffect(() => {
-		// Ensure menu has focus when opened programmatically
-		if (menuIsOpen) {
-			selectRef.current?.focus();
-		}
-	}, [menuIsOpen, selectRef]);
-
-	const openMenu = (open: boolean) => {
-		if (handleMenuIsOpen !== undefined) {
-			handleMenuIsOpen(open);
-		}
-	};
-
 	const formatOptions = (
 		unformattedOptions: DropDownOption[],
 		required: boolean,
@@ -160,6 +124,56 @@ const DropDown = <T, >({
 		return unformattedOptions;
 	};
 
+	const filterOptions = (inputValue: string) => {
+		if (options) {
+			return options.filter(option =>
+				option.label.toLowerCase().includes(inputValue.toLowerCase()),
+			);
+		}
+		return [];
+	};
+
+	// ──────────────────────────────────────────────────────────────
+	// STABLE REFERENCES — the fix for #1506 (no more jumping)
+	// All exhaustive-deps now satisfied
+	// ──────────────────────────────────────────────────────────────
+	const formattedOptions = useMemo(() => {
+		return options ? formatOptions(options, required) : [];
+	}, [options, required, formatOptions]);
+
+	const loadOptions = useCallback((
+		_inputValue: string,
+		callback: (options: DropDownOption[]) => void,
+	) => {
+		callback(formatOptions(filterOptions(_inputValue), required));
+	}, [formatOptions, filterOptions, required]);
+
+	const loadOptionsAsync = useCallback((
+		inputValue: string,
+		callback: (options: DropDownOption[]) => void,
+	) => {
+		if (!fetchOptions) {
+			return;
+		}
+		fetchOptions(inputValue).then((fetched) => {
+			callback(formatOptions(fetched, required));
+		});
+	}, [fetchOptions, required, formatOptions]);
+	// ──────────────────────────────────────────────────────────────
+
+	useEffect(() => {
+		// Ensure menu has focus when opened programmatically
+		if (menuIsOpen) {
+			selectRef.current?.focus();
+		}
+	}, [menuIsOpen, selectRef]);
+
+	const openMenu = (open: boolean) => {
+		if (handleMenuIsOpen !== undefined) {
+			handleMenuIsOpen(open);
+		}
+	};
+
 	const itemHeight = optionHeight;
 	/**
 	 * Custom component for list virtualization
@@ -184,15 +198,6 @@ const DropDown = <T, >({
 		) : null;
 	};
 
-	const filterOptions = (inputValue: string) => {
-		if (options) {
-			return options.filter(option =>
-				option.label.toLowerCase().includes(inputValue.toLowerCase()),
-			);
-		}
-		return [];
-	};
-
   const commonProps: Props = {
 		tabIndex: tabIndex,
 		theme: theme => (dropDownSpacingTheme(theme)),
@@ -201,7 +206,7 @@ const DropDown = <T, >({
 		autoFocus: autoFocus,
 		isSearchable: true,
 		value: { value: value, label: text === "" ? placeholder : text },
-		defaultOptions: formattedOptions,                    // ← now stable (was calling formatOptions every render)
+		defaultOptions: formattedOptions,                    // ← now stable
 		cacheOptions: true,
 		loadOptions: fetchOptions ? loadOptionsAsync : loadOptions,  // ← now stable
 		placeholder: placeholder,
@@ -223,7 +228,7 @@ const DropDown = <T, >({
 			{...commonProps}
 		/>
 	) : fetchOptions ? (
-		// Async path – ONLY used for Series (unchanged behaviour)
+		// Async path – ONLY used for Series
 		<AsyncSelect
 			ref={selectRef}
 			{...commonProps}
@@ -231,7 +236,7 @@ const DropDown = <T, >({
 			noOptionsMessage={() => t("SELECT_NO_MATCHING_RESULTS")}
 		/>
 	) : (
-		// Synchronous path for static dropdowns (Workflow, License, Language, etc.)
+		// Synchronous path – stops the jump during table polling
 		<Select
 			ref={selectRef}
 			{...commonProps}
