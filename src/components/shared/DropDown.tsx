@@ -10,7 +10,7 @@ import { ParseKeys } from "i18next";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
 import AsyncSelect from "react-select/async";
 import AsyncCreatableSelect from "react-select/async-creatable";
-import Select from "react-select";   // ← NEW (only for static dropdowns)
+import Select from "react-select";
 
 export type DropDownOption = {
 	label: string,
@@ -76,14 +76,13 @@ const DropDown = <T, >({
 	const style = dropDownStyle(customCSS ?? {});
 
 	// ──────────────────────────────────────────────────────────────
-	// Helper functions (moved BEFORE hooks so ESLint can see them)
+	// Memoized helpers (required by exhaustive-deps)
 	// ──────────────────────────────────────────────────────────────
-	const formatOptions = (
+	const formatOptions = useCallback((
 		unformattedOptions: DropDownOption[],
 		required: boolean,
 	) => {
-		// Translate
-		// Translating is expensive, skip it if it is not required
+		// Translate (expensive, skip if not required)
 		if (!skipTranslate) {
 			unformattedOptions = unformattedOptions.map(option => ({ ...option, label: t(option.label as ParseKeys) }));
 		}
@@ -122,20 +121,20 @@ const DropDown = <T, >({
 		}
 
 		return unformattedOptions;
-	};
+	}, [t, skipTranslate]);
 
-	const filterOptions = (inputValue: string) => {
+	const filterOptions = useCallback((inputValue: string) => {
 		if (options) {
 			return options.filter(option =>
 				option.label.toLowerCase().includes(inputValue.toLowerCase()),
 			);
 		}
 		return [];
-	};
+	}, [options]);
 
 	// ──────────────────────────────────────────────────────────────
 	// STABLE REFERENCES — the fix for #1506 (no more jumping)
-	// All exhaustive-deps now satisfied
+	// All exhaustive-deps satisfied, CI-clean
 	// ──────────────────────────────────────────────────────────────
 	const formattedOptions = useMemo(() => {
 		return options ? formatOptions(options, required) : [];
@@ -155,7 +154,7 @@ const DropDown = <T, >({
 		if (!fetchOptions) {
 			return;
 		}
-		fetchOptions(inputValue).then((fetched) => {
+		fetchOptions(inputValue).then(fetched => {   // ← arrow-parens fixed
 			callback(formatOptions(fetched, required));
 		});
 	}, [fetchOptions, required, formatOptions]);
@@ -198,7 +197,7 @@ const DropDown = <T, >({
 		) : null;
 	};
 
-  const commonProps: Props = {
+	const commonProps: Props = {
 		tabIndex: tabIndex,
 		theme: theme => (dropDownSpacingTheme(theme)),
 		styles: style,
@@ -206,9 +205,9 @@ const DropDown = <T, >({
 		autoFocus: autoFocus,
 		isSearchable: true,
 		value: { value: value, label: text === "" ? placeholder : text },
-		defaultOptions: formattedOptions,                    // ← now stable
+		defaultOptions: formattedOptions,
 		cacheOptions: true,
-		loadOptions: fetchOptions ? loadOptionsAsync : loadOptions,  // ← now stable
+		loadOptions: fetchOptions ? loadOptionsAsync : loadOptions,
 		placeholder: placeholder,
 		onChange: element => handleChange(element as {value: T, label: string}),
 		menuIsOpen: menuIsOpen,
