@@ -76,7 +76,7 @@ const DropDown = <T, >({
 	const style = dropDownStyle(customCSS ?? {});
 
 	// ──────────────────────────────────────────────────────────────
-	// Memoized helpers (required by exhaustive-deps)
+	// Stable helpers
 	// ──────────────────────────────────────────────────────────────
 	const formatOptions = useCallback((
 		unformattedOptions: DropDownOption[],
@@ -132,10 +132,6 @@ const DropDown = <T, >({
 		return [];
 	}, [options]);
 
-	// ──────────────────────────────────────────────────────────────
-	// STABLE REFERENCES — the fix for #1506 (no more jumping)
-	// All exhaustive-deps satisfied, CI-clean
-	// ──────────────────────────────────────────────────────────────
 	const formattedOptions = useMemo(() => {
 		return options ? formatOptions(options, required) : [];
 	}, [options, required, formatOptions]);
@@ -151,33 +147,20 @@ const DropDown = <T, >({
 		inputValue: string,
 		callback: (options: DropDownOption[]) => void,
 	) => {
-		if (!fetchOptions) {
-			return;
-		}
-		fetchOptions(inputValue).then(fetched => {   // ← arrow-parens fixed
+		if (!fetchOptions) return;
+		fetchOptions(inputValue).then(fetched => {
 			callback(formatOptions(fetched, required));
 		});
 	}, [fetchOptions, required, formatOptions]);
+
 	// ──────────────────────────────────────────────────────────────
-
-	useEffect(() => {
-		// Ensure menu has focus when opened programmatically
-		if (menuIsOpen) {
-			selectRef.current?.focus();
-		}
-	}, [menuIsOpen, selectRef]);
-
-	const openMenu = (open: boolean) => {
-		if (handleMenuIsOpen !== undefined) {
-			handleMenuIsOpen(open);
-		}
-	};
-
+	// Full stabilization — this stops the jump (MenuList, commonProps, value, callbacks)
+	// ──────────────────────────────────────────────────────────────
 	const itemHeight = optionHeight;
 	/**
 	 * Custom component for list virtualization
 	 */
-	const MenuList = (props: MenuListProps<DropDownOption, false>) => {
+	const MenuList = useMemo(() => (props: MenuListProps<DropDownOption, false>) => {
 		const { children, maxHeight } = props;
 
 		console.log("Menu List render");
@@ -195,31 +178,76 @@ const DropDown = <T, >({
 				</FixedSizeList>
 			</div>
 		) : null;
-	};
+	}, [itemHeight]);
 
-	const commonProps: Props = {
-		tabIndex: tabIndex,
-		theme: theme => (dropDownSpacingTheme(theme)),
+	const selectValue = useMemo(() => ({
+		value,
+		label: text === "" ? placeholder : text,
+	}), [value, text, placeholder]);
+
+	const onChangeCallback = useCallback((element: any) => {  // kept internal cast pattern from original file
+		handleChange(element as {value: T, label: string});
+	}, [handleChange]);
+
+	const openMenuCallback = useCallback((open: boolean) => {
+		if (handleMenuIsOpen !== undefined) {
+			handleMenuIsOpen(open);
+		}
+	}, [handleMenuIsOpen]);
+
+	const commonProps = useMemo(() => ({
+		tabIndex,
+		theme: theme => dropDownSpacingTheme(theme),  // no type — matches original file exactly
 		styles: style,
 		defaultMenuIsOpen: defaultOpen,
-		autoFocus: autoFocus,
+		autoFocus,
 		isSearchable: true,
-		value: { value: value, label: text === "" ? placeholder : text },
+		value: selectValue,
 		defaultOptions: formattedOptions,
 		cacheOptions: true,
 		loadOptions: fetchOptions ? loadOptionsAsync : loadOptions,
-		placeholder: placeholder,
-		onChange: element => handleChange(element as {value: T, label: string}),
-		menuIsOpen: menuIsOpen,
-		onMenuOpen: () => openMenu(true),
-		onMenuClose: () => openMenu(false),
+		placeholder,
+		onChange: onChangeCallback,
+		menuIsOpen,
+		onMenuOpen: openMenuCallback,
+		onMenuClose: openMenuCallback,
 		isDisabled: disabled,
-		openMenuOnFocus: openMenuOnFocus,
+		openMenuOnFocus,
 		menuPlacement: menuPlacement ?? "auto",
-
-		// @ts-expect-error: React-Select typing does not account for the typing of option it itself requires
 		components: { MenuList },
-	};
+	}), [
+		tabIndex, style, defaultOpen, autoFocus, selectValue, formattedOptions,
+		placeholder, onChangeCallback, menuIsOpen, openMenuCallback, disabled,
+		openMenuOnFocus, menuPlacement, fetchOptions, loadOptionsAsync, loadOptions, MenuList,
+	]);
+
+	useEffect(() => {
+		if (menuIsOpen) {
+			selectRef.current?.focus();
+		}
+	}, [menuIsOpen, selectRef]);
+
+	const commonProps = useMemo(() => ({
+		tabIndex,
+		theme: theme => dropDownSpacingTheme(theme),
+		styles: style,
+		defaultMenuIsOpen: defaultOpen,
+		autoFocus,
+		isSearchable: true,
+		value: selectValue,
+		defaultOptions: formattedOptions,
+		cacheOptions: true,
+		loadOptions: fetchOptions ? loadOptionsAsync : loadOptions,
+		placeholder,
+		onChange: onChangeCallback,
+		menuIsOpen,
+		onMenuOpen: openMenuCallback,
+		onMenuClose: openMenuCallback,
+		isDisabled: disabled,
+		openMenuOnFocus,
+		menuPlacement: menuPlacement ?? "auto",
+		components: { MenuList },
+	}), [tabIndex, style, defaultOpen, autoFocus, selectValue, formattedOptions, placeholder, onChangeCallback, menuIsOpen, openMenuCallback, disabled, openMenuOnFocus, menuPlacement, fetchOptions, loadOptionsAsync, loadOptions, MenuList]);
 
 	return creatable ? (
 		<AsyncCreatableSelect
@@ -227,7 +255,6 @@ const DropDown = <T, >({
 			{...commonProps}
 		/>
 	) : fetchOptions ? (
-		// Async path – ONLY used for Series
 		<AsyncSelect
 			ref={selectRef}
 			{...commonProps}
@@ -235,7 +262,6 @@ const DropDown = <T, >({
 			noOptionsMessage={() => t("SELECT_NO_MATCHING_RESULTS")}
 		/>
 	) : (
-		// Synchronous path – stops the jump during table polling
 		<Select
 			ref={selectRef}
 			{...commonProps}
