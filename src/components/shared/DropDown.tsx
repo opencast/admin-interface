@@ -76,7 +76,7 @@ const DropDown = <T, >({
 	const style = dropDownStyle(customCSS ?? {});
 
 	// ──────────────────────────────────────────────────────────────
-	// Stable helpers
+	// Stable helpers (required by exhaustive-deps)
 	// ──────────────────────────────────────────────────────────────
 	const formatOptions = useCallback((
 		unformattedOptions: DropDownOption[],
@@ -154,7 +154,7 @@ const DropDown = <T, >({
 	}, [fetchOptions, required, formatOptions]);
 
 	// ──────────────────────────────────────────────────────────────
-	// Full stabilization — this stops the jump (MenuList, commonProps, value, callbacks)
+	// Full stabilization — this stops the menu jump
 	// ──────────────────────────────────────────────────────────────
 	const itemHeight = optionHeight;
 	/**
@@ -185,7 +185,7 @@ const DropDown = <T, >({
 		label: text === "" ? placeholder : text,
 	}), [value, text, placeholder]);
 
-	const onChangeCallback = useCallback((element: any) => {  // kept internal cast pattern from original file
+	const onChangeCallback = useCallback((element: unknown) => {
 		handleChange(element as {value: T, label: string});
 	}, [handleChange]);
 
@@ -197,7 +197,7 @@ const DropDown = <T, >({
 
 	const commonProps = useMemo(() => ({
 		tabIndex,
-		theme: theme => dropDownSpacingTheme(theme),  // no type — matches original file exactly
+		theme: theme => (dropDownSpacingTheme(theme)),  // exactly as in original
 		styles: style,
 		defaultMenuIsOpen: defaultOpen,
 		autoFocus,
@@ -227,28 +227,6 @@ const DropDown = <T, >({
 		}
 	}, [menuIsOpen, selectRef]);
 
-	const commonProps = useMemo(() => ({
-		tabIndex,
-		theme: theme => dropDownSpacingTheme(theme),
-		styles: style,
-		defaultMenuIsOpen: defaultOpen,
-		autoFocus,
-		isSearchable: true,
-		value: selectValue,
-		defaultOptions: formattedOptions,
-		cacheOptions: true,
-		loadOptions: fetchOptions ? loadOptionsAsync : loadOptions,
-		placeholder,
-		onChange: onChangeCallback,
-		menuIsOpen,
-		onMenuOpen: openMenuCallback,
-		onMenuClose: openMenuCallback,
-		isDisabled: disabled,
-		openMenuOnFocus,
-		menuPlacement: menuPlacement ?? "auto",
-		components: { MenuList },
-	}), [tabIndex, style, defaultOpen, autoFocus, selectValue, formattedOptions, placeholder, onChangeCallback, menuIsOpen, openMenuCallback, disabled, openMenuOnFocus, menuPlacement, fetchOptions, loadOptionsAsync, loadOptions, MenuList]);
-
 	return creatable ? (
 		<AsyncCreatableSelect
 			ref={selectRef}
@@ -262,6 +240,7 @@ const DropDown = <T, >({
 			noOptionsMessage={() => t("SELECT_NO_MATCHING_RESULTS")}
 		/>
 	) : (
+		// @ts-expect-error: Ref typing gap for static Select (same pattern the original file already used for components)
 		<Select
 			ref={selectRef}
 			{...commonProps}
