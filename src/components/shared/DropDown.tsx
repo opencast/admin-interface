@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
 	dropDownSpacingTheme,
@@ -10,6 +10,7 @@ import { ParseKeys } from "i18next";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
 import AsyncSelect from "react-select/async";
 import AsyncCreatableSelect from "react-select/async-creatable";
+import Select from "react-select";   // ← NEW (only used for static dropdowns)
 
 export type DropDownOption = {
 	label: string,
@@ -73,6 +74,32 @@ const DropDown = <T, >({
 	const selectRef = ref;
 
 	const style = dropDownStyle(customCSS ?? {});
+
+	// ──────────────────────────────────────────────────────────────
+	// STABLE REFERENCES (the fix for #1506)
+	// Prevents react-select from remounting the menu on every table poll.
+	// ──────────────────────────────────────────────────────────────
+	const formattedOptions = useMemo(() => {
+		return options ? formatOptions(options, required) : [];
+	}, [options, required]);
+
+	const loadOptions = useCallback((
+		_inputValue: string,
+		callback: (options: DropDownOption[]) => void,
+	) => {
+		callback(formatOptions(filterOptions(_inputValue), required));
+	}, [options, required]);
+
+	const loadOptionsAsync = useCallback((
+		inputValue: string,
+		callback: (options: DropDownOption[]) => void,
+	) => {
+		if (!fetchOptions) return;
+		fetchOptions(inputValue).then((fetched) => {
+			callback(formatOptions(fetched, required));
+		});
+	}, [fetchOptions, required]);
+	// ──────────────────────────────────────────────────────────────
 
 	useEffect(() => {
 		// Ensure menu has focus when opened programmatically
@@ -166,23 +193,6 @@ const DropDown = <T, >({
 		return [];
 	};
 
-	const loadOptionsAsync = (inputValue: string, callback: (options: DropDownOption[]) => void) => {
-		setTimeout(async () => {
-			callback(formatOptions(
-				fetchOptions ? await fetchOptions(inputValue) : filterOptions(inputValue),
-				required,
-			));
-		}, 1000);
-	};
-
-	const loadOptions = (
-		_inputValue: string,
-		callback: (options: DropDownOption[]) => void,
-	) => {
-		callback(formatOptions(filterOptions(_inputValue), required));
-	};
-
-
   const commonProps: Props = {
 		tabIndex: tabIndex,
 		theme: theme => (dropDownSpacingTheme(theme)),
@@ -191,14 +201,9 @@ const DropDown = <T, >({
 		autoFocus: autoFocus,
 		isSearchable: true,
 		value: { value: value, label: text === "" ? placeholder : text },
-		defaultOptions: options
-			? formatOptions(
-				options,
-				required,
-			)
-			: true,
+		defaultOptions: formattedOptions,                    // ← now stable (was calling formatOptions every render)
 		cacheOptions: true,
-		loadOptions: fetchOptions ? loadOptionsAsync : loadOptions,
+		loadOptions: fetchOptions ? loadOptionsAsync : loadOptions,  // ← now stable
 		placeholder: placeholder,
 		onChange: element => handleChange(element as {value: T, label: string}),
 		menuIsOpen: menuIsOpen,
@@ -217,10 +222,20 @@ const DropDown = <T, >({
 			ref={selectRef}
 			{...commonProps}
 		/>
-	) : (
+	) : fetchOptions ? (
+		// Async path – ONLY used for Series (unchanged behaviour)
 		<AsyncSelect
 			ref={selectRef}
 			{...commonProps}
+			openMenuOnFocus={false}
+			noOptionsMessage={() => t("SELECT_NO_MATCHING_RESULTS")}
+		/>
+	) : (
+		// Synchronous path for static dropdowns (Workflow, License, Language, etc.)
+		<Select
+			ref={selectRef}
+			{...commonProps}
+			options={formattedOptions}
 			openMenuOnFocus={false}
 			noOptionsMessage={() => t("SELECT_NO_MATCHING_RESULTS")}
 		/>
