@@ -538,7 +538,7 @@ const FilterSwitch = ({
 					/>
 					{/* For text filter, there is no secondary filter, so nothing is shown here */}
 				</div>
-			)
+			);
     // This should never happen
     default:
       return null;
