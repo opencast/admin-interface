@@ -26,7 +26,6 @@ import ModalContentTable from "../../../shared/modals/ModalContentTable";
 interface RequiredFormProps {
   metadata: {
     "dublincore/episode_isPartOf": string,
-    // other metadata fields as needed
   },
   policies: TransformedAcl[],
   aclTemplate: string,
