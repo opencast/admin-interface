@@ -113,16 +113,24 @@ export const useClickOutsideField = (
 			childRef.current.focus();
 		}
 
-		const handleBlur = (e: FocusEvent) => {
-        // Check if blur moves to an element outside childRef
-        if (childRef.current && !childRef.current.contains(e.relatedTarget as Node)) {
-        setEditMode(false);
-        }
-        };
+		/* TODO: Fix handleBlur
+			This is supposed to handle blur for tab navigation, which it does.
+			But it also triggers on mouse clicks that are inside the field, causing
+			unintended blurs and sometimes other elements besides the input element
+			to not work. A proper fix should properly set edit mode to false when the
+			field is left via keyboard navigation, but not set edit mode to false when
+			the user is clicking inside of the field.
+		*/
+		// const handleBlur = (e: FocusEvent) => {
+		// // Check if blur moves to an element outside childRef
+		// 	if (childRef.current && !childRef.current.contains(e.relatedTarget as Node)) {
+		// 		setEditMode(false);
+		// 	}
+		// };
 
-        if (childRef.current) {
-        childRef.current.addEventListener("blur", handleBlur, true); // capture phase
-        }
+		// if (childRef.current) {
+		// 	childRef.current.addEventListener("blur", handleBlur, true); // capture phase
+		// }
 
 		// Adding event listener for detecting click outside
 		window.addEventListener("mousedown", handleClickOutside);

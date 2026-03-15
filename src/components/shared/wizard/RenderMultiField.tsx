@@ -206,27 +206,26 @@ const ShowValue = ({
 	showCheck,
 	onBlur,
 }: {
-    setEditMode: (e: boolean) => void
+	setEditMode: (e: boolean) => void
 	form: FieldProps["form"]
 	field: FieldProps["field"]
 	showCheck: boolean,
 	onBlur: () => void
 }) => {
 	return (
-	<div
-		tabIndex={0}
-		onClick={() => setEditMode(true)}
-		onFocus={() => setEditMode(true)}  // <-- activate edit mode on focus
-		onKeyDown={e => {
-			if (e.key === "Enter" || e.key === " ") {
-				setEditMode(true);
-				e.preventDefault();
-			}
-		}}
-
-	  onBlur={onBlur}
-  		className="show-edit"
-			>
+		<div
+			tabIndex={0}
+			onClick={() => setEditMode(true)}
+			onFocus={() => setEditMode(true)}  // <-- activate edit mode on focus
+			onKeyDown={e => {
+				if (e.key === "Enter" || e.key === " ") {
+					setEditMode(true);
+					e.preventDefault();
+				}
+			}}
+			onBlur={onBlur}
+			className="show-edit"
+		>
 			{field.value instanceof Array && field.value.length !== 0 ? (
 				<ul>
 					{field.value.map((item, key) => (
