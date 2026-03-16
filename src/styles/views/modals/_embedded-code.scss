@@ -94,6 +94,8 @@
 .embedded-code-video {
     text-align:center;
     margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
 }
 
 .embedded-code-textarea {
@@ -101,7 +103,12 @@
     width:95%;
     overflow:auto;
     margin-top:5px;
-    color:black;
+    color: variables.$color-black;
+    display: block;
+    padding: 16px;
+    border-radius: 10px;
+    border: 1px solid variables.$color-darkgray;
+    white-space: pre-wrap;
 }
 
 .embedded-code-copy-to-clipboard {

@@ -31,10 +31,10 @@ const EmbeddingCodeModal = ({
 	}, []);
 
 	const copy = () => {
-		const copyText = document.getElementById("social_embed-textarea") as HTMLTextAreaElement;
+		const copyText = document.getElementById("social_embed-textarea");
 		if (copyText) {
-			copyText.select();
-			document.execCommand("copy");
+			const text = copyText.innerText;
+  		navigator.clipboard.writeText(text);
 
 			setCopySuccess(true);
 		}
@@ -76,6 +76,13 @@ const EmbeddingCodeModal = ({
 		setTextAreaContent(iFrameString);
 		setCurrentSize(frameSize);
 		setCopySuccess(false);
+	};
+
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+		if ((e.ctrlKey || e.metaKey) && e.key === "c") {
+			e.preventDefault();
+			copy();
+		}
 	};
 
 	return (
@@ -142,14 +149,15 @@ const EmbeddingCodeModal = ({
 
 			{/* text area containing current iFrame code to copy*/}
 			<div className="embedded-code-video">
-				<textarea
+				<code
 					id="social_embed-textarea"
-					className="social_embed-textarea embedded-code-textarea"
-					rows={2}
-					value={textAreaContent}
-					cols={1}
+					className="embedded-code-textarea"
 					aria-label={t("EMBEDDING_CODE.EMBEDD_CODE_TEXTAREA_ARIA")}
-				/>
+					tabIndex={0}
+					onKeyDown={handleKeyDown}
+				>
+					{textAreaContent}
+				</code>
 			</div>
 
 			{/* copy confirmation */}
