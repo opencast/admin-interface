@@ -546,7 +546,8 @@
 						"SUBTITLES": {
 							"SHORT": "Subtitles",
 							"DETAIL": "A subtitle file in vtt format"
-						}
+						},
+						"ARIA_REMOVE_FILE": "Remove uploaded file"
 					},
 					"DATE_TIME": {
 						"CAPTION": "Schedule",
@@ -917,7 +918,8 @@
 						"SANITIZATION_NOTE": "User role sanitization is enabled in your Opencast, therefore user roles are displayed alongside other roles. This does not impact role functionality in any way."
 					},
 					"ROLES": {
-						"LABEL": "Select or create a role"
+						"LABEL": "Select or create a role",
+						"ARIA_REMOVE_ROLE": "Remove this role"
 					}
 				},
 				"COMMENTS": {

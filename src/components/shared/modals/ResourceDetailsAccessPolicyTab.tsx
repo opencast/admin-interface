@@ -680,6 +680,7 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 																				arrayHelpers.remove(formik.values.policies.findIndex(p => p === policy))
 																			}
 																			className="action-cell-button remove"
+																			aria-label={t("EVENTS.EVENTS.DETAILS.ACCESS.ROLES.ARIA_REMOVE_ROLE")}
 																		>
 																			<LuCircleX />
 																		</ButtonLikeAnchor>

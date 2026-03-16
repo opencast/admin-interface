@@ -269,10 +269,10 @@ const Upload = <T extends RequiredFormPropsUpload>({
 									formik.values.uploadAssetsTrack.map((asset, key) => (
 										<tr key={key}>
 											<td>
-												<span className="title">
+												<span id={`asset-title-${asset.id}`} className="title">
 													{translateOverrideFallback(asset, t, "SHORT")}
 												</span>
-												<p>
+												<p id={`asset-desc-${asset.id}`}>
 													{translateOverrideFallback(asset, t, "DETAIL")}
 												</p>
 											</td>
@@ -289,6 +289,8 @@ const Upload = <T extends RequiredFormPropsUpload>({
 														multiple={asset.multiple}
 														name={`uploadAssetsTrack.${key}.file`}
 														tabIndex={0}
+														aria-labelledby={`asset-title-${asset.id}`}
+														aria-describedby={`asset-desc-${asset.id}`}
 													/>
 												</div>
 											</td>
@@ -303,6 +305,7 @@ const Upload = <T extends RequiredFormPropsUpload>({
 														);
 														(document.getElementById(asset.id) as HTMLInputElement).value = "";
 													}}
+													aria-label={t("EVENTS.EVENTS.NEW.SOURCE.UPLOAD.ARIA_REMOVE_FILE")}
 												>
 													<LuCircleX />
 												</ButtonLikeAnchor>
