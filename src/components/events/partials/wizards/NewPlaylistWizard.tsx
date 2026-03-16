@@ -3,6 +3,7 @@ import { Formik } from "formik";
 
 import NewMetadataCommonPage from "../ModalTabsAndPages/NewMetadataCommonPage";
 import NewAccessPage from "../ModalTabsAndPages/NewAccessPage";
+import NewPlaylistEntriesPage from "../ModalTabsAndPages/NewPlaylistEntriesPage";
 import NewPlaylistSummary from "./NewPlaylistSummary";
 import WizardStepper, { WizardStep } from "../../../shared/wizard/WizardStepper";
 import { initialFormValuesNewPlaylist } from "../../../../configs/modalConfig";
@@ -11,6 +12,7 @@ import { getInitialMetadataFieldValues } from "../../../../utils/resourceUtils";
 import { useAppDispatch, useAppSelector } from "../../../../store";
 import { getNewPlaylistMetadataFields, postNewPlaylist } from "../../../../slices/playlistSlice";
 import { TransformedAcl } from "../../../../slices/aclDetailsSlice";
+import { PlaylistEntry } from "../../../../slices/playlistDetailsSlice";
 import { removeNotificationWizardForm } from "../../../../slices/notificationSlice";
 import { getUserInformation } from "../../../../selectors/userInfoSelectors";
 import { getAclDefaultActions, getAclDefaultTemplate } from "../../../../selectors/aclSelectors";
@@ -48,7 +50,7 @@ const NewPlaylistWizard = ({
   const [page, setPage] = useState(0);
   const [pageCompleted, setPageCompleted] = useState<{ [key: number]: boolean }>({});
 
-  type StepName = "metadata" | "access" | "summary";
+  type StepName = "metadata" | "entries" | "access" | "summary";
   type Step = WizardStep & {
     name: StepName,
   }
@@ -57,6 +59,10 @@ const NewPlaylistWizard = ({
     {
       translation: "EVENTS.PLAYLISTS.NEW.METADATA.CAPTION",
       name: "metadata",
+    },
+    {
+      translation: "EVENTS.PLAYLISTS.DETAILS.TABS.ENTRIES",
+      name: "entries",
     },
     {
       translation: "EVENTS.PLAYLISTS.NEW.ACCESS.CAPTION",
@@ -91,6 +97,7 @@ const NewPlaylistWizard = ({
     values: {
       metadata: { [key: string]: unknown },
       policies: TransformedAcl[],
+      entries: PlaylistEntry[],
     },
   ) => {
     // Extract metadata field values from the formik values
@@ -131,6 +138,14 @@ const NewPlaylistWizard = ({
               formik={formik}
               metadataFields={metadataFields}
               header={steps[page].translation}
+            />
+          )}
+
+          {steps[page].name === "entries" && (
+            <NewPlaylistEntriesPage
+              nextPage={nextPage}
+              previousPage={previousPage}
+              formik={formik}
             />
           )}
 

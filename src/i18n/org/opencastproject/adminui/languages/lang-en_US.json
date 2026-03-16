@@ -184,6 +184,7 @@
 		"PLAYLIST_NOT_SAVED": "The playlist could not be created",
 		"PLAYLIST_DELETED": "The playlist has been deleted",
 		"PLAYLIST_NOT_DELETED": "The playlist could not be deleted",
+		"PLAYLIST_ENTRIES_UPDATED": "The playlist entries have been updated",
 		"SERIES_PATH_UPDATED": "The series path has been updated",
 		"SERIES_PATH_REMOVED": "The series path has been removed",
 		"SERIES_PATH_NOT_UPDATED": "The series path could not be updated",
@@ -1320,6 +1321,7 @@
 				"HEADER": "Playlist details - {{name}}",
 				"TABS": {
 					"METADATA": "Metadata",
+					"ENTRIES": "Entries",
 					"PERMISSIONS": "Access policy"
 				},
 				"METADATA": {
@@ -1328,6 +1330,17 @@
 					"CREATOR": "Creator",
 					"UPDATED": "Updated",
 					"ENTRIES": "Entries"
+				},
+				"ENTRIES": {
+					"AVAILABLE": "Add Events",
+					"SEARCH_PLACEHOLDER": "Search events by title...",
+					"EMPTY": "This playlist has no entries yet.",
+					"NO_AVAILABLE": "There are no events available to add.",
+					"REMOVE": "Remove entry",
+					"OPEN_PLAYER": "Open in player",
+					"DATE_LABEL": "Created: ",
+					"SERIES_LABEL": "Series: ",
+					"PRESENTERS_LABEL": "Presenter(s): "
 				},
 				"ACCESS": {
 					"ACCESS_POLICY": {

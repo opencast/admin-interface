@@ -8,8 +8,16 @@ import { useAppDispatch, useAppSelector } from "../../../../store";
 import { Modal } from "../../../shared/modals/Modal";
 import { confirmUnsaved } from "../../../../utils/utils";
 import { MetadataValues } from "../ModalTabsAndPages/DetailsMetadataTab";
-import { setModalPlaylist, setShowModal } from "../../../../slices/playlistDetailsSlice";
-import { getModalPlaylist, showModal } from "../../../../selectors/playlistDetailsSelectors";
+import {
+  setModalPlaylist,
+  setPlaylistEntriesChanged,
+  setShowModal,
+} from "../../../../slices/playlistDetailsSlice";
+import {
+  getModalPlaylist,
+  getPlaylistDetailsEntriesChanged,
+  showModal,
+} from "../../../../selectors/playlistDetailsSelectors";
 
 
 /**
@@ -24,6 +32,7 @@ const PlaylistDetailsModal = () => {
 
   const displayPlaylistDetailsModal = useAppSelector(state => showModal(state));
   const playlist = useAppSelector(state => getModalPlaylist(state))!;
+  const entriesChanged = useAppSelector(state => getPlaylistDetailsEntriesChanged(state));
 
   const hideModal = () => {
     dispatch(setModalPlaylist(null));
@@ -31,13 +40,14 @@ const PlaylistDetailsModal = () => {
   };
 
   const close = () => {
-    let isUnsavedChanges = policyChanged;
+    let isUnsavedChanges = policyChanged || entriesChanged;
     if (formikRef.current?.dirty) {
       isUnsavedChanges = true;
     }
 
     if (!isUnsavedChanges || confirmUnsaved(t)) {
       setPolicyChanged(false);
+      dispatch(setPlaylistEntriesChanged(false));
       dispatch(removeNotificationWizardForm());
       hideModal();
       return true;

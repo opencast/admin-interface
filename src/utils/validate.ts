@@ -168,6 +168,7 @@ export const NewSeriesSchema = {
 export const NewPlaylistSchema: Record<string, Yup.ObjectSchema<any>> = {
 	// For metadata validation see MetadataSchema
 	"metadata": Yup.object().shape({}),
+	"entries": Yup.object().shape({}),
 	"access": Yup.object().shape({}),
 	"summary": Yup.object().shape({}),
 };

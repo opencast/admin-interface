@@ -1,0 +1,104 @@
+@use "../../base/variables";
+
+/**
+ * Playlist entry editor styles.
+ * Shared between the playlist details modal and the new playlist wizard.
+ */
+.modal {
+    .playlist-entries-box {
+      margin-top: 15px;
+
+      > table.main-tbl {
+        border: none;
+        padding: 6px 8px;
+      }
+
+      .playlist-entry-count {
+        font-weight: normal;
+        color: variables.$color-gray;
+      }
+    }
+
+    .playlist-entries-empty {
+      padding: 15px 20px;
+      color: variables.$color-gray;
+      font-size: 12px;
+      margin: 0;
+      line-height: 1;
+    }
+
+    .playlist-entries-list {
+      max-height: 400px;
+      overflow-y: auto;
+
+      &.drag-drop-items {
+        padding: 10px 15px;
+      }
+
+      > div {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .playlist-entry-item {
+        margin: 0;
+        height: auto;
+        min-height: 35px;
+        padding: 6px 10px;
+        gap: 12px;
+
+        &.drag-disabled {
+          cursor: default;
+        }
+
+        .move-item {
+          position: static;
+          flex-shrink: 0;
+        }
+
+        .entry-info {
+          flex: 1;
+          min-width: 0;
+
+          .title {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .entry-meta {
+            font-size: 11px;
+            font-weight: normal;
+            color: variables.$color-gray;
+            display: flex;
+            gap: 10px;
+            margin-top: 4px;
+
+            .entry-meta-label {
+              font-weight: variables.$weight-bold;
+            }
+
+            > span {
+              overflow-x: clip;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+          }
+        }
+
+        .entry-link {
+          display: flex;
+          align-items: center;
+          color: variables.$color-gray;
+          margin-right: 8px;
+          flex-shrink: 0;
+          transition: color 0.15s;
+
+          &:hover {
+            color: variables.$l-blue;
+          }
+        }
+      }
+    }
+}

@@ -7,15 +7,20 @@ import { ParseKeys } from "i18next";
 import { getUserInformation } from "../../../../selectors/userInfoSelectors";
 import { confirmUnsaved, hasAccess } from "../../../../utils/utils";
 import { useAppSelector } from "../../../../store";
-import { getPlaylistDetailsMetadata } from "../../../../selectors/playlistDetailsSelectors";
+import {
+  getPlaylistDetailsEntriesChanged,
+  getPlaylistDetailsMetadata,
+} from "../../../../selectors/playlistDetailsSelectors";
 import { updatePlaylistMetadata } from "../../../../slices/playlistDetailsSlice";
 import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
 import DetailsMetadataTab, { MetadataValues } from "../ModalTabsAndPages/DetailsMetadataTab";
 import PlaylistDetailsAccessTab from "../ModalTabsAndPages/PlaylistDetailsAccessTab";
+import PlaylistDetailsEntriesTab from "../ModalTabsAndPages/PlaylistDetailsEntriesTab";
 
 
 export enum PlaylistDetailsPage {
   Metadata,
+  Entries,
   AccessPolicy,
 }
 
@@ -37,6 +42,7 @@ const PlaylistDetails = ({
 
   const metadata = useAppSelector(state => getPlaylistDetailsMetadata(state));
   const user = useAppSelector(state => getUserInformation(state));
+  const entriesChanged = useAppSelector(state => getPlaylistDetailsEntriesChanged(state));
 
   const [page, setPage] = useState(0);
 
@@ -51,6 +57,11 @@ const PlaylistDetails = ({
       name: "metadata",
     },
     {
+      tabNameTranslation: "EVENTS.PLAYLISTS.DETAILS.TABS.ENTRIES",
+      accessRole: "ROLE_UI_PLAYLISTS_DETAILS_METADATA_VIEW",
+      name: "entries",
+    },
+    {
       tabNameTranslation: "EVENTS.PLAYLISTS.DETAILS.TABS.PERMISSIONS",
       accessRole: "ROLE_UI_PLAYLISTS_DETAILS_ACL_VIEW",
       name: "permissions",
@@ -58,7 +69,7 @@ const PlaylistDetails = ({
   ];
 
   const openTab = (tabNr: number) => {
-    let isUnsavedChanges = policyChanged;
+    let isUnsavedChanges = policyChanged || entriesChanged;
     if (formikRef.current?.dirty) {
       isUnsavedChanges = true;
     }
@@ -94,7 +105,10 @@ const PlaylistDetails = ({
           header={tabs[page].tabNameTranslation}
         />
       )}
-      {page === 1 && <PlaylistDetailsAccessTab
+      {page === 1 && <PlaylistDetailsEntriesTab
+        playlistId={playlistId}
+      />}
+      {page === 2 && <PlaylistDetailsAccessTab
         playlistId={playlistId}
         header={tabs[page].tabNameTranslation}
         policyChanged={policyChanged}

@@ -7,6 +7,7 @@ import { getURLParams, prepareAccessPolicyRulesForPost } from "../utils/resource
 import { playlistsTableConfig } from "../configs/tableConfigs/playlistsTableConfig";
 import { addNotification } from "./notificationSlice";
 import { TransformedAcl } from "./aclDetailsSlice";
+import { PlaylistEntry } from "./playlistDetailsSlice";
 import { MetadataCatalog } from "./eventSlice";
 import { AppThunk } from "../store";
 
@@ -55,6 +56,10 @@ export type Playlist = {
         id: number;
         contentId: string;
         type: string;
+        title?: string;
+        start_date?: string;
+        series?: { id: string, title: string };
+        presenters?: string[];
     }[];
     title: string;
     description: string;
@@ -118,6 +123,7 @@ export const postNewPlaylist = (params: {
   values: {
     policies: TransformedAcl[],
     metadata: { [key: string]: unknown },
+    entries: PlaylistEntry[],
   },
   metadataFields: { title: string, description: string, creator: string },
 }): AppThunk => dispatch => {
@@ -128,7 +134,7 @@ export const postNewPlaylist = (params: {
     title: metadataFields.title,
     description: metadataFields.description,
     creator: metadataFields.creator,
-    entries: [],
+    entries: (values.entries || []).map(e => ({ contentId: e.contentId, type: e.type })),
   };
 
   // Build ACL

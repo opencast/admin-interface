@@ -15,6 +15,16 @@ import { PlaylistDetailsPage } from "../components/events/partials/modals/Playli
 /**
  * This file contains redux reducer for actions affecting the state of playlist details
  */
+export type PlaylistEntry = {
+  contentId: string,
+  type: string,
+  title: string,
+  date?: string,
+  series?: string,
+  presenters?: string[],
+};
+
+
 type PlaylistDetailsModal = {
   show: boolean,
   page: PlaylistDetailsPage,
@@ -26,6 +36,8 @@ type PlaylistDetailsState = {
   errorMetadata: SerializedError | null,
   modal: PlaylistDetailsModal,
   metadata: MetadataCatalog,
+  entries: PlaylistEntry[],
+  entriesChanged: boolean,
   acl: TransformedAcl[],
   policyTemplateId: number,
 }
@@ -91,6 +103,8 @@ const initialState: PlaylistDetailsState = {
     flavor: "",
     fields: [],
   },
+  entries: [],
+  entriesChanged: false,
   acl: [],
   policyTemplateId: 0,
 };
@@ -121,7 +135,17 @@ const transformPlaylistAcl = (entries: Playlist["accessControlEntries"]): Transf
   return acl;
 };
 
+const mapEntries = (entries: Playlist["entries"]): PlaylistEntry[] =>
+  entries.map(entry => ({
+    contentId: entry.contentId,
+    type: entry.type,
+    title: entry.title ?? entry.contentId,
+    date: entry.start_date,
+    series: entry.series?.title,
+    presenters: entry.presenters,
+  }));
 
+// Fetch playlist details (metadata + ACL + entries) from server in a single request
 export const fetchPlaylistDetails = createAppAsyncThunk("playlistDetails/fetchPlaylistDetails", async (id: string) => {
   const res = await axios.get<Playlist>(`/admin-ng/playlists/${id}`);
   const playlist = res.data;
@@ -129,6 +153,7 @@ export const fetchPlaylistDetails = createAppAsyncThunk("playlistDetails/fetchPl
   return {
     metadata: playlistToMetadataCatalog(playlist),
     acl: transformPlaylistAcl(playlist.accessControlEntries),
+    entries: mapEntries(playlist.entries),
   };
 });
 
@@ -159,6 +184,31 @@ export const updatePlaylistMetadata = createAppAsyncThunk("playlistDetails/updat
 });
 
 
+export const updatePlaylistEntries = createAppAsyncThunk("playlistDetails/updatePlaylistEntries", async (params: {
+  id: string,
+  entries: PlaylistEntry[],
+}, { dispatch }) => {
+  const { id, entries } = params;
+
+  const apiEntries = entries.map(e => ({ contentId: e.contentId, type: e.type }));
+  const data = new URLSearchParams();
+  data.append("playlist", JSON.stringify({ entries: apiEntries }));
+
+  await axios.put(`/admin-ng/playlists/${id}`, data, {
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  });
+
+  dispatch(setPlaylistEntriesChanged(false));
+
+  dispatch(addNotification({
+    type: "info",
+    key: "PLAYLIST_ENTRIES_UPDATED",
+    duration: 3,
+    context: NOTIFICATION_CONTEXT,
+  }));
+});
+
+
 export const updatePlaylistAccess = createAppAsyncThunk("playlistDetails/updatePlaylistAccess", async (params: {
   id: string,
   policies: { acl: Acl },
@@ -183,7 +233,7 @@ export const updatePlaylistAccess = createAppAsyncThunk("playlistDetails/updateP
   dispatch(addNotification({
     type: "info",
     key: "SAVED_ACL_RULES",
-    duration: -1,
+    duration: 3,
     context: NOTIFICATION_CONTEXT,
   }));
 
@@ -223,6 +273,12 @@ const playlistDetailsSlice = createSlice({
     setPlaylistDetailsAcl(state, action: PayloadAction<PlaylistDetailsState["acl"]>) {
       state.acl = action.payload;
     },
+    setPlaylistDetailsEntries(state, action: PayloadAction<PlaylistDetailsState["entries"]>) {
+      state.entries = action.payload;
+    },
+    setPlaylistEntriesChanged(state, action: PayloadAction<boolean>) {
+      state.entriesChanged = action.payload;
+    },
   },
   extraReducers: builder => {
     builder
@@ -232,10 +288,13 @@ const playlistDetailsSlice = createSlice({
       .addCase(fetchPlaylistDetails.fulfilled, (state, action: PayloadAction<{
         metadata: MetadataCatalog,
         acl: TransformedAcl[],
+        entries: PlaylistEntry[],
       }>) => {
         state.statusMetadata = "succeeded";
         state.metadata = action.payload.metadata;
         state.acl = action.payload.acl;
+        state.entries = action.payload.entries;
+        state.entriesChanged = false;
       })
       .addCase(fetchPlaylistDetails.rejected, (state, action) => {
         state.statusMetadata = "failed";
@@ -250,6 +309,8 @@ export const {
   setModalPlaylist,
   setPlaylistDetailsMetadata,
   setPlaylistDetailsAcl,
+  setPlaylistDetailsEntries,
+  setPlaylistEntriesChanged,
 } = playlistDetailsSlice.actions;
 
 export default playlistDetailsSlice.reducer;
