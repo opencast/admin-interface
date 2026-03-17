@@ -11,12 +11,12 @@ export default [
     {
         rules: {
             // TODO: We want to turn these on eventually
-            // "indent": "off",
-            // "max-len": "off",
-            // "no-tabs": "off",
-            // "@typescript-eslint/no-explicit-any": "off",
-            // "@typescript-eslint/no-floating-promises": "off",
-            // "@typescript-eslint/no-misused-promises": "off",
+            "indent": "off",
+            "max-len": "off",
+            "no-tabs": "off",
+            "@typescript-eslint/no-explicit-any": "off",
+            "@typescript-eslint/no-floating-promises": "off",
+            "@typescript-eslint/no-misused-promises": "off",
         },
     },
 ];
