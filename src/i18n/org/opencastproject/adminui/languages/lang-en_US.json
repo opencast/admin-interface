@@ -1337,6 +1337,7 @@
 					"EMPTY": "This playlist has no entries yet.",
 					"NO_AVAILABLE": "There are no events available to add.",
 					"REMOVE": "Remove entry",
+					"UNKNOWN": "Unknown entry",
 					"OPEN_PLAYER": "Open in player",
 					"DATE_LABEL": "Created: ",
 					"SERIES_LABEL": "Series: ",

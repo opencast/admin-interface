@@ -252,8 +252,8 @@ const PlaylistEntriesEditor = ({
                         >
                           <LuGrip />
                           <div className="entry-info">
-                            <div className="title" title={entry.title}>
-                              {entry.title}
+                            <div className="title" title={entry.title || entry.contentId}>
+                              {entry.title || `${t("EVENTS.PLAYLISTS.DETAILS.ENTRIES.UNKNOWN")} [${entry.contentId}]`}
                             </div>
                             <EntryMeta entry={entry} />
                           </div>

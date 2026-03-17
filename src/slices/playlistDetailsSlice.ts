@@ -18,7 +18,7 @@ import { PlaylistDetailsPage } from "../components/events/partials/modals/Playli
 export type PlaylistEntry = {
   contentId: string,
   type: string,
-  title: string,
+  title?: string,
   date?: string,
   series?: string,
   presenters?: string[],
@@ -139,7 +139,7 @@ const mapEntries = (entries: Playlist["entries"]): PlaylistEntry[] =>
   entries.map(entry => ({
     contentId: entry.contentId,
     type: entry.type,
-    title: entry.title ?? entry.contentId,
+    title: entry.title,
     date: entry.start_date,
     series: entry.series?.title,
     presenters: entry.presenters,
