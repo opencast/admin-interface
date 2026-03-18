@@ -147,3 +147,68 @@ export const dropDownSpacingTheme = (theme: Theme) => ({
 		baseUnit: 2,
 	},
 });
+
+/**
+ * Style specific to the page size component
+ */
+export const pageSizeStyles: StylesConfig<any, false> = {
+	container: (base, _state) => ({
+		...base,
+		position: "absolute",
+		right: "20px",
+	}),
+	control: base => ({
+		...base,
+		minHeight: 28,
+		height: 28,
+		width: 75,
+		borderRadius: 4,
+		paddingLeft: 10,
+
+		cursor: "pointer",
+		fontSize: 12,
+		fontWeight: 600,
+	}),
+	valueContainer: base => ({
+		...base,
+		padding: 0,
+	}),
+	singleValue: base => ({
+		...base,
+		color: "#666",
+	}),
+	indicatorSeparator: () => ({
+		display: "none",
+	}),
+
+	dropdownIndicator: (base, state) => ({
+		...base,
+		padding: "0 8px",
+		color: "#666",
+		transition: "transform 0.2s",
+		transform: state.selectProps.menuIsOpen
+			? "rotate(180deg)"
+			: "rotate(0deg)",
+	}),
+	menu: base => ({
+		...base,
+		width: "75px",
+		marginBottom: 2,
+		borderRadius: 6,
+		overflow: "hidden",
+		zIndex: 9999,
+	}),
+	menuList: base => ({
+		...base,
+		padding: 0,
+	}),
+	option: (base, state) => ({
+		...base,
+		fontSize: 12,
+		fontWeight: 600,
+		cursor: "pointer",
+
+		backgroundColor: state.isFocused ? "#4da1f7" : "white",
+		color: state.isFocused ? "white" : "#069",
+	}),
+};

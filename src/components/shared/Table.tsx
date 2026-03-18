@@ -1,4 +1,4 @@
-import React, { JSX, useEffect, useRef, useState } from "react";
+import React, { JSX, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import {
 	getMultiSelect,
@@ -41,8 +41,8 @@ import ButtonLikeAnchor from "./ButtonLikeAnchor";
 import { ModalHandle } from "./modals/Modal";
 import { ParseKeys } from "i18next";
 import { LuChevronDown, LuChevronLeft, LuChevronRight, LuChevronUp } from "react-icons/lu";
-
-const containerPageSize = React.createRef<HTMLDivElement>();
+import Select, { components } from "react-select";
+import { pageSizeStyles } from "../../utils/componentStyles";
 
 export type TemplateMap = {
 	[key: string]: ({ row }: { row: any }) => JSX.Element | JSX.Element[]
@@ -358,26 +358,14 @@ const PageSize = ({ forceDeselectAll }: { forceDeselectAll: () => unknown }) => 
 	const dispatch = useAppDispatch();
 	const pagination = useAppSelector(state => getTablePagination(state));
 
-	const sizeOptions = [10, 20, 50, 100, 1000]; // Size options for pagination
-	const [showPageSizes, setShowPageSizes] = useState(false);
-
-	useEffect(() => {
-		// Function for handling clicks outside of an open dropdown menu
-		const handleClickOutside = (e: MouseEvent) => {
-			if (
-				e && containerPageSize.current && !containerPageSize.current.contains(e.target as Node)
-			) {
-				setShowPageSizes(false);
-			}
-		};
-
-		// Event listener for handle a click outside of dropdown menu
-		window.addEventListener("mousedown", handleClickOutside);
-
-		return () => {
-			window.removeEventListener("mousedown", handleClickOutside);
-		};
-	});
+	const sizeOptions = React.useMemo(
+		() =>
+			[10, 20, 50, 100, 1000].map(size => ({
+				value: size,
+				label: size.toString(),
+			})),
+		[],
+	);
 
 	const changePageSize = (size: number) => {
 		forceDeselectAll();
@@ -386,31 +374,28 @@ const PageSize = ({ forceDeselectAll }: { forceDeselectAll: () => unknown }) => 
 		dispatch(updatePages());
 	};
 
+	const DropdownIndicator = (props: any) => {
+		return (
+			<components.DropdownIndicator {...props}>
+				<LuChevronDown />
+			</components.DropdownIndicator>
+		);
+	};
+
 	return (
-		<div
-			className="drop-down-container small flipped"
-			onClick={() => setShowPageSizes(!showPageSizes)}
-			ref={containerPageSize}
-			role="button"
-			tabIndex={0}
-		>
-			<span>{pagination.limit}</span>
-			<LuChevronDown className="chevron-down"/>
-			{/* Drop down menu for selection of page size */}
-			{showPageSizes && (
-				<ul className="dropdown-ul">
-					{sizeOptions.map((size, key) => (
-						<li key={key}>
-							<ButtonLikeAnchor
-								onClick={() => changePageSize(size)}
-							>
-								{size}
-							</ButtonLikeAnchor>
-						</li>
-					))}
-				</ul>
-			)}
-		</div>
+		<Select
+			options={sizeOptions}
+			value={sizeOptions.find(opt => opt.value === pagination.limit)}
+			onChange={(option: {value: number, label: string}) => {
+				if (option) {
+					changePageSize(option.value);
+				}
+			}}
+			isSearchable={false}
+			components={{ DropdownIndicator }}
+			styles={pageSizeStyles}
+			menuPlacement="top"
+		/>
 	);
 };
 
