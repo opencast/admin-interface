@@ -493,6 +493,52 @@ const FilterSwitch = ({
 					/>
 				</div>
 			);
+		case "freetext":
+			return (
+				<div>
+										<DropDown
+										creatable={true}
+						value={secondFilter}
+						text={secondFilter}
+						options={
+							!!filter.options && filter.options.length > 0
+								? filter.options.map(option => {
+									if (!filter.translatable) {
+										return {
+											...option,
+											label: option.label.substr(0, 40),
+										};
+									} else {
+										return {
+											...option,
+											label: t(option.label as ParseKeys).substr(0, 40),
+										};
+									}
+								})
+								: []
+						}
+						required={true}
+						handleChange={element => handleChange("secondFilter", element!.value)}
+						placeholder={
+							!!filter.options && filter.options.length > 0
+								? t(
+									"TABLE_FILTERS.FILTER_VALUE_SELECTION.PLACEHOLDER",
+									)
+								: t(
+									"TABLE_FILTERS.FILTER_SELECTION.NO_OPTIONS",
+									)
+						}
+						autoFocus
+						defaultOpen
+						openMenuOnFocus
+						menuIsOpen={openSecondFilterMenu}
+						handleMenuIsOpen={setOpenSecondFilterMenu}
+						skipTranslate={!filter.translatable}
+						customCSS={{ width: 200, optionPaddingTop: 5 }}
+					/>
+					{/* For text filter, there is no secondary filter, so nothing is shown here */}
+				</div>
+			);
     // This should never happen
     default:
       return null;

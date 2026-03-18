@@ -1886,6 +1886,12 @@
 			},
 			"WORKFLOW_STATE": {
 				"LABEL": "Workflow state"
+			},
+			"READ_ACCESS": {
+				"LABEL": "Read Access"
+			},
+			"WRITE_ACCESS": {
+				"LABEL": "Write Access"
 			}
 		},
 		"JOBS": {
@@ -1930,6 +1936,12 @@
 			},
 			"CREATION_DATE": {
 				"LABEL": "Creation date"
+			},
+			"READ_ACCESS": {
+				"LABEL": "Read Access"
+			},
+			"WRITE_ACCESS": {
+				"LABEL": "Write Access"
 			}
 		},
 		"SERVERS": {
