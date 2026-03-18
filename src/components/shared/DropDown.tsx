@@ -5,7 +5,6 @@ import {
 	dropDownStyle,
 } from "../../utils/componentStyles";
 import { GroupBase, MenuListProps, Props, SelectInstance } from "react-select";
-import { isJson } from "../../utils/utils";
 import { ParseKeys } from "i18next";
 import { FixedSizeList, ListChildComponentProps } from "react-window";
 import AsyncSelect from "react-select/async";
@@ -102,29 +101,23 @@ const DropDown = <T, >({
 			unformattedOptions.push({
 				value: "",
 				label: `-- ${t("SELECT_NO_OPTION_SELECTED")} --`,
+				order: 0,
 			});
 		}
 
 		// Sort
 		/**
-		 * This is used to determine whether any entry of the passed `unformattedOptions`
+		 * This is used to determine whether every entry of the passed `unformattedOptions`
 		 * contains an `order` field, indicating that a custom ordering for that list
 		 * exists and the list therefore should not be ordered alphabetically.
 		 */
 		const hasCustomOrder = unformattedOptions.every(item => {
-			if (!isJson(item.label)) {
-				return false;
-			}
-			// TODO: Handle JSON parsing errors
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-			const parsed = JSON.parse(item.label);
-			return parsed && typeof parsed === "object" && "order" in parsed;
+			return item.order !== undefined;
 		});
 
 		if (hasCustomOrder) {
 			// Apply custom ordering.
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-			unformattedOptions.sort((a, b) => JSON.parse(a.label).order - JSON.parse(b.label).order);
+			unformattedOptions.sort((a, b) => a.order! - b.order!);
 		} else {
 			// Apply alphabetical ordering.
 			unformattedOptions.sort((a, b) => a.label.localeCompare(b.label));
