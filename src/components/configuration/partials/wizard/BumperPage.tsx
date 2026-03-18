@@ -93,6 +93,7 @@ const BumperPage = <T extends RequiredFormProps>({
 								acceptableTypes="video/*"
 								fileId={!isTrailer ? "bumperFile" : "trailerFile"}
 								fileName={!isTrailer ? "bumperFileName" : "trailerFileName"}
+								fileUrlKey={!isTrailer ? "bumperFileUrl" : "trailerFileUrl"}
 								formik={formik}
 								buttonKey="CONFIGURATION.THEMES.DETAILS.BUMPER.UPLOAD_BUTTON"
 								labelKey="CONFIGURATION.THEMES.DETAILS.BUMPER.UPLOAD_LABEL"

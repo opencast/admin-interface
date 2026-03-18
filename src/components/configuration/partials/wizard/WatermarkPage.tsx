@@ -78,6 +78,7 @@ const WatermarkPage = <T extends RequiredFormProps>({
 									acceptableTypes="image/gif,image/png,image/jpg,image/jpeg,image/bmp"
 									fileId="watermarkFile"
 									fileName="watermarkFileName"
+									fileUrlKey="watermarkFileUrl"
 									formik={formik}
 									buttonKey="CONFIGURATION.THEMES.DETAILS.WATERMARK.UPLOAD_BUTTON"
 									labelKey="CONFIGURATION.THEMES.DETAILS.WATERMARK.UPLOAD_LABEL"

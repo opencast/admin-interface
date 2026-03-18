@@ -98,6 +98,7 @@ const TitleSlidePage = <T extends RequiredFormProps>({
 									acceptableTypes="image/*"
 									fileId="titleSlideBackground"
 									fileName="titleSlideBackgroundName"
+									fileUrlKey="titleSlideBackgroundUrl"
 									formik={formik}
 									labelKey="CONFIGURATION.THEMES.DETAILS.TITLE.UPLOAD_LABEL"
 									buttonKey="CONFIGURATION.THEMES.DETAILS.TITLE.UPLOAD_BUTTON"

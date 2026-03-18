@@ -23,6 +23,7 @@ const FileUpload = <T extends RequiredFormProps>({
 	acceptableTypes,
 	fileId,
 	fileName,
+	fileUrlKey,
 	formik,
 	isEdit,
 }: {
@@ -32,6 +33,7 @@ const FileUpload = <T extends RequiredFormProps>({
 	acceptableTypes: string,
 	fileId: string,
 	fileName: string,
+	fileUrlKey: string,
 	formik: FormikProps<T>,
 	isEdit?: boolean,
 }) => {
@@ -45,6 +47,16 @@ const FileUpload = <T extends RequiredFormProps>({
 
 	// reference used for activating file input when button is clicked
 	const hiddenFileInput = useRef<HTMLInputElement>(null);
+
+	const existingFileUrl = fileUrlKey ? formik.values[fileUrlKey] as string : undefined;
+
+	const displayName = file
+		? file.name
+		: (formik.values[fileName] as string);
+
+	const displayUrl = file
+		? URL.createObjectURL(file)
+		: existingFileUrl;
 
 	// Trigger formik validation
 	// Setting formik fields in a promise callback does not trigger formik
@@ -62,6 +74,9 @@ const FileUpload = <T extends RequiredFormProps>({
 		setLoaded(0);
 		formik.setFieldValue(fileId, "");
 		formik.setFieldValue(fileName, "");
+		if (fileUrlKey) {
+			formik.setFieldValue(fileUrlKey, "");
+		}
 	};
 
 	// upload file to backend
@@ -120,11 +135,11 @@ const FileUpload = <T extends RequiredFormProps>({
 					<div className="content-container">
 						{/* If user already uploaded a file, its name and a delete button is rendered */}
 						{/* else render button for upload */}
-						{!!formik.values[fileId] && file ? (
+						{(file || existingFileUrl) ? (
 							<div className="upload-file-info">
 								<p className={isEdit ? "edit" : ""}>
-									<a href={URL.createObjectURL(file)} target="_blank" rel="noreferrer">
-										{formik.values[fileName] as string}
+									<a href={displayUrl} target="_blank" rel="noreferrer">
+										{displayName}
 									</a>
 								</p>
 								<div className="button-container">
