@@ -3,17 +3,12 @@ import { useTranslation } from "react-i18next";
 import DatePicker from "react-datepicker";
 import {
 	getFilters,
-	getSecondFilter,
-	getSelectedFilter,
 	getTextFilter,
 } from "../../selectors/tableFilterSelectors";
 import {
 	FilterData,
 	editFilterValue,
-	editSelectedFilter,
 	editTextFilter,
-	removeSecondFilter,
-	removeSelectedFilter,
 	removeTextFilter,
 	resetFilterValues,
 } from "../../slices/tableFilterSlice";
@@ -52,8 +47,8 @@ const TableFilters = ({
 	const dispatch = useAppDispatch();
 
 	const filterMap = useAppSelector(state => getFilters(state, resource));
-	const secondFilter = useAppSelector(state => getSecondFilter(state));
-	const selectedFilter = useAppSelector(state => getSelectedFilter(state));
+	const [selectedFilter, setSelectedFilter] = useState("");
+	const [secondFilter, setSecondFilter] = useState("");
 	const textFilter = useAppSelector(state => getTextFilter(state, resource));
 
 	// Variables for showing different dialogs depending on what was clicked
@@ -76,8 +71,7 @@ const TableFilters = ({
 		setFilterSelector(false);
 
 		dispatch(removeTextFilter(resource));
-		dispatch(removeSelectedFilter());
-		dispatch(removeSelectedFilter());
+		setSelectedFilter("");
 
 		// Set all values of the filters in filterMap back to ""
 		dispatch(resetFilterValues());
@@ -119,7 +113,7 @@ const TableFilters = ({
 		}
 
 		if (name === "selectedFilter") {
-			dispatch(editSelectedFilter(value));
+			setSelectedFilter(value);
 			setOpenSecondFilterMenu(true);
 		}
 
@@ -130,8 +124,8 @@ const TableFilters = ({
 			if (filter) {
 				dispatch(editFilterValue({ filterName: filter.name, value: value, resource }));
 				setFilterSelector(false);
-				dispatch(removeSelectedFilter());
-				dispatch(removeSecondFilter());
+				setSelectedFilter("");
+				setSecondFilter("");
 				setOpenSecondFilterMenu(false);
 				mustApplyChanges = true;
 			}
@@ -211,7 +205,7 @@ const TableFilters = ({
 					resource,
 				}));
 				setFilterSelector(false);
-				dispatch(removeSelectedFilter());
+				setSelectedFilter("");
 				// Reload of resource after going to very first page.
 				dispatch(goToPage(0));
 				await dispatch(loadResource());

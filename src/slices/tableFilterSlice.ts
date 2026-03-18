@@ -50,8 +50,6 @@ type TableFilterState = {
 	data: FilterData[],
 	filterProfiles: FilterProfile[],
 	textFilter: TextFilter[],
-	selectedFilter: string,
-	secondFilter: string,
 	stats: Stats[],
 }
 
@@ -65,8 +63,6 @@ const initialState: TableFilterState = {
 	data: [],
 	filterProfiles: [],
 	textFilter: [],
-	selectedFilter: "",
-	secondFilter: "",
 	stats: [],
 };
 
@@ -362,24 +358,6 @@ const tableFilterSlice = createSlice({
 			const filterMap = action.payload;
 			state.data = filterMap;
 		},
-		editSelectedFilter(state, action: PayloadAction<
-			TableFilterState["selectedFilter"]
-		>) {
-			const filter = action.payload;
-			state.selectedFilter = filter;
-		},
-		removeSelectedFilter(state) {
-			state.selectedFilter = "";
-		},
-		editSecondFilter(state, action: PayloadAction<
-			TableFilterState["secondFilter"]
-		>) {
-			const filter = action.payload;
-			state.secondFilter = filter;
-		},
-		removeSecondFilter(state) {
-			state.secondFilter = "";
-		},
 		resetCorruptedState(state) {
 			// Reset corrupted localStorage state to initial values
 			if (!Array.isArray(state.data)) {
@@ -438,10 +416,6 @@ export const {
 	editTextFilter,
 	removeTextFilter,
 	loadFilterProfile,
-	editSelectedFilter,
-	removeSelectedFilter,
-	editSecondFilter,
-	removeSecondFilter,
 	resetCorruptedState,
 } = tableFilterSlice.actions;
 
