@@ -155,10 +155,3 @@ select {
 input.disabled, select.disabled {
   background: variables.$modal-nav-bg-color;
 }
-
-// Use HTML5 input field for file upload
-.file-upload > input[type="file"] {
-  width: 100%;
-  visibility: visible !important;
-  text-align: left;
-}

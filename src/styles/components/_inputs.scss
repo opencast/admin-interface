@@ -226,3 +226,37 @@ input[type="radio"].ios {
 
 }
 
+/**
+ * Fake upload for create event dialog
+ */
+.fake-file-input {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 256px;
+  max-width: 320px;
+  max-height: 34px;
+}
+
+/* Left button */
+.file-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-height: 22px;
+  background: variables.$modal-nav-bg-color;
+  border: 1px solid variables.$main-border-color;
+  border-radius: 4px;
+  padding: 0px 8px;
+  color: variables.$color-black;
+  margin-right: 8px;
+  white-space: nowrap;
+}
+
+/* Right text */
+.file-text {
+  color: variables.$color-white;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

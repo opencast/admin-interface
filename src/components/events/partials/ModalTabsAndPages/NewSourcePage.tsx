@@ -277,18 +277,39 @@ const Upload = <T extends RequiredFormPropsUpload>({
 												</p>
 											</td>
 											<td>
-												<div className="file-upload">
+												<div
+													className="fake-file-input blue-btn"
+													role="button"
+													tabIndex={0}
+													onClick={() => document.getElementById(asset.id)?.click()}
+													onKeyDown={e => {
+														if (e.key === "Enter" || e.key === " ") {
+															e.preventDefault();
+															document.getElementById(asset.id)?.click();
+														}
+													}}
+													aria-label={t("EVENTS.EVENTS.NEW.SOURCE.UPLOAD.ARIA_FILE_PICKER")}
+												>
+													<span className="file-button">
+														{t("EVENTS.EVENTS.NEW.SOURCE.UPLOAD.FILE_PICKER")}
+													</span>
+
+													<span className="file-text">
+														{asset.file && asset.file.length > 0
+															? asset.file[0].name
+															: t("EVENTS.EVENTS.NEW.SOURCE.UPLOAD.NO_FILE_PICKED")}
+													</span>
+
 													<input
 														id={asset.id}
-														className="blue-btn file-select-btn"
+														type="file"
+														name={`uploadAssetsTrack.${key}.file`}
+														hidden
 														accept={asset.accept}
+														multiple={asset.multiple}
 														onChange={e =>
 															handleChange(e, `uploadAssetsTrack.${key}.file`)
 														}
-														type="file"
-														multiple={asset.multiple}
-														name={`uploadAssetsTrack.${key}.file`}
-														tabIndex={0}
 													/>
 												</div>
 											</td>

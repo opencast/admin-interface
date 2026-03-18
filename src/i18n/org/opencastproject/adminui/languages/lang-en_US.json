@@ -526,6 +526,9 @@
 						"CAPTION": "Upload",
 						"RECORDING_ELEMENTS": "Recording elements",
 						"RECORDING_METADATA": "Recording metadata",
+						"FILE_PICKER": "Upload file...",
+						"NO_FILE_PICKED": "No file chosen",
+						"ARIA_FILE_PICKER": "Upload file",
 						"SEGMENTABLE": {
 							"SHORT": "Presentation",
 							"DETAIL": "The file contains a recording of a what is shown to an audience (Keynote, Powerpoint, etc)."
