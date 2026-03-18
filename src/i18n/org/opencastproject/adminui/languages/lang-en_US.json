@@ -1672,7 +1672,7 @@
 					"BOTTOM_RIGHT": "Bottom right",
 					"UPLOAD": "Upload",
 					"POSITION": "Watermark position and preview",
-					"FILEUPLOAD_DESCRIPTION": "File should have an alpha channel (transparent background). Acceptable file types are: .PNG, .GIF, .SVG, .WEBP",
+					"FILEUPLOAD_DESCRIPTION": "File should have an alpha channel (transparent background). Acceptable file types are: gif, png, jp(e)g, or bmp",
 					"UPLOAD_LABEL": "Upload image",
 					"UPLOAD_BUTTON": "Upload"
 				},

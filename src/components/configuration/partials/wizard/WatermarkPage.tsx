@@ -75,7 +75,7 @@ const WatermarkPage = <T extends RequiredFormProps>({
 							</header>
 							<div className="obj-container padded">
 								<FileUpload
-									acceptableTypes="image/*"
+									acceptableTypes="image/gif,image/png,image/jpg,image/jpeg,image/bmp"
 									fileId="watermarkFile"
 									fileName="watermarkFileName"
 									formik={formik}
