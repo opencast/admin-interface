@@ -53,7 +53,9 @@ const initialState: WorkflowState = {
 };
 
 // fetch workflow definitions from server
-export const fetchWorkflowDef = createAppAsyncThunk("workflow/fetchWorkflowDef", async (type: string) => {
+export const fetchWorkflowDef = createAppAsyncThunk("workflow/fetchWorkflowDef", async (
+	type: "tasks" | "delete-event" | "event-details" | "new-event-upload" | "new-event-schedule" | "default",
+) => {
 	type NewProcessing = {
 		default_workflow_id: string,
 		workflows: Workflow[],
@@ -74,6 +76,16 @@ export const fetchWorkflowDef = createAppAsyncThunk("workflow/fetchWorkflowDef",
 			break;
 		}
 		case "event-details":
+			urlParams = {
+				tags: "schedule",
+			};
+			break;
+		case "new-event-upload":
+			urlParams = {
+				tags: "upload",
+			};
+			break;
+		case "new-event-schedule":
 			urlParams = {
 				tags: "schedule",
 			};

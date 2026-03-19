@@ -35,9 +35,12 @@ const NewProcessingPage = <T extends RequiredFormProps>({
 
 	useEffect(() => {
 		// Load workflow definitions for selecting
-		dispatch(fetchWorkflowDef("default"));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+		if (formik.values.sourceMode !== "UPLOAD") {
+			dispatch(fetchWorkflowDef("new-event-schedule"));
+		} else {
+			dispatch(fetchWorkflowDef("new-event-upload"));
+		}
+	}, [dispatch, formik.values.sourceMode]);
 
 	// Preselect the first item
 	useEffect(() => {
