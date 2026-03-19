@@ -187,6 +187,8 @@ const TableHeadRows = ({ forceDeselectAll }: { forceDeselectAll: () => unknown }
 		let direction: ReverseOptions = "ASC";
 		if (reverse && reverse === "ASC") {
 			direction = "DESC";
+		} else if (reverse && reverse === "DESC") {
+			direction = "NONE";
 		}
 		dispatch(reverseTable(direction));
 		dispatch(updatePages());
@@ -199,7 +201,7 @@ const TableHeadRows = ({ forceDeselectAll }: { forceDeselectAll: () => unknown }
 					<th
 						key={key}
 						className={cn({
-							"col-sort": !!sortBy && column.name === sortBy,
+							"col-sort": reverse !== "NONE" && !!sortBy && column.name === sortBy,
 							sortable: true,
 						})}
 						onClick={() => sortByColumn(column.name)}
@@ -211,7 +213,7 @@ const TableHeadRows = ({ forceDeselectAll }: { forceDeselectAll: () => unknown }
 									className={cn("chevron-up", { active: reverse === "ASC" && column.name === sortBy })}
 								/>
 								<LuChevronDown
-									className={cn("chevron-down", { active: reverse === "ASC" && column.name === sortBy })}
+									className={cn("chevron-down", { active: reverse === "DESC" && column.name === sortBy })}
 								/>
 							</div>
 						</span>

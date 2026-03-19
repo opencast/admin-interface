@@ -89,7 +89,7 @@ export type SubmitRow = {
 
 export type Resource = "events" | "series" | "recordings" | "jobs" | "servers" | "services" | "users" | "groups" | "acls" | "themes"
 
-export type ReverseOptions = "ASC" | "DESC"
+export type ReverseOptions = "ASC" | "DESC" | "NONE"
 
 export type TableState = {
 	status: "uninitialized" | "loading" | "succeeded" | "failed",

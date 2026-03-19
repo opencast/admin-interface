@@ -140,6 +140,7 @@ const TableFilters = ({
 	// simply by going to first page and then load resources.
 	// This helps increase performance by reducing the number of calls to load resources.
 	const applyFilterChangesDebounced = async () => {
+		console.log("Applying filter changes with value: " + itemValue);
 		// No matter what, we go to page one.
 		dispatch(goToPage(0));
 		// Reload of resource
@@ -149,8 +150,8 @@ const TableFilters = ({
 
 	useEffect(() => {
 		if (itemValue) {
-			// Call to apply filter changes with 500MS debounce!
-			const applyFilterChangesDebouncedTimeoutId = setTimeout(applyFilterChangesDebounced, 500);
+			// Call to apply filter changes with 600MS debounce!
+			const applyFilterChangesDebouncedTimeoutId = setTimeout(applyFilterChangesDebounced, 600);
 
 			return () => clearTimeout(applyFilterChangesDebouncedTimeoutId);
 		}

@@ -71,7 +71,7 @@ export const getURLParams = (
 		};
 	}
 
-	if (getTableSortingForResource(state, resource)) {
+	if (getTableDirectionForResource(state, resource) !== "NONE") {
 		params = {
 			...params,
 			sort: getTableSortingForResource(state, resource)
