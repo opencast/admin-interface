@@ -15,8 +15,10 @@ import {
 } from "../../slices/tableFilterSlice";
 import { reverseTable } from "../../slices/tableSlice";
 import {
-	goToPage,
-} from "../../thunks/tableThunks";
+	deselectAll,
+	setOffset,
+	setPageActive,
+} from "../../slices/tableSlice";
 import TableFilterProfiles from "./TableFilterProfiles";
 import { availableHotkeys } from "../../configs/hotkeysConfig";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -147,7 +149,9 @@ const TableFilters = ({
 	// This helps increase performance by reducing the number of calls to load resources.
 	const applyFilterChangesDebounced = async () => {
 		// No matter what, we go to page one.
-		dispatch(goToPage(0));
+		dispatch(deselectAll());
+		dispatch(setOffset(0));
+		dispatch(setPageActive(0));
 		// Reload of resource
 		await loadResource();
 	};
@@ -212,7 +216,9 @@ const TableFilters = ({
 				setFilterSelector(false);
 				setSelectedFilter("");
 				// Reload of resource after going to very first page.
-				dispatch(goToPage(0));
+				dispatch(deselectAll());
+				dispatch(setOffset(0));
+				dispatch(setPageActive(0));
 				await loadResource();
 			}
 		}
