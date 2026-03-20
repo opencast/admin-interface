@@ -12,10 +12,9 @@ import {
 } from "../../thunks/tableThunks";
 import { getFilters } from "../../selectors/tableFilterSelectors";
 import { FilterData, loadFilterProfile } from "../../slices/tableFilterSlice";
-import { AppThunk, useAppDispatch, useAppSelector } from "../../store";
+import { useAppDispatch, useAppSelector } from "../../store";
 import { useHotkeys } from "react-hotkeys-hook";
 import { availableHotkeys } from "../../configs/hotkeysConfig";
-import { AsyncThunk } from "@reduxjs/toolkit";
 import ButtonLikeAnchor from "./ButtonLikeAnchor";
 import { ParseKeys } from "i18next";
 import { Resource } from "../../slices/tableSlice";
@@ -29,13 +28,11 @@ const TableFiltersProfiles = ({
 	showFilterSettings,
 	setFilterSettings,
 	loadResource,
-	loadResourceIntoTable,
 	resource,
 }: {
 	showFilterSettings: boolean,
 	setFilterSettings: (_: boolean) => void,
-	loadResource: AsyncThunk<any, void, any>,
-	loadResourceIntoTable: () => AppThunk,
+	loadResource: () => Promise<void>,
 	resource: Resource,
 }) => {
 	const dispatch = useAppDispatch();
@@ -132,14 +129,13 @@ const TableFiltersProfiles = ({
 		}
 	};
 
-	const chooseFilterProfile = (filterMap: FilterData[]) => {
+	const chooseFilterProfile = async (filterMap: FilterData[]) => {
 		dispatch(loadFilterProfile(filterMap));
 
 		// No matter what, we go to page one.
 		dispatch(goToPage(0));
 		// Reload resources when filters are removed
-		dispatch(loadResource());
-		dispatch(loadResourceIntoTable());
+		await loadResource();
 	};
 
 	return (

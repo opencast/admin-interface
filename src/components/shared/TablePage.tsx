@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import TableFilters from "../shared/TableFilters";
 import Table, { TemplateMap } from "../shared/Table";
@@ -7,7 +7,7 @@ import { fetchFilters } from "../../slices/tableFilterSlice";
 import { CreateType, NavBarLink } from "../NavBar";
 import { AppThunk, RootState, useAppDispatch, useAppSelector } from "../../store";
 import { resetTableProperties, Resource } from "../../slices/tableSlice";
-import { AsyncThunk } from "@reduxjs/toolkit";
+import { AsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { ParseKeys } from "i18next";
 import { useLocation } from "react-router";
 import MainPage from "./MainPage";
@@ -40,14 +40,70 @@ const TablePage = ({
 }) => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
+	const currentLoadRequest = useRef<{ abort:() => void } | null>(null);
+	const latestLoadRequestId = useRef(0);
+	const allowLoadIntoTable = useRef(true);
+	const currentLoadSource = useRef<"auto" | "filters">(null);
+	const autoRefreshPaused = useRef(false);
+	const autoRefreshPauseTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 	const location = useLocation();
 
 	const numberOfRows = useAppSelector(state => getTotalResources(state));
 
+	const pauseAutoRefresh = () => {
+		autoRefreshPaused.current = true;
+
+		if (autoRefreshPauseTimeout.current) {
+			clearTimeout(autoRefreshPauseTimeout.current);
+		}
+
+		autoRefreshPauseTimeout.current = setTimeout(() => {
+			autoRefreshPaused.current = false;
+			autoRefreshPauseTimeout.current = null;
+		}, 2000);
+	};
+
+	const loadResource = async (source: "auto" | "filters" = "auto") => {
+		if (source === "filters") {
+			pauseAutoRefresh();
+		}
+
+		if (source === "auto" && autoRefreshPaused.current) {
+			return;
+		}
+
+		if (source === "auto" && currentLoadSource.current === "filters") {
+			return;
+		}
+
+		const requestId = ++latestLoadRequestId.current;
+		currentLoadSource.current = source;
+
+		currentLoadRequest.current?.abort?.();
+
+		const fetchRequest = dispatch(fetchResource()) as Promise<PayloadAction<any, string>> & { abort:() => void };
+		currentLoadRequest.current = fetchRequest;
+
+		const fetchResult = await fetchRequest as { meta?: { requestStatus?: string } };
+
+		if (requestId === latestLoadRequestId.current) {
+			currentLoadSource.current = null;
+		}
+
+		if (
+			allowLoadIntoTable.current
+			&& requestId === latestLoadRequestId.current
+			&& fetchResult?.meta?.requestStatus === "fulfilled"
+		) {
+			dispatch(loadResourceIntoTable());
+		}
+	};
+
+	const loadResourceFromFilters = () => loadResource("filters");
+
 	useEffect(() => {
-		// State variable for interrupting the load function
-		let allowLoadIntoTable = true;
+		allowLoadIntoTable.current = true;
 
 		// Clear table of previous data
 		dispatch(resetTableProperties());
@@ -55,22 +111,18 @@ const TablePage = ({
 		dispatch(fetchFilters(resource));
 
 		// Load resource on mount
-		const loadResource = async () => {
-			// Fetching resources from server
-			await dispatch(fetchResource());
-
-			// Load resources into table
-			if (allowLoadIntoTable) {
-				dispatch(loadResourceIntoTable());
-			}
-		};
-		loadResource();
+		loadResource("auto");
 
 		// Fetch resources every minute
-		const fetchResourceInterval = setInterval(loadResource, 5000);
+		const fetchResourceInterval = setInterval(() => loadResource("auto"), 5000);
 
 		return () => {
-			allowLoadIntoTable = false;
+			allowLoadIntoTable.current = false;
+			currentLoadRequest.current?.abort?.();
+			if (autoRefreshPauseTimeout.current) {
+				clearTimeout(autoRefreshPauseTimeout.current);
+				autoRefreshPauseTimeout.current = null;
+			}
 			clearInterval(fetchResourceInterval);
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -91,8 +143,7 @@ const TablePage = ({
 
 						{/* Include filters component */}
 						<TableFilters
-							loadResource={fetchResource}
-							loadResourceIntoTable={loadResourceIntoTable}
+							loadResource={loadResourceFromFilters}
 							resource={resource}
 						/>
 					</div>

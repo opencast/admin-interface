@@ -19,11 +19,10 @@ import TableFilterProfiles from "./TableFilterProfiles";
 import { availableHotkeys } from "../../configs/hotkeysConfig";
 import { useHotkeys } from "react-hotkeys-hook";
 import moment from "moment";
-import { AppThunk, useAppDispatch, useAppSelector } from "../../store";
+import { useAppDispatch, useAppSelector } from "../../store";
 import { renderValidDate } from "../../utils/dateUtils";
 import { getCurrentLanguageInformation } from "../../utils/utils";
 import DropDown from "./DropDown";
-import { AsyncThunk } from "@reduxjs/toolkit";
 import ButtonLikeAnchor from "./ButtonLikeAnchor";
 import { ParseKeys } from "i18next";
 import SearchContainer from "./SearchContainer";
@@ -36,11 +35,9 @@ import { LuSettings, LuX } from "react-icons/lu";
  */
 const TableFilters = ({
 	loadResource,
-	loadResourceIntoTable,
 	resource,
 }: {
-	loadResource: AsyncThunk<any, void, any>,
-	loadResourceIntoTable: () => AppThunk,
+	loadResource: () => Promise<void>,
 	resource: Resource,
 }) => {
 	const { t } = useTranslation();
@@ -77,8 +74,7 @@ const TableFilters = ({
 		dispatch(resetFilterValues());
 
 		// Reload resources when filters are removed
-		await dispatch(loadResource());
-		dispatch(loadResourceIntoTable());
+		await loadResource();
 	};
 
 	// Remove a certain filter
@@ -92,8 +88,7 @@ const TableFilters = ({
 		dispatch(editFilterValue({ filterName: filter.name, value: "", resource }));
 
 		// Reload resources when filter is removed
-		await dispatch(loadResource());
-		dispatch(loadResourceIntoTable());
+		await loadResource();
 	};
 
 	const handleSearchChange = (value: string) => {
@@ -143,8 +138,7 @@ const TableFilters = ({
 		// No matter what, we go to page one.
 		dispatch(goToPage(0));
 		// Reload of resource
-		await dispatch(loadResource());
-		dispatch(loadResourceIntoTable());
+		await loadResource();
 	};
 
 	useEffect(() => {
@@ -208,8 +202,7 @@ const TableFilters = ({
 				setSelectedFilter("");
 				// Reload of resource after going to very first page.
 				dispatch(goToPage(0));
-				await dispatch(loadResource());
-				dispatch(loadResourceIntoTable());
+				await loadResource();
 			}
 		}
 	};
@@ -374,7 +367,6 @@ const TableFilters = ({
 							setFilterSettings={setFilterSettings}
 							resource={resource}
 							loadResource={loadResource}
-							loadResourceIntoTable={loadResourceIntoTable}
 						/>
 					</div>
 				)}
