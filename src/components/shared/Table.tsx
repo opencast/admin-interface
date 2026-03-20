@@ -24,7 +24,6 @@ import {
 	selectRowIds,
 	selectRowById,
 	rowsSelectors,
-	resetTableProperties,
 } from "../../slices/tableSlice";
 import {
 	changeAllSelected,
@@ -37,17 +36,14 @@ import cn from "classnames";
 import EditTableViewModal from "../shared/EditTableViewModal";
 
 import Notifications from "./Notifications";
-import { AppThunk, useAppDispatch, useAppSelector } from "../../store";
+import { useAppDispatch, useAppSelector } from "../../store";
 import { TableColumn } from "../../configs/tableConfigs/aclsTableConfig";
 import ButtonLikeAnchor from "./ButtonLikeAnchor";
 import { ModalHandle } from "./modals/Modal";
 import { ParseKeys } from "i18next";
 import { LuChevronDown, LuChevronLeft, LuChevronRight, LuChevronUp, LuLoader } from "react-icons/lu";
-import { useLocation } from "react-router";
 import Select, { components, DropdownIndicatorProps } from "react-select";
 import { pageSizeStyles } from "../../utils/componentStyles";
-import { GenericAsyncThunk } from "../../utils/utils";
-import { usePolling } from "../../hooks/usePolling";
 
 export type TemplateMap<T> = {
 	[key: string]: ({ row }: { row: T }) => JSX.Element | JSX.Element[]
@@ -59,36 +55,15 @@ export type TemplateMap<T> = {
 const Table = <T extends Row, >({
 	resource,
 	templateMap,
-	fetchResource,
-	loadResourceIntoTable,
 }: {
 	resource: Resource,
 	templateMap: TemplateMap<T>
-	fetchResource: GenericAsyncThunk,
-	loadResourceIntoTable: () => AppThunk,
 }) => {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
-	const location = useLocation();
 
 	const editTableViewModalRef = useRef<ModalHandle>(null);
 	const selectAllCheckboxRef = useRef<HTMLInputElement>(null);
-
-	useEffect(() => {
-		// Clear table of previous data
-		dispatch(resetTableProperties());
-	}, [dispatch, location.hash]);
-
-	// Fetch resources on mount and every 5 seconds after
-	usePolling(async signal => {
-		// Fetching resources from server
-		await dispatch(fetchResource());
-
-		// Load resources into table
-		if (!signal.aborted) {
-			dispatch(loadResourceIntoTable());
-		}
-	}, 5000, [location.hash]);
 
 	const forceDeselectAll = () => {
 		dispatch(changeAllSelected(false));
