@@ -14,8 +14,10 @@ import {
 	resetFilterValues,
 } from "../../slices/tableFilterSlice";
 import {
-	goToPage,
-} from "../../thunks/tableThunks";
+	deselectAll,
+	setOffset,
+	setPageActive,
+} from "../../slices/tableSlice";
 import TableFilterProfiles from "./TableFilterProfiles";
 import { availableHotkeys } from "../../configs/hotkeysConfig";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -146,7 +148,9 @@ const TableFilters = ({
 	const applyFilterChangesDebounced = async () => {
 		console.log("Applying filter changes with value: " + itemValue);
 		// No matter what, we go to page one.
-		dispatch(goToPage(0));
+		dispatch(deselectAll());
+		dispatch(setOffset(0));
+		dispatch(setPageActive(0));
 		// Reload of resource
 		await loadResource();
 	};
@@ -211,7 +215,9 @@ const TableFilters = ({
 				setFilterSelector(false);
 				setSelectedFilter("");
 				// Reload of resource after going to very first page.
-				dispatch(goToPage(0));
+				dispatch(deselectAll());
+				dispatch(setOffset(0));
+				dispatch(setPageActive(0));
 				await loadResource();
 			}
 		}
