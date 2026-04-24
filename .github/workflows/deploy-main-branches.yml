@@ -147,6 +147,7 @@ jobs:
             gh pr edit $CURRENT_PR \
               --body "Updating Opencast ${{ needs.detect-repo-owner.outputs.branch }} Admin Interface module to [${{ github.sha }}](https://github.com/${{ github.repository_owner }}/admin-interface/commit/${{ github.sha }})" \
               -R ${{ github.repository_owner }}/opencast
+            gh pr merge --auto --merge
           else
             gh pr create \
               --title "Update ${{ needs.detect-repo-owner.outputs.branch }} Admin Interface" \
@@ -157,4 +158,8 @@ jobs:
               #FIXME: fine grained PATs can't apply labels
               #FIXME: classic PATs don't have the permissions because the PR isn't in an opencastproject (the user) repo
               #--label admin-ui --label maintenance \
+            # Set the PR to auto merge
+            # We sleep here since sometimes the merge call right after might be too fast for Github
+            sleep 30
+            gh pr merge --auto --merge
           fi
