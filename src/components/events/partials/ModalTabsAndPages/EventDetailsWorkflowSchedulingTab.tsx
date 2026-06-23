@@ -21,6 +21,7 @@ import { removeNotificationWizardForm } from "../../../../slices/notificationSli
 import { useTranslation } from "react-i18next";
 import { formatWorkflowsForDropdown } from "../../../../utils/dropDownUtils";
 import ModalContent from "../../../shared/modals/ModalContent";
+import { setDefaultConfig } from "../../../../utils/workflowPanelUtils";
 
 type InitialValues = {
 	workflowDefinition: string;
@@ -65,26 +66,6 @@ const EventDetailsWorkflowSchedulingTab = ({
 		return true;
 	};
 
-	const extractDefaultValuesFromWorkflowDefinition = (workflowId: string) => {
-		const defaultValues: Record<string, any> = {};
-		const workflowDefinition = workflowDefinitions.find(def => def.id === workflowId);
-		if (workflowDefinition) {
-			const panel = workflowDefinition.configurationPanelJson;
-			if (Array.isArray(panel)) {
-				const fieldset = panel[0].fieldset;
-				if (fieldset !== undefined) {
-					fieldset.forEach(function (field) {
-						defaultValues[field.name] = field.value;
-					});
-				}
-			}
-		}
-		if (defaultValues.length == 0) {
-			console.warn("No default values extracted from workflow definition: ", workflowId);
-		}
-		return defaultValues;
-	};
-
 	const setInitialValues = () => {
 		let configFromDatabase = undefined;
 		if (baseWorkflow.configuration) {
@@ -93,7 +74,7 @@ const EventDetailsWorkflowSchedulingTab = ({
 		const workflowId = "workflowId" in workflow && !!workflow.workflowId
 				? workflow.workflowId
 				: baseWorkflow.workflowId;
-		const initialConfigValuesFromWorkflowDef = extractDefaultValuesFromWorkflowDefinition(workflowId);
+		const initialConfigValuesFromWorkflowDef = setDefaultConfig(workflowDefinitions, workflowId);
 		const initialConfig = { ...initialConfigValuesFromWorkflowDef, ...configFromDatabase };
 		return {
 			workflowDefinition: workflowId,
