@@ -1,6 +1,7 @@
 import { UploadAssetsTrack } from "./../slices/eventSlice";
 import * as Yup from "yup";
 import { MetadataCatalog } from "../slices/eventSlice";
+import { FormikValues } from "formik";
 
 /**
  * This File contains all schemas used for validation with yup in the context of events and series
@@ -142,6 +143,33 @@ export const NewEventSchema = {
 				value === "SCHEDULE_SINGLE" || value === "SCHEDULE_MULTIPLE",
 			then: () => Yup.string().required("Required"),
 		}),
+		// Capture Agent specific
+		stream: Yup.string()
+			.nullable()
+			.oneOf(["0", "1"], "Invalid stream value")
+			.optional(),
+		record: Yup.string()
+			.nullable()
+			.oneOf(["0", "1"], "Invalid record value")
+			.optional()
+			.test(
+				"record-depends-on-stream",
+				"Record can be 0 only if Stream is 1",
+				function (value) {
+					const { stream } = this.parent as FormikValues;
+
+					// If record is not provided — no validation needed
+					if (value == null) { return true; }
+
+					// If stream is not provided — also fine
+					if (stream == null || stream === "") { return true; }
+
+					// Enforce the rule only when both are defined
+					if (value === "0" && stream !== "1") { return false; }
+
+					return true;
+				},
+			),
 	}),
 	"upload-asset": Yup.object().shape({}),
 	"processing": Yup.object().shape({

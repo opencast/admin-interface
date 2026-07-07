@@ -12,7 +12,7 @@ type FetchRecordingDetails = {
 	URL: RecordingDetailsState["url"],
 	capabilities: RecordingDetailsState["capabilities"],
 	configuration: RecordingDetailsState["configuration"],
-	inputs: RecordingDetailsState["inputs"],
+	parsedCapabilities: RecordingDetailsState["parsedCapabilities"],
 }
 
 export interface RecordingDetails {
@@ -22,7 +22,13 @@ export interface RecordingDetails {
 	url: string,
 	capabilities: { key: string, value: string }[],
 	configuration: { key: string, value: string }[],
-	inputs: { id: string, value: string }[],
+	parsedCapabilities: {
+		inputs: { id: string, value: string }[],
+		stream: { id: string, value: string }[],
+		record: { id: string, value: string }[],
+		layout: { id: string, value: string }[],
+		cameraPosition: { id: string, value: string }[],
+	},
 }
 
 interface RecordingDetailsState extends RecordingDetails {
@@ -40,7 +46,13 @@ const initialState: RecordingDetailsState = {
 	url: "",
 	capabilities: [],
 	configuration: [],
-	inputs: [],
+	parsedCapabilities: {
+		inputs: [],
+		stream: [],
+		record: [],
+		layout: [],
+		cameraPosition: [],
+	},
 };
 
 // fetch details of certain recording from server
@@ -71,7 +83,7 @@ const recordingDetailsSlice = createSlice({
 				state.url = recordingDetails.URL;
 				state.capabilities = recordingDetails.capabilities;
 				state.configuration = recordingDetails.configuration;
-				state.inputs = recordingDetails.inputs;
+				state.parsedCapabilities = recordingDetails.parsedCapabilities;
 			})
 			.addCase(fetchRecordingDetails.rejected, (state, action) => {
 				state.statusRecordingDetails = "failed";

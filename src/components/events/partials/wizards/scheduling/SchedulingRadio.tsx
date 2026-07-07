@@ -1,7 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { Field } from "formik";
+import { ParseKeys } from "i18next";
 
-const SchedulingInputs = ({
+const SchedulingRadio = ({
 	name,
 	inputs,
 }: {
@@ -20,10 +21,10 @@ const SchedulingInputs = ({
 					<label key={key}>
 						<Field
 							name={name}
-							type="checkbox"
+							type="radio"
 							value={input.id}
 						/>
-						{t(input.value, input.id)}
+						{t(input.value as ParseKeys)}
 					</label>
 				),
 			)}
@@ -31,4 +32,4 @@ const SchedulingInputs = ({
 	);
 };
 
-export default SchedulingInputs;
+export default SchedulingRadio;

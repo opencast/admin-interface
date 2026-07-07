@@ -388,9 +388,24 @@
 	},
 	"CAPTURE_AGENT": {
 		"DEVICE": {
-			"MICROPHONE": "Microphone",
-			"CAMERA": "Camera",
-			"PRESENTATION": "Presentation"
+			"INPUTS": {
+				"MICROPHONE": "Microphone",
+				"CAMERA": "Camera",
+				"PRESENTATION": "Presentation"
+			},
+			"STREAM": {
+				"0": "Do not send a livestream",
+				"1": "Stream the event"
+			},
+			"RECORD": {
+				"0": "Do not record",
+				"1": "Record and upload"
+			},
+			"LAYOUT": {
+				"SBS": "side-by-side",
+				"PBP": "picture-by-picture",
+				"FULL_PRES": "full presentation"
+			}
 		}
 	},
 	"NAV": {
@@ -527,7 +542,11 @@
 						"START_DATE": "yyyy-mm-dd",
 						"START_DATE_FORMAT": "yyyy-mm-dd",
 						"END_DATE": "yyyy-mm-dd",
-						"END_DATE_FORMAT": "yyyy-mm-dd"
+						"END_DATE_FORMAT": "yyyy-mm-dd",
+						"STREAM": "Stream",
+						"RECORD": "Record",
+						"LAYOUT": "Layout",
+						"CAMERA_POSITION": "Camera position"
 					},
 					"UPLOAD": {
 						"CAPTION": "Upload",
@@ -761,7 +780,11 @@
 						"MINUTE": "Minute",
 						"REPEATS": "Repeats",
 						"START_DATE": "yyyy-mm-dd",
-						"END_DATE": "yyyy-mm-dd"
+						"END_DATE": "yyyy-mm-dd",
+						"STREAM": "Stream",
+						"RECORD": "Record",
+						"LAYOUT": "Layout",
+						"CAMERA_POSITION": "Camera position"
 					},
 					"UPLOAD": {
 						"CAPTION": "Upload",
