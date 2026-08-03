@@ -70,7 +70,7 @@
     "eslint": "^9.39.2",
     "prop-types": "^15.8.1",
     "sass": "^1.102.0",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "typescript-eslint": "^8.65.0",
     "uuid": "^14.0.1",
     "vite": "^8.2.0",
