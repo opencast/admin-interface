@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { FormikProps } from "formik";
 import { Field } from "../../../shared/Field";
@@ -157,7 +157,8 @@ const RenderField = <T extends RequiredFormProps>({
 	validate?: (value: string) => string | undefined,
 }) => {
 	// id used for Field and label
-	const uuid = uuidv4();
+	// (turn this into state to keep it consistent across rerenders)
+	const [uuid] = useState(() => uuidv4());
 	const disabled = field.disabled ? field.disabled : false;
 
 	const renderField = () => {
