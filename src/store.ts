@@ -7,6 +7,7 @@ import events from "./slices/eventSlice";
 import table from "./slices/tableSlice";
 import series from "./slices/seriesSlice";
 import playlists from "./slices/playlistSlice";
+import lifeCycle from "./slices/lifeCycleSlice";
 import recordings from "./slices/recordingSlice";
 import jobs from "./slices/jobSlice";
 import servers from "./slices/serverSlice";
@@ -20,6 +21,7 @@ import notifications from "./slices/notificationSlice";
 import workflows from "./slices/workflowSlice";
 import eventDetails from "./slices/eventDetailsSlice";
 import seriesDetails from "./slices/seriesDetailsSlice";
+import lifeCyclePolicyDetails from "./slices/lifeCycleDetailsSlice";
 import userDetails from "./slices/userDetailsSlice";
 import recordingDetails from "./slices/recordingDetailsSlice";
 import groupDetails from "./slices/groupDetailsSlice";
@@ -41,6 +43,7 @@ const tableFilterProfilesPersistConfig = { key: "tableFilterProfiles", storage, 
 const eventsPersistConfig = { key: "events", storage, whitelist: ["columns"] };
 const seriesPersistConfig = { key: "series", storage, whitelist: ["columns"] };
 const playlistPersistConfig = { key: "playlists", storage, whitelist: ["columns"] };
+const lifeCyclePersistConfig = { key: "lifeCycle", storage, whitelist: ["columns"] };
 const tablePersistConfig = { key: "table", storage, whitelist: ["pagination", "sortBy", "reverse"] };
 const recordingsPersistConfig = { key: "recordings", storage, whitelist: ["columns"] };
 const jobsPersistConfig = { key: "jobs", storage, whitelist: ["columns"] };
@@ -58,6 +61,7 @@ const reducers = combineReducers({
   events: persistReducer(eventsPersistConfig, events),
   series: persistReducer(seriesPersistConfig, series),
   playlists: persistReducer(playlistPersistConfig, playlists),
+  lifeCycle: persistReducer(lifeCyclePersistConfig, lifeCycle),
   table: persistReducer(tablePersistConfig, table),
   recordings: persistReducer(recordingsPersistConfig, recordings),
   jobs: persistReducer(jobsPersistConfig, jobs),
@@ -72,6 +76,7 @@ const reducers = combineReducers({
   workflows,
   eventDetails,
   playlistDetails,
+  lifeCyclePolicyDetails,
   themeDetails,
   seriesDetails,
   recordingDetails,

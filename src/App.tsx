@@ -17,6 +17,7 @@ import About from "./components/About";
 import Playlists from "./components/events/Playlists";
 import { useAppDispatch } from "./store";
 import { fetchOcVersion, fetchUserInfo } from "./slices/userInfoSlice";
+import LifeCyclePolicies from "./components/events/LifeCyclePolicies";
 import { subscribeToAuthEvents } from "./utils/broadcastSync";
 import { useTableFilterStateValidation } from "./hooks/useTableFilterStateValidation";
 
@@ -50,6 +51,8 @@ function App() {
 				<Route path={"/events/series"} element={<Series />} />
 
 				<Route path={"/events/playlists"} element={<Playlists />} />
+
+				<Route path={"/events/lifeCyclePolicies"} element={<LifeCyclePolicies />} />
 
 				<Route path={"/recordings/recordings"} element={<Recordings />} />
 

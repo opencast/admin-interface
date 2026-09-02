@@ -1,28 +1,30 @@
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
-import { FormikProps } from "formik";
 import { Field } from "../../../shared/Field";
 import {
 	getWorkflowDefById,
 } from "../../../../selectors/workflowSelectors";
 import { useAppSelector } from "../../../../store";
-import { FieldSetField } from "../../../../slices/workflowSlice";
+import { ConfigurationPanelField, FieldSetField } from "../../../../slices/workflowSlice";
 
 /**
  * This component renders the configuration panel for the selected workflow in the processing step of the new event
  * wizard chosen via dropdown.
  */
-interface RequiredFormProps {
-	configuration?: { [key: string]: unknown }
-}
+// interface RequiredFormProps {
+// 	configuration?: { [key: string]: unknown }
+// }
+export type Configuration = { [key: string]: unknown }
 
-const RenderWorkflowConfig = <T extends RequiredFormProps>({
+const RenderWorkflowConfig = ({
 	workflowId,
-	formik,
+	configuration,
+	configurationName,
 	displayDescription,
 }: {
 	workflowId: string
-	formik: FormikProps<T>
+	configuration: Configuration
+	configurationName: string
 	displayDescription?: boolean
 }) => {
 
@@ -32,13 +34,35 @@ const RenderWorkflowConfig = <T extends RequiredFormProps>({
 	const configPanel = !!workflowDef && workflowDef.configurationPanelJson
 		? workflowDef.configurationPanelJson
 		: [];
-	const description = !!workflowDef && workflowDef.description
+	const description = !!workflowDef && workflowDef.description && !displayDescription
 		? workflowDef.description
 		: "";
 
 	return (
+		<WorkflowConfig
+			configuration={configuration}
+			configurationName={configurationName}
+			configPanel={configPanel}
+			description={description}
+		/>
+	);
+};
+
+export const WorkflowConfig = ({
+	configuration,
+	configurationName,
+	configPanel,
+	description,
+}: {
+	configuration: Configuration
+	configurationName: string
+	configPanel: string | ConfigurationPanelField[]
+	description: string
+}) => {
+
+	return (
 		<>
-			{displayDescription && description.length > 0 && (
+			{description.length > 0 && (
 				<div id="workflow-configuration-description-box">
 					<div id="workflow-configuration-description-text">{description.trim()}</div>
 				</div>
@@ -57,7 +81,7 @@ const RenderWorkflowConfig = <T extends RequiredFormProps>({
 								)}
 								<ul>
 									{configOption.fieldset?.map((field, keys) =>
-										renderInputByType(field, keys, formik),
+										renderInputByType(field, keys, configuration, configurationName),
 									)}
 								</ul>
 							</fieldset>
@@ -70,50 +94,50 @@ const RenderWorkflowConfig = <T extends RequiredFormProps>({
 };
 
 // render input depending on field type
-const renderInputByType = <T extends RequiredFormProps>(
+const renderInputByType = (
 	field: FieldSetField,
 	key: React.Key | null | undefined,
-	formik: FormikProps<T>,
+	configuration: Configuration,
+	configurationName: string,
 ) => {
 	switch (field.type) {
 		case "checkbox":
-			return <RenderCheckbox field={field} key={key} formik={formik} />;
+			return <RenderCheckbox field={field} key={key} configuration={configuration} configurationName={configurationName} />;
 		case "radio":
-			return <RenderRadio field={field} key={key} formik={formik} />;
+			return <RenderRadio field={field} key={key} configuration={configuration} configurationName={configurationName} />;
 		case "number":
-			return <RenderNumber field={field} key={key} formik={formik} />;
+			return <RenderNumber field={field} key={key} configuration={configuration} configurationName={configurationName} />;
 		case "text":
-			return <RenderText field={field} key={key} formik={formik} />;
+			return <RenderText field={field} key={key} configuration={configuration} configurationName={configurationName} />;
 		case "datetime-local":
-			return <RenderDatetimeLocal field={field} key={key} formik={formik} />;
+			return <RenderDatetimeLocal field={field} key={key} configuration={configuration} configurationName={configurationName} />;
 		default:
 			return "";
 	}
 };
 
-const RenderDatetimeLocal = <T extends RequiredFormProps>(
-	{ field, formik } : { field: FieldSetField, formik: FormikProps<T> }) => {
-		return <RenderField field={field} formik={formik} />;
+const RenderDatetimeLocal = (
+	{ field, configuration, configurationName } : { field: FieldSetField, configuration: Configuration, configurationName: string }) => {
+		return <RenderField field={field} configuration={configuration} configurationName={configurationName} />;
 };
 
-const RenderCheckbox = <T extends RequiredFormProps>(
-	{ field, formik } : { field: FieldSetField, formik: FormikProps<T> }) => {
-		return <RenderField field={field} formik={formik} />;
+const RenderCheckbox = (
+	{ field, configuration, configurationName } : { field: FieldSetField, configuration: Configuration, configurationName: string }) => {
+		return <RenderField field={field} configuration={configuration} configurationName={configurationName} />;
 };
 
-const RenderRadio = <T extends RequiredFormProps>(
-	{ field } : { field: FieldSetField, formik: FormikProps<T> }) => {
+const RenderRadio = (
+	{ field, configuration, configurationName } : { field: FieldSetField, configuration: Configuration, configurationName: string }) => {
 
 		return (
 			<li>
 				<div role="group" className="configField">
 					{field.options?.map(option =>
 						<label key={option.value}>
-							<Field
-								type="radio"
-								className="configField"
-								name={"configuration." + field.name}
-								value={option.value}
+							<RenderField
+								field={field}
+								configuration={configuration}
+								configurationName={configurationName}
 							/>
 							{option.label}
 						</label>,
@@ -123,8 +147,8 @@ const RenderRadio = <T extends RequiredFormProps>(
 		);
 };
 
-const RenderNumber = <T extends RequiredFormProps>(
-	{ field, formik } : { field: FieldSetField, formik: FormikProps<T> }) => {
+const RenderNumber = (
+	{ field, configuration, configurationName } : { field: FieldSetField, configuration: Configuration, configurationName: string }) => {
 	// validate that value of number is between max and min
 	const validate = (value: string) => {
 		let error;
@@ -134,26 +158,30 @@ const RenderNumber = <T extends RequiredFormProps>(
 		return error;
 	};
 
-		return <RenderField field={field} formik={formik} validate={validate}/>;
+		return <RenderField field={field} configuration={configuration} configurationName={configurationName} validate={validate}/>;
 };
 
-const RenderText = <T extends RequiredFormProps>({
+const RenderText = ({
 	field,
-	formik,
+	configuration,
+	configurationName,
 }: {
 	field: FieldSetField,
-	formik: FormikProps<T>,
+	configuration: Configuration,
+	configurationName: string,
 }) => {
-		return <RenderField field={field} formik={formik} />;
+		return <RenderField field={field} configuration={configuration} configurationName={configurationName} />;
 };
 
-const RenderField = <T extends RequiredFormProps>({
+const RenderField = ({
 	field,
-	formik,
+	configuration,
+	configurationName,
 	validate = undefined,
 }: {
 	field: FieldSetField,
-	formik: FormikProps<T>,
+	configuration: Configuration,
+	configurationName: string,
 	validate?: (value: string) => string | undefined,
 }) => {
 	// id used for Field and label
@@ -167,7 +195,7 @@ const RenderField = <T extends RequiredFormProps>({
 					defaultValue={field.defaultValue}
 					validate={validate}
 					className="configField"
-					name={"configuration." + field.name}
+					name={configurationName + "." + field.name}
 					disabled={disabled}
 					type={field.type}
 					min={field.min}
@@ -182,9 +210,9 @@ const RenderField = <T extends RequiredFormProps>({
 			<label htmlFor={uuid}>{field.label as string}</label>
 			{/* if input has an additional fieldset or further configuration inputs
 						then render again by input type*/}
-			{!!field.fieldset && !!formik.values.configuration && !!formik.values.configuration[field.name] && (
+			{!!field.fieldset && !!configuration && !!configuration[field.name] && (
 				<ul className="workflow-configuration-subpanel">
-					{field.fieldset?.map((f, keys) => renderInputByType(f, keys, formik))}
+					{field.fieldset?.map((f, keys) => renderInputByType(f, keys, configuration, configurationName))}
 				</ul>
 			)}
 		</li>

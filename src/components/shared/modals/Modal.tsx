@@ -23,6 +23,7 @@ export type ModalProps = {
   header: string;
   classId: string;
   className?: string;
+  focusTrapActive?: boolean;  // Deactive focus trap, because it clashes with react-js-cron (can't click on dropdown elements)
 };
 
 export type ModalHandle = {
@@ -33,7 +34,7 @@ export type ModalHandle = {
 
 export const Modal = forwardRef<ModalHandle, PropsWithChildren<ModalProps>>(
   (
-    { open = false, closeCallback, header, classId, className, children },
+    { open = false, closeCallback, header, classId, className, children, focusTrapActive = true },
     ref,
   ) => {
     const { t } = useTranslation();
@@ -69,7 +70,9 @@ export const Modal = forwardRef<ModalHandle, PropsWithChildren<ModalProps>>(
 
 	return ReactDOM.createPortal(
 		isOpen &&
-			<FocusTrap>
+			<FocusTrap
+				active={focusTrapActive}
+			>
 				<div>
 					<div className="modal-animation modal-overlay" />
 					<section

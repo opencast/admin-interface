@@ -38,6 +38,7 @@ import { Ace } from "./aclSlice";
 import { setTobiraTabHierarchy, TobiraData } from "./seriesDetailsSlice";
 import { handleTobiraError } from "./shared/tobiraErrors";
 import camelcaseKeys from "camelcase-keys";
+import { LifeCyclePolicy } from "./lifeCycleSlice";
 
 // Contains the navigation logic for the modal
 type EventDetailsModal = {
@@ -218,6 +219,8 @@ type EventDetailsState = {
 	errorStatisticsValue: SerializedError | null,
 	statusTobiraData: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorTobiraData: SerializedError | null,
+	statusLifeCyclePolicies: "uninitialized" | "loading" | "succeeded" | "failed",
+	errorLifeCyclePolicies: SerializedError | null,
 	eventId: string,
 	modal: EventDetailsModal,
 	metadata: MetadataCatalog,
@@ -377,6 +380,7 @@ type EventDetailsState = {
 	statistics: Statistics[],
 	hasStatisticsError: boolean,
 	tobiraData: TobiraData,
+	lifeCyclePolicies: LifeCyclePolicy[]
 }
 
 // Initial state of event details in redux store
@@ -441,6 +445,8 @@ const initialState: EventDetailsState = {
 	errorStatisticsValue: null,
 	statusTobiraData: "uninitialized",
 	errorTobiraData: null,
+	statusLifeCyclePolicies: "uninitialized",
+	errorLifeCyclePolicies: null,
 	eventId: "",
 	modal: {
 		show: false,
@@ -609,6 +615,7 @@ const initialState: EventDetailsState = {
 		id: "",
 		hostPages: [],
 	},
+	lifeCyclePolicies: [],
 };
 
 
@@ -1571,6 +1578,13 @@ export const fetchEventStatisticsValueUpdate = createAppAsyncThunk("eventDetails
 			statistics,
 		)
 	);
+});
+
+export const fetchEventLifeCyclePolicies = createAppAsyncThunk("eventDetails/fetchLifeCyclePolicies", async (eventId: Event["id"]) => {
+	const data = await axios.get<EventDetailsState["lifeCyclePolicies"]>(
+		`/api/lifecyclemanagement/policiesForEvent/${eventId}`,
+	);
+	return data.data;
 });
 
 export const updateMetadata = createAppAsyncThunk("eventDetails/updateMetadata", async (params: {
@@ -2546,6 +2560,21 @@ const eventDetailsSlice = createSlice({
 			.addCase(fetchEventDetailsTobira.rejected, (state, action) => {
 				state.statusTobiraData = "failed";
 				state.errorTobiraData = action.error;
+			})
+			// fetch lifecycle
+			.addCase(fetchEventLifeCyclePolicies.pending, state => {
+				state.statusLifeCyclePolicies = "loading";
+			})
+			.addCase(fetchEventLifeCyclePolicies.fulfilled, (state, action: PayloadAction<
+				EventDetailsState["lifeCyclePolicies"]
+			>) => {
+				state.statusLifeCyclePolicies = "succeeded";
+				state.lifeCyclePolicies = action.payload;
+				state.errorLifeCyclePolicies = null;
+			})
+			.addCase(fetchEventLifeCyclePolicies.rejected, (state, action) => {
+				state.statusLifeCyclePolicies = "failed";
+				state.errorLifeCyclePolicies = action.error;
 			});
 	},
 });

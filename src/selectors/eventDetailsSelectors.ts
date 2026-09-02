@@ -193,3 +193,6 @@ export const hasStatisticsError = (state: RootState) =>
 	state.eventDetails.hasStatisticsError;
 export const isFetchingStatistics = (state: RootState) =>
 	state.eventDetails.statusStatistics === "loading";
+
+export const getLifeCyclePoliciesForEvent = (state: RootState) =>
+	state.eventDetails.lifeCyclePolicies;

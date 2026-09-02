@@ -5,6 +5,7 @@ import { TobiraPage } from "../slices/seriesSlice";
 import { initArray } from "../utils/utils";
 import { EditedEvents, Event, UploadAssetsTrack } from "../slices/eventSlice";
 import { Role } from "../slices/aclSlice";
+import { TargetFilter } from "../slices/lifeCycleSlice";
 import { ParseKeys } from "i18next";
 import { UserRole } from "../slices/userSlice";
 import { PlaylistEntry } from "../slices/playlistDetailsSlice";
@@ -239,4 +240,38 @@ export const initialFormValuesEditScheduledEvents: {
 	events: [],
 	editedEvents: [],
 	changedEvents: [],
+};
+
+export const initialFormValuesNewLifeCyclePolicy: {
+	title: string,
+	isActive: boolean,
+	isCreatedFromConfig: boolean,
+	targetType: string,
+	timing: string,
+	action: string,
+	actionDate: string,
+	cronTrigger: string,
+	actionParameters: { [key: string]: unknown }
+	policies: TransformedAcl[]
+	targetFiltersTransformed: { [key: string]: (TargetFilter & { filter: string })[] },
+} = {
+	title: "",
+	isActive: true,
+	isCreatedFromConfig: false,
+	targetType: "EVENT",
+	timing: "SPECIFIC_DATE",
+	action: "START_WORKFLOW",
+	actionDate: "",
+	cronTrigger: "",
+	actionParameters: {
+		// workflowId: "noop",
+		// workflowParameters: "{\"straightToPublishing\": true}",
+		workflowId: "",
+		workflowParameters: { },
+	},
+
+	policies: [],
+	targetFiltersTransformed: {
+		"dublincore/episode": [],
+	},
 };

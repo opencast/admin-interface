@@ -51,6 +51,7 @@ import { NOTIFICATION_CONTEXT } from "../../../../configs/modalConfig";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { ParseKeys } from "i18next";
 import EventDetailsWorkflowSchedulingTab from "../ModalTabsAndPages/EventDetailsWorkflowSchedulingTab";
+import EventDetailsLifeCyclePolicy from "../ModalTabsAndPages/EventDetailsLifeCyclePolicy";
 import { useHotkeys } from "react-hotkeys-hook";
 import { availableHotkeys } from "../../../../configs/hotkeysConfig";
 
@@ -65,6 +66,7 @@ export enum EventDetailsPage {
 	Comments,
 	Tobira,
 	Statistics,
+	LifeCyclePolicies,
 }
 
 export type WorkflowTabHierarchy = "workflows" | "workflow-details" | "workflow-operations" | "workflow-operation-details" | "errors-and-warnings" | "workflow-error-details"
@@ -220,6 +222,12 @@ const EventDetails = ({
 			page: EventDetailsPage.Statistics,
 			hidden: !hasStatistics,
 		},
+		{
+			tabNameTranslation: "EVENTS.EVENTS.DETAILS.TABS.LIFECYCLEPOLICIES",
+			accessRole: "ROLE_UI_EVENTS_DETAILS_LIFECYCLEPOLICIES_VIEW",
+			name: "lifecyclepolicies",
+			page: EventDetailsPage.LifeCyclePolicies,
+		},
 	];
 
 	const openTab = (tabNr: EventDetailsPage) => {
@@ -371,6 +379,11 @@ const EventDetails = ({
 					<EventDetailsStatisticsTab
 						eventId={eventId}
 						header={tabs[page].bodyHeaderTranslation ?? "EVENTS.EVENTS.DETAILS.STATISTICS.CAPTION"}
+					/>
+				)}
+				{page === EventDetailsPage.LifeCyclePolicies && (
+					<EventDetailsLifeCyclePolicy
+						eventId={eventId}
 					/>
 				)}
 			</div>

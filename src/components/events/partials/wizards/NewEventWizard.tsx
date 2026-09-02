@@ -225,11 +225,8 @@ const NewEventWizard = ({
 								)}
 								{steps[page].name === "access" && (
 									<NewAccessPage
-									// @ts-expect-error TS(7006):
 										previousPage={previousPage}
-										// @ts-expect-error TS(7006):
 										nextPage={nextPage}
-										// @ts-expect-error TS(7006):
 										formik={formik}
 										editAccessRole="ROLE_UI_EVENTS_DETAILS_ACL_EDIT"
 										viewUsersAccessRole="ROLE_UI_EVENTS_DETAILS_ACL_USER_ROLES_VIEW"
