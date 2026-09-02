@@ -19,6 +19,8 @@ import { useAppDispatch } from "./store";
 import { fetchOcVersion, fetchUserInfo } from "./slices/userInfoSlice";
 import { subscribeToAuthEvents } from "./utils/broadcastSync";
 import { useTableFilterStateValidation } from "./hooks/useTableFilterStateValidation";
+import { ErrorBoundary } from "react-error-boundary";
+import opencastLogo from "./img/opencast-white.svg?url";
 
 function App() {
 	const dispatch = useAppDispatch();
@@ -43,49 +45,65 @@ function App() {
 	}, []);
 
 	return (
-		<HashRouter>
-			<Routes>
-				<Route path={"/events/events"} element={<Events />} />
+		<ErrorBoundary fallback={
+			<>
+				<header className="primary-header">
+					{/* Opencast logo in upper left corner */}
+					<div className="header-branding">
+						<a href="/" target="_self" className="logo">
+							<img src={opencastLogo} alt="Opencast Logo" />
+						</a>
+					</div>
+				</header>
+				<div className="about">
+					Something went wrong. Please reload the page.
+				</div>
+			</>
+		}>
+			<HashRouter>
+				<Routes>
+					<Route path={"/events/events"} element={<Events />} />
 
-				<Route path={"/events/series"} element={<Series />} />
+					<Route path={"/events/series"} element={<Series />} />
 
-				<Route path={"/events/playlists"} element={<Playlists />} />
+					<Route path={"/events/playlists"} element={<Playlists />} />
 
-				<Route path={"/recordings/recordings"} element={<Recordings />} />
+					<Route path={"/recordings/recordings"} element={<Recordings />} />
 
-				<Route path={"/systems/jobs"} element={<Jobs />} />
+					<Route path={"/systems/jobs"} element={<Jobs />} />
 
-				<Route path={"/systems/servers"} element={<Servers />} />
+					<Route path={"/systems/servers"} element={<Servers />} />
 
-				<Route path={"/systems/services"} element={<Services />} />
+					<Route path={"/systems/services"} element={<Services />} />
 
-				<Route path={"/users/users"} element={<Users />} />
+					<Route path={"/users/users"} element={<Users />} />
 
-				<Route path={"/users/groups"} element={<Groups />} />
+					<Route path={"/users/groups"} element={<Groups />} />
 
-				<Route path={"/users/acls"} element={<Acls />} />
+					<Route path={"/users/acls"} element={<Acls />} />
 
-				<Route path={"/configuration/themes"} element={<Themes />} />
+					<Route path={"/configuration/themes"} element={<Themes />} />
 
-				<Route path={"/statistics/organization"} element={<Statistics />} />
+					<Route path={"/statistics/organization"} element={<Statistics />} />
 
-				<Route path={"/about/imprint"} element={<About />} />
+					<Route path={"/about/imprint"} element={<About />} />
 
-				<Route path={"/about/privacy"} element={<About />} />
+					<Route path={"/about/privacy"} element={<About />} />
 
-				<Route
-					path={"*"}
-					element={<Navigate to={"/events/events"} replace />}
+					<Route
+						path={"*"}
+						element={<Navigate to={"/events/events"} replace />}
+					/>
+				</Routes>
+				<Tooltip
+					id="my-tooltip"
+					clickable
+					className="my-tooltip"
+					delayShow={100}
+					delayHide={150}
 				/>
-			</Routes>
-			<Tooltip
-				id="my-tooltip"
-				clickable
-				className="my-tooltip"
-				delayShow={100}
-				delayHide={150}
-			/>
-		</HashRouter>
+			</HashRouter>
+		</ErrorBoundary>
 	);
 }
 

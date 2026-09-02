@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import ButtonLikeAnchor from "../ButtonLikeAnchor";
 import { FocusTrap } from "focus-trap-react";
 import { LuX } from "react-icons/lu";
+import { ErrorBoundary } from "react-error-boundary";
 
 export type ModalProps = {
   open?: boolean;
@@ -88,8 +89,13 @@ export const Modal = forwardRef<ModalHandle, PropsWithChildren<ModalProps>>(
 								{header}
 							</h2>
 						</header>
-
+						<ErrorBoundary fallback={
+							<div className="about">
+								Something went wrong. Please close the modal and try again.
+							</div>
+						}>
 							{children}
+						</ErrorBoundary>
 					</section>
 				</div>
 			</FocusTrap>,
