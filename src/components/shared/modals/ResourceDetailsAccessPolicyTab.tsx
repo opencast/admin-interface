@@ -147,6 +147,7 @@ const ResourceDetailsAccessPolicyTab = ({
 		}
 
 		fetchData().then(() => {});
+		// Only run on mount
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -432,8 +433,7 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 
 	useEffect(() => {
 		dispatch(fetchAclDefaults());
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [dispatch]);
 
 	const dropdownOptions = useMemo(() => {
 		return roles.length > 0

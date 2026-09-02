@@ -71,15 +71,21 @@ export function isRowSelectable(row: Row) {
 	return false;
 }
 
-export function isEvent(row: Row | Event | Series | Recording | Server | Job | Service | User | Group | AclResult | ThemeDetailsType): row is Event {
+export function isEvent(row: Row): row is Row & Event {
 	return (row as Event).event_status !== undefined;
 }
 
-export function isSeries(row: Row | Event | Series | Recording | Server | Job | Service | User | Group | AclResult | ThemeDetailsType): row is Series {
+// export function isEvent(row: Row | Event | Series | Recording | Server | Job | Service | User | Group | AclResult | ThemeDetailsType): row is Event {
+// 	return (row as Event).event_status !== undefined;
+// }
+
+export function isSeries(row: Row): row is Row & Series {
 	return (row as Series).organizers !== undefined;
 }
 
-export type Meh = Event | Series | Recording | Server | Job | Service | User | Group | AclResult | ThemeDetailsType
+// export function isSeries(row: Row | Event | Series | Recording | Server | Job | Service | User | Group | AclResult | ThemeDetailsType): row is Series {
+// 	return (row as Series).organizers !== undefined;
+// }
 
 // TODO: Improve row typing. While this somewhat correctly reflects the current state of our code, it is rather annoying to work with.
 export type Row = {

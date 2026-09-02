@@ -67,6 +67,7 @@ const SelectContainer = ({
 
 		setItems(initialItems);
 		setDefaultItems(initialItems);
+		// Init on mount
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

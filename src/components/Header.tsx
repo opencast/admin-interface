@@ -57,10 +57,6 @@ const Header = () => {
 	const orgProperties = useAppSelector(state => getOrgProperties(state));
 	const displayTerms = (orgProperties["org.opencastproject.admin.display_terms"] || "false").toLowerCase() === "true";
 
-	const loadHealthStatus = async () => {
-		await dispatch(fetchHealthStatus());
-	};
-
 	const hideMenuHelp = () => {
 		setMenuHelp(false);
 	};
@@ -120,6 +116,9 @@ const Header = () => {
 			}
 		};
 
+		const loadHealthStatus = async () => {
+			await dispatch(fetchHealthStatus());
+		};
 
 		// Fetching health status information at mount
 		loadHealthStatus().then(r => console.info(r));
@@ -133,8 +132,8 @@ const Header = () => {
 			clearInterval(interval);
 			window.removeEventListener("mousedown", handleClickOutside);
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+		// Only run on mount
+	}, [dispatch]);
 
 	useEffect(() => {
   			if (!user) { return; }

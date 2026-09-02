@@ -132,19 +132,19 @@ const DropDown = <T, >({
 	 */
 	const MenuList = (props: MenuListProps<DropDownOption<T>, false>) => {
 		const { children, maxHeight } = props;
+		const items = React.Children.toArray(children);
 
 		return Array.isArray(children) ? (
 			<div style={{ paddingTop: 4 }}>
 				<List
 					rowComponent={MenuListRow}
-					rowCount={children.length}
+					rowCount={items.length}
 					rowHeight={itemHeight}
 					style={{
-						height: maxHeight < (children.length * itemHeight) ? maxHeight : children.length * itemHeight,
+						height: maxHeight < (items.length * itemHeight) ? maxHeight : items.length * itemHeight,
 						width: "100%",
 					}}
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-					rowProps={{ names: children }}
+					rowProps={{ names: items }}
 					overscanCount={4}
 				/>
 			</div>
@@ -156,7 +156,7 @@ const DropDown = <T, >({
 		names,
 		style,
 	}: RowComponentProps<{
-		names: string[];
+		names: React.ReactNode[];
 	}>) {
 		const name = names[index];
 		return <div style={style}>{name}</div>;

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { getSelectedRows } from "../../../../selectors/tableSelectors";
+import { getSelectedEvents } from "../../../../selectors/tableSelectors";
 import { useAppDispatch, useAppSelector } from "../../../../store";
 import { deleteMultipleEvent } from "../../../../slices/eventSlice";
 import { isEvent } from "../../../../slices/tableSlice";
@@ -19,13 +19,12 @@ const DeleteEventsModal = ({
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
-	const selectedRows = useAppSelector(state => getSelectedRows(state));
+	const selectedRows = useAppSelector(state => getSelectedEvents(state));
 
 	const [allChecked, setAllChecked] = useState(true);
 	const [selectedEvents, setSelectedEvents] = useState(selectedRows);
 
 	const deleteSelectedEvents = () => {
-		// @ts-expect-error TS(7006): Type guarding array is hard
 		dispatch(deleteMultipleEvent(selectedEvents));
 		close();
 	};

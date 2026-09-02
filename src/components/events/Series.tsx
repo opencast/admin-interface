@@ -40,8 +40,7 @@ const Series = () => {
 	useEffect(() => {
 		// disable actions button
 		dispatch(showActionsSeries(false));
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [location.hash]);
+	}, [dispatch, location.hash]);
 
 	const onNewSeriesModal = async () => {
 		await Promise.all([

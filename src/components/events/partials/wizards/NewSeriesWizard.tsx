@@ -48,16 +48,13 @@ const NewSeriesWizard = ({
 
 	useEffect(() => {
 		dispatch(removeNotificationWizardForm());
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [dispatch]);
 
 	useEffect(() => {
 		// This should set off a web request that will intentionally fail, in order
 		// to check if tobira is available at all
 		dispatch(fetchSeriesDetailsTobiraNew(""));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [dispatch]);
 
 	const themesEnabled = (orgProperties["admin.themes.enabled"] || "false").toLowerCase() === "true";
 
@@ -195,7 +192,6 @@ const NewSeriesWizard = ({
 									<NewAccessPage
 										nextPage={nextPage}
 										previousPage={previousPage}
-										// @ts-expect-error TS(7006):
 										formik={formik}
 										editAccessRole="ROLE_UI_SERIES_DETAILS_ACL_EDIT"
 										viewUsersAccessRole="ROLE_UI_SERIES_DETAILS_ACL_USER_ROLES_VIEW"

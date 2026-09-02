@@ -34,12 +34,10 @@ const Statistics = () => {
 	// fetch user information for organization id, then fetch statistics
 	useEffect(() => {
 		dispatch(fetchUserInfo());
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [dispatch]);
 	useEffect(() => {
-			dispatch(fetchStatisticsPageStatistics(organizationId)).then();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [organizationId]);
+		dispatch(fetchStatisticsPageStatistics(organizationId));
+	}, [dispatch, organizationId]);
 
 	/* generates file name for download-link for a statistic */
 	const statisticsCsvFileName = (statsTitle: string) => {

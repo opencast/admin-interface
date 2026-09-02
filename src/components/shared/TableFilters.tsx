@@ -68,6 +68,7 @@ const TableFilters = ({
 
 	useEffect(() => {
 		dispatch(fetchFilters(resource));
+		// Only run on mount
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [location.hash]);
 
@@ -144,26 +145,27 @@ const TableFilters = ({
 		}
 	};
 
-	// Apply the filter changes (in debounced) accomulated in handleChange,
-	// simply by going to first page and then load resources.
-	// This helps increase performance by reducing the number of calls to load resources.
-	const applyFilterChangesDebounced = async () => {
-		console.log("Applying filter changes with value: " + itemValue);
-		// No matter what, we go to page one.
-		dispatch(goToPage(0));
-		// Reload of resource
-		await dispatch(loadResource());
-		dispatch(loadResourceIntoTable());
-	};
-
 	useEffect(() => {
+		// Apply the filter changes (in debounced) accomulated in handleChange,
+		// simply by going to first page and then load resources.
+		// This helps increase performance by reducing the number of calls to load resources.
+		const applyFilterChangesDebounced = async () => {
+			console.log("Applying filter changes with value: " + itemValue);
+			// No matter what, we go to page one.
+			dispatch(goToPage(0));
+			// Reload of resource
+			await dispatch(loadResource());
+			dispatch(loadResourceIntoTable());
+		};
+
 		if (itemValue) {
 			// Call to apply filter changes with 600MS debounce!
 			const applyFilterChangesDebouncedTimeoutId = setTimeout(() => { applyFilterChangesDebounced(); }, 600);
 
 			return () => clearTimeout(applyFilterChangesDebouncedTimeoutId);
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+	// Only run if the filter value changed
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [itemValue]);
 
 	const handleDatepicker = (dates?: [Date | undefined | null, Date | undefined | null]) => {

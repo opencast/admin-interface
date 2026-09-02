@@ -14,7 +14,7 @@ const MetadataSummaryTable = ({
 	header,
 }: {
 	metadataCatalogs: MetadataCatalog[],
-	formikValues: { [key: string]: string | string[] | boolean | Date },
+	formikValues: { [key: string]: unknown },
 	header: ParseKeys,
 }) => {
 	const { t } = useTranslation();
@@ -26,7 +26,7 @@ const MetadataSummaryTable = ({
 		let metadata: {
 			name: string,
 			label: string,
-			value: string | string[] | boolean,
+			value: unknown,
 		}[] = [];
 		for (let i = 0; metadataFields.length > i; i++) {
 			let fieldValue =
@@ -82,7 +82,7 @@ const MetadataSummaryTable = ({
 									<td>
 										{Array.isArray(entry.value)
 											? entry.value.join(", ")
-											: entry.value}
+											: String(entry.value)}
 									</td>
 								</tr>
 							))}

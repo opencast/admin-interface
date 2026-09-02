@@ -19,7 +19,9 @@ const EventDetailsPublicationTab = ({
 	const publications = useAppSelector(state => getPublications(state));
 
 	useEffect(() => {
-		dispatch(fetchEventPublications(eventId)).then(r => console.info(r));
+		dispatch(fetchEventPublications(eventId));
+		// Only run on mount.
+		// Don't update when the id changes (which should not happen anyway) to avoid data inconsistencies
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

@@ -71,6 +71,8 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 			fetchNewScheduling: fetchEventInfos,
 			setFieldValue: formik.setFieldValue,
 	}));
+		// Dispatching the backend request should only happen when events change,
+		// and WILL change editedEvents
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [formik.values.events]);
 
@@ -93,20 +95,22 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 	 */
 	const reduceGroupedEvent = (groupedEvents: EditedEvents[]) => {
 		const result = groupedEvents.reduce((prev, curr) => {
-			for (const [key, value] of Object.entries(curr)) {
-				// TODO: This relies on the fact that the EditedEvent type only contains 'string' and 'string[]'. Improve on that.
-				if (typeof value === "string") {
-					// @ts-expect-error TS(7006):
-					prev[key as keyof EditedEvents] = prev[key as keyof EditedEvents] === curr[key as keyof EditedEvents] ? curr[key as keyof EditedEvents] : "";
-				} else {
-					// @ts-expect-error TS(7006):
-					prev[key as keyof EditedEvents] = prev[key as keyof EditedEvents] === curr[key as keyof EditedEvents] ? curr[key as keyof EditedEvents] : [];
-				}
+			for (const key of Object.keys(curr) as Array<keyof EditedEvents>) {
+				updateKey(key, prev, curr, defaultValuesEditedEvents);
 			}
 			return prev;
 		}, lodash.cloneDeep(groupedEvents[0]));
 		return result;
 	};
+
+	function updateKey<K extends keyof EditedEvents>(
+		key: K,
+		prev: EditedEvents,
+		curr: EditedEvents,
+		defaults: EditedEvents,
+	) {
+		prev[key] = prev[key] === curr[key] ? curr[key] : defaults[key];
+	}
 
 	const findSeriesName = (seriesOptions: { name: string, value: string }[], editedEvents: EditedEvents[]) => {
 		const series = seriesOptions.find(e => e.value === reduceGroupedEvent(editedEvents).changedSeries);
@@ -424,6 +428,28 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 			/>
 		</>
 	);
+};
+
+const defaultValuesEditedEvents: EditedEvents = {
+	changedDeviceInputs: [],
+	changedEndTimeHour: "",
+	changedEndTimeMinutes: "",
+	changedLocation: "",
+	changedSeries: "",
+	changedStartTimeHour: "",
+	changedStartTimeMinutes: "",
+	changedTitle: "",
+	changedWeekday: "MO",
+	deviceInputs: "",
+	endTimeHour: "",
+	endTimeMinutes: "",
+	eventId: "",
+	location: "",
+	series: "",
+	startTimeHour: "",
+	startTimeMinutes: "",
+	title: "",
+	weekday: "MO",
 };
 
 export default EditScheduledEventsEditPage;

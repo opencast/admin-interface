@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { getSelectedRows } from "../../../../selectors/tableSelectors";
+import { getSelectedSeries } from "../../../../selectors/tableSelectors";
 import cn from "classnames";
 import { useAppDispatch, useAppSelector } from "../../../../store";
 import {
@@ -27,7 +27,7 @@ const DeleteSeriesModal = ({
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 
-	const selectedRows = useAppSelector(state => getSelectedRows(state));
+	const selectedRows = useAppSelector(state => getSelectedSeries(state));
 	const modifiedSelectedRows = selectedRows.map(row => {
 		return { ...row, hasEvents: false };
 	});
@@ -62,11 +62,11 @@ const DeleteSeriesModal = ({
 			setSelectedSeries(series);
 		}
 		fetchData();
+		// Only run on mount
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const deleteSelectedSeries = () => {
-		// @ts-expect-error TS(7006): Type guarding array is hard
 		dispatch(deleteMultipleSeries(selectedSeries));
 		close();
 	};

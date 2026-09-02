@@ -65,6 +65,7 @@ const FileUpload = <T extends RequiredFormProps>({
 	// additional rerender which then triggers formik validation.
 	useEffect(() => {
 		formik.validateForm();
+	// Only run validation if these values change
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [formik.values.fileId, formik.values.fileName, loaded]);
 

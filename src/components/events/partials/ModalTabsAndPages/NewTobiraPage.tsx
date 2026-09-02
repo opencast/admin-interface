@@ -96,6 +96,7 @@ const NewTobiraPage = <T extends TobiraFormProps>({
 
 		valid = valid && check("warning", "TOBIRA_PATH_SEGMENT_INVALID", NOTIFICATION_CONTEXT_TOBIRA, () => (
 			newPage.segment.length <= 1 || [
+				// We are explicitly checking that nothing is wrong with the path
 				// eslint-disable-next-line no-control-regex
 				/[\u0000-\u001F\u007F-\u009F]/u,
 				/[\u00A0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000]/u,
@@ -158,6 +159,7 @@ const NewTobiraPage = <T extends TobiraFormProps>({
 			select(undefined);
 			formik.setFieldValue("breadcrumbs", [...formik.values.breadcrumbs, currentPage]);
 		}
+	// Should only trigger on page change
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentPage]);
 

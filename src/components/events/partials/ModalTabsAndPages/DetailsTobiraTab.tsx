@@ -42,8 +42,7 @@ const DetailsTobiraTab = ({ kind, id }: DetailsTobiraTabProps) => {
 			// is removed when switching to another tab.
 			dispatch(fetchEventDetailsTobira(id));
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [id]);
+	}, [dispatch, id, kind]);
 
 	const [initialValues, setInitialValues] = useState<TobiraFormProps>({
 		breadcrumbs: [],

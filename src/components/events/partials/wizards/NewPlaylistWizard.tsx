@@ -152,7 +152,6 @@ const NewPlaylistWizard = ({
             <NewAccessPage
               nextPage={nextPage}
               previousPage={previousPage}
-              // @ts-expect-error TS(7006):
               formik={formik}
               editAccessRole="ROLE_UI_PLAYLISTS_DETAILS_ACL_EDIT"
               viewUsersAccessRole="ROLE_UI_PLAYLISTS_DETAILS_ACL_USER_ROLES_VIEW"

@@ -47,6 +47,8 @@ const EventDetailsCommentsTab = ({
 
 	useEffect(() => {
 		dispatch(fetchComments(eventId));
+		// Only run on mount.
+		// Don't update when the id changes (which should not happen anyway) to avoid data inconsistencies
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

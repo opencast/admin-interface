@@ -1,6 +1,6 @@
 import { createSelector } from "reselect";
 import { RootState } from "../store";
-import { rowsSelectors, TableState } from "../slices/tableSlice";
+import { isEvent, isSeries, rowsSelectors, TableState } from "../slices/tableSlice";
 
 /**
  * This file contains selectors regarding the table view
@@ -30,4 +30,12 @@ export const getActivatedColumns = (state: RootState) =>
 export const getSelectedRows = createSelector(
 	rowsSelectors.selectAll,
 	rows => rows.filter(row => row.selected),
+);
+export const getSelectedEvents = createSelector(
+	rowsSelectors.selectAll,
+	rows => rows.filter(row => row.selected).filter(isEvent),
+);
+export const getSelectedSeries = createSelector(
+	rowsSelectors.selectAll,
+	rows => rows.filter(row => row.selected).filter(isSeries),
 );

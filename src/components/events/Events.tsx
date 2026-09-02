@@ -56,8 +56,7 @@ const Events = () => {
 	useEffect(() => {
 		// disable actions button
 		dispatch(setShowActions(false));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [location.hash]);
+	}, [dispatch, location.hash]);
 
 	const onNewEventModal = async () => {
 		await Promise.all([

@@ -25,10 +25,10 @@ import ModalContentTable from "../../../shared/modals/ModalContentTable";
  */
 interface RequiredFormProps {
   metadata: {
-    "dublincore/episode_isPartOf": string,
+    "dublincore/episode_isPartOf"?: string,
   },
   policies: TransformedAcl[],
-  aclTemplate: string,
+  aclTemplate: string, // For TemplateSelector
   // theme: string,
 }
 
@@ -81,6 +81,7 @@ const NewAccessPage = <T extends RequiredFormProps>({
 		if (initEventAclWithSeriesAcl && formik.values.metadata["dublincore/episode_isPartOf"]) {
 			dispatch(fetchSeriesDetailsAcls(formik.values.metadata["dublincore/episode_isPartOf"]));
 		}
+	// We only care about the series, not all metadata
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [formik.values.metadata["dublincore/episode_isPartOf"], initEventAclWithSeriesAcl, dispatch]);
 
@@ -89,6 +90,7 @@ const NewAccessPage = <T extends RequiredFormProps>({
 		if (initEventAclWithSeriesAcl && formik.values.metadata["dublincore/episode_isPartOf"] && seriesAcl) {
 			formik.setFieldValue("policies", seriesAcl);
 		}
+	// We only care to set "policies" if the seriesAcl updated
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [initEventAclWithSeriesAcl, seriesAcl]);
 

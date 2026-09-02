@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import cn from "classnames";
-import { getSelectedRows } from "../../../../selectors/tableSelectors";
+import { getSelectedEvents } from "../../../../selectors/tableSelectors";
 import { useSelectionChanges } from "../../../../hooks/wizardHooks";
 import { getUserInformation } from "../../../../selectors/userInfoSelectors";
 import {
@@ -35,7 +35,7 @@ const EditScheduledEventsGeneralPage = <T extends RequiredFormProps>({
 }) => {
 	const { t } = useTranslation();
 
-	const selectedRows = useAppSelector(state => getSelectedRows(state));
+	const selectedRows = useAppSelector(state => getSelectedEvents(state));
 	const user = useAppSelector(state => getUserInformation(state));
 
 	const {
@@ -43,7 +43,6 @@ const EditScheduledEventsGeneralPage = <T extends RequiredFormProps>({
 		allChecked,
 		onChangeSelected,
 		onChangeAllSelected,
-		// @ts-expect-error TS(7006):
 	} = useSelectionChanges(formik, selectedRows);
 
 	useEffect(() => {

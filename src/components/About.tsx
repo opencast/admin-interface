@@ -32,6 +32,7 @@ const About = () => {
 						setAboutContent(t("ABOUT.NOCONTENT").toString());
 					});
 			});
+	// Exclude t from the array, as it is not guaranteed to be stable
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [location.pathname]); // Listen to changes in pathname
 

@@ -76,8 +76,9 @@ const RegistrationModalContent = () => {
 	}>();
 
 	useEffect(() => {
-		fetchRegistrationInfos().then(r => console.log(r));
+		fetchRegistrationInfos();
 		fetchStatisticSummary();
+		// Only run on mount
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -683,8 +684,7 @@ const RegistrationModalContent = () => {
 							{states[state].buttons.back && (
 								<BaseButton
 									className="cancel"
-// @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-									onClick={() => setState(states[state].nextState[5])}
+									onClick={() => setState(states[state].nextState[5] as keyof typeof states)}
 								>
 									{t("ADOPTER_REGISTRATION.MODAL.BACK")}
 								</BaseButton>
@@ -700,8 +700,7 @@ const RegistrationModalContent = () => {
 							{states[state].buttons.skip && (
 								<BaseButton
 									className="cancel"
-// @ts-expect-error TS(7053): Element implicitly has an 'any' type because expre... Remove this comment to see the full error message
-									onClick={() => setState(states[state].nextState[2])}
+									onClick={() => setState(states[state].nextState[2] as keyof typeof states)}
 								>
 									{t("ADOPTER_REGISTRATION.MODAL.SKIP")}
 								</BaseButton>

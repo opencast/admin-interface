@@ -53,8 +53,8 @@ const EditScheduledEventsModal = ({
 	useEffect(() => {
 		// Load recordings that can be used for input
 		dispatch(fetchRecordings("inputs"));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+		// Only run on mount
+	}, [dispatch]);
 
 	type StepName = "general" | "edit" | "summary";
 	type Step = WizardStep & {

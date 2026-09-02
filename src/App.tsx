@@ -39,8 +39,8 @@ function App() {
 			dispatch(fetchUserInfo());
 		});
 
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+		// Only run on mount
+	}, [dispatch]);
 
 	return (
 		<HashRouter>

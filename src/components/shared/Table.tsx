@@ -96,6 +96,7 @@ const Table = <T extends Row, >({
 			allowLoadIntoTable = false;
 			clearInterval(fetchResourceInterval);
 		};
+		// Only run on mount
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [location.hash]);
 
@@ -183,14 +184,14 @@ const MultiSelect = ({ selectAllCheckboxRef }: { selectAllCheckboxRef: React.Ref
 		const selected = e.target.checked;
 		dispatch(changeAllSelected(selected));
 	};
-   	useEffect(() => {
-  	if (isNewEventAdded && multiSelect) {
-   	 if (selectAllCheckboxRef.current?.checked) {
-		selectAllCheckboxRef.current.checked = false;
+
+	useEffect(() => {
+		if (isNewEventAdded && multiSelect) {
+			if (selectAllCheckboxRef.current?.checked) {
+				selectAllCheckboxRef.current.checked = false;
 			}
-		  }
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-		}, [isNewEventAdded, multiSelect]);
+		}
+	}, [isNewEventAdded, multiSelect, selectAllCheckboxRef]);
 
 	return (
 		<>

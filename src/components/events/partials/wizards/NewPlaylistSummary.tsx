@@ -34,7 +34,6 @@ const NewPlaylistSummary = <T extends RequiredFormProps>({
     <ModalContentTable>
       <MetadataSummaryTable
         metadataCatalogs={[metadataFields]}
-        // @ts-expect-error TS(7006):
         formikValues={formik.values.metadata}
         header={"EVENTS.PLAYLISTS.NEW.METADATA.CAPTION"}
       />

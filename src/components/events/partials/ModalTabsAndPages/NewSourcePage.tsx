@@ -94,7 +94,8 @@ const NewSourcePage = <T extends RequiredFormProps>({
 		dispatch(fetchRecordings("inputs"));
 
 		// validate form because dependent default values need to be checked
-		formik.validateForm().then(r => console.info(r));
+		formik.validateForm();
+		// Only run on mount
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

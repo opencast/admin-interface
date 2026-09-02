@@ -57,6 +57,7 @@ const myFormatter: FormatterModule = {
 			});
 		}
 
+		// If we are given any by the package, we can only really return any
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 		return value;
 	},

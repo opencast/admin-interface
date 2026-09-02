@@ -106,7 +106,7 @@ export const initialFormValuesNewSeries: {
 
 	breadcrumbs: TobiraPage[],
 	selectedPage?: TobiraPage,
-	aclTemplate?: string,
+	aclTemplate: string,
 	metadata: { [key: string]: unknown }
 } = {
 	policies: [
@@ -120,13 +120,14 @@ export const initialFormValuesNewSeries: {
 	theme: "",
 	breadcrumbs: [],
 	selectedPage: undefined,
+	aclTemplate: "",
 	metadata: {},
 };
 
 
 export const initialFormValuesNewPlaylist: {
 	policies: TransformedAcl[],
-	aclTemplate?: string,
+	aclTemplate: string,
 	metadata: { [key: string]: unknown },
 	entries: PlaylistEntry[],
 } = {
@@ -138,6 +139,7 @@ export const initialFormValuesNewPlaylist: {
 			actions: [],
 		},
 	],
+	aclTemplate: "",
 	metadata: {},
 	entries: [],
 };

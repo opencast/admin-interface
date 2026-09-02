@@ -15,6 +15,7 @@ import RenderWorkflowSelect from "../wizards/RenderWorkflowSelect";
  */
 interface RequiredFormProps {
 	workflowId: string,
+	configuration?: { [key: string]: unknown } // For RenderWorkflowConfig
 }
 
 const StartTaskWorkflowPage = <T extends RequiredFormProps>({
@@ -36,14 +37,14 @@ const StartTaskWorkflowPage = <T extends RequiredFormProps>({
 	useEffect(() => {
 		// Load workflow definitions for selecting
 		dispatch(fetchWorkflowDef("tasks"));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [dispatch]);
 
 	// Preselect the first item
 	useEffect(() => {
 		if (workflowDefinitions.length === 1) {
 			setDefaultValues(formik, workflowDefinitions, workflowDefinitions[0].id);
 		}
+	// We only care to set default values if workflowDef changes
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [workflowDefinitions]);
 
@@ -69,7 +70,6 @@ const StartTaskWorkflowPage = <T extends RequiredFormProps>({
 									<RenderWorkflowConfig
 										displayDescription
 										workflowId={formik.values.workflowId}
-										// @ts-expect-error TS(7006):
 										formik={formik}
 									/>
 								</div>

@@ -100,7 +100,8 @@ const EventDetailsSchedulingTab = ({
 			startDate: sourceStartDate,
 			endDate: endStartDate,
 			deviceId: source.device.id,
-		})).then();
+		}));
+		// Force an initial conflicts check
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

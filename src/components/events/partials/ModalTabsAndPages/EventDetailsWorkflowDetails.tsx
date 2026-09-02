@@ -60,6 +60,8 @@ const EventDetailsWorkflowDetails = ({
 		} else {
 			dispatch(fetchWorkflowDetails({ eventId, workflowId }));
 		}
+	// Only run on mount.
+	// Don't update when the id changes (which should not happen anyway) to avoid data inconsistencies
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
@@ -350,6 +352,8 @@ const OperationsPreview = ({
 
 		// Unmount interval
 		return () => clearInterval(fetchWorkflowOperationsInterval);
+	// Only run on mount.
+	// Don't update when the id changes (which should not happen anyway) to avoid data inconsistencies
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

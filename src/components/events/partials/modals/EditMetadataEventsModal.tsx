@@ -81,6 +81,7 @@ const EditMetadataEventsModal = ({
 			setLoading(false);
 		}
 		fetchData();
+		// Only run on mount
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 

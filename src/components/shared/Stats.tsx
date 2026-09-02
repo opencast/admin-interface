@@ -50,20 +50,19 @@ const Stats = () => {
 		dispatch(loadEventsIntoTable());
 	};
 
-	const loadStats = async () => {
-		// Fetching stats from server
-		await dispatch(fetchStats());
-	};
-
 	useEffect(() => {
+		const loadStats = async () => {
+			// Fetching stats from server
+			await dispatch(fetchStats());
+		};
+
 		// Load stats on mount
 		loadStats();
 
 		const fetchEventsInterval = setInterval(() => { loadStats(); }, 5000);
 
 		return () => clearInterval(fetchEventsInterval);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [dispatch]);
 
 	return (
 		<>
