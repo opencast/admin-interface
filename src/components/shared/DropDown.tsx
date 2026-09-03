@@ -4,7 +4,14 @@ import {
 	dropDownSpacingTheme,
 	dropDownStyle,
 } from "../../utils/componentStyles";
-import { GroupBase, MenuListProps, SelectInstance } from "react-select";
+import {
+	components as SelectComponents,
+	GroupBase,
+	MenuListProps,
+	OptionProps,
+	SelectInstance,
+	ValueContainerProps,
+} from "react-select";
 import { ParseKeys } from "i18next";
 import { List, RowComponentProps } from "react-window";
 import AsyncSelect, { AsyncProps } from "react-select/async";
@@ -142,6 +149,28 @@ const DropDown = <T, >({
 		return unformattedOptions;
 	};
 
+	/**
+	 * Wrapper that adds the title attribute to options, which should result
+	 * in a native tooltip that is intended to help with very long labels.
+	 */
+	const OptionWithTitle = useCallback((
+		props: OptionProps<DropDownOption<T>, boolean, GroupBase<DropDownOption<T>>>,
+	) => (
+		<SelectComponents.Option {...props} innerProps={{ ...props.innerProps, title: props.data.label }} />
+	), []);
+
+	/**
+	 * Same wrapper as above, but for the input field.
+	 */
+	const ValueContainerWithTitle = useCallback((
+		props: ValueContainerProps<DropDownOption<T>, boolean, GroupBase<DropDownOption<T>>>,
+	) => (
+		<SelectComponents.ValueContainer
+			{...props}
+			innerProps={{ ...props.innerProps, title: props.getValue()[0]?.label }}
+		/>
+	), []);
+
 	const itemHeight = optionHeight;
 	/**
 	 * Custom component for list virtualization
@@ -231,7 +260,11 @@ const DropDown = <T, >({
 		isDisabled: disabled,
 		openMenuOnFocus: openMenuOnFocus,
 		menuPlacement: menuPlacement,
-		components: { MenuList },
+		components: {
+			MenuList,
+			Option: OptionWithTitle,
+			ValueContainer: ValueContainerWithTitle,
+		},
 	};
 
 	return creatable ? (
