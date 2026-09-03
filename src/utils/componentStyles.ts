@@ -127,6 +127,9 @@ export function dropDownStyle<T>(
 			color: state.isFocused || state.isSelected ? "white" : provided.color,
 			cursor: "pointer",
 			overflowWrap: "normal",
+			whiteSpace: "nowrap",
+			overflow: "hidden",
+			textOverflow: "ellipsis",
 			lineHeight: customCss.optionLineHeight ?? "inherit", // type === "comment" ? "105%" : "inherit",
 		}),
 		singleValue: (provided, _state) => ({
