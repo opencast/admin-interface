@@ -12,14 +12,13 @@ import {
 } from "../../thunks/tableThunks";
 import { getFilters } from "../../selectors/tableFilterSelectors";
 import { FilterData, loadFilterProfile } from "../../slices/tableFilterSlice";
-import { AppThunk, useAppDispatch, useAppSelector } from "../../store";
+import { useAppDispatch, useAppSelector } from "../../store";
 import { useHotkeys } from "react-hotkeys-hook";
 import { availableHotkeys } from "../../configs/hotkeysConfig";
 import ButtonLikeAnchor from "./ButtonLikeAnchor";
 import { ParseKeys } from "i18next";
 import { Resource } from "../../slices/tableSlice";
 import { LuSettings, LuX } from "react-icons/lu";
-import { GenericAsyncThunk } from "../../utils/utils";
 
 /**
  * This component renders the table filter profiles in the upper right corner when clicked on settings icon of the
@@ -29,13 +28,11 @@ const TableFiltersProfiles = ({
 	showFilterSettings,
 	setFilterSettings,
 	loadResource,
-	loadResourceIntoTable,
 	resource,
 }: {
 	showFilterSettings: boolean,
 	setFilterSettings: (_: boolean) => void,
-	loadResource: GenericAsyncThunk,
-	loadResourceIntoTable: () => AppThunk,
+	loadResource: () => Promise<void>,
 	resource: Resource,
 }) => {
 	const dispatch = useAppDispatch();
@@ -132,14 +129,13 @@ const TableFiltersProfiles = ({
 		}
 	};
 
-	const chooseFilterProfile = (filterMap: FilterData[]) => {
+	const chooseFilterProfile = async (filterMap: FilterData[]) => {
 		dispatch(loadFilterProfile(filterMap));
 
 		// No matter what, we go to page one.
 		dispatch(goToPage(0));
 		// Reload resources when filters are removed
-		dispatch(loadResource());
-		dispatch(loadResourceIntoTable());
+		await loadResource();
 	};
 
 	return (
@@ -169,7 +165,7 @@ const TableFiltersProfiles = ({
 									currentProfiles.map((profile, key) => (
 										<li key={key}>
 											<ButtonLikeAnchor
-												onClick={() => chooseFilterProfile(profile.filterMap)}
+												onClick={() => { void chooseFilterProfile(profile.filterMap); }}
 												tooltipText={profile.description as ParseKeys}
 											>
 												{profile.name.substr(0, 70)}
