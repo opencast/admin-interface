@@ -454,19 +454,9 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 
 		// If config exists, set defaults according to config
 		if (aclDefaults) {
-			if (aclDefaults["read_enabled"] && aclDefaults["read_enabled"] === "true") {
-				newRole.read = true;
-			} else if (aclDefaults["read_enabled"] && aclDefaults["read_enabled"] === "false") {
-				newRole.read = false;
-			}
-			if (aclDefaults["write_enabled"] && aclDefaults["write_enabled"] === "true") {
-				newRole.write = true;
-			} else if (aclDefaults["write_enabled"] && aclDefaults["write_enabled"] === "false") {
-				newRole.write = false;
-			}
-			if (aclDefaults["default_actions"]) {
-				newRole.actions = newRole.actions.concat(aclDefaults["default_actions"].split(","));
-			}
+			newRole.read = aclDefaults["read_enabled"];
+			newRole.write = aclDefaults["write_enabled"];
+			newRole.actions = newRole.actions.concat(aclDefaults["default_actions"]);
 		}
 
 		return newRole;
@@ -474,12 +464,10 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 
 	// Filter available options by custom prefixes from the config
 	if (aclDefaults) {
-		if (aclDefaults["display_role_filter_blacklist_prefixes"]) {
-			const prefixes = aclDefaults["display_role_filter_blacklist_prefixes"].split(",");
-			rolesFilteredbyPolicies = rolesFilteredbyPolicies.filter(role =>
-				!prefixes.some(prefix => role.name.startsWith(prefix)),
-			);
-		}
+		const prefixes = aclDefaults["display_role_filter_blacklist_prefixes"];
+		rolesFilteredbyPolicies = rolesFilteredbyPolicies.filter(role =>
+			!prefixes.some(prefix => role.name.startsWith(prefix)),
+		);
 	}
 
 	return (
@@ -596,7 +584,7 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 																			editAccessRole,
 																			user,
 																		) ||
-																		(aclDefaults && aclDefaults["read_readonly"] !== "false")
+																		(aclDefaults && aclDefaults["read_readonly"] !== false)
 																	}
 																	className={`${
 																		transactions.readOnly
@@ -621,9 +609,7 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 																			editAccessRole,
 																			user,
 																		) ||
-																		(aclDefaults
-																			&& aclDefaults["write_readonly"]
-																			&& aclDefaults["write_readonly"] === "true")
+																		(aclDefaults && aclDefaults["write_readonly"] === true)
 																	}
 																	className={`${
 																		transactions.readOnly

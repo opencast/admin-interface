@@ -2,7 +2,7 @@
 
 import { FormikProps } from "formik";
 import { TransformedAcl } from "../slices/aclDetailsSlice";
-import { checkAcls, fetchAclTemplateById, Role } from "../slices/aclSlice";
+import { AclDefaults, checkAcls, fetchAclTemplateById, Role } from "../slices/aclSlice";
 import { UserInfoState } from "../slices/userInfoSlice";
 import { fetchUsersForTemplate } from "../slices/userSlice";
 import { AppDispatch } from "../store";
@@ -53,7 +53,7 @@ export const handleTemplateChange = async <T extends { policies: TransformedAcl[
 	templateId: string,
 	formik: FormikProps<T>,
 	dispatch: AppDispatch,
-	aclDefaults: { [key: string]: string } | undefined,
+	aclDefaults?: AclDefaults,
 	defaultUser?: UserInfoState,
 ) => {
 	// fetch information about chosen template from backend
@@ -80,7 +80,7 @@ export const handleTemplateChange = async <T extends { policies: TransformedAcl[
 			role: defaultUser.userRole,
 			read: true,
 			write: true,
-			actions: aclDefaults && aclDefaults["default_actions"] ? aclDefaults["default_actions"].split(",") : [],
+			actions: aclDefaults ? aclDefaults["default_actions"] : [],
 			user: {
 				username: defaultUser.user.username,
 				name: defaultUser.user.name,
@@ -91,8 +91,7 @@ export const handleTemplateChange = async <T extends { policies: TransformedAcl[
 
 	// If configured, keep roles that match the configured prefix
 	if (aclDefaults && aclDefaults["keep_on_template_switch_role_prefixes"]) {
-		const prefixString = aclDefaults["keep_on_template_switch_role_prefixes"];
-		const prefixes = prefixString.split(",");
+		const prefixes = aclDefaults["keep_on_template_switch_role_prefixes"];
 		for (const policy of formik.values.policies) {
 			if (prefixes.some(prefix => policy.role.startsWith(prefix)) && !template.acl.find(acl => acl.role === policy.role)) {
 				template.acl.push(policy);

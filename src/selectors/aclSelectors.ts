@@ -9,6 +9,6 @@ export const getTotalAcls = (state: RootState) => state.acls.total;
 export const getAclDefaults = (state: RootState) => state.acls.aclDefaults;
 export const getAclDefaultActions = createSelector(
 	[getAclDefaults],
-	aclDefaults => aclDefaults["default_actions"] ? aclDefaults["default_actions"].split(",") : [], // derived value
+	aclDefaults => aclDefaults ? aclDefaults["default_actions"] : [],
 );
 export const getAclDefaultTemplate = (state: RootState) => state.acls.aclDefaultTemplate;
