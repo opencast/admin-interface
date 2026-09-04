@@ -94,13 +94,17 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 	const reduceGroupedEvent = (groupedEvents: EditedEvents[]) => {
 		const result = groupedEvents.reduce((prev, curr) => {
 			for (const [key, value] of Object.entries(curr)) {
-				// TODO: This relies on the fact that the EditedEvent type only contains 'string' and 'string[]'. Improve on that.
+				const typedKey = key as keyof EditedEvents;
+				const same = prev[typedKey] === curr[typedKey];
+				// TypeScript can't correlate a generic `keyof EditedEvents` key with its
+				// value's type across separate property accesses like this, so the
+				// assignment itself still needs an escape hatch. But narrowing on `value`
+				// (rather than blanket-suppressing the line) keeps this honest: it only
+				// papers over that specific correlation gap, not any other real type error.
 				if (typeof value === "string") {
-					// @ts-expect-error TS(7006):
-					prev[key as keyof EditedEvents] = prev[key as keyof EditedEvents] === curr[key as keyof EditedEvents] ? curr[key as keyof EditedEvents] : "";
+					prev[typedKey] = (same ? value : "") as never;
 				} else {
-					// @ts-expect-error TS(7006):
-					prev[key as keyof EditedEvents] = prev[key as keyof EditedEvents] === curr[key as keyof EditedEvents] ? curr[key as keyof EditedEvents] : [];
+					prev[typedKey] = (same ? value : []) as never;
 				}
 			}
 			return prev;

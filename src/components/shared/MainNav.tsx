@@ -178,12 +178,11 @@ const MainNav = ({
 		if (linkMapItem?.links && linkMapItem.links.length > 1) {
 			const arrToSort = linkMapItem.links;
 			if (arrToSort != undefined && arrToSort.length > 1) {
-				arrToSort.forEach(item => {
-					// @ts-expect-error: TODO: Someone else can fix this
-					if (item.path === pathname) { item.tmpIndex = 0; } else { item.tmpIndex = 1; }
+				arrToSort.sort((a, b) => {
+					const aIndex = a.path === pathname ? 0 : 1;
+					const bIndex = b.path === pathname ? 0 : 1;
+					return aIndex - bIndex;
 				});
-				// @ts-expect-error: TODO: Someone else can fix this
-				arrToSort.sort((a, b) => a.tmpIndex - b.tmpIndex);
 			}
 		}
 	}

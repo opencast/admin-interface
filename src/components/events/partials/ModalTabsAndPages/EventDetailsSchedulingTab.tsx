@@ -191,20 +191,24 @@ const EventDetailsSchedulingTab = ({
 			values.scheduleEndHour,
 			values.scheduleEndMinute,
 		);
-		dispatch(checkConflicts({ eventId, startDate, endDate, deviceId: values.captureAgent })).then(
-			r => {
-				if (r) {
+		const notifyNotUpdated = () => {
+			dispatch(addNotification({
+				type: "error",
+				key: "EVENTS_NOT_UPDATED",
+				duration: -1,
+				context: NOTIFICATION_CONTEXT,
+			}));
+		};
+
+		dispatch(checkConflicts({ eventId, startDate, endDate, deviceId: values.captureAgent })).unwrap()
+			.then(({ hasSchedulingConflicts }) => {
+				if (!hasSchedulingConflicts) {
 					dispatch(saveSchedulingInfo({ eventId, values, startDate, endDate })).then();
 				} else {
-					dispatch(addNotification({
-						type: "error",
-						key: "EVENTS_NOT_UPDATED",
-						duration: -1,
-						context: NOTIFICATION_CONTEXT,
-					}));
+					notifyNotUpdated();
 				}
-			},
-		);
+			})
+			.catch(notifyNotUpdated);
 	};
 
 	// initial values of the formik form

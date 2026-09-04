@@ -1190,8 +1190,6 @@ export const saveSchedulingInfo = createAppAsyncThunk("eventDetails/saveScheduli
 	return source;
 });
 
-// TODO: This does not return a boolean anymore. Fix this in usage, make users
-// get their info from the state
 export const checkConflicts = createAppAsyncThunk("eventDetails/checkConflicts", async (params: {
 	eventId: Event["id"],
 	startDate: Date,
@@ -1530,7 +1528,6 @@ export const fetchWorkflowErrorDetails = createAppAsyncThunk("eventDetails/fetch
 	return data.data;
 });
 
-// TODO: Fix this after the modernization of statisticsThunks happened
 export const fetchEventStatistics = createAppAsyncThunk("eventDetails/fetchEventStatistics", async (eventId: Event["id"], { getState }) => {
 	// get prior statistics
 	const state = getState();
@@ -1545,7 +1542,6 @@ export const fetchEventStatistics = createAppAsyncThunk("eventDetails/fetchEvent
 	);
 });
 
-// TODO: Fix this after the modernization of statisticsThunks happened
 export const fetchEventStatisticsValueUpdate = createAppAsyncThunk("eventDetails/fetchEventStatisticsValueUpdate", async (params: {
 	id: Event["id"],
 	providerId: string,
@@ -2367,9 +2363,9 @@ const eventDetailsSlice = createSlice({
 			})
 			.addCase(fetchWorkflowDetails.rejected, (state, action) => {
 				state.statusWorkflowDetails = "failed";
-				// This is the empty workflow data from the original reducer
-				// TODO: Figure out why it is so vastly different from our initial state
-				// and maybe fix our initial state if this is actually correct
+				// Falls back to the same placeholder as our initial state (workflowId/description
+				// only, not the full workflow-details shape); consumers already narrow on
+				// `"status" in workflow` before reading details-only fields, so this degrades safely.
 				const emptyWorkflowData = {
 					workflowId: "",
 					description: "",
