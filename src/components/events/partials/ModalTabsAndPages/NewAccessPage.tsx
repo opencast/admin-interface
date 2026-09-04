@@ -2,14 +2,13 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Notifications from "../../../shared/Notifications";
 import {
-	Role,
 	checkAcls,
 	fetchAclActions,
 	fetchAclTemplates,
 	fetchRolesWithTarget,
 } from "../../../../slices/aclSlice";
 import { FormikProps } from "formik";
-import { policiesFiltered, rolesFiltered } from "../../../../utils/aclUtils";
+import { policiesFiltered } from "../../../../utils/aclUtils";
 import { useAppDispatch, useAppSelector } from "../../../../store";
 import { fetchSeriesDetailsAcls } from "../../../../slices/seriesDetailsSlice";
 import { getSeriesDetailsAcl } from "../../../../selectors/seriesDetailsSelectors";
@@ -55,21 +54,23 @@ const NewAccessPage = <T extends RequiredFormProps>({
 	// States containing response from server concerning acl templates, actions and roles
 	const [aclTemplates, setAclTemplates] = useState<{ id: string, value: string}[]>([]);
 	const [aclActions, setAclActions] = useState<{ id: string, value: string}[]>([]);
-	const [roles, setRoles] = useState<Role[]>([]);
+	const [isSanitize, setIsSanitize] = useState<boolean | undefined>(undefined);
 	const [loading, setLoading] = useState(false);
 
 	const seriesAcl = useAppSelector(state => getSeriesDetailsAcl(state));
 	const user = useAppSelector(state => getUserInformation(state));
 
 	useEffect(() => {
-		// fetch data about roles, acl templates and actions from backend
+		// fetch data about acl templates and actions from backend
 		async function fetchData() {
 			setLoading(true);
 			const [responseTemplates, responseActions, responseRoles] = await Promise.all([
-				fetchAclTemplates(), fetchAclActions(), fetchRolesWithTarget("ACL")]);
+				fetchAclTemplates(), fetchAclActions(), fetchRolesWithTarget("ACL", { limit: 1 })]);
 			setAclTemplates(responseTemplates);
 			setAclActions(responseActions);
-			setRoles(responseRoles);
+			if (responseRoles.length > 0) {
+				setIsSanitize(responseRoles[0].isSanitize);
+			}
 			setLoading(false);
 		}
 
@@ -118,13 +119,13 @@ const NewAccessPage = <T extends RequiredFormProps>({
 									defaultUser={user}
 								/>
 
-								{roles.length > 0 && !roles[0].isSanitize &&
+								{isSanitize === false &&
 									<>
 										{hasAccess(viewUsersAccessRole, user) &&
 											<AccessPolicyTable
 												isUserTable={true}
 												policiesFiltered={policiesFiltered(formik.values.policies, true)}
-												rolesFilteredbyPolicies={rolesFiltered(roles, true)}
+												hasUser={true}
 												header={"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.USERS"}
 												firstColumnHeader={"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.USER"}
 												createLabel={"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.NEW_USER"}
@@ -132,7 +133,6 @@ const NewAccessPage = <T extends RequiredFormProps>({
 												hasActions={aclActions.length > 0}
 												transactions={{ readOnly: false }}
 												aclActions={aclActions}
-												roles={roles}
 												editAccessRole={editAccessRole}
 											/>
 										}
@@ -141,7 +141,7 @@ const NewAccessPage = <T extends RequiredFormProps>({
 											<AccessPolicyTable
 												isUserTable={false}
 												policiesFiltered={policiesFiltered(formik.values.policies, false)}
-												rolesFilteredbyPolicies={rolesFiltered(roles, false)}
+												hasUser={false}
 												header={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.NON_USER_ROLES"}
 												firstColumnHeader={"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.ROLE"}
 												createLabel={"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.NEW"}
@@ -149,26 +149,24 @@ const NewAccessPage = <T extends RequiredFormProps>({
 												hasActions={aclActions.length > 0}
 												transactions={{ readOnly: false }}
 												aclActions={aclActions}
-												roles={roles}
 												editAccessRole={editAccessRole}
 											/>
 										}
 									</>
 								}
 
-								{roles.length > 0 && roles[0].isSanitize &&
+								{isSanitize === true &&
 									<>
 										<AccessPolicyTable
 											isUserTable={false}
 											policiesFiltered={formik.values.policies}
-											rolesFilteredbyPolicies={roles}
+											hasUser={undefined}
 											firstColumnHeader={"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.ROLE"}
 											createLabel={"EVENTS.EVENTS.DETAILS.ACCESS.ACCESS_POLICY.NEW"}
 											formik={formik}
 											hasActions={aclActions.length > 0}
 											transactions={{ readOnly: false }}
 											aclActions={aclActions}
-											roles={roles}
 											editAccessRole={editAccessRole}
 										/>
 										<div className="obj-container">

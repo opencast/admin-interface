@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
 	dropDownSpacingTheme,
@@ -54,6 +54,7 @@ const DropDown = <T, >({
 	optionHeight = 25,
 	customCSS,
 	fetchOptions,
+	loadOptionsOnMount = true,
 }: {
 	ref?: React.RefObject<SelectInstance<DropDownOption<T>, boolean, GroupBase<DropDownOption<T>>> | null>
 	value: T
@@ -80,11 +81,22 @@ const DropDown = <T, >({
 		optionLineHeight?: string
 	},
 	fetchOptions?: (inputValue: string) => Promise<DropDownOption<T>[]>
+	// Whether an async (fetchOptions-based) dropdown should eagerly fetch its default option list on
+	// mount, before the user has interacted with it. Set to false when many instances of this dropdown
+	// may be mounted at once (e.g. one per table row), to avoid firing one request per instance on
+	// render; the default option list is then fetched lazily, the first time this instance's menu is
+	// opened, instead of unconditionally on mount.
+	loadOptionsOnMount?: boolean
 }) => {
 	const { t } = useTranslation();
 
 	const internalRef = useRef<SelectInstance<DropDownOption<T>, boolean, GroupBase<DropDownOption<T>>> | null>(null);
 	const selectRef = ref ?? internalRef;
+
+	// Holds the result of the one-off default-option fetch below, once it has completed.
+	const [preloadedOptions, setPreloadedOptions] = useState<DropDownOption<T>[] | undefined>(undefined);
+	const [isPreloading, setIsPreloading] = useState(false);
+	const hasStartedPreload = useRef(false);
 
 	const style = dropDownStyle<T>(customCSS ?? {});
 
@@ -96,6 +108,14 @@ const DropDown = <T, >({
 	}, [menuIsOpen, selectRef]);
 
 	const openMenu = (open: boolean) => {
+		// If loadOptionsOnMount === false, fetch option list ourselves here
+		if (open && fetchOptions && !loadOptionsOnMount && !hasStartedPreload.current) {
+			hasStartedPreload.current = true;
+			setIsPreloading(true);
+			fetchOptions("")
+				.then(fetched => setPreloadedOptions(formatOptions(fetched, required)))
+				.finally(() => setIsPreloading(false));
+		}
 		if (handleMenuIsOpen !== undefined) {
 			handleMenuIsOpen(open);
 		}
@@ -164,7 +184,9 @@ const DropDown = <T, >({
 					overscanCount={4}
 				/>
 			</div>
-		) : null;
+		// react-select passes a single NoOptionsMessage/LoadingMessage node here (not an array) when
+		// there are no options to list, e.g. before the user has typed anything into an async dropdown.
+		) : children;
 	}, [itemHeight]);
 
 	const filterOptions = (inputValue: string) => {
@@ -220,7 +242,8 @@ const DropDown = <T, >({
 				options,
 				required,
 			)
-			: true,
+			: loadOptionsOnMount || (preloadedOptions ?? []),
+		isLoading: isPreloading,
 		cacheOptions: true,
 		loadOptions: fetchOptions ? loadOptionsAsync : loadOptions,
 		placeholder: placeholder,

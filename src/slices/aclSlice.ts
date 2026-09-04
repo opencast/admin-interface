@@ -187,10 +187,18 @@ export const fetchAclTemplateByName = async (name: string) => {
 };
 
 // fetch roles for select dialogs and access policy pages
-export const fetchRolesWithTarget = async (target: string) => {
+export const fetchRolesWithTarget = async (target: string, options?: {
+	query?: string,
+	limit?: number,
+	offset?: number,
+	hasUser?: boolean, // If set, only return roles that do (true) or don't (false) resolve to an actual user account.
+}) => {
 	const params = {
-		limit: -1,
+		limit: options?.limit ?? -1,
+		offset: options?.offset,
 		target: target,
+		query: options?.query,
+		hasUser: options?.hasUser,
 	};
 
 	const response = await axios.get<Role[]>("/admin-ng/acl/roles.json", { params: params });

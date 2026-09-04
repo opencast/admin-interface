@@ -3,13 +3,12 @@ import { useTranslation } from "react-i18next";
 import { FormikProps } from "formik";
 import Notifications from "../../../shared/Notifications";
 import {
-	Role,
 	checkAcls,
 	fetchAclActions,
 	fetchAclTemplates,
 	fetchRolesWithTarget,
 } from "../../../../slices/aclSlice";
-import { policiesFiltered, rolesFiltered } from "../../../../utils/aclUtils";
+import { policiesFiltered } from "../../../../utils/aclUtils";
 import { useAppDispatch } from "../../../../store";
 import { TransformedAcl } from "../../../../slices/aclDetailsSlice";
 import { AccessPolicyTable, TemplateSelector } from "../../../shared/modals/ResourceDetailsAccessPolicyTab";
@@ -40,20 +39,22 @@ const AclAccessPage = <T extends RequiredFormProps>({
 
 	const [aclTemplates, setAclTemplates] = useState<{ id: string, value: string }[]>([]);
 	const [aclActions, setAclActions] = useState<{ id: string, value: string }[]>([]);
-	const [roles, setRoles] = useState<Role[]>([]);
+	const [isSanitize, setIsSanitize] = useState<boolean | undefined>(undefined);
 	const [loading, setLoading] = useState(false);
 
 	const editAccessRole = "ROLE_UI_SERIES_DETAILS_ACL_EDIT";
 
 	useEffect(() => {
-		// fetch data about roles, acl templates and actions from backend
+		// fetch data about acl templates and actions from backend
 		async function fetchData() {
 			setLoading(true);
 			const [responseTemplates, responseActions, responseRoles] = await Promise.all([
-				fetchAclTemplates(), fetchAclActions(), fetchRolesWithTarget("ACL")]);
+				fetchAclTemplates(), fetchAclActions(), fetchRolesWithTarget("ACL", { limit: 1 })]);
 			setAclTemplates(responseTemplates);
 			setAclActions(responseActions);
-			setRoles(responseRoles);
+			if (responseRoles.length > 0) {
+				setIsSanitize(responseRoles[0].isSanitize);
+			}
 			setLoading(false);
 		}
 
@@ -83,12 +84,12 @@ const AclAccessPage = <T extends RequiredFormProps>({
 									aclTemplates={aclTemplates}
 								/>
 
-								{roles.length > 0 && !roles[0].isSanitize &&
+								{isSanitize === false &&
 									<>
 										<AccessPolicyTable
 											isUserTable={true}
 											policiesFiltered={policiesFiltered(formik.values.policies, true)}
-											rolesFilteredbyPolicies={rolesFiltered(roles, true)}
+											hasUser={true}
 											header={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.USERS"}
 											firstColumnHeader={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.USER"}
 											createLabel={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.NEW_USER"}
@@ -96,14 +97,13 @@ const AclAccessPage = <T extends RequiredFormProps>({
 											hasActions={aclActions.length > 0}
 											transactions={{ readOnly: false }}
 											aclActions={aclActions}
-											roles={roles}
 											editAccessRole={editAccessRole}
 										/>
 
 										<AccessPolicyTable
 											isUserTable={false}
 											policiesFiltered={policiesFiltered(formik.values.policies, false)}
-											rolesFilteredbyPolicies={rolesFiltered(roles, false)}
+											hasUser={false}
 											header={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.NON_USER_ROLES"}
 											firstColumnHeader={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.ROLE"}
 											createLabel={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.NEW"}
@@ -111,25 +111,23 @@ const AclAccessPage = <T extends RequiredFormProps>({
 											hasActions={aclActions.length > 0}
 											transactions={{ readOnly: false }}
 											aclActions={aclActions}
-											roles={roles}
 											editAccessRole={editAccessRole}
 										/>
 									</>
 								}
 
-								{roles.length > 0 && roles[0].isSanitize &&
+								{isSanitize === true &&
 									<>
 										<AccessPolicyTable
 											isUserTable={false}
 											policiesFiltered={formik.values.policies}
-											rolesFilteredbyPolicies={roles}
+											hasUser={undefined}
 											firstColumnHeader={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.ROLE"}
 											createLabel={"USERS.ACLS.NEW.ACCESS.ACCESS_POLICY.NEW"}
 											formik={formik}
 											hasActions={aclActions.length > 0}
 											transactions={{ readOnly: false }}
 											aclActions={aclActions}
-											roles={roles}
 											editAccessRole={editAccessRole}
 										/>
 										<div className="obj-container">
