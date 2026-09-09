@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef } from "react";
+import { ReactNode, useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import TableFilters from "../shared/TableFilters";
 import Table, { TemplateMap } from "../shared/Table";
@@ -63,7 +63,7 @@ const TablePage = <T extends Row, >({
 		}, 2000);
 	};
 
-	const loadResource = async (source: "auto" | "filters" = "auto") => {
+	const loadResource = useCallback(async (source: "auto" | "filters" = "auto") => {
 		if (source === "filters") {
 			pauseAutoRefresh();
 		}
@@ -97,7 +97,7 @@ const TablePage = <T extends Row, >({
 		) {
 			dispatch(loadResourceIntoTable());
 		}
-	};
+	}, [dispatch, fetchResource, loadResourceIntoTable]);
 
 	const loadResourceFromFilters = () => loadResource("filters");
 
@@ -120,7 +120,7 @@ const TablePage = <T extends Row, >({
 			}
 			clearInterval(fetchResourceInterval);
 		};
-	}, [location.hash]);
+	}, [location.hash, dispatch, loadResource]);
 
 	return (
 		<MainPage
