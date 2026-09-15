@@ -23,4 +23,9 @@ export const eventsLinks: {
     accessRole: "ROLE_UI_PLAYLISTS_VIEW",
     text: "EVENTS.PLAYLISTS.TABLE.CAPTION",
   },
+  {
+    path: "/events/lifeCyclePolicies",
+    accessRole: "ROLE_UI_LIFECYCLEPOLICIES_VIEW",
+    text: "LIFECYCLE.NAVIGATION.POLICIES",
+  },
 ];
