@@ -181,19 +181,43 @@
                 justify-content: center;
 
                 .chevron-up {
-                    position: relative;
-                    top: 3px;
                     color: variables.$color-gray;
                 }
                 .chevron-down {
-                    position: relative;
-                    top: -3px;
                     color: variables.$color-gray;
                 }
                 .active {
                     color: variables.$color-darkgray;
                 }
+
+                &.chevron-pair {
+                    visibility: hidden;
+
+                    .chevron-up{
+                        position: relative;
+                        top: 3px;
+                    }
+                    .chevron-down {
+                        position: relative;
+                        top: -3px;
+                    }
+                }
             }
+        }
+
+        &.sortable:hover div.chevron-pair,
+        &.sortable:focus-within div.chevron-pair {
+            visibility: visible;
+        }
+
+        &.sortable span[role="button"] {
+            outline: none;
+        }
+
+        &.sortable:focus-within {
+            outline-style: auto;
+            outline-color: -webkit-focus-ring-color;
+            outline-offset: -2px;
         }
     }
 
