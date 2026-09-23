@@ -82,8 +82,7 @@ const NewAccessPage = <T extends RequiredFormProps>({
 			dispatch(fetchSeriesDetailsAcls(formik.values.metadata["dublincore/episode_isPartOf"]));
 		}
 	// We only care about the series, not all metadata
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [formik.values.metadata["dublincore/episode_isPartOf"], initEventAclWithSeriesAcl, dispatch]);
+	}, [initEventAclWithSeriesAcl, dispatch, formik.values.metadata]);
 
 	// If we have to use series ACL, overwrite existing rules
 	useEffect(() => {
@@ -91,8 +90,7 @@ const NewAccessPage = <T extends RequiredFormProps>({
 			formik.setFieldValue("policies", seriesAcl);
 		}
 	// We only care to set "policies" if the seriesAcl updated
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [initEventAclWithSeriesAcl, seriesAcl]);
+	}, [formik, initEventAclWithSeriesAcl, seriesAcl]);
 
 	return (
 		<>

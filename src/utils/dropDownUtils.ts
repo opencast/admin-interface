@@ -19,3 +19,7 @@ export const formatWorkflowsForDropdown = (workflows: Workflow[]) => {
 export const formatAclTemplatesForDropdown = (templates: { id: string, value: string }[]) => {
 	return templates.map(template => ({ label: template.value, value: template.id }));
 };
+
+export const formatPolicyActionsForDropdown = (policieActions: string[]) => {
+	return policieActions.map(action => ({ label: action, value: action }));
+};

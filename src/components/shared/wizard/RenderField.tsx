@@ -8,6 +8,8 @@ import DropDown, { DropDownOption } from "../DropDown";
 import { parseISO } from "date-fns";
 import { FieldProps } from "formik";
 import { MetadataField } from "../../../slices/eventSlice";
+import { Cron } from "react-js-cron";
+import "react-js-cron/dist/styles.css";
 import { GroupBase, SelectInstance } from "react-select";
 import TextareaAutosize from "react-textarea-autosize";
 import { LuCheck, LuSquarePen } from "react-icons/lu";
@@ -123,6 +125,12 @@ const RenderField = ({
 					field={field}
 					isFirstField={isFirstField}
 					ref={editableRef}
+				/>
+			)}
+			{metadataField.type === "cron" && (
+				<EditableCronValue
+					field={field}
+					form={form}
 				/>
 			)}
 			<div className="single-value-right">
@@ -327,6 +335,38 @@ const EditableSingleValueTime = ({
 			/>
 		</div>
 	);
+};
+
+const EditableCronValue = ({
+	field,
+	form: { setFieldValue },
+} : {
+	field: FieldProps["field"]
+	form: FieldProps["form"]
+}) => {
+
+	return (
+		<div>
+			<Cron
+				className={"my-project-cron"}
+				value={field.value as string}
+				setValue={(value: string) => { setFieldValue(field.name, value); }}
+			/>
+		</div>
+	);
+		// <div onClick={() => setEditMode(true)} className="show-edit">
+		// 	<span className="editable preserve-newlines">{text || ""}</span>
+		// 	<div>
+		// 		<i className="edit fa fa-pencil-square" />
+		// 		{showCheck && (
+		// 			<i
+		// 				className={cn("saved fa fa-check", {
+		// 					active: initialValues[field.name] !== field.value,
+		// 				})}
+		// 			/>
+		// 		)}
+		// 	</div>
+		// </div>
 };
 
 /**
