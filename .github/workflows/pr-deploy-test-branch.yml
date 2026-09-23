@@ -49,7 +49,7 @@ jobs:
           run-id: ${{ github.event.workflow_run.id }}
 
       - name: Fetch build path from GHA
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ github.event.workflow_run.id }}-path
           github-token: ${{ github.token }}
