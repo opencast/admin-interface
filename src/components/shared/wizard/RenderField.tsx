@@ -32,9 +32,11 @@ const RenderField = ({
 }) => {
 	const { t } = useTranslation();
 
-	// TODO: Figure out how to type a ref that could have multiple types
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const editableRef = useRef<any>(null);
+	// Only one of the following is ever mounted at once, chosen by metadataField.type below.
+	const inputRef = useRef<HTMLInputElement>(null);
+	const textareaRef = useRef<HTMLTextAreaElement>(null);
+	const datePickerRef = useRef<DatePicker>(null);
+	const selectRef = useRef<SelectInstance<DropDownOption<string>, boolean, GroupBase<DropDownOption<string>>>>(null);
 	const [focused, setFocused] = useState(false);
 	const onFocus = () => setFocused(true);
 	const onBlur = () => setFocused(false);
@@ -42,18 +44,10 @@ const RenderField = ({
 	return (
 		<div
 			onClick={() => {
-				if (editableRef.current) {
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-					if (editableRef.current.focus) {
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-						editableRef.current.focus();
-					}
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-					if (editableRef.current.setFocus) {
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-						editableRef.current.setFocus(); // For DatePicker
-					}
-				}
+				inputRef.current?.focus();
+				textareaRef.current?.focus();
+				selectRef.current?.focus();
+				datePickerRef.current?.setFocus();
 			}}
 			onFocus={onFocus}
 			onBlur={onBlur}
@@ -64,7 +58,7 @@ const RenderField = ({
 					field={field}
 					form={form}
 					isFirstField={isFirstField}
-					ref={editableRef}
+					ref={datePickerRef}
 				/>
 			)}
 			{metadataField.type === "text" &&
@@ -78,7 +72,7 @@ const RenderField = ({
 						isFirstField={isFirstField}
 						focused={focused}
 						setFocused={setFocused}
-						ref={editableRef}
+						ref={selectRef}
 					/>
 				)}
 			{metadataField.type === "ordered_text" && (
@@ -90,7 +84,7 @@ const RenderField = ({
 					isFirstField={isFirstField}
 					focused={focused}
 					setFocused={setFocused}
-					ref={editableRef}
+					ref={selectRef}
 				/>
 			)}
 			{metadataField.type === "text" &&
@@ -100,14 +94,14 @@ const RenderField = ({
 					<EditableSingleValue
 						field={field}
 						isFirstField={isFirstField}
-						ref={editableRef}
+						ref={inputRef}
 					/>
 				)}
 			{metadataField.type === "text_long" && (
 				<EditableSingleValueTextArea
 					field={field}
 					isFirstField={isFirstField}
-					ref={editableRef}
+					ref={textareaRef}
 				/>
 			)}
 			{metadataField.type === "date" && (
@@ -115,14 +109,14 @@ const RenderField = ({
 					field={field}
 					form={form}
 					isFirstField={isFirstField}
-					ref={editableRef}
+					ref={datePickerRef}
 				/>
 			)}
 			{metadataField.type === "boolean" && (
 				<EditableBooleanValue
 					field={field}
 					isFirstField={isFirstField}
-					ref={editableRef}
+					ref={inputRef}
 				/>
 			)}
 			<div className="single-value-right">
@@ -148,7 +142,7 @@ const EditableBooleanValue = ({
 }: {
 	field: FieldProps["field"]
 	isFirstField?: boolean,
-	ref: React.RefObject<HTMLInputElement>
+	ref: React.RefObject<HTMLInputElement | null>
 }) => {
 	return (
 		<input
@@ -171,7 +165,7 @@ const EditableDateValue = ({
 	field: FieldProps["field"]
 	form: FieldProps["form"]
 	isFirstField?: boolean,
-	ref: React.RefObject<DatePicker>
+	ref: React.RefObject<DatePicker | null>
 }) => {
 	return (
 		// For some reason onclick events are bubbling up from the datepicker which we do not want.
@@ -254,7 +248,7 @@ const EditableSingleValueTextArea = ({
 }: {
 	field: FieldProps["field"]
 	isFirstField?: boolean,
-	ref: React.RefObject<HTMLTextAreaElement>
+	ref: React.RefObject<HTMLTextAreaElement | null>
 }) => {
 	return (
 		// Maybe replace TextareaAutosize with css "field-sizing: content" once all
@@ -304,7 +298,7 @@ const EditableSingleValueTime = ({
 	field: FieldProps["field"]
 	form: FieldProps["form"]
 	isFirstField?: boolean,
-	ref: React.RefObject<DatePicker>
+	ref: React.RefObject<DatePicker | null>
 }) => {
 	return (
 		// For some reason onclick events are bubbling up from the datepicker which we do not want.
