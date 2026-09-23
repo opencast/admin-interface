@@ -10,6 +10,8 @@ export const getModalWorkflowTabHierarchy = (state: RootState) =>
 	state.eventDetails.modal.workflowTabHierarchy;
 export const getModalAssetsTabHierarchy = (state: RootState) =>
 	state.eventDetails.modal.assetsTabHierarchy;
+export const getModalUsageTabHierarchy = (state: RootState) =>
+	state.eventDetails.modal.usageTabHierarchy;
 
 /* selectors for metadata */
 export const getMetadata = (state: RootState) => state.eventDetails.metadata;
@@ -193,3 +195,20 @@ export const hasStatisticsError = (state: RootState) =>
 	state.eventDetails.hasStatisticsError;
 export const isFetchingStatistics = (state: RootState) =>
 	state.eventDetails.statusStatistics === "loading";
+
+/* selectors for usage statistics */
+export const hasUsageStatistics = (state: RootState) =>
+	state.eventDetails.statusUsageStatistics === "succeeded";
+export const getUsageStatistics = (state: RootState) =>
+	state.eventDetails.usageStatistics;
+export const hasUsageStatisticsError = (state: RootState) =>
+	state.eventDetails.statusUsageStatistics === "failed";
+export const isFetchingUsageStatistics = (state: RootState) =>
+	state.eventDetails.statusUsageStatistics === "loading";
+
+export const getUsageDailyStatistics = (state: RootState) =>
+	state.eventDetails.usageDailyStatistics;
+export const hasUsageDailyStatisticsError = (state: RootState) =>
+	state.eventDetails.statusUsageDailyStatistics === "failed";
+export const isFetchingUsageDailyStatistics = (state: RootState) =>
+	state.eventDetails.statusUsageDailyStatistics === "loading";
