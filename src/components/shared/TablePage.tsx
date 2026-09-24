@@ -65,6 +65,7 @@ const TablePage = <T extends Row, >({
 				</div>
 				{/* Include table component */}
 				<Table
+					resource={resource}
 					templateMap={templateMap}
 					fetchResource={fetchResource}
 					loadResourceIntoTable={loadResourceIntoTable}
