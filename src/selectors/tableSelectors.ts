@@ -1,6 +1,6 @@
 import { createSelector } from "reselect";
 import { RootState } from "../store";
-import { rowsSelectors, TableState } from "../slices/tableSlice";
+import { Resource, rowsSelectors, TableState } from "../slices/tableSlice";
 
 /**
  * This file contains selectors regarding the table view
@@ -21,7 +21,11 @@ export const getTableDirection = (state: RootState) => state.table.reverse[state
 export const getTableDirectionForResource = (state: RootState, resource: TableState["resource"]) => state.table.reverse[resource];
 export const getMultiSelect = (state: RootState) => state.table.multiSelect[state.table.resource];
 export const getTable = (state: RootState) => state.table;
-export const getTableStatus = (state: RootState) => state.table.status;
+export const isTableWaitingForData = (state: RootState, resource: Resource) => {
+	const { status, results } = state[resource];
+	return rowsSelectors.selectTotal(state) === 0
+		&& (status === "loading" || status === "uninitialized" || results.length > 0);
+};
 export const getDeactivatedColumns = (state: RootState) =>
 	state.table.columns.filter(column => column.deactivated);
 export const getActivatedColumns = (state: RootState) =>

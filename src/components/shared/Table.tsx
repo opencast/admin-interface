@@ -8,11 +8,12 @@ import {
 	getTablePages,
 	getTablePagination,
 	getTableSorting,
-	// getTableStatus,
+	isTableWaitingForData,
 	getTable,
 } from "../../selectors/tableSelectors";
 import {
 	Row,
+	Resource,
 	reverseTable,
 	setOffset,
 	setSortBy,
@@ -41,7 +42,7 @@ import { TableColumn } from "../../configs/tableConfigs/aclsTableConfig";
 import ButtonLikeAnchor from "./ButtonLikeAnchor";
 import { ModalHandle } from "./modals/Modal";
 import { ParseKeys } from "i18next";
-import { LuChevronDown, LuChevronLeft, LuChevronRight, LuChevronUp } from "react-icons/lu";
+import { LuChevronDown, LuChevronLeft, LuChevronRight, LuChevronUp, LuLoader } from "react-icons/lu";
 import { useLocation } from "react-router";
 import Select, { components, DropdownIndicatorProps } from "react-select";
 import { pageSizeStyles } from "../../utils/componentStyles";
@@ -55,10 +56,12 @@ export type TemplateMap<T> = {
  * This component renders the table in the table views of resources
  */
 const Table = <T extends Row, >({
+	resource,
 	templateMap,
 	fetchResource,
 	loadResourceIntoTable,
 }: {
+	resource: Resource,
 	templateMap: TemplateMap<T>
 	fetchResource: GenericAsyncThunk,
 	loadResourceIntoTable: () => AppThunk,
@@ -149,6 +152,7 @@ const Table = <T extends Row, >({
 				</thead>
 				<tbody>
 					<TableBody
+						resource={resource}
 						templateMap={templateMap}
 					/>
 				</tbody>
@@ -269,29 +273,31 @@ const TableHeadRows = ({ forceDeselectAll }: { forceDeselectAll: () => unknown }
 	);
 };
 
-const TableBody = <T extends Row, >({ templateMap }: { templateMap: TemplateMap<T> }) => {
+const TableBody = <T extends Row, >({ resource, templateMap }: { resource: Resource, templateMap: TemplateMap<T> }) => {
 	const { t } = useTranslation();
 
 	const columnCount = useAppSelector(state => getTableColumns(state).length);
 	const rowCount = useAppSelector(rowsSelectors.selectTotal);
-	// const status = useAppSelector(state => getTableStatus(state));
+	// Whether the table is empty but data is on the way: before or during a fetch, or after a
+	// fetch until its results are loaded into the table. Selected as a boolean, so status
+	// changes during polling don't re-render the rows
+	const isWaitingForData = useAppSelector(state => isTableWaitingForData(state, resource));
 
 	return (
 		<>
-			{status === "loading" && rowCount === 0 ? (
+			{isWaitingForData ? (
 				<tr>
 					<td colSpan={columnCount} style={{ textAlign: "center" }}>
-						<i className="fa fa-spinner fa-spin fa-2x fa-fw" />
+						<LuLoader className="fa-spin" size="2em" />
 					</td>
 				</tr>
-			) : !(status === "loading") && rowCount === 0 ? (
+			) : rowCount === 0 ? (
 				// Show if no results and table is not loading
 				<tr>
 					<td colSpan={columnCount}>{t("TABLE_NO_RESULT")}</td>
 				</tr>
 			) : (
-				!(status === "loading") &&
-				// Repeat for each row in table.rows
+				// Repeat for each row in table.rows, even while newer data is loading
 				<TableRows
 					templateMap={templateMap}
 				/>
