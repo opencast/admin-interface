@@ -172,6 +172,8 @@ export type Conflict = {
 type EventState = {
 	status: "uninitialized" | "loading" | "succeeded" | "failed",
 	error: SerializedError | null,
+	// ID of the most recent fetch, to ignore responses of older overlapping fetches
+	latestRequestId: string,
 	statusMetadata: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorMetadata: SerializedError | null,
 	statusSchedulingInfo: "uninitialized" | "loading" | "succeeded" | "failed",
@@ -210,6 +212,7 @@ const initialColumns = eventsTableConfig.columns.map(column => ({
 const initialState: EventState = {
 	status: "uninitialized",
 	error: null,
+	latestRequestId: "",
 	statusMetadata: "uninitialized",
 	errorMetadata: null,
 	statusSchedulingInfo: "uninitialized",
@@ -1170,16 +1173,15 @@ const eventSlice = createSlice({
 	// These are used for thunks
 	extraReducers: builder => {
 		builder
-			.addCase(fetchEvents.pending, state => {
+			.addCase(fetchEvents.pending, (state, action) => {
 				state.status = "loading";
+				state.latestRequestId = action.meta.requestId;
 			})
-			.addCase(fetchEvents.fulfilled, (state, action: PayloadAction<{
-				total: EventState["total"],
-				count: EventState["count"],
-				limit: EventState["limit"],
-				offset: EventState["offset"],
-				results: EventState["results"],
-			}>) => {
+			.addCase(fetchEvents.fulfilled, (state, action) => {
+				// Ignore responses of older fetches that finished after a newer one started
+				if (action.meta.requestId !== state.latestRequestId) {
+					return;
+				}
 				state.status = "succeeded";
 				const events = action.payload;
 				state.total = events.total;
@@ -1189,6 +1191,10 @@ const eventSlice = createSlice({
 				state.results = events.results;
 			})
 			.addCase(fetchEvents.rejected, (state, action) => {
+				// Ignore responses of older fetches that finished after a newer one started
+				if (action.meta.requestId !== state.latestRequestId) {
+					return;
+				}
 				state.status = "failed";
 				state.results = [];
 				state.error = action.error;

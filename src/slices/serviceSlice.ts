@@ -33,6 +33,8 @@ export type Service = {
 type ServiceState = {
 	status: "uninitialized" | "loading" | "succeeded" | "failed",
 	error: SerializedError | null,
+	// ID of the most recent fetch, to ignore responses of older overlapping fetches
+	latestRequestId: string,
 	results: Service[],
 	columns: TableConfig["columns"],
 	total: number,
@@ -51,6 +53,7 @@ const initialColumns = servicesTableConfig.columns.map(column => ({
 const initialState: ServiceState = {
 	status: "uninitialized",
 	error: null,
+	latestRequestId: "",
 	results: [],
 	columns: initialColumns,
 	total: 0,
@@ -103,10 +106,15 @@ const serviceSlice = createSlice({
 	// These are used for thunks
 	extraReducers: builder => {
 		builder
-			.addCase(fetchServices.pending, state => {
+			.addCase(fetchServices.pending, (state, action) => {
 				state.status = "loading";
+				state.latestRequestId = action.meta.requestId;
 			})
-			.addCase(fetchServices.fulfilled, (state, action: PayloadAction<FetchServices>) => {
+			.addCase(fetchServices.fulfilled, (state, action) => {
+				// Ignore responses of older fetches that finished after a newer one started
+				if (action.meta.requestId !== state.latestRequestId) {
+					return;
+				}
 				state.status = "succeeded";
 				const acls = action.payload;
 				state.total = acls.total;
@@ -116,6 +124,10 @@ const serviceSlice = createSlice({
 				state.results = acls.results;
 			})
 			.addCase(fetchServices.rejected, (state, action) => {
+				// Ignore responses of older fetches that finished after a newer one started
+				if (action.meta.requestId !== state.latestRequestId) {
+					return;
+				}
 				state.status = "failed";
 				state.error = action.error;
 			});
