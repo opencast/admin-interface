@@ -26,6 +26,7 @@ import HotKeyCheatSheet from "./shared/HotKeyCheatSheet";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useAppDispatch, useAppSelector } from "../store";
 import { HealthStatus, fetchHealthStatus } from "../slices/healthSlice";
+import { usePolling } from "../hooks/usePolling";
 import {
 	fetchRegistration,
 	fetchLatestToU,
@@ -71,10 +72,6 @@ const Header = () => {
 	const registration = useAppSelector(state => getRegistration(state));
 	const orgProperties = useAppSelector(state => getOrgProperties(state));
 	const displayTerms = (orgProperties["org.opencastproject.admin.display_terms"] || "false").toLowerCase() === "true";
-
-	const loadHealthStatus = async () => {
-		await dispatch(fetchHealthStatus());
-	};
 
 	const hideMenuHelp = () => {
 		setMenuHelp(false);
@@ -139,21 +136,16 @@ const Header = () => {
 			}
 		};
 
-
-		// Fetching health status information at mount
-		loadHealthStatus();
-		// Fetch health status every minute
-		const interval = setInterval(() => { dispatch(fetchHealthStatus()); }, 5000);
-
 		// Event listener for handle a click outside of dropdown menu
 		window.addEventListener("mousedown", handleClickOutside);
 
 		return () => {
-			clearInterval(interval);
 			window.removeEventListener("mousedown", handleClickOutside);
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	// Fetch health status on mount and every 5 seconds after
+	usePolling(() => dispatch(fetchHealthStatus()), 5000);
 
 	useEffect(() => {
 		dispatch(fetchRegistration());

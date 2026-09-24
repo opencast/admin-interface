@@ -46,6 +46,7 @@ import { useLocation } from "react-router";
 import Select, { components, DropdownIndicatorProps } from "react-select";
 import { pageSizeStyles } from "../../utils/componentStyles";
 import { GenericAsyncThunk } from "../../utils/utils";
+import { usePolling } from "../../hooks/usePolling";
 
 export type TemplateMap<T> = {
 	[key: string]: ({ row }: { row: T }) => JSX.Element | JSX.Element[]
@@ -71,33 +72,20 @@ const Table = <T extends Row, >({
 	const selectAllCheckboxRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
-		// State variable for interrupting the load function
-		let allowLoadIntoTable = true;
-
 		// Clear table of previous data
 		dispatch(resetTableProperties());
+	}, [dispatch, location.hash]);
 
-		// Load resource on mount
-		const loadResource = async () => {
-			// Fetching resources from server
-			await dispatch(fetchResource());
+	// Fetch resources on mount and every 5 seconds after
+	usePolling(async signal => {
+		// Fetching resources from server
+		await dispatch(fetchResource());
 
-			// Load resources into table
-			if (allowLoadIntoTable) {
-				dispatch(loadResourceIntoTable());
-			}
-		};
-		loadResource();
-
-		// Fetch resources every minute
-		const fetchResourceInterval = setInterval(() => { loadResource(); }, 5000);
-
-		return () => {
-			allowLoadIntoTable = false;
-			clearInterval(fetchResourceInterval);
-		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [location.hash]);
+		// Load resources into table
+		if (!signal.aborted) {
+			dispatch(loadResourceIntoTable());
+		}
+	}, 5000, [location.hash]);
 
 	const forceDeselectAll = () => {
 		dispatch(changeAllSelected(false));
