@@ -331,7 +331,7 @@ const TableRows = <T extends Row, >({ templateMap }: { templateMap: TemplateMap<
 	return (
 		<>
 			{rowKeys.map(rowKey => (
-				<TableRow
+				<MemoizedTableRow
 					key={rowKey}
 					rowKey={rowKey}
 					templateMap={templateMap}
@@ -409,6 +409,9 @@ const TableRow = <T extends Row, >({ rowKey, templateMap }: { rowKey: string, te
 		</tr>
 	);
 };
+
+// Rows are only re-rendered if their data changed, not whenever the table is updated
+const MemoizedTableRow = React.memo(TableRow) as typeof TableRow;
 
 // Apply a column template and render corresponding components
 const ColumnTemplate = <T extends Row, >({ row, column, templateMap }: {row: T, column: TableColumn, templateMap: TemplateMap<T>}) => {
