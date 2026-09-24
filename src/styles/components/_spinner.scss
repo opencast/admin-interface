@@ -20,3 +20,9 @@
             transform: rotate(359deg);
   }
 }
+
+// Rotates an icon, e.g. a loading indicator
+.fa-spin {
+  -webkit-animation: fa-spin 2s infinite linear;
+          animation: fa-spin 2s infinite linear;
+}
