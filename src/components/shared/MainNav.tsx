@@ -179,10 +179,9 @@ const MainNav = ({
 			const arrToSort = linkMapItem.links;
 			if (arrToSort != undefined && arrToSort.length > 1) {
 				arrToSort.sort((a, b) => {
-					const aPriority = a.path === pathname ? 0 : 1;
-					const bPriority = b.path === pathname ? 0 : 1;
-
-					return aPriority - bPriority;
+					const aIndex = a.path === pathname ? 0 : 1;
+					const bIndex = b.path === pathname ? 0 : 1;
+					return aIndex - bIndex;
 				});
 			}
 		}
