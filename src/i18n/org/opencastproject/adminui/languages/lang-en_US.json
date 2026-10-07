@@ -22,6 +22,7 @@
 	"SELECT_NO_OPTION_SELECTED_DASHED": "-- No option selected --",
 	"SELECT_NO_OPTIONS_AVAILABLE": "No options available",
 	"SELECT_NO_MATCHING_RESULTS": "No matching results.",
+	"SELECT_LOADING": "Loading…",
 	"YES": "Yes",
 	"COPY": "Copy to clipboard",
 	"UPDATE": {

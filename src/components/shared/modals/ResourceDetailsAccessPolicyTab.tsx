@@ -17,7 +17,8 @@ import {
 } from "../../../utils/resourceUtils";
 import { getUserInformation } from "../../../selectors/userInfoSelectors";
 import { hasAccess } from "../../../utils/utils";
-import DropDown, { DropDownOption } from "../DropDown";
+import DropDown from "../DropDown";
+import PagedDropDown, { DropDownPage } from "../PagedDropDown";
 import { getAclTemplateText, handleTemplateChange, policiesFiltered } from "../../../utils/aclUtils";
 import { useAppDispatch, useAppSelector } from "../../../store";
 import { removeNotificationWizardForm, addNotification } from "../../../slices/notificationSlice";
@@ -41,6 +42,9 @@ type AclTemplate = {
 	id: string,
 	value: string
 }
+
+// How many roles to load into the role dropdowns at a time
+const ROLES_PAGE_SIZE = 50;
 
 const ResourceDetailsAccessPolicyTab = ({
 	resourceId,
@@ -443,21 +447,33 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 	// full Role (including .user) without having to hold or re-fetch the entire roles list.
 	const roleCacheRef = useRef<Map<string, Role>>(new Map());
 
-	const fetchRoleOptions = async (inputValue: string): Promise<DropDownOption<string>[]> => {
-		let fetchedRoles = await fetchRolesWithTarget("ACL", { query: inputValue, limit: 50, hasUser });
+	const fetchRolePage = async (inputValue: string, offset: number): Promise<DropDownPage> => {
+		// Ask for one more than a page, to find out if there is another page
+		const fetched = await fetchRolesWithTarget("ACL", {
+			query: inputValue,
+			limit: ROLES_PAGE_SIZE + 1,
+			offset: offset,
+			hasUser,
+		});
+		const hasMore = fetched.length > ROLES_PAGE_SIZE;
+		let page = fetched.slice(0, ROLES_PAGE_SIZE);
 
 		if (aclDefaults) {
 			const prefixes = aclDefaults["display_role_filter_blacklist_prefixes"];
-			fetchedRoles = fetchedRoles.filter(role =>
+			page = page.filter(role =>
 				!prefixes.some(prefix => role.name.startsWith(prefix)),
 			);
 		}
 
-		for (const role of fetchedRoles) {
+		for (const role of page) {
 			roleCacheRef.current.set(role.name, role);
 		}
 
-		return formatAclRolesForDropdown(fetchedRoles);
+		return {
+			options: formatAclRolesForDropdown(page),
+			// The offset is that of the unfiltered list, no matter how many roles were filtered out of the page
+			nextOffset: hasMore ? offset + ROLES_PAGE_SIZE : undefined,
+		};
 	};
 
 	const createPolicy = (role: string, withUser: boolean): TransformedAcl => {
@@ -550,12 +566,10 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 															{/* dropdown for policy.role */}
 															<td className="editable">
 																{!transactions.readOnly ? (
-																	<DropDown
+																	<PagedDropDown
 																		value={policy.role}
 																		text={createPolicyLabel(policy)}
-																		fetchOptions={fetchRoleOptions}
-																		loadOptionsOnMount={false}
-																		required={true}
+																		fetchPage={fetchRolePage}
 																		creatable={true}
 																		handleChange={element => {
 																			if (element) {
@@ -576,9 +590,8 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 																				user,
 																			)
 																		}
-																		skipTranslate
-																		optionHeight={35}
-																		customCSS={{ width: "100%", optionPaddingTop: 5 }}
+																		// Together with the padding this makes each option 35px high, like it was when options had a fixed height
+																		customCSS={{ width: "100%", optionPaddingTop: 5, optionLineHeight: "25px" }}
 																	/>
 																) : (
 																	<p>{policy.role}</p>
