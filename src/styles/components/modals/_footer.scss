@@ -49,6 +49,14 @@
             @include button.btn(red);
         }
 
+        // Grey out disabled wizard buttons. Must stay after the btn() includes
+        // to override their :hover/:focus rules.
+        &.inactive,
+        &:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+
         min-width: 100px;
         margin: 10px 3% 0 15px;
         display: inline-block;
