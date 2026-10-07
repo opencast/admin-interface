@@ -19,7 +19,7 @@ export type FieldSetField = {
 	[key: string]: unknown
 }
 
-type ConfigurationPanelField = {
+export type ConfigurationPanelField = {
 	// We could potentially specify 'fieldset' more, but I cannot find a definition
 	// for which key value pairs are allowed
 	fieldset?: FieldSetField[]  // Values can be anything

@@ -11,6 +11,7 @@ import { ThemeDetailsType } from "./themeSlice";
 import { Series } from "./seriesSlice";
 import { Playlist } from "./playlistSlice";
 import { Event } from "./eventSlice";
+import { LifeCyclePolicy } from "./lifeCycleSlice";
 import { eventsTableConfig } from "../configs/tableConfigs/eventsTableConfig";
 import { seriesTableConfig } from "../configs/tableConfigs/seriesTableConfig";
 import { playlistsTableConfig } from "../configs/tableConfigs/playlistsTableConfig";
@@ -21,6 +22,7 @@ import { servicesTableConfig } from "../configs/tableConfigs/servicesTableConfig
 import { usersTableConfig } from "../configs/tableConfigs/usersTableConfig";
 import { groupsTableConfig } from "../configs/tableConfigs/groupsTableConfig";
 import { themesTableConfig } from "../configs/tableConfigs/themesTableConfig";
+import { lifeCyclePolicyTableConfig } from "../configs/tableConfigs/lifeCyclePoliciesTableConfig";
 import { RootState } from "../store";
 
 /*
@@ -91,14 +93,14 @@ export function isSeries(row: Row): row is Row & Series {
 export type Row = {
 	id: string, // For use with entityAdapter. Directly taken from event/series etc. if available
 	selected: boolean // If the row was marked in the ui by the user
-} & (Event | Series | Playlist | Recording | Server | Job | Service | User | Group | AclResult | ThemeDetailsType)
+} & (Event | Series | Playlist | Recording | Server | Job | Service | User | Group | AclResult | ThemeDetailsType | LifeCyclePolicy)
 
 export type SubmitRow = {
 	selected: boolean
-} & (Event | Series | Playlist | Recording | Server | Job | Service | User | Group | AclResult | ThemeDetailsType)
+} & (Event | Series | Playlist | Recording | Server | Job | Service | User | Group | AclResult | ThemeDetailsType | LifeCyclePolicy)
 
 export type Resource = "events" | "series" | "playlists" | "recordings"
-	| "jobs" | "servers" | "services" | "users" | "groups" | "acls" | "themes";
+	| "jobs" | "servers" | "services" | "users" | "groups" | "acls" | "themes" | "lifeCyclePolicies";
 
 export type ReverseOptions = "ASC" | "DESC" | "NONE"
 
@@ -155,6 +157,7 @@ const initialState: TableState = {
 		groups: groupsTableConfig.multiSelect,
 		acls: aclsTableConfig.multiSelect,
 		themes: themesTableConfig.multiSelect,
+		lifeCyclePolicies: lifeCyclePolicyTableConfig.multiSelect,
 	},
 	resource: "events",
 	pages: [],
@@ -171,6 +174,7 @@ const initialState: TableState = {
 		groups: "name",
 		acls: "name",
 		themes: "name",
+		lifeCyclePolicies: "title",
 	},
 	predicate: "",
 	reverse: {
@@ -185,6 +189,7 @@ const initialState: TableState = {
 		groups: "ASC",
 		acls: "ASC",
 		themes: "ASC",
+		lifeCyclePolicies: "ASC",
 	},
 	rows: rowsAdapter.getInitialState(),
 	maxLabel: "",

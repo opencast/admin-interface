@@ -7,7 +7,7 @@ import BaseButton from "./BaseButton";
 
 export type ResourceType =
   "EVENT" | "SERIES" | "PLAYLIST" | "LOCATION" | "USER" |
-  "GROUP" | "ACL" | "THEME" | "TOBIRA_PATH";
+  "GROUP" | "ACL" | "THEME" | "TOBIRA_PATH" | "LIFECYCLE_POLICY";
 
 const ConfirmModal = <T, >({
 	close,
