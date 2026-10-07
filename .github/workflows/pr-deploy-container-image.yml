@@ -35,7 +35,7 @@ jobs:
           docker load --input ${{ runner.temp }}/build.tar
 
       - name: Fetch pr number from GHA
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ github.event.workflow_run.id }}-number
           github-token: ${{ github.token }}
