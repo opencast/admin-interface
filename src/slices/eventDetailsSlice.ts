@@ -33,6 +33,7 @@ import {
 	EventDetailsPage,
 	WorkflowTabHierarchy,
 } from "../components/events/partials/modals/EventDetails";
+import { UsageTabHierarchy } from "../components/events/partials/ModalTabsAndPages/EventDetailsUsageTab";
 import { AppDispatch, AppThunk } from "../store";
 import { Ace } from "./aclSlice";
 import { setTobiraTabHierarchy, TobiraData } from "./seriesDetailsSlice";
@@ -46,6 +47,7 @@ type EventDetailsModal = {
 	event: Event | null,
 	workflowTabHierarchy: WorkflowTabHierarchy,
 	assetsTabHierarchy: AssetTabHierarchy,
+	usageTabHierarchy: UsageTabHierarchy,
 	workflowId: string,
 }
 
@@ -216,6 +218,10 @@ type EventDetailsState = {
 	errorStatistics: SerializedError | null,
 	statusStatisticsValue: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorStatisticsValue: SerializedError | null,
+	statusUsageStatistics: "uninitialized" | "loading" | "succeeded" | "failed",
+	errorUsageStatistics: SerializedError | null,
+	statusUsageDailyStatistics: "uninitialized" | "loading" | "succeeded" | "failed",
+	errorUsageDailyStatistics: SerializedError | null,
 	statusTobiraData: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorTobiraData: SerializedError | null,
 	eventId: string,
@@ -376,6 +382,16 @@ type EventDetailsState = {
 	publications: Publication[],
 	statistics: Statistics[],
 	hasStatisticsError: boolean,
+	usageStatistics: {
+		views: number,
+		watchtime: number,
+		completenessThreshold: string,
+	},
+	usageDailyStatistics: {
+		day: string,
+		views: number[],
+		watchtime: number[],
+	}[],
 	tobiraData: TobiraData,
 }
 
@@ -439,6 +455,10 @@ const initialState: EventDetailsState = {
 	errorStatistics: null,
 	statusStatisticsValue: "uninitialized",
 	errorStatisticsValue: null,
+	statusUsageStatistics: "uninitialized",
+	errorUsageStatistics: null,
+	statusUsageDailyStatistics: "uninitialized",
+	errorUsageDailyStatistics: null,
 	statusTobiraData: "uninitialized",
 	errorTobiraData: null,
 	eventId: "",
@@ -448,6 +468,7 @@ const initialState: EventDetailsState = {
 		event: null,
 		workflowTabHierarchy: "workflow-details",
 		assetsTabHierarchy: "entry",
+		usageTabHierarchy: "overview",
 		workflowId: "",
 	},
 	metadata: {
@@ -604,6 +625,12 @@ const initialState: EventDetailsState = {
 	publications: [],
 	statistics: [],
 	hasStatisticsError: false,
+	usageStatistics: {
+		views: 0,
+		watchtime: 0,
+		completenessThreshold: "",
+	},
+	usageDailyStatistics: [],
 	tobiraData: {
 		baseURL: "",
 		id: "",
@@ -1492,6 +1519,7 @@ export const openModalTab = (
 	dispatch(setTobiraTabHierarchy("main"));
 	dispatch(setModalWorkflowTabHierarchy(workflowTab));
 	dispatch(setModalAssetsTabHierarchy(assetsTab));
+	dispatch(setModalUsageTabHierarchy("overview"));
 };
 
 export const fetchWorkflowOperationDetails = createAppAsyncThunk("eventDetails/fetchWorkflowOperationDetails", async (params: {
@@ -1571,6 +1599,35 @@ export const fetchEventStatisticsValueUpdate = createAppAsyncThunk("eventDetails
 			statistics,
 		)
 	);
+});
+
+export const fetchEventUsageStatistics = createAppAsyncThunk("eventDetails/fetchEventUsageStatistics", async (eventId: Event["id"]) => {
+	const [totalResponse, completenessThresholdResponse] = await Promise.all([
+		axios.get<{ views: number, watchtime: number }>(
+			"/basicstatistics-aggregation/video/total",
+			{ params: { itemId: eventId } },
+		),
+		axios.get<string>("/basicstatistics/completenessThreshold"),
+	]);
+
+	return {
+		views: totalResponse.data.views,
+		watchtime: totalResponse.data.watchtime,
+		completenessThreshold: completenessThresholdResponse.data,
+	};
+});
+
+export const fetchEventUsageDailyStatistics = createAppAsyncThunk("eventDetails/fetchEventUsageDailyStatistics", async (params: {
+	eventId: Event["id"],
+	from: string,
+	to: string,
+}) => {
+	const { eventId, from, to } = params;
+	const data = await axios.get<EventDetailsState["usageDailyStatistics"]>(
+		"/basicstatistics-aggregation/video/daily",
+		{ params: { itemId: eventId, from, to } },
+	);
+	return data.data;
 });
 
 export const updateMetadata = createAppAsyncThunk("eventDetails/updateMetadata", async (params: {
@@ -1893,6 +1950,11 @@ const eventDetailsSlice = createSlice({
 			EventDetailsState["modal"]["assetsTabHierarchy"]
 		>) {
 			state.modal.assetsTabHierarchy = action.payload;
+		},
+		setModalUsageTabHierarchy(state, action: PayloadAction<
+			EventDetailsState["modal"]["usageTabHierarchy"]
+		>) {
+			state.modal.usageTabHierarchy = action.payload;
 		},
 		setEventMetadata(state, action: PayloadAction<
 			EventDetailsState["metadata"]
@@ -2526,6 +2588,42 @@ const eventDetailsSlice = createSlice({
 				state.errorStatisticsValue = action.error;
 				console.error(action.error);
 			})
+			// fetchEventUsageStatistics
+			.addCase(fetchEventUsageStatistics.pending, state => {
+				state.statusUsageStatistics = "loading";
+			})
+			.addCase(fetchEventUsageStatistics.fulfilled, (state, action: PayloadAction<
+				EventDetailsState["usageStatistics"]
+			>) => {
+				state.statusUsageStatistics = "succeeded";
+				state.usageStatistics = action.payload;
+			})
+			.addCase(fetchEventUsageStatistics.rejected, (state, action) => {
+				state.statusUsageStatistics = "failed";
+				state.usageStatistics = {
+					views: 0,
+					watchtime: 0,
+					completenessThreshold: "",
+				};
+				state.errorUsageStatistics = action.error;
+				console.error(action.error);
+			})
+			// fetchEventUsageDailyStatistics
+			.addCase(fetchEventUsageDailyStatistics.pending, state => {
+				state.statusUsageDailyStatistics = "loading";
+			})
+			.addCase(fetchEventUsageDailyStatistics.fulfilled, (state, action: PayloadAction<
+				EventDetailsState["usageDailyStatistics"]
+			>) => {
+				state.statusUsageDailyStatistics = "succeeded";
+				state.usageDailyStatistics = action.payload;
+			})
+			.addCase(fetchEventUsageDailyStatistics.rejected, (state, action) => {
+				state.statusUsageDailyStatistics = "failed";
+				state.usageDailyStatistics = [];
+				state.errorUsageDailyStatistics = action.error;
+				console.error(action.error);
+			})
 			.addCase(fetchHasActiveTransactions.rejected, (_state, action) => {
 				console.error(action.error);
 			})
@@ -2557,6 +2655,7 @@ export const {
 	setModalWorkflowId,
 	setModalWorkflowTabHierarchy,
 	setModalAssetsTabHierarchy,
+	setModalUsageTabHierarchy,
 	setEventMetadata,
 	setExtendedEventMetadata,
 	setEventWorkflow,

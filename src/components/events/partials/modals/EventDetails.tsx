@@ -23,12 +23,16 @@ import {
 	isFetchingStatistics,
 	getModalWorkflowTabHierarchy,
 	getModalPage,
+	getModalEvent,
 	getEventDetailsTobiraDataError,
 	getEventDetailsTobiraStatus,
 	getWorkflows,
+	hasUsageStatistics as getHasUsageStatistics,
+	isFetchingUsageStatistics,
 } from "../../../../selectors/eventDetailsSelectors";
 import { getUserInformation } from "../../../../selectors/userInfoSelectors";
 import EventDetailsStatisticsTab from "../ModalTabsAndPages/EventDetailsStatisticsTab";
+import EventDetailsUsageTab from "../ModalTabsAndPages/EventDetailsUsageTab";
 import { fetchAssetUploadOptions } from "../../../../thunks/assetsThunks";
 import { hasAnyDeviceAccess } from "../../../../utils/resourceUtils";
 import { getRecordings } from "../../../../selectors/recordingSelectors";
@@ -39,6 +43,7 @@ import {
 	updateExtendedMetadata,
 	fetchSchedulingInfo,
 	fetchEventStatistics,
+	fetchEventUsageStatistics,
 	openModalTab,
 	fetchEventDetailsTobira,
 	fetchHasActiveTransactions,
@@ -65,6 +70,7 @@ export enum EventDetailsPage {
 	Comments,
 	Tobira,
 	Statistics,
+	Usage,
 }
 
 export type WorkflowTabHierarchy = "workflows" | "workflow-details" | "workflow-operations" | "workflow-operation-details" | "errors-and-warnings" | "workflow-error-details"
@@ -94,6 +100,7 @@ const EventDetails = ({
 		dispatch(fetchMetadata(eventId));
 		dispatch(fetchSchedulingInfo(eventId));
 		dispatch(fetchEventStatistics(eventId));
+		dispatch(fetchEventUsageStatistics(eventId));
 		dispatch(fetchAssetUploadOptions());
 
 		dispatch(fetchHasActiveTransactions(eventId)).then(fetchTransactionResult => {
@@ -127,6 +134,7 @@ const EventDetails = ({
 	}, []);
 
 	const page = useAppSelector(state => getModalPage(state));
+	const modalEvent = useAppSelector(state => getModalEvent(state));
 	const workflowTabHierarchy = useAppSelector(state => getModalWorkflowTabHierarchy(state));
 	const user = useAppSelector(state => getUserInformation(state));
 	const metadata = useAppSelector(state => getMetadata(state));
@@ -136,6 +144,8 @@ const EventDetails = ({
 	const isLoadingScheduling = useAppSelector(state => isFetchingScheduling(state));
 	const hasStatistics = useAppSelector(state => getHasStatistics(state));
 	const isLoadingStatistics = useAppSelector(state => isFetchingStatistics(state));
+	const hasUsageStatistics = useAppSelector(state => getHasUsageStatistics(state));
+	const isLoadingUsageStatistics = useAppSelector(state => isFetchingUsageStatistics(state));
 	const captureAgents = useAppSelector(state => getRecordings(state));
 	const tobiraStatus = useAppSelector(state => getEventDetailsTobiraStatus(state));
 	const tobiraError = useAppSelector(state => getEventDetailsTobiraDataError(state));
@@ -221,6 +231,14 @@ const EventDetails = ({
 			name: "statistics",
 			page: EventDetailsPage.Statistics,
 			hidden: !hasStatistics,
+		},
+		{
+			tabNameTranslation: "EVENTS.EVENTS.DETAILS.TABS.USAGE",
+			bodyHeaderTranslation: "EVENTS.EVENTS.DETAILS.USAGE.CAPTION",
+			accessRole: "ROLE_UI_EVENTS_DETAILS_USAGE_VIEW",
+			name: "usage",
+			page: EventDetailsPage.Usage,
+			hidden: !hasUsageStatistics,
 		},
 	];
 
@@ -373,6 +391,13 @@ const EventDetails = ({
 					<EventDetailsStatisticsTab
 						eventId={eventId}
 						header={tabs[page].bodyHeaderTranslation ?? "EVENTS.EVENTS.DETAILS.STATISTICS.CAPTION"}
+					/>
+				)}
+				{page === EventDetailsPage.Usage && !isLoadingUsageStatistics && (
+					<EventDetailsUsageTab
+						eventId={eventId}
+						eventDate={modalEvent?.date ?? ""}
+						header={tabs[page].bodyHeaderTranslation ?? "EVENTS.EVENTS.DETAILS.USAGE.CAPTION"}
 					/>
 				)}
 			</div>
