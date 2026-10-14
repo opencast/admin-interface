@@ -31,6 +31,8 @@ export type Job = {
 type JobState = {
 	status: "uninitialized" | "loading" | "succeeded" | "failed",
 	error: SerializedError | null,
+	// ID of the most recent fetch, to ignore responses of older overlapping fetches
+	latestRequestId: string,
 	results: Job[],
 	columns: TableConfig["columns"],
 	total: number,
@@ -49,6 +51,7 @@ const initialColumns = jobsTableConfig.columns.map(column => ({
 const initialState: JobState = {
 	status: "uninitialized",
 	error: null,
+	latestRequestId: "",
 	results: [],
 	columns: initialColumns,
 	total: 0,
@@ -81,10 +84,15 @@ const jobSlice = createSlice({
 	// These are used for thunks
 	extraReducers: builder => {
 		builder
-			.addCase(fetchJobs.pending, state => {
+			.addCase(fetchJobs.pending, (state, action) => {
 				state.status = "loading";
+				state.latestRequestId = action.meta.requestId;
 			})
-			.addCase(fetchJobs.fulfilled, (state, action: PayloadAction<FetchJobs>) => {
+			.addCase(fetchJobs.fulfilled, (state, action) => {
+				// Ignore responses of older fetches that finished after a newer one started
+				if (action.meta.requestId !== state.latestRequestId) {
+					return;
+				}
 				state.status = "succeeded";
 				const jobs = action.payload;
 				state.total = jobs.total;
@@ -94,6 +102,10 @@ const jobSlice = createSlice({
 				state.results = jobs.results;
 			})
 			.addCase(fetchJobs.rejected, (state, action) => {
+				// Ignore responses of older fetches that finished after a newer one started
+				if (action.meta.requestId !== state.latestRequestId) {
+					return;
+				}
 				state.status = "failed";
 				state.error = action.error;
 			});

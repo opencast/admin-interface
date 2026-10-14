@@ -45,6 +45,8 @@ export type ThemeDetailsInitialValues = ThemeDetailsType & { titleSlideMode: str
 type ThemeState = {
 	status: "uninitialized" | "loading" | "succeeded" | "failed",
 	error: SerializedError | null,
+	// ID of the most recent fetch, to ignore responses of older overlapping fetches
+	latestRequestId: string,
 	results: ThemeDetailsType[],
 	columns: TableConfig["columns"],
 	total: number,
@@ -63,6 +65,7 @@ const initialColumns = themesTableConfig.columns.map(column => ({
 const initialState: ThemeState = {
 	status: "uninitialized",
 	error: null,
+	latestRequestId: "",
 	results: [],
 	columns: initialColumns,
 	total: 0,
@@ -156,10 +159,15 @@ const themeSlice = createSlice({
 	// These are used for thunks
 	extraReducers: builder => {
 		builder
-			.addCase(fetchThemes.pending, state => {
+			.addCase(fetchThemes.pending, (state, action) => {
 				state.status = "loading";
+				state.latestRequestId = action.meta.requestId;
 			})
-			.addCase(fetchThemes.fulfilled, (state, action: PayloadAction<FetchThemes>) => {
+			.addCase(fetchThemes.fulfilled, (state, action) => {
+				// Ignore responses of older fetches that finished after a newer one started
+				if (action.meta.requestId !== state.latestRequestId) {
+					return;
+				}
 				state.status = "succeeded";
 				const acls = action.payload;
 				state.total = acls.total;
@@ -169,6 +177,10 @@ const themeSlice = createSlice({
 				state.results = acls.results;
 			})
 			.addCase(fetchThemes.rejected, (state, action) => {
+				// Ignore responses of older fetches that finished after a newer one started
+				if (action.meta.requestId !== state.latestRequestId) {
+					return;
+				}
 				state.status = "failed";
 				state.error = action.error;
 			});

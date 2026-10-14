@@ -44,6 +44,8 @@ export type NewUser = {
 type UsersState = {
 	status: "uninitialized" | "loading" | "succeeded" | "failed",
 	error: SerializedError | null,
+	// ID of the most recent fetch, to ignore responses of older overlapping fetches
+	latestRequestId: string,
 	results: User[],
 	columns: TableConfig["columns"],
 	total: number,
@@ -62,6 +64,7 @@ const initialColumns = usersTableConfig.columns.map(column => ({
 const initialState: UsersState = {
 	status: "uninitialized",
 	error: null,
+	latestRequestId: "",
 	results: [],
 	columns: initialColumns,
 	total: 0,
@@ -153,10 +156,15 @@ const usersSlice = createSlice({
 	extraReducers: builder => {
 		builder
 			// fetchUsers
-			.addCase(fetchUsers.pending, state => {
+			.addCase(fetchUsers.pending, (state, action) => {
 				state.status = "loading";
+				state.latestRequestId = action.meta.requestId;
 			})
-			.addCase(fetchUsers.fulfilled, (state, action: PayloadAction<FetchUsers>) => {
+			.addCase(fetchUsers.fulfilled, (state, action) => {
+				// Ignore responses of older fetches that finished after a newer one started
+				if (action.meta.requestId !== state.latestRequestId) {
+					return;
+				}
 				state.status = "succeeded";
 				const users = action.payload;
 				state.total = users.total;
@@ -166,6 +174,10 @@ const usersSlice = createSlice({
 				state.results = users.results;
 			})
 			.addCase(fetchUsers.rejected, (state, action) => {
+				// Ignore responses of older fetches that finished after a newer one started
+				if (action.meta.requestId !== state.latestRequestId) {
+					return;
+				}
 				state.status = "failed";
 				state.results = [];
 				state.error = action.error;

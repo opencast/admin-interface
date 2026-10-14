@@ -65,6 +65,8 @@ export interface TobiraPage {
 type SeriesState = {
 	status: "uninitialized" | "loading" | "succeeded" | "failed",
 	error: SerializedError | null,
+	// ID of the most recent fetch, to ignore responses of older overlapping fetches
+	latestRequestId: string,
 	statusMetadata: "uninitialized" | "loading" | "succeeded" | "failed",
 	errorMetadata: SerializedError | null,
 	statusThemes: "uninitialized" | "loading" | "succeeded" | "failed",
@@ -96,6 +98,7 @@ const initialColumns = seriesTableConfig.columns.map(column => ({
 const initialState: SeriesState = {
 	status: "uninitialized",
 	error: null,
+	latestRequestId: "",
 	statusMetadata: "uninitialized",
 	errorMetadata: null,
 	statusThemes: "uninitialized",
@@ -435,10 +438,15 @@ const seriesSlice = createSlice({
 	// These are used for thunks
 	extraReducers: builder => {
 		builder
-			.addCase(fetchSeries.pending, state => {
+			.addCase(fetchSeries.pending, (state, action) => {
 				state.status = "loading";
+				state.latestRequestId = action.meta.requestId;
 			})
-			.addCase(fetchSeries.fulfilled, (state, action: PayloadAction<FetchSeries>) => {
+			.addCase(fetchSeries.fulfilled, (state, action) => {
+				// Ignore responses of older fetches that finished after a newer one started
+				if (action.meta.requestId !== state.latestRequestId) {
+					return;
+				}
 				state.status = "succeeded";
 				const series = action.payload;
 				state.total = series.total;
@@ -448,6 +456,10 @@ const seriesSlice = createSlice({
 				state.results = series.results;
 			})
 			.addCase(fetchSeries.rejected, (state, action) => {
+				// Ignore responses of older fetches that finished after a newer one started
+				if (action.meta.requestId !== state.latestRequestId) {
+					return;
+				}
 				state.status = "failed";
 				state.error = action.error;
 			})
