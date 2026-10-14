@@ -16,7 +16,7 @@ import RenderWorkflowSelect from "../wizards/RenderWorkflowSelect";
 interface RequiredFormProps {
 	sourceMode: string,
 	workflowId: string,
-	configuration?: { [key: string]: unknown } // For RenderWorkflowConfig
+	configuration: { [key: string]: unknown },
 }
 
 const NewProcessingPage = <T extends RequiredFormProps>({
@@ -84,7 +84,8 @@ const NewProcessingPage = <T extends RequiredFormProps>({
 									<RenderWorkflowConfig
 										displayDescription
 										workflowId={formik.values.workflowId}
-										formik={formik}
+										configuration={formik.values.configuration}
+										configurationName="configuration"
 									/>
 								) : null}
 							</div>

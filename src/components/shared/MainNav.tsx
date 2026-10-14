@@ -91,6 +91,12 @@ const MainNav = ({
 					tooltipTitle: "NAV.EVENTS.TITLE",
 					Icon: LuCalendarCheck,
 				},
+				{
+					path: "/events/lifeCyclePolicies",
+					accessRole: "ROLE_UI_LIFECYCLEPOLICIES_VIEW",
+					tooltipTitle: "NAV.EVENTS.TITLE",
+					Icon: LuCalendarCheck,
+				},
 			],
 		},
 		"recordings": {
