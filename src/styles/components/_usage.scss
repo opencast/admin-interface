@@ -1,0 +1,19 @@
+@use "../base/variables";
+
+.usage-daily-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.usage-chart-title {
+  font-weight: 600;
+  margin: 16px 0 8px;
+}
+
+// Make range field look like input
+.usage-date-range-input {
+  width: 240px !important;
+  padding: 0 8px !important;
+  cursor: pointer;
+}

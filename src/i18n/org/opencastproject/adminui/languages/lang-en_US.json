@@ -724,6 +724,7 @@
 					"ACCESS": "Access policy",
 					"COMMENTS": "Comments",
 					"STATISTICS": "Statistics",
+					"USAGE": "Usage",
 					"TOBIRA": "Tobira"
 				},
 				"PUBLICATIONS": {
@@ -973,6 +974,20 @@
 				},
 				"STATISTICS": {
 					"CAPTION": "Statistics"
+				},
+				"USAGE": {
+					"CAPTION": "Usage",
+					"VIEWS": "Views",
+					"WATCHTIME": "Watchtime",
+					"NOT_AVAILABLE": "Usage statistics cannot be displayed at the moment. Please try again later.",
+					"INCOMPLETE_WARNING": "Statistical data from before {{date}} might be incomplete or completely missing.",
+					"TAB_OVERVIEW": "Overview",
+					"TAB_DETAILS": "Details",
+					"DAILY_CAPTION": "Usage details",
+					"PER_DAY": "Per day",
+					"BY_HOUR_OF_DAY": "By hour of day",
+					"METRIC_VIEWS": "Views",
+					"METRIC_WATCHTIME": "Watchtime"
 				},
 				"METADATA": {
 					"CAPTION": "Event details",
