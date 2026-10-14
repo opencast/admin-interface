@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import Notifications from "../../../shared/Notifications";
 import { getModalWorkflowId, getWorkflowOperations } from "../../../../selectors/eventDetailsSelectors";
 import EventDetailsTabHierarchyNavigation from "./EventDetailsTabHierarchyNavigation";
@@ -18,6 +17,7 @@ import ModalContentTable from "../../../shared/modals/ModalContentTable";
 import { LuCheck, LuEllipsis, LuLoader, LuPause, LuRotateCcw, LuX } from "react-icons/lu";
 import { GoDash } from "react-icons/go";
 import { LuChevronRight } from "react-icons/lu";
+import { usePolling } from "../../../../hooks/usePolling";
 
 /**
  * This component manages the workflow operations for the workflows tab of the event details modal
@@ -32,22 +32,8 @@ const EventDetailsWorkflowOperations = ({
 	const workflowId = useAppSelector(state => getModalWorkflowId(state));
 	const operations = useAppSelector(state => getWorkflowOperations(state));
 
-  const loadWorkflowOperations = () => {
-		// Fetching workflow operations from server
-		dispatch(fetchWorkflowOperations({ eventId, workflowId }));
-	};
-
-  useEffect(() => {
-		// Fetch workflow operations initially
-		loadWorkflowOperations();
-
-		// Fetch workflow operations every 5 seconds
-		const fetchWorkflowOperationsInterval = setInterval(loadWorkflowOperations, 5000);
-
-		// Unmount interval
-		return () => clearInterval(fetchWorkflowOperationsInterval);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	// Fetch workflow operations on mount and every 5 seconds after
+	usePolling(() => dispatch(fetchWorkflowOperations({ eventId, workflowId })), 5000);
 
 	const openSubTab = (tabType: WorkflowTabHierarchy, operationId: number | undefined = undefined) => {
 		dispatch(removeNotificationWizardForm());

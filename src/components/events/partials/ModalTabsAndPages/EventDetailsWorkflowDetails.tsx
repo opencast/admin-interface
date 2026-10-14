@@ -28,6 +28,7 @@ import ModalContentTable from "../../../shared/modals/ModalContentTable";
 import EventDetailsWorkflowErrors from "./EventDetailsWorkflowErrors";
 import { WorfklowOperationsTableBody } from "./EventDetailsWorkflowOperations";
 import { LuChevronRight } from "react-icons/lu";
+import { usePolling } from "../../../../hooks/usePolling";
 
 /**
  * This component manages the workflow details for the workflows tab of the event details modal
@@ -334,24 +335,12 @@ const OperationsPreview = ({
 		workflowDone = !(workflowStatus === "SUCCEEDED" || workflowStatus === "FAILED" || workflowStatus === "STOPPED");
 	}
 
-	const loadWorkflowOperations = () => {
-		// Fetching workflow operations from server
+	// Fetch workflow operations on mount and every 5 seconds after
+	usePolling(async () => {
 		if (workflowId) {
-			dispatch(fetchWorkflowOperations({ eventId, workflowId }));
+			await dispatch(fetchWorkflowOperations({ eventId, workflowId }));
 		}
-	};
-
-	useEffect(() => {
-		// Fetch workflow operations initially
-		loadWorkflowOperations();
-
-		// Fetch workflow operations every 5 seconds
-		const fetchWorkflowOperationsInterval = setInterval(loadWorkflowOperations, 5000);
-
-		// Unmount interval
-		return () => clearInterval(fetchWorkflowOperationsInterval);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, 5000);
 
 	const openDetailsSubTab = (tabType: WorkflowTabHierarchy, operationId: number | undefined = undefined) => {
 		dispatch(removeNotificationWizardForm());

@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { getFilters, getStats } from "../../selectors/tableFilterSelectors";
 import {
@@ -15,6 +14,7 @@ import { useAppDispatch, useAppSelector } from "../../store";
 import { fetchEvents } from "../../slices/eventSlice";
 import { ParseKeys } from "i18next";
 import BaseButton from "./BaseButton";
+import { usePolling } from "../../hooks/usePolling";
 
 /**
  * This component renders the status bar of the event view and filters depending on these
@@ -50,20 +50,8 @@ const Stats = () => {
 		dispatch(loadEventsIntoTable());
 	};
 
-	const loadStats = async () => {
-		// Fetching stats from server
-		await dispatch(fetchStats());
-	};
-
-	useEffect(() => {
-		// Load stats on mount
-		loadStats();
-
-		const fetchEventsInterval = setInterval(() => { loadStats(); }, 5000);
-
-		return () => clearInterval(fetchEventsInterval);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	// Fetch stats on mount and every 5 seconds after
+	usePolling(() => dispatch(fetchStats()), 5000);
 
 	return (
 		<>
