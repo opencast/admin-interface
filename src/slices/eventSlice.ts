@@ -630,6 +630,7 @@ export const postNewEvent = (params: {
 	);
 
 	// Process bar notification
+	const titleField = metadata[0].fields.find(field => field.id === "title");
 	const notificationId = Math.floor(Math.random() * -100000);
 	const config = {
 		onUploadProgress: function (progressEvent: AxiosProgressEvent) {
@@ -640,7 +641,7 @@ export const postNewEvent = (params: {
 					type: "success",
 					key: "EVENTS_UPLOAD_STARTED",
 					duration: -1,
-					parameter: { "progress": percentCompleted.toFixed(2), "title": metadata[0].fields[0].value },
+					parameter: { "progress": percentCompleted.toFixed(2), "title": titleField ? String(titleField.value) : "" },
 				}));
 			}
 			if (!percentCompleted || percentCompleted >= 100) {
