@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Ensure our node version matches the main repo's version for pull requests
         if: github.event_name == 'pull_request'
