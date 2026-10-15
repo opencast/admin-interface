@@ -42,7 +42,14 @@ const tableFilterProfilesPersistConfig = { key: "tableFilterProfiles", storage, 
 const eventsPersistConfig = { key: "events", storage, whitelist: ["columns"] };
 const seriesPersistConfig = { key: "series", storage, whitelist: ["columns"] };
 const playlistPersistConfig = { key: "playlists", storage, whitelist: ["columns"] };
-const tablePersistConfig = { key: "table", storage, whitelist: ["pagination", "sortBy", "reverse"] };
+const tablePersistConfig = {
+  key: "table",
+  storage,
+  whitelist: ["pagination", "sortBy", "reverse"],
+  // Shallow merge persisted values into defaults, so resources added later still get their default sorting
+  // instead of `undefined:undefined` when the stored value was missing.
+  stateReconciler: autoMergeLevel2,
+};
 const recordingsPersistConfig = { key: "recordings", storage, whitelist: ["columns"] };
 const jobsPersistConfig = { key: "jobs", storage, whitelist: ["columns"] };
 const serversPersistConfig = { key: "servers", storage, whitelist: ["columns"] };
@@ -59,7 +66,7 @@ const reducers = combineReducers({
   events: persistReducer(eventsPersistConfig, events),
   series: persistReducer(seriesPersistConfig, series),
   playlists: persistReducer(playlistPersistConfig, playlists),
-  table: persistReducer(tablePersistConfig, table),
+  table: persistReducer<ReturnType<typeof table>>(tablePersistConfig, table),
   recordings: persistReducer(recordingsPersistConfig, recordings),
   jobs: persistReducer(jobsPersistConfig, jobs),
   servers: persistReducer(serversPersistConfig, servers),
