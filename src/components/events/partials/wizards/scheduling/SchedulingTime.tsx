@@ -47,7 +47,6 @@ const SchedulingTime = ({
 					handleChange={element => {
 						if (element) {
 							callbackHour(element.value);
-							// TODO: Allow for ChangeMultiple for NewSourcePage
 						}
 					}}
 					placeholder={t(hourPlaceholder)}
