@@ -10,6 +10,7 @@ import {
 } from "../utils/resourceUtils";
 import { makeTwoDigits } from "../utils/utils";
 import { sourceMetadata } from "../configs/sourceConfig";
+import { captureOptions } from "./recordingSlice";
 import {
 	NOTIFICATION_CONTEXT,
 	weekdays,
@@ -444,6 +445,9 @@ export const postNewEvent = (params: {
 		scheduleStartMinute: string,
 		sourceMode: string,
 		location: string,
+		streamConfiguration: string[],
+		devicePosition: string[],
+		deviceContent: string[],
 		uploadAssetsTrack?: UploadAssetsTrack[],
 		metadata: { [key: string]: unknown },
 	},
@@ -466,6 +470,8 @@ export const postNewEvent = (params: {
 			end: Date,
 			duration: string,
 			rrule?: string,
+			// Options the agent offers, chosen by their agent configuration key
+			[key: string]: unknown,
 		}
 	} | undefined = undefined;
 
@@ -543,6 +549,15 @@ export const postNewEvent = (params: {
 				duration: duration.toString(),
 			},
 		};
+
+		// Options the agent offers are sent under the key the agent declared them with
+		if (source.metadata) {
+			for (const { field, key } of captureOptions) {
+				if (values[field].length > 0) {
+					source.metadata[key] = values[field].join(",");
+				}
+			}
+		}
 
 		if (values.sourceMode === "SCHEDULE_MULTIPLE") {
 			// assemble an iCalendar RRULE (repetition instruction) for the given user input

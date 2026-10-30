@@ -36,7 +36,7 @@ import {
 	changeStartMinuteMultiple,
 } from "../../../../utils/dateUtils";
 import { useAppDispatch, useAppSelector } from "../../../../store";
-import { Recording, fetchRecordings } from "../../../../slices/recordingSlice";
+import { CaptureOptionSelection, Recording, captureOptions, fetchRecordings } from "../../../../slices/recordingSlice";
 import { addNotification, removeNotificationWizardForm } from "../../../../slices/notificationSlice";
 import { parseISO } from "date-fns";
 import WizardNavigationButtons from "../../../shared/wizard/WizardNavigationButtons";
@@ -46,6 +46,7 @@ import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
 import SchedulingTime from "../wizards/scheduling/SchedulingTime";
 import SchedulingLocation from "../wizards/scheduling/SchedulingLocation";
 import SchedulingInputs from "../wizards/scheduling/SchedulingInputs";
+import SchedulingCaptureOptions from "../wizards/scheduling/SchedulingCaptureOptions";
 import SchedulingConflicts from "../wizards/scheduling/SchedulingConflicts";
 import { ParseKeys } from "i18next";
 import { LuCircleX } from "react-icons/lu";
@@ -54,7 +55,7 @@ import i18n from "../../../../i18n/i18n";
 /**
  * This component renders the source page for new events in the new event wizard.
  */
-interface RequiredFormProps {
+interface RequiredFormProps extends CaptureOptionSelection {
 	scheduleStartDate: string,
 	sourceMode: string,
 	// Schedule
@@ -393,7 +394,7 @@ const Upload = <T extends RequiredFormPropsUpload>({
 /*
  * Renders fields for providing information for schedule of event
  */
-const Schedule = <T extends {
+const Schedule = <T extends CaptureOptionSelection & {
 	location: string
 	scheduleStartDate: string
 	scheduleEndDate: string
@@ -759,6 +760,10 @@ const Schedule = <T extends {
 									if (inputDevice) {
 										await formik.setFieldValue("inputs", inputDevice.inputs.map(input => input.id));
 									}
+									// Select all options of the location
+									for (const { field, list } of captureOptions) {
+										await formik.setFieldValue(field, inputDevice ? inputDevice[list].map(option => option.id) : []);
+									}
 									// Set location
 									await formik.setFieldValue("location", value);
 								}}
@@ -770,6 +775,12 @@ const Schedule = <T extends {
 								{renderInputDeviceOptions()}
 							</td>
 						</tr>
+						{/* Other options the selected location offers */}
+						<SchedulingCaptureOptions
+							agent={inputDevices.find(({ name }) => name === formik.values.location)}
+							selection={formik.values}
+							disabled={false}
+						/>
 					</tbody>
 				</table>
 			</div>

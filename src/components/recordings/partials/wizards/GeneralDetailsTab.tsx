@@ -14,6 +14,13 @@ const GeneralDetailsTab: React.FC<{
 }) => {
 	const { t } = useTranslation();
 
+	const vendorInformation: { label: ParseKeys, value: string }[] = [
+		{ label: "RECORDINGS.RECORDINGS.DETAILS.GENERAL.VENDOR", value: agent.vendor },
+		{ label: "RECORDINGS.RECORDINGS.DETAILS.GENERAL.MODEL", value: agent.model },
+		{ label: "RECORDINGS.RECORDINGS.DETAILS.GENERAL.HARDWARE", value: agent.hardware },
+		{ label: "RECORDINGS.RECORDINGS.DETAILS.GENERAL.FIRMWARE", value: agent.firmware },
+	];
+
 	return (
 		<ModalContentTable>
 			<div className="obj tbl-details">
@@ -44,6 +51,17 @@ const GeneralDetailsTab: React.FC<{
 								<td>{t("RECORDINGS.RECORDINGS.DETAILS.GENERAL.UPDATE")}</td>
 								<td>{agent.update}</td>
 							</tr>
+							<tr>
+								<td>{t("RECORDINGS.RECORDINGS.DETAILS.GENERAL.VERSION")}</td>
+								<td>{agent.version}</td>
+							</tr>
+							{/* Agents using capture agent API 1.x do not report any vendor information */}
+							{vendorInformation.map(({ label, value }) => value && (
+								<tr key={label}>
+									<td>{t(label)}</td>
+									<td>{value}</td>
+								</tr>
+							))}
 						</tbody>
 					</table>
 				</div>

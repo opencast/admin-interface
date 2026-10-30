@@ -38,6 +38,7 @@ import { Ace } from "./aclSlice";
 import { setTobiraTabHierarchy, TobiraData } from "./seriesDetailsSlice";
 import { handleTobiraError } from "./shared/tobiraErrors";
 import camelcaseKeys from "camelcase-keys";
+import { CaptureOptionLists, CaptureOptionSelection, captureOptions } from "./recordingSlice";
 
 // Contains the navigation logic for the modal
 type EventDetailsModal = {
@@ -112,7 +113,7 @@ export type WorkflowOperation = {
 	title: string,
 }
 
-type Device = {
+type Device = CaptureOptionLists & {
 	id: string,
 	inputs: { id: string, value: string }[],
 	inputMethods: string[],
@@ -1091,7 +1092,7 @@ export const fetchSchedulingInfo = createAppAsyncThunk("eventDetails/fetchSchedu
 		return source;
 });
 
-export type SchedulingInfo = {
+export type SchedulingInfo = CaptureOptionSelection & {
 	captureAgent: string,
 	inputs: string[],
 	scheduleDurationHours: string,
@@ -1103,6 +1104,36 @@ export type SchedulingInfo = {
 	scheduleStartHour: string,
 	scheduleStartMinute: string,
 }
+
+// The options selected for an event, as stored in its agent configuration
+export const getSelectedCaptureOptions = (
+	configuration: { [key: string]: string } | undefined,
+): CaptureOptionSelection => {
+	const selection: CaptureOptionSelection = { streamConfiguration: [], devicePosition: [], deviceContent: [] };
+	for (const { field, key } of captureOptions) {
+		selection[field] = (configuration?.[key] ?? "").split(",").filter(option => option !== "");
+	}
+	return selection;
+};
+
+// Writes the selected options into the agent configuration of an event.
+// If the agent has changed, the options of the previous agent do not apply anymore.
+const applyCaptureOptions = (
+	configuration: { [key: string]: string },
+	agent: CaptureOptionLists | undefined,
+	selection: CaptureOptionSelection,
+	agentChanged: boolean,
+) => {
+	const result = { ...configuration };
+	for (const { field, key, list } of captureOptions) {
+		if ((agent?.[list] ?? []).length > 0) {
+			result[key] = selection[field].join(",");
+		} else if (agentChanged) {
+			delete result[key];
+		}
+	}
+	return result;
+};
 
 export const saveSchedulingInfo = createAppAsyncThunk("eventDetails/saveSchedulingInfo", async (params: {
 	eventId: Event["id"],
@@ -1147,11 +1178,16 @@ export const saveSchedulingInfo = createAppAsyncThunk("eventDetails/saveScheduli
 			minute: parseInt(values.scheduleDurationMinutes),
 		},
 		device: { ...device },
-		agentConfiguration: {
-			...oldSource.agentConfiguration,
-			"capture.device.names": values.inputs.join(","),
-			"event.location": device.id,
-		},
+		agentConfiguration: applyCaptureOptions(
+			{
+				...oldSource.agentConfiguration,
+				"capture.device.names": values.inputs.join(","),
+				"event.location": device.id,
+			},
+			device,
+			values,
+			oldSource.agentId !== device.id,
+		),
 	};
 
 	const start = startDate.toISOString();
