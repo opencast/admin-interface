@@ -24,6 +24,8 @@ export type Recording = {
 type RecordingState = {
 	status: "uninitialized" | "loading" | "succeeded" | "failed",
 	error: SerializedError | null,
+	// ID of the most recent fetch, to ignore responses of older overlapping fetches
+	latestRequestId: string,
 	results: Recording[],
 	columns: TableConfig["columns"],
 	total: number,
@@ -42,6 +44,7 @@ const initialColumns = recordingsTableConfig.columns.map(column => ({
 const initialState: RecordingState = {
 	status: "uninitialized",
 	error: null,
+	latestRequestId: "",
 	results: [],
 	columns: initialColumns,
 	total: 0,
@@ -142,16 +145,15 @@ const recordingSlice = createSlice({
 	// These are used for thunks
 	extraReducers: builder => {
 		builder
-			.addCase(fetchRecordings.pending, state => {
+			.addCase(fetchRecordings.pending, (state, action) => {
 				state.status = "loading";
+				state.latestRequestId = action.meta.requestId;
 			})
-			.addCase(fetchRecordings.fulfilled, (state, action: PayloadAction<{
-				total: RecordingState["total"],
-				count: RecordingState["count"],
-				limit: RecordingState["limit"],
-				offset: RecordingState["offset"],
-				results: RecordingState["results"],
-			}>) => {
+			.addCase(fetchRecordings.fulfilled, (state, action) => {
+				// Ignore responses of older fetches that finished after a newer one started
+				if (action.meta.requestId !== state.latestRequestId) {
+					return;
+				}
 				state.status = "succeeded";
 				const recordings = action.payload;
 				state.total = recordings.total;
@@ -161,6 +163,10 @@ const recordingSlice = createSlice({
 				state.results = recordings.results;
 			})
 			.addCase(fetchRecordings.rejected, (state, action) => {
+				// Ignore responses of older fetches that finished after a newer one started
+				if (action.meta.requestId !== state.latestRequestId) {
+					return;
+				}
 				state.status = "failed";
 				state.error = action.error;
 			});

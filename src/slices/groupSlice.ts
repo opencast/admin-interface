@@ -30,6 +30,8 @@ export type Group = {
 type GroupState = {
 	status: "uninitialized" | "loading" | "succeeded" | "failed",
 	error: SerializedError | null,
+	// ID of the most recent fetch, to ignore responses of older overlapping fetches
+	latestRequestId: string,
 	results: Group[],
 	columns: TableConfig["columns"],
 	total: number,
@@ -48,6 +50,7 @@ const initialColumns = groupsTableConfig.columns.map(column => ({
 const initialState: GroupState = {
 	status: "uninitialized",
 	error: null,
+	latestRequestId: "",
 	results: [],
 	columns: initialColumns,
 	total: 0,
@@ -120,10 +123,15 @@ const groupSlice = createSlice({
 	// These are used for thunks
 	extraReducers: builder => {
 		builder
-			.addCase(fetchGroups.pending, state => {
+			.addCase(fetchGroups.pending, (state, action) => {
 				state.status = "loading";
+				state.latestRequestId = action.meta.requestId;
 			})
-			.addCase(fetchGroups.fulfilled, (state, action: PayloadAction<FetchGroups>) => {
+			.addCase(fetchGroups.fulfilled, (state, action) => {
+				// Ignore responses of older fetches that finished after a newer one started
+				if (action.meta.requestId !== state.latestRequestId) {
+					return;
+				}
 				state.status = "succeeded";
 				const groups = action.payload;
 				state.total = groups.total;
@@ -133,6 +141,10 @@ const groupSlice = createSlice({
 				state.results = groups.results;
 			})
 			.addCase(fetchGroups.rejected, (state, action) => {
+				// Ignore responses of older fetches that finished after a newer one started
+				if (action.meta.requestId !== state.latestRequestId) {
+					return;
+				}
 				state.status = "failed";
 				state.error = action.error;
 			});

@@ -73,6 +73,8 @@ export type AclDefaults = {
 type AclsState = {
 	status: "uninitialized" | "loading" | "succeeded" | "failed",
 	error: SerializedError | null,
+	// ID of the most recent fetch, to ignore responses of older overlapping fetches
+	latestRequestId: string,
 	results: AclResult[],
 	columns: TableConfig["columns"],
 	total: number,
@@ -93,6 +95,7 @@ const initialColumns = aclsTableConfig.columns.map(column => ({
 const initialState: AclsState = {
 	status: "uninitialized",
 	error: null,
+	latestRequestId: "",
 	results: [],
 	columns: initialColumns,
 	total: 0,
@@ -338,11 +341,16 @@ const aclsSlice = createSlice({
 	// These are used for thunks
 	extraReducers: builder => {
 		builder
-			.addCase(fetchAcls.pending, state => {
+			.addCase(fetchAcls.pending, (state, action) => {
 				state.status = "loading";
+				state.latestRequestId = action.meta.requestId;
 			})
 			// Pass the generated action creators to `.addCase()`
-			.addCase(fetchAcls.fulfilled, (state, action: PayloadAction<FetchAcls>) => {
+			.addCase(fetchAcls.fulfilled, (state, action) => {
+				// Ignore responses of older fetches that finished after a newer one started
+				if (action.meta.requestId !== state.latestRequestId) {
+					return;
+				}
 				// Same "mutating" update syntax thanks to Immer
 				state.status = "succeeded";
 				const acls = action.payload;
@@ -353,6 +361,10 @@ const aclsSlice = createSlice({
 				state.results = acls.results;
 			})
 			.addCase(fetchAcls.rejected, (state, action) => {
+				// Ignore responses of older fetches that finished after a newer one started
+				if (action.meta.requestId !== state.latestRequestId) {
+					return;
+				}
 				state.status = "failed";
 				state.results = [];
 				state.error = action.error;
