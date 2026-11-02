@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import RenderMultiField from "../wizard/RenderMultiField";
 import {
 	Acl,
@@ -18,7 +18,8 @@ import {
 import { getUserInformation } from "../../../selectors/userInfoSelectors";
 import { hasAccess } from "../../../utils/utils";
 import DropDown from "../DropDown";
-import { getAclTemplateText, handleTemplateChange, policiesFiltered, rolesFiltered } from "../../../utils/aclUtils";
+import PagedDropDown, { DropDownPage } from "../PagedDropDown";
+import { getAclTemplateText, handleTemplateChange, policiesFiltered } from "../../../utils/aclUtils";
 import { useAppDispatch, useAppSelector } from "../../../store";
 import { removeNotificationWizardForm, addNotification } from "../../../slices/notificationSlice";
 import { useTranslation } from "react-i18next";
@@ -41,6 +42,9 @@ type AclTemplate = {
 	id: string,
 	value: string
 }
+
+// How many roles to load into the role dropdowns at a time
+const ROLES_PAGE_SIZE = 50;
 
 const ResourceDetailsAccessPolicyTab = ({
 	resourceId,
@@ -101,8 +105,10 @@ const ResourceDetailsAccessPolicyTab = ({
 	// shows, whether a resource has additional actions on top of normal read and write rights
 	const [hasActions, setHasActions] = useState(false);
 
-	// list of possible roles
-	const [roles, setRoles] = useState<Role[]>([]);
+	// Whether per-role user info is sanitized (hidden) by this Opencast instance. Determines whether the roles
+	// list is split into a "Users" table and a "Groups & other roles" table, or shown as a single combined table.
+	// undefined until the initial, minimal check below has resolved.
+	const [isSanitize, setIsSanitize] = useState<boolean | undefined>(undefined);
 
 	// this state is used, because the policies should be read-only, if a transaction is currently being performed on a resource
 	const [transactions, setTransactions] = useState({ readOnly: false });
@@ -122,7 +128,12 @@ const ResourceDetailsAccessPolicyTab = ({
 			setAclTemplates(responseTemplates);
 			setAclActions(responseActions);
 			setHasActions(responseActions.length > 0);
-			fetchRolesWithTarget("ACL").then(roles => setRoles(roles));
+			// Fetch a single role just to read the isSanitize flag off it, rather than fetching every role.
+			fetchRolesWithTarget("ACL", { limit: 1 }).then(roles => {
+				if (roles.length > 0) {
+					setIsSanitize(roles[0].isSanitize);
+				}
+			});
 			if (fetchHasActiveTransactions) {
 				const fetchTransactionResult = await dispatch(fetchHasActiveTransactions(resourceId)).then(unwrapResult);
 				if (fetchTransactionResult.active !== undefined) {
@@ -306,13 +317,13 @@ const ResourceDetailsAccessPolicyTab = ({
 										defaultUser={user}
 									/>
 
-									{roles.length > 0 && !roles[0].isSanitize &&
+									{isSanitize === false &&
 										<>
 											{hasAccess(viewUsersAccessRole, user) &&
 												<AccessPolicyTable
 													isUserTable={true}
 													policiesFiltered={policiesFiltered(formik.values.policies, true)}
-													rolesFilteredbyPolicies={rolesFiltered(roles, true)}
+													hasUser={true}
 													header={userPolicyTableHeaderText}
 													firstColumnHeader={userPolicyTableRoleText}
 													createLabel={userPolicyTableNewText}
@@ -320,7 +331,6 @@ const ResourceDetailsAccessPolicyTab = ({
 													hasActions={hasActions}
 													transactions={transactions}
 													aclActions={aclActions}
-													roles={roles}
 													editAccessRole={editAccessRole}
 												/>
 											}
@@ -329,7 +339,7 @@ const ResourceDetailsAccessPolicyTab = ({
 											<AccessPolicyTable
 												isUserTable={false}
 												policiesFiltered={policiesFiltered(formik.values.policies, false)}
-												rolesFilteredbyPolicies={rolesFiltered(roles, false)}
+												hasUser={false}
 												header={policyTableHeaderText}
 												firstColumnHeader={policyTableRoleText}
 												createLabel={policyTableNewText}
@@ -337,19 +347,18 @@ const ResourceDetailsAccessPolicyTab = ({
 												hasActions={hasActions}
 												transactions={transactions}
 												aclActions={aclActions}
-												roles={roles}
 												editAccessRole={editAccessRole}
 											/>
 										}
 										</>
 									}
 
-									{roles.length > 0 && roles[0].isSanitize &&
+									{isSanitize === true &&
 										<>
 											<AccessPolicyTable
 												isUserTable={false}
 												policiesFiltered={formik.values.policies}
-												rolesFilteredbyPolicies={roles}
+												hasUser={undefined}
 												header={policyTableHeaderText}
 												firstColumnHeader={policyTableRoleText}
 												createLabel={policyTableNewText}
@@ -357,7 +366,6 @@ const ResourceDetailsAccessPolicyTab = ({
 												hasActions={hasActions}
 												transactions={transactions}
 												aclActions={aclActions}
-												roles={roles}
 												editAccessRole={editAccessRole}
 											/>
 											<div className="obj-container">
@@ -400,7 +408,7 @@ type AccessPolicyTabFormikProps = {
 export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 	isUserTable,
 	policiesFiltered,
-	rolesFilteredbyPolicies,
+	hasUser,
 	header,
 	firstColumnHeader,
 	createLabel,
@@ -408,12 +416,13 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 	hasActions,
 	transactions,
 	aclActions,
-	roles,
 	editAccessRole,
 }: {
 	isUserTable: boolean
 	policiesFiltered: TransformedAcl[]
-	rolesFilteredbyPolicies: Role[]
+	// If set, only search roles that do (true) or don't (false) resolve to a user account.
+	// undefined means no filter (single combined table, sanitized instances).
+	hasUser: boolean | undefined
 	header?: ParseKeys
 	firstColumnHeader: ParseKeys
 	createLabel: ParseKeys,
@@ -421,7 +430,6 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 	hasActions: boolean
 	transactions: { readOnly: boolean }
 	aclActions: { id: string, value: string }[]
-	roles: Role[]
 	editAccessRole: string
 }) => {
 	const { t } = useTranslation();
@@ -435,11 +443,38 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const dropdownOptions = useMemo(() => {
-		return roles.length > 0
-			? formatAclRolesForDropdown(rolesFilteredbyPolicies)
-			: [];
-	}, [roles, rolesFilteredbyPolicies]);
+	// Roles seen in the most recent search, keyed by name, so a selection can be enriched with its
+	// full Role (including .user) without having to hold or re-fetch the entire roles list.
+	const roleCacheRef = useRef<Map<string, Role>>(new Map());
+
+	const fetchRolePage = async (inputValue: string, offset: number): Promise<DropDownPage> => {
+		// Ask for one more than a page, to find out if there is another page
+		const fetched = await fetchRolesWithTarget("ACL", {
+			query: inputValue,
+			limit: ROLES_PAGE_SIZE + 1,
+			offset: offset,
+			hasUser,
+		});
+		const hasMore = fetched.length > ROLES_PAGE_SIZE;
+		let page = fetched.slice(0, ROLES_PAGE_SIZE);
+
+		if (aclDefaults) {
+			const prefixes = aclDefaults["display_role_filter_blacklist_prefixes"];
+			page = page.filter(role =>
+				!prefixes.some(prefix => role.name.startsWith(prefix)),
+			);
+		}
+
+		for (const role of page) {
+			roleCacheRef.current.set(role.name, role);
+		}
+
+		return {
+			options: formatAclRolesForDropdown(page),
+			// The offset is that of the unfiltered list, no matter how many roles were filtered out of the page
+			nextOffset: hasMore ? offset + ROLES_PAGE_SIZE : undefined,
+		};
+	};
 
 	const createPolicy = (role: string, withUser: boolean): TransformedAcl => {
 		const user = withUser ? { username: "", name: "", email: "" } : undefined;
@@ -461,14 +496,6 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 
 		return newRole;
 	};
-
-	// Filter available options by custom prefixes from the config
-	if (aclDefaults) {
-		const prefixes = aclDefaults["display_role_filter_blacklist_prefixes"];
-		rolesFilteredbyPolicies = rolesFilteredbyPolicies.filter(role =>
-			!prefixes.some(prefix => role.name.startsWith(prefix)),
-		);
-	}
 
 	return (
 		<>
@@ -539,15 +566,14 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 															{/* dropdown for policy.role */}
 															<td className="editable">
 																{!transactions.readOnly ? (
-																	<DropDown
+																	<PagedDropDown
 																		value={policy.role}
 																		text={createPolicyLabel(policy)}
-																		options={dropdownOptions}
-																		required={true}
+																		fetchPage={fetchRolePage}
 																		creatable={true}
 																		handleChange={element => {
 																			if (element) {
-																				const matchingRole = roles.find(role => role.name === element.value);
+																				const matchingRole = roleCacheRef.current.get(element.value);
 																				arrayHelpers.replace(formik.values.policies.findIndex(p => p === policy), {
 																					...policy,
 																					role: element.value,
@@ -564,9 +590,8 @@ export const AccessPolicyTable = <T extends AccessPolicyTabFormikProps>({
 																				user,
 																			)
 																		}
-																		skipTranslate
-																		optionHeight={35}
-																		customCSS={{ width: "100%", optionPaddingTop: 5 }}
+																		// Together with the padding this makes each option 35px high, like it was when options had a fixed height
+																		customCSS={{ width: "100%", optionPaddingTop: 5, optionLineHeight: "25px" }}
 																	/>
 																) : (
 																	<p>{policy.role}</p>
