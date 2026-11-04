@@ -1,4 +1,5 @@
-import { EntityState, PayloadAction, SerializedError, createEntityAdapter, createSlice, nanoid } from "@reduxjs/toolkit";
+import { EntityState, PayloadAction, SerializedError, createEntityAdapter, createSlice, nanoid, original } from "@reduxjs/toolkit";
+import isEqual from "fast-deep-equal";
 import { aclsTableConfig, TableConfig } from "../configs/tableConfigs/aclsTableConfig";
 import { Server } from "./serverSlice";
 import { Recording } from "./recordingSlice";
@@ -237,15 +238,21 @@ const tableSlice = createSlice({
 
 			// Entity Adapter preparations
 			const rows: Row[] = [];
+			// Rows as they were before this update
+			const previousRows = original(state.rows)?.entities ?? {};
 
 			action.payload.rows.forEach(row => {
 				const rowId = getRowKey(row);                // new stable id
 
 				// @ts-expect-error: Id will not be number
-				rows.push({
+				const newRow: Row = {
 					...row,
 					id: rowId,
-				});
+				};
+
+				// Keep the previous object if the row did not change, so it is not re-rendered
+				const previousRow = previousRows[rowId];
+				rows.push(previousRow && isEqual(previousRow, newRow) ? previousRow : newRow);
 			});
 
 			// Replace state with the fetched entities

@@ -37,8 +37,6 @@ export const Modal = forwardRef<ModalHandle, PropsWithChildren<ModalProps>>(
     { open = false, closeCallback, header, classId, className, children },
     ref,
   ) => {
-    const { t } = useTranslation();
-
     const [isOpen, setOpen] = useState(open);
     const close = useCallback(() => {
       if (closeCallback !== undefined && !closeCallback()) {
@@ -58,48 +56,74 @@ export const Modal = forwardRef<ModalHandle, PropsWithChildren<ModalProps>>(
       [close, isOpen],
     );
 
-    useHotkeys(
-      availableHotkeys.general.CLOSE_MODAL.sequence,
-      close,
-      {
-        description:
-          t(availableHotkeys.general.CLOSE_MODAL.description) ?? undefined,
-      },
-      [ref],
-    );
-
 	return ReactDOM.createPortal(
 		isOpen &&
-			<FocusTrap>
-				<div>
-					<div className="modal-animation modal-overlay" />
-					<section
-						id={classId}
-						className={className ? className : "modal modal-animation"}
-					>
-						<header>
-							<ButtonLikeAnchor
-								className="close-modal"
-								onClick={close}
-								tabIndex={0}
-							>
-								<LuX />
-							</ButtonLikeAnchor>
-							<h2>
-								{header}
-							</h2>
-						</header>
-						<ErrorBoundary fallback={
-							<div className="about">
-								Something went wrong. Please close the modal and try again.
-							</div>
-						}>
-							{children}
-						</ErrorBoundary>
-					</section>
-				</div>
-			</FocusTrap>,
+			<ModalContent
+				close={close}
+				header={header}
+				classId={classId}
+				className={className}
+			>
+				{children}
+			</ModalContent>,
 		document.body,
 	);
 
 });
+
+const ModalContent = ({
+	close,
+	header,
+	classId,
+	className,
+	children,
+}: PropsWithChildren<{
+	close: () => void,
+	header: string,
+	classId: string,
+	className?: string,
+}>) => {
+	const { t } = useTranslation();
+
+	useHotkeys(
+		availableHotkeys.general.CLOSE_MODAL.sequence,
+		close,
+		{
+			description:
+				t(availableHotkeys.general.CLOSE_MODAL.description) ?? undefined,
+		},
+		[close],
+	);
+
+	return (
+		<FocusTrap>
+			<div>
+				<div className="modal-animation modal-overlay" />
+				<section
+					id={classId}
+					className={className ? className : "modal modal-animation"}
+				>
+					<header>
+						<ButtonLikeAnchor
+							className="close-modal"
+							onClick={close}
+							tabIndex={0}
+						>
+							<LuX />
+						</ButtonLikeAnchor>
+						<h2>
+							{header}
+						</h2>
+					</header>
+					<ErrorBoundary fallback={
+						<div className="about">
+							Something went wrong. Please close the modal and try again.
+						</div>
+					}>
+						{children}
+					</ErrorBoundary>
+				</section>
+			</div>
+		</FocusTrap>
+	);
+};
