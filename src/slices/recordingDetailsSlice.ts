@@ -1,6 +1,7 @@
 import { PayloadAction, SerializedError, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
+import { ParsedCapabilities } from "./recordingSlice";
 
 /**
  * This file contains redux reducer for actions affecting the state of a recording/capture agent
@@ -12,7 +13,12 @@ type FetchRecordingDetails = {
 	URL: RecordingDetailsState["url"],
 	capabilities: RecordingDetailsState["capabilities"],
 	configuration: RecordingDetailsState["configuration"],
-	inputs: RecordingDetailsState["inputs"],
+	Version: RecordingDetailsState["version"],
+	Vendor: RecordingDetailsState["vendor"],
+	Model: RecordingDetailsState["model"],
+	Hardware: RecordingDetailsState["hardware"],
+	Firmware: RecordingDetailsState["firmware"],
+	parsedCapabilities?: ParsedCapabilities,
 }
 
 export interface RecordingDetails {
@@ -23,6 +29,13 @@ export interface RecordingDetails {
 	capabilities: { key: string, value: string }[],
 	configuration: { key: string, value: string }[],
 	inputs: { id: string, value: string }[],
+	// The capture agent API version the agent speaks, "1" or "2". Vendor information is blank for version 1.
+	version: string,
+	vendor: string,
+	model: string,
+	hardware: string,
+	firmware: string,
+	parsedCapabilities?: ParsedCapabilities,
 }
 
 interface RecordingDetailsState extends RecordingDetails {
@@ -41,6 +54,11 @@ const initialState: RecordingDetailsState = {
 	capabilities: [],
 	configuration: [],
 	inputs: [],
+	version: "",
+	vendor: "",
+	model: "",
+	hardware: "",
+	firmware: "",
 };
 
 // fetch details of certain recording from server
@@ -71,7 +89,13 @@ const recordingDetailsSlice = createSlice({
 				state.url = recordingDetails.URL;
 				state.capabilities = recordingDetails.capabilities;
 				state.configuration = recordingDetails.configuration;
-				state.inputs = recordingDetails.inputs;
+				state.inputs = recordingDetails.parsedCapabilities?.inputs ?? [];
+				state.version = recordingDetails.Version;
+				state.vendor = recordingDetails.Vendor;
+				state.model = recordingDetails.Model;
+				state.hardware = recordingDetails.Hardware;
+				state.firmware = recordingDetails.Firmware;
+				state.parsedCapabilities = recordingDetails.parsedCapabilities;
 			})
 			.addCase(fetchRecordingDetails.rejected, (state, action) => {
 				state.statusRecordingDetails = "failed";

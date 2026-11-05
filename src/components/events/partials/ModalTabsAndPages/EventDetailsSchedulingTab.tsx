@@ -36,6 +36,7 @@ import { NOTIFICATION_CONTEXT } from "../../../../configs/modalConfig";
 import { useAppDispatch, useAppSelector } from "../../../../store";
 import {
 	checkConflicts,
+	getSelectedCaptureOptions,
 	saveSchedulingInfo,
 	SchedulingInfo,
 } from "../../../../slices/eventDetailsSlice";
@@ -43,18 +44,20 @@ import {
 	removeNotificationWizardForm,
 	addNotification,
 } from "../../../../slices/notificationSlice";
-import { Recording } from "../../../../slices/recordingSlice";
+import { CaptureOptionSelection, captureOptions, Recording } from "../../../../slices/recordingSlice";
 import { useTranslation } from "react-i18next";
 import WizardNavigationButtons from "../../../shared/wizard/WizardNavigationButtons";
 import SchedulingTime from "../wizards/scheduling/SchedulingTime";
 import SchedulingLocation from "../wizards/scheduling/SchedulingLocation";
 import SchedulingInputs from "../wizards/scheduling/SchedulingInputs";
+import SchedulingCaptureOptions from "../wizards/scheduling/SchedulingCaptureOptions";
+
 import SchedulingConflicts from "../wizards/scheduling/SchedulingConflicts";
 import { ParseKeys } from "i18next";
 import ModalContentTable from "../../../shared/modals/ModalContentTable";
 import i18n from "../../../../i18n/i18n";
 
-export type InitialValues = {
+export type InitialValues = CaptureOptionSelection & {
 	scheduleStartDate: string;
 	scheduleStartHour: string;
 	scheduleStartMinute: string;
@@ -143,10 +146,21 @@ const EventDetailsSchedulingTab = ({
 		return value ? t(value as ParseKeys) : "";
 	};
 
-	// changes the inputs in the formik
+	// finds the agent, whose options are to be displayed in the formik
+	const getAgent = (deviceId: Recording["id"]) => {
+		if (deviceId === source.device.id) {
+			return source.device;
+		}
+		return filterDevicesForAccess(user, captureAgents).find(agent => agent.id === deviceId);
+	};
+
+	// changes the inputs and other options in the formik
 	const changeInputs = (deviceId: Recording["id"], setFieldValue: FormikHelpers<InitialValues>["setFieldValue"]) => {
 		setFieldValue("captureAgent", deviceId);
 		setFieldValue("inputs", []);
+		for (const { field } of captureOptions) {
+			setFieldValue(field, []);
+		}
 	};
 	const filterCaptureAgents = (agent: Recording) => {
 		return agent.id === source.agentId || hasDeviceAccess(user, agent.id);
@@ -161,19 +175,15 @@ const EventDetailsSchedulingTab = ({
 			accessAllowed(formik.values.captureAgent) &&
 			!(conflicts.length > 0)
 		) {
-			// check if user provided values differ from initial ones
-			if (!_.isEqual(formik.values, formik.initialValues)) {
-				if (!_.isEqual(formik.values.inputs, formik.initialValues.inputs)) {
-					return !_.isEqual(
-						[...formik.values.inputs].sort(),
-						[...formik.initialValues.inputs].sort(),
-					);
-				} else {
-					return true;
-				}
-			} else {
-				return false;
-			}
+			// check if user provided values differ from initial ones, the order of selected options does not matter
+			const sortSelected = (values: InitialValues) => ({
+				...values,
+				inputs: [...values.inputs].sort(),
+				streamConfiguration: [...values.streamConfiguration].sort(),
+				devicePosition: [...values.devicePosition].sort(),
+				deviceContent: [...values.deviceContent].sort(),
+			});
+			return !_.isEqual(sortSelected(formik.values), sortSelected(formik.initialValues));
 		} else {
 			return false;
 		}
@@ -231,6 +241,7 @@ const EventDetailsSchedulingTab = ({
 			scheduleEndMinute: source.end.minute != null ? makeTwoDigits(source.end.minute) : "",
 			captureAgent: source.device.name,
 			inputs: inputs.filter(input => input !== ""),
+			...getSelectedCaptureOptions(source.agentConfiguration),
 		};
 	};
 
@@ -516,6 +527,13 @@ const EventDetailsSchedulingTab = ({
 																)))}
 												</td>
 											</tr>
+
+											{/* other options the agent offers */}
+											<SchedulingCaptureOptions
+												agent={getAgent(formik.values.captureAgent)}
+												selection={formik.values}
+												disabled={!hasAccessRole || !accessAllowed(formik.values.captureAgent)}
+											/>
 										</tbody>
 									</table>
 								</div>
