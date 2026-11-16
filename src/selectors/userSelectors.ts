@@ -1,7 +1,7 @@
 /**
  * This file contains selectors regarding users
  */
-import { createSelector } from "reselect";
+import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
 export const getUsers = (state: RootState) => state.users.results;

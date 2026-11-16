@@ -1,6 +1,5 @@
-import { PayloadAction, SerializedError, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, SerializedError, WritableDraft, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { WritableDraft } from "immer";
 import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
 
 /**
