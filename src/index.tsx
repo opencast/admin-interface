@@ -11,7 +11,7 @@ import { Provider } from "react-redux";
 import store from "./store";
 
 // import i18n (needs to be bundled)
-import "./i18n/i18n";
+import { i18nReady } from "./i18n/i18n";
 
 // import css files for certain libraries
 import "react-datepicker/dist/react-datepicker.css";
@@ -34,14 +34,18 @@ if (!container) {
 }
 const root = ReactDOMClient.createRoot(container);
 
-root.render(
-	<React.StrictMode>
-		<Provider store={store}>
-			<PersistGate loading={<div>loading...</div>} persistor={persistor}>
-				<HotkeysProvider>
-					<App />
-				</HotkeysProvider>
-			</PersistGate>
-		</Provider>
-	</React.StrictMode>,
-);
+// Wait for the translations of the language of the user, so the app is not shown in English first.
+// If they cannot be loaded, the app is shown in English.
+i18nReady.finally(() => {
+	root.render(
+		<React.StrictMode>
+			<Provider store={store}>
+				<PersistGate loading={<div>loading...</div>} persistor={persistor}>
+					<HotkeysProvider>
+						<App />
+					</HotkeysProvider>
+				</PersistGate>
+			</Provider>
+		</React.StrictMode>,
+	);
+});
