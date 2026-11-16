@@ -28,10 +28,7 @@
 @mixin font-face($font-family, $file, $font-weight, $font-style) {
   @font-face {
     font-family: $font-family;
-      src: url('#{variables.$font-path}#{$file}.eot');
-      src: url('#{variables.$font-path}#{$file}.eot?#iefix') format('embedded-opentype'),
-           url('#{variables.$font-path}#{$file}.woff') format('woff'),
-           url('#{variables.$font-path}#{$file}.ttf') format('truetype');
+      src: url('#{variables.$font-path}#{$file}.woff') format('woff');
     font-weight: $font-weight;
     font-style: $font-style;
   }
