@@ -1,6 +1,6 @@
 import { PayloadAction, SerializedError, createSlice } from "@reduxjs/toolkit";
 import axios, { AxiosError } from "axios";
-import _ from "lodash";
+import { isEmpty } from "lodash-es";
 import {
 	getSeriesDetailsExtendedMetadata,
 	getStatistics,
@@ -175,7 +175,7 @@ export const fetchSeriesDetailsTheme = createAppAsyncThunk("seriesDetails/fetchS
 	let seriesTheme: SeriesDetailsState["theme"] = null;
 
 	// check if series has a theme
-	if (!_.isEmpty(themeResponse)) {
+	if (!isEmpty(themeResponse)) {
 		// transform response for further use
 		seriesTheme = transformToIdValueArray(themeResponse)[0];
 	}

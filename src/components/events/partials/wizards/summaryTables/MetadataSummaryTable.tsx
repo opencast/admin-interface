@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { getMetadataCollectionFieldName } from "../../../../../utils/resourceUtils";
 import { MetadataCatalog } from "../../../../../slices/eventSlice";
-import { isEmpty } from "lodash";
+import { isEmpty } from "lodash-es";
 import { isEmptyArray } from "formik";
 import { ParseKeys } from "i18next";
 
