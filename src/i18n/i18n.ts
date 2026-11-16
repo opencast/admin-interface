@@ -1,51 +1,51 @@
-import i18n, { FormatterModule } from "i18next";
+import i18n, { BackendModule, FormatterModule } from "i18next";
 import { initReactI18next } from "react-i18next";
 
-import HttpBackend, { HttpBackendOptions } from "i18next-http-backend";
 import LanguageDetector from "i18next-browser-languagedetector";
 
-// import language files
+// The translation of the default language is part of the bundle, as it is also the fallback for all other languages
 import enUSTrans from "./org/opencastproject/adminui/languages/lang-en_US.json";
-import enGBTrans from "./org/opencastproject/adminui/languages/lang-en_GB.json";
-import daDKTrans from "./org/opencastproject/adminui/languages/lang-da_DK.json";
-import deDETrans from "./org/opencastproject/adminui/languages/lang-de_DE.json";
-import elGRTrans from "./org/opencastproject/adminui/languages/lang-el_GR.json";
-import esESTrans from "./org/opencastproject/adminui/languages/lang-es_ES.json";
-import frFRTrans from "./org/opencastproject/adminui/languages/lang-fr_FR.json";
-import glESTrans from "./org/opencastproject/adminui/languages/lang-gl_ES.json";
-import heILTrans from "./org/opencastproject/adminui/languages/lang-he_IL.json";
-import itITTrans from "./org/opencastproject/adminui/languages/lang-it_IT.json";
-import nlNLTrans from "./org/opencastproject/adminui/languages/lang-nl_NL.json";
-import plPLTrans from "./org/opencastproject/adminui/languages/lang-pl_PL.json";
-import slSITrans from "./org/opencastproject/adminui/languages/lang-sl_SI.json";
-import svSETrans from "./org/opencastproject/adminui/languages/lang-sv_SE.json";
-import trTRTrans from "./org/opencastproject/adminui/languages/lang-tr_TR.json";
-import zhCNTrans from "./org/opencastproject/adminui/languages/lang-zh_CN.json";
-import zhTWTrans from "./org/opencastproject/adminui/languages/lang-zh_TW.json";
 import { getCurrentLanguageInformation } from "../utils/utils";
 import { format as dateFnsFormat } from "date-fns/format";
 
-// Assignment of language code to translation file
+// Assignment of language code to translation file, which is only loaded once the language is used
 // !!! If translation file of a new language is added, please add assignment here, too !!!
-const resources = {
-	"en-US": { translation: enUSTrans },
-	"en-GB": { translation: enGBTrans },
-	da: { translation: daDKTrans },
-	de: { translation: deDETrans },
-	el: { translation: elGRTrans },
-	es: { translation: esESTrans },
-	fr: { translation: frFRTrans },
-	gl: { translation: glESTrans },
-	he: { translation: heILTrans },
-	it: { translation: itITTrans },
-	nl: { translation: nlNLTrans },
-	pl: { translation: plPLTrans },
-	sl: { translation: slSITrans },
-	sv: { translation: svSETrans },
-	tr: { translation: trTRTrans },
-	"zh-CN": { translation: zhCNTrans },
-	"zh-TW": { translation: zhTWTrans },
-} as const;
+const translations: Record<string, () => Promise<{ default: object }>> = {
+	"en-GB": () => import("./org/opencastproject/adminui/languages/lang-en_GB.json"),
+	da: () => import("./org/opencastproject/adminui/languages/lang-da_DK.json"),
+	de: () => import("./org/opencastproject/adminui/languages/lang-de_DE.json"),
+	el: () => import("./org/opencastproject/adminui/languages/lang-el_GR.json"),
+	es: () => import("./org/opencastproject/adminui/languages/lang-es_ES.json"),
+	fr: () => import("./org/opencastproject/adminui/languages/lang-fr_FR.json"),
+	gl: () => import("./org/opencastproject/adminui/languages/lang-gl_ES.json"),
+	he: () => import("./org/opencastproject/adminui/languages/lang-he_IL.json"),
+	it: () => import("./org/opencastproject/adminui/languages/lang-it_IT.json"),
+	nl: () => import("./org/opencastproject/adminui/languages/lang-nl_NL.json"),
+	pl: () => import("./org/opencastproject/adminui/languages/lang-pl_PL.json"),
+	sl: () => import("./org/opencastproject/adminui/languages/lang-sl_SI.json"),
+	sv: () => import("./org/opencastproject/adminui/languages/lang-sv_SE.json"),
+	tr: () => import("./org/opencastproject/adminui/languages/lang-tr_TR.json"),
+	"zh-CN": () => import("./org/opencastproject/adminui/languages/lang-zh_CN.json"),
+	"zh-TW": () => import("./org/opencastproject/adminui/languages/lang-zh_TW.json"),
+};
+
+// Loads the translation file of a language when i18next asks for it
+const translationBackend: BackendModule = {
+	type: "backend",
+	init() { },
+	read(language, _namespace, callback) {
+		const load = translations[language];
+		// Nothing to load for regions of a language, like "de-CH", as they fall back to the language itself
+		if (!load) {
+			callback(null, {});
+			return;
+		}
+		load().then(
+			translation => callback(null, translation.default),
+			(error: Error) => callback(error, null),
+		);
+	},
+};
 
 const myFormatter: FormatterModule = {
 	type: "formatter",
@@ -66,13 +66,16 @@ const myFormatter: FormatterModule = {
 };
 
 // Configuration of i18next
-i18n
-	.use(HttpBackend)
+// The promise resolves as soon as the translations of the language of the user are available
+export const i18nReady = i18n
+	.use(translationBackend)
 	.use(LanguageDetector)
 	.use(initReactI18next)
 	.use(myFormatter)
-	.init<HttpBackendOptions>({
-		resources,
+	.init({
+		resources: { "en-US": { translation: enUSTrans } },
+		// Without this, i18next would not load the other languages with the backend
+		partialBundledLanguages: true,
 		fallbackLng: "en-US",
 		debug: false,
 
