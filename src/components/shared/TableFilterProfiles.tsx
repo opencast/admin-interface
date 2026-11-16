@@ -27,12 +27,10 @@ import { LuSettings, LuX } from "react-icons/lu";
 const TableFiltersProfiles = ({
 	showFilterSettings,
 	setFilterSettings,
-	loadResource,
 	resource,
 }: {
 	showFilterSettings: boolean,
 	setFilterSettings: (_: boolean) => void,
-	loadResource: () => Promise<void>,
 	resource: Resource,
 }) => {
 	const dispatch = useAppDispatch();
@@ -129,13 +127,11 @@ const TableFiltersProfiles = ({
 		}
 	};
 
-	const chooseFilterProfile = async (filterMap: FilterData[]) => {
+	const chooseFilterProfile = (filterMap: FilterData[]) => {
 		dispatch(loadFilterProfile(filterMap));
 
-		// No matter what, we go to page one.
+		// No matter what, we go to page one. This also reloads the resources.
 		dispatch(goToPage(0));
-		// Reload resources when filters are removed
-		await loadResource();
 	};
 
 	return (
@@ -165,7 +161,7 @@ const TableFiltersProfiles = ({
 									currentProfiles.map((profile, key) => (
 										<li key={key}>
 											<ButtonLikeAnchor
-												onClick={() => { void chooseFilterProfile(profile.filterMap); }}
+												onClick={() => chooseFilterProfile(profile.filterMap)}
 												tooltipText={profile.description as ParseKeys}
 											>
 												{profile.name.substr(0, 70)}

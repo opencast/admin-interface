@@ -1,9 +1,7 @@
 import { recordingsTemplateMap } from "../../configs/tableConfigs/recordingsTableMap";
 import { getTotalRecordings } from "../../selectors/recordingSelectors";
-import { loadRecordingsIntoTable } from "../../thunks/tableThunks";
-import { fetchRecordings, Recording } from "../../slices/recordingSlice";
+import { Recording } from "../../slices/recordingSlice";
 import TablePage from "../shared/TablePage";
-import { GenericAsyncThunk } from "../../utils/utils";
 import { Row } from "../../slices/tableSlice";
 
 /**
@@ -13,8 +11,6 @@ const Recordings = () => {
 	return (
 		<TablePage<Row & Recording>
 			resource={"recordings"}
-			fetchResource={fetchRecordings as GenericAsyncThunk}
-			loadResourceIntoTable={loadRecordingsIntoTable}
 			getTotalResources={getTotalRecordings}
 			navBarLinks={[
 				{

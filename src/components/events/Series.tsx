@@ -3,13 +3,9 @@ import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router";
 import DeleteSeriesModal from "./partials/modals/DeleteSeriesModal";
 import { seriesTemplateMap } from "../../configs/tableConfigs/seriesTableMap";
-import {
-	loadSeriesIntoTable,
-} from "../../thunks/tableThunks";
 import { getTotalSeries, isShowActions } from "../../selectors/seriesSeletctor";
 import { useAppDispatch } from "../../store";
 import {
-	fetchSeries,
 	fetchSeriesMetadata,
 	fetchSeriesThemes,
 	Series as SeriesRow,
@@ -58,8 +54,6 @@ const Series = () => {
 		<>
 			<TablePage<Row & SeriesRow>
 				resource={"series"}
-				fetchResource={fetchSeries}
-				loadResourceIntoTable={loadSeriesIntoTable}
 				getTotalResources={getTotalSeries}
 				navBarLinks={eventsLinks}
 				navBarCreate={{

@@ -174,8 +174,8 @@ const usersSlice = createSlice({
 				state.results = users.results;
 			})
 			.addCase(fetchUsers.rejected, (state, action) => {
-				// Ignore responses of older fetches that finished after a newer one started
-				if (action.meta.requestId !== state.latestRequestId) {
+				// Ignore aborted fetches and responses of older fetches that finished after a newer one started
+				if (action.meta.aborted || action.meta.requestId !== state.latestRequestId) {
 					return;
 				}
 				state.status = "failed";

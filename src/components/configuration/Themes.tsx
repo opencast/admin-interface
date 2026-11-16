@@ -1,7 +1,6 @@
 import { themesTemplateMap } from "../../configs/tableConfigs/themesTableMap";
 import { getTotalThemes } from "../../selectors/themeSelectors";
-import { loadThemesIntoTable } from "../../thunks/tableThunks";
-import { fetchThemes, ThemeDetailsType } from "../../slices/themeSlice";
+import { ThemeDetailsType } from "../../slices/themeSlice";
 import TablePage from "../shared/TablePage";
 import { Row } from "../../slices/tableSlice";
 
@@ -12,8 +11,6 @@ const Themes = () => {
 	return (
 		<TablePage<Row & ThemeDetailsType>
 			resource={"themes"}
-			fetchResource={fetchThemes}
-			loadResourceIntoTable={loadThemesIntoTable}
 			getTotalResources={getTotalThemes}
 			navBarLinks={[
 				{

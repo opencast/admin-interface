@@ -7,6 +7,7 @@ import {
 	setOffset,
 	setPageActive,
 	setPages,
+	tableReloadRequested,
 } from "../slices/tableSlice";
 import {
 	setEventColumns,
@@ -34,7 +35,9 @@ import { fetchThemes, setThemeColumns } from "../slices/themeSlice";
 import { fetchRecordings, setRecordingsColumns } from "../slices/recordingSlice";
 import { setGroupColumns } from "../slices/groupSlice";
 import { fetchAcls, setAclColumns } from "../slices/aclSlice";
-import { AppDispatch, AppThunk, RootState } from "../store";
+import type { AppDispatch, AppThunk, RootState } from "../store";
+import type { Resource } from "../slices/tableSlice";
+import type { GenericAsyncThunk } from "../utils/utils";
 
 /**
  * This file contains methods/thunks used to manage the table in the main view and its state changes
@@ -313,8 +316,22 @@ export const loadThemesIntoTable = (): AppThunk => (dispatch, getState) => {
 	dispatch(loadResourceIntoTable(tableData));
 };
 
+// How to fetch each resource from the server and how to put the result into the table
+export const tableLoaders: Record<Resource, { fetch: GenericAsyncThunk, loadIntoTable: () => AppThunk }> = {
+	events: { fetch: fetchEvents, loadIntoTable: loadEventsIntoTable },
+	series: { fetch: fetchSeries, loadIntoTable: loadSeriesIntoTable },
+	recordings: { fetch: fetchRecordings as GenericAsyncThunk, loadIntoTable: loadRecordingsIntoTable },
+	jobs: { fetch: fetchJobs, loadIntoTable: loadJobsIntoTable },
+	servers: { fetch: fetchServers, loadIntoTable: loadServersIntoTable },
+	services: { fetch: fetchServices, loadIntoTable: loadServicesIntoTable },
+	users: { fetch: fetchUsers, loadIntoTable: loadUsersIntoTable },
+	groups: { fetch: fetchGroups, loadIntoTable: loadGroupsIntoTable },
+	acls: { fetch: fetchAcls, loadIntoTable: loadAclsIntoTable },
+	themes: { fetch: fetchThemes, loadIntoTable: loadThemesIntoTable },
+};
+
 // Navigate between pages
-export const goToPage = (pageNumber: number) => async (dispatch: AppDispatch, getState: () => RootState) => {
+export const goToPage = (pageNumber: number) => (dispatch: AppDispatch, getState: () => RootState) => {
 	dispatch(deselectAll());
 	dispatch(setOffset(pageNumber));
 
@@ -327,62 +344,11 @@ export const goToPage = (pageNumber: number) => async (dispatch: AppDispatch, ge
 	}
 
 	// Get resources of page and load them into table
-	switch (getResourceType(state)) {
-		case "events": {
-			await dispatch(fetchEvents());
-			dispatch(loadEventsIntoTable());
-			break;
-		}
-		case "series": {
-			await dispatch(fetchSeries());
-			dispatch(loadSeriesIntoTable());
-			break;
-		}
-		case "recordings": {
-			await dispatch(fetchRecordings());
-			dispatch(loadRecordingsIntoTable());
-			break;
-		}
-		case "jobs": {
-			await dispatch(fetchJobs());
-			dispatch(loadJobsIntoTable());
-			break;
-		}
-		case "servers": {
-			await dispatch(fetchServers());
-			dispatch(loadServersIntoTable());
-			break;
-		}
-		case "services": {
-			await dispatch(fetchServices());
-			dispatch(loadServicesIntoTable());
-			break;
-		}
-		case "users": {
-			await dispatch(fetchUsers());
-			dispatch(loadUsersIntoTable());
-			break;
-		}
-		case "groups": {
-			await dispatch(fetchGroups());
-			dispatch(loadGroupsIntoTable());
-			break;
-		}
-		case "acls": {
-			await dispatch(fetchAcls());
-			dispatch(loadAclsIntoTable());
-			break;
-		}
-		case "themes": {
-			await dispatch(fetchThemes());
-			dispatch(loadThemesIntoTable());
-			break;
-		}
-	}
+	dispatch(tableReloadRequested());
 };
 
 // Update pages for example if page size was changed
-export const updatePages = () => async (dispatch: AppDispatch, getState: () => RootState) => {
+export const updatePages = () => (dispatch: AppDispatch, getState: () => RootState) => {
 	const state = getState();
 
 	const pagination = getTablePagination(state);
@@ -395,58 +361,7 @@ export const updatePages = () => async (dispatch: AppDispatch, getState: () => R
 	dispatch(setPages(pages));
 
 	// Get resources of page and load them into table
-	switch (getResourceType(state)) {
-		case "events": {
-			await dispatch(fetchEvents());
-			dispatch(loadEventsIntoTable());
-			break;
-		}
-		case "series": {
-			await dispatch(fetchSeries());
-			dispatch(loadSeriesIntoTable());
-			break;
-		}
-		case "recordings": {
-			await dispatch(fetchRecordings());
-			dispatch(loadRecordingsIntoTable());
-			break;
-		}
-		case "jobs": {
-			await dispatch(fetchJobs());
-			dispatch(loadJobsIntoTable());
-			break;
-		}
-		case "servers": {
-			await dispatch(fetchServers());
-			dispatch(loadServersIntoTable());
-			break;
-		}
-		case "services": {
-			await dispatch(fetchServices());
-			dispatch(loadServicesIntoTable());
-			break;
-		}
-		case "users": {
-			await dispatch(fetchUsers());
-			dispatch(loadUsersIntoTable());
-			break;
-		}
-		case "groups": {
-			await dispatch(fetchGroups());
-			dispatch(loadGroupsIntoTable());
-			break;
-		}
-		case "acls": {
-			await dispatch(fetchAcls());
-			dispatch(loadAclsIntoTable());
-			break;
-		}
-		case "themes": {
-			await dispatch(fetchThemes());
-			dispatch(loadThemesIntoTable());
-			break;
-		}
-	}
+	dispatch(tableReloadRequested());
 };
 
 // Select all rows on table page

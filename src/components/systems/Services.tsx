@@ -1,9 +1,6 @@
 import { servicesTemplateMap } from "../../configs/tableConfigs/servicesTableMap";
-import {
-	loadServicesIntoTable,
-} from "../../thunks/tableThunks";
 import { getTotalServices } from "../../selectors/serviceSelector";
-import { fetchServices, Service } from "../../slices/serviceSlice";
+import { Service } from "../../slices/serviceSlice";
 import { systemsLinks } from "./partials/SystemsNavigation";
 import TablePage from "../shared/TablePage";
 import { Row } from "../../slices/tableSlice";
@@ -16,8 +13,6 @@ const Services = () => {
 	return (
 		<TablePage<Row & Service & Server>
 			resource={"services"}
-			fetchResource={fetchServices}
-			loadResourceIntoTable={loadServicesIntoTable}
 			getTotalResources={getTotalServices}
 			navBarLinks={systemsLinks}
 			caption={"SYSTEMS.SERVICES.TABLE.CAPTION"}

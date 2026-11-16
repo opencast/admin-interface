@@ -8,9 +8,6 @@ import EditScheduledEventsModal from "./partials/modals/EditScheduledEventsModal
 import EditMetadataEventsModal from "./partials/modals/EditMetadataEventsModal";
 import { eventsTemplateMap } from "../../configs/tableConfigs/eventsTableMap";
 import {
-	loadEventsIntoTable,
-} from "../../thunks/tableThunks";
-import {
 	getTotalEvents,
 	isFetchingAssetUploadOptions as getIsFetchingAssetUploadOptions,
 	isShowActions,
@@ -23,7 +20,6 @@ import { useAppDispatch, useAppSelector } from "../../store";
 import {
 	Event,
 	fetchEventMetadata,
-	fetchEvents,
 	setShowActions,
 } from "../../slices/eventSlice";
 import EventDetailsModal from "./partials/modals/EventDetailsModal";
@@ -73,8 +69,6 @@ const Events = () => {
 		<>
 			<TablePage<Row & Event>
 				resource={"events"}
-				fetchResource={fetchEvents}
-				loadResourceIntoTable={loadEventsIntoTable}
 				getTotalResources={getTotalEvents}
 				navBarLinks={eventsLinks}
 				navBarCreate={{

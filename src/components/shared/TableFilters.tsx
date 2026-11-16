@@ -13,12 +13,8 @@ import {
 	removeTextFilter,
 	resetFilterValues,
 } from "../../slices/tableFilterSlice";
-import { reverseTable } from "../../slices/tableSlice";
-import {
-	deselectAll,
-	setOffset,
-	setPageActive,
-} from "../../slices/tableSlice";
+import { reverseTable, tableReloadRequested } from "../../slices/tableSlice";
+import { goToPage } from "../../thunks/tableThunks";
 import TableFilterProfiles from "./TableFilterProfiles";
 import { availableHotkeys } from "../../configs/hotkeysConfig";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -40,10 +36,8 @@ import i18n from "../../i18n/i18n";
  * This component renders the table filters in the upper right corner of the table
  */
 const TableFilters = ({
-	loadResource,
 	resource,
 }: {
-	loadResource: () => Promise<void>,
 	resource: Resource,
 }) => {
 	const { t } = useTranslation();
@@ -73,7 +67,7 @@ const TableFilters = ({
 	}, [location.hash]);
 
 	// Remove all selected filters, no filter should be "active" anymore
-	const removeFilters = async () => {
+	const removeFilters = () => {
 		// Clear state
 		setStartDate(undefined);
 		setEndDate(undefined);
@@ -86,11 +80,11 @@ const TableFilters = ({
 		dispatch(resetFilterValues());
 
 		// Reload resources when filters are removed
-		await loadResource();
+		dispatch(tableReloadRequested());
 	};
 
 	// Remove a certain filter
-	const removeFilter = async (filter: FilterData) => {
+	const removeFilter = (filter: FilterData) => {
 		if (filter.name === "startDate") {
 			// Clear state
 			setStartDate(undefined);
@@ -100,7 +94,7 @@ const TableFilters = ({
 		dispatch(editFilterValue({ filterName: filter.name, value: "", resource }));
 
 		// Reload resources when filter is removed
-		await loadResource();
+		dispatch(tableReloadRequested());
 	};
 
 	const handleSearchChange = (value: string) => {
@@ -147,13 +141,9 @@ const TableFilters = ({
 	// Apply the filter changes (in debounced) accomulated in handleChange,
 	// simply by going to first page and then load resources.
 	// This helps increase performance by reducing the number of calls to load resources.
-	const applyFilterChangesDebounced = async () => {
+	const applyFilterChangesDebounced = () => {
 		// No matter what, we go to page one.
-		dispatch(deselectAll());
-		dispatch(setOffset(0));
-		dispatch(setPageActive(0));
-		// Reload of resource
-		await loadResource();
+		dispatch(goToPage(0));
 	};
 
 	useEffect(() => {
@@ -204,7 +194,7 @@ const TableFilters = ({
 		}
 	};
 
-	const submitDateFilter = async (start: Date | undefined | null, end: Date | undefined | null) => {
+	const submitDateFilter = (start: Date | undefined | null, end: Date | undefined | null) => {
 		if (start && end && isValid(start) && isValid(end)) {
 			const filter = filterMap.find(({ name }) => name === selectedFilter);
 			if (filter) {
@@ -216,10 +206,7 @@ const TableFilters = ({
 				setFilterSelector(false);
 				setSelectedFilter("");
 				// Reload of resource after going to very first page.
-				dispatch(deselectAll());
-				dispatch(setOffset(0));
-				dispatch(setPageActive(0));
-				await loadResource();
+				dispatch(goToPage(0));
 			}
 		}
 	};
@@ -383,7 +370,6 @@ const TableFilters = ({
 							showFilterSettings={showFilterSettings}
 							setFilterSettings={setFilterSettings}
 							resource={resource}
-							loadResource={loadResource}
 						/>
 					</div>
 				)}
