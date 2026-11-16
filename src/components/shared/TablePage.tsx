@@ -1,22 +1,20 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import TableFilters from "../shared/TableFilters";
 import Table, { TemplateMap } from "../shared/Table";
 import Notifications from "../shared/Notifications";
 import { CreateType, NavBarLink } from "../NavBar";
-import { AppThunk, RootState, useAppSelector } from "../../store";
-import { Resource, Row } from "../../slices/tableSlice";
+import { RootState, useAppDispatch, useAppSelector } from "../../store";
+import { Resource, Row, tableClosed, tableOpened } from "../../slices/tableSlice";
 import { ParseKeys } from "i18next";
+import { useLocation } from "react-router";
 import MainPage from "./MainPage";
-import { GenericAsyncThunk } from "../../utils/utils";
 
 /**
  * This component renders a generic page with a table
  */
 const TablePage = <T extends Row, >({
 	resource,
-	fetchResource,
-	loadResourceIntoTable,
 	getTotalResources,
 	navBarLinks,
 	navBarCreate,
@@ -26,8 +24,6 @@ const TablePage = <T extends Row, >({
 	children,
 }: {
 	resource: Resource
-	fetchResource: GenericAsyncThunk,
-	loadResourceIntoTable: () => AppThunk,
 	getTotalResources: (state: RootState) => number,
 	navBarLinks: NavBarLink[]
 	navBarCreate?: CreateType
@@ -37,8 +33,20 @@ const TablePage = <T extends Row, >({
 	children?: ReactNode
 }) => {
 	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
+
+	const location = useLocation();
 
 	const numberOfRows = useAppSelector(state => getTotalResources(state));
+
+	useEffect(() => {
+		// Loading and refreshing the resource is handled by the table listener
+		dispatch(tableOpened(resource));
+
+		return () => {
+			dispatch(tableClosed());
+		};
+	}, [location.hash, resource, dispatch]);
 
 	return (
 		<MainPage
@@ -55,8 +63,6 @@ const TablePage = <T extends Row, >({
 
 						{/* Include filters component */}
 						<TableFilters
-							loadResource={fetchResource}
-							loadResourceIntoTable={loadResourceIntoTable}
 							resource={resource}
 						/>
 					</div>
@@ -67,8 +73,6 @@ const TablePage = <T extends Row, >({
 				<Table
 					resource={resource}
 					templateMap={templateMap}
-					fetchResource={fetchResource}
-					loadResourceIntoTable={loadResourceIntoTable}
 				/>
 		</MainPage>
 	);

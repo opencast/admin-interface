@@ -1,9 +1,6 @@
 import { aclsTemplateMap } from "../../configs/tableConfigs/aclsTableMap";
-import {
-	loadAclsIntoTable,
-} from "../../thunks/tableThunks";
 import { getTotalAcls } from "../../selectors/aclSelectors";
-import { AclResult, fetchAcls } from "../../slices/aclSlice";
+import { AclResult } from "../../slices/aclSlice";
 import { usersLinks } from "./partials/UsersNavigation";
 import TablePage from "../shared/TablePage";
 import { Row } from "../../slices/tableSlice";
@@ -15,8 +12,6 @@ const Acls = () => {
 	return (
 		<TablePage<Row & AclResult>
 			resource={"acls"}
-			fetchResource={fetchAcls}
-			loadResourceIntoTable={loadAclsIntoTable}
 			getTotalResources={getTotalAcls}
 			navBarLinks={usersLinks}
 			navBarCreate={{

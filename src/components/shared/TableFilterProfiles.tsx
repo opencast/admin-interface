@@ -12,14 +12,13 @@ import {
 } from "../../thunks/tableThunks";
 import { getFilters } from "../../selectors/tableFilterSelectors";
 import { FilterData, loadFilterProfile } from "../../slices/tableFilterSlice";
-import { AppThunk, useAppDispatch, useAppSelector } from "../../store";
+import { useAppDispatch, useAppSelector } from "../../store";
 import { useHotkeys } from "react-hotkeys-hook";
 import { availableHotkeys } from "../../configs/hotkeysConfig";
 import ButtonLikeAnchor from "./ButtonLikeAnchor";
 import { ParseKeys } from "i18next";
 import { Resource } from "../../slices/tableSlice";
 import { LuSettings, LuX } from "react-icons/lu";
-import { GenericAsyncThunk } from "../../utils/utils";
 
 /**
  * This component renders the table filter profiles in the upper right corner when clicked on settings icon of the
@@ -28,14 +27,10 @@ import { GenericAsyncThunk } from "../../utils/utils";
 const TableFiltersProfiles = ({
 	showFilterSettings,
 	setFilterSettings,
-	loadResource,
-	loadResourceIntoTable,
 	resource,
 }: {
 	showFilterSettings: boolean,
 	setFilterSettings: (_: boolean) => void,
-	loadResource: GenericAsyncThunk,
-	loadResourceIntoTable: () => AppThunk,
 	resource: Resource,
 }) => {
 	const dispatch = useAppDispatch();
@@ -135,11 +130,8 @@ const TableFiltersProfiles = ({
 	const chooseFilterProfile = (filterMap: FilterData[]) => {
 		dispatch(loadFilterProfile(filterMap));
 
-		// No matter what, we go to page one.
+		// No matter what, we go to page one. This also reloads the resources.
 		dispatch(goToPage(0));
-		// Reload resources when filters are removed
-		dispatch(loadResource());
-		dispatch(loadResourceIntoTable());
 	};
 
 	return (

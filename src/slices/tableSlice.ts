@@ -98,6 +98,8 @@ export type TableState = {
 	error: SerializedError | null,
 	multiSelect: { [key in Resource]: boolean },
 	resource: Resource,
+	// The resource of the table that is currently mounted in the UI, if any
+	openResource: Resource | null,
 	pages: Page[],
 	columns: TableConfig["columns"],
 	sortBy: { [key in Resource]: string },  // Key is resource, value is actual sorting parameter
@@ -147,6 +149,7 @@ const initialState: TableState = {
 		themes: themesTableConfig.multiSelect,
 	},
 	resource: "events",
+	openResource: null,
 	pages: [],
 	columns: [],
 	sortBy: {
@@ -183,6 +186,13 @@ const initialState: TableState = {
 		directAccessibleNo: 3,
 	},
     flags: {},
+};
+
+const resetTable = (state: TableState) => {
+	state.columns = initialState.columns;
+	state.pages = initialState.pages;
+	state.rows = initialState.rows;
+	state.pagination.offset = initialState.pagination.offset;
 };
 
 const tableSlice = createSlice({
@@ -340,11 +350,19 @@ const tableSlice = createSlice({
 			});
 		},
 		resetTableProperties: state => {
-			state.columns = initialState.columns;
-			state.pages = initialState.pages;
-			state.rows = initialState.rows;
-			state.pagination.offset = initialState.pagination.offset;
+			resetTable(state);
 		},
+		// A table was mounted. Clears the table of previous data. Loading is done by the table listener.
+		tableOpened: (state, action: PayloadAction<Resource>) => {
+			state.openResource = action.payload;
+			resetTable(state);
+		},
+		// The table was unmounted
+		tableClosed: state => {
+			state.openResource = null;
+		},
+		// Data of the open table is outdated (e.g. filters, page or sorting changed): load it again
+		tableReloadRequested: () => {},
 	},
 });
 
@@ -373,6 +391,9 @@ export const {
 	setDirectAccessiblePages,
 	setPageActive,
 	resetTableProperties,
+	tableOpened,
+	tableClosed,
+	tableReloadRequested,
 } = tableSlice.actions;
 
 // Export the slice reducer as the default export

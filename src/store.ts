@@ -29,6 +29,7 @@ import userInfo from "./slices/userInfoSlice";
 import statistics from "./slices/statisticsSlice";
 import { ThunkAction, configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+import { tableListenerMiddleware } from "./listeners/tableListener";
 import autoMergeLevel2 from "redux-persist/lib/stateReconciler/autoMergeLevel2";
 
 /**
@@ -96,7 +97,7 @@ const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }),
+    }).prepend(tableListenerMiddleware.middleware),
 });
 
 // Initialize typescript type inference

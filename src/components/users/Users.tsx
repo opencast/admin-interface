@@ -1,9 +1,6 @@
 import { usersTemplateMap } from "../../configs/tableConfigs/usersTableMap";
 import { getTotalUsers } from "../../selectors/userSelectors";
-import {
-	loadUsersIntoTable,
-} from "../../thunks/tableThunks";
-import { fetchUsers, User } from "../../slices/userSlice";
+import { User } from "../../slices/userSlice";
 import { usersLinks } from "./partials/UsersNavigation";
 import TablePage from "../shared/TablePage";
 import { Row } from "../../slices/tableSlice";
@@ -15,8 +12,6 @@ const Users = () => {
 	return (
 		<TablePage<Row & User>
 			resource={"users"}
-			fetchResource={fetchUsers}
-			loadResourceIntoTable={loadUsersIntoTable}
 			getTotalResources={getTotalUsers}
 			navBarLinks={usersLinks}
 			navBarCreate={{
