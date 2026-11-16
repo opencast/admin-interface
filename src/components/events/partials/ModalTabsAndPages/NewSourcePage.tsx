@@ -36,7 +36,13 @@ import {
 	changeStartMinuteMultiple,
 } from "../../../../utils/dateUtils";
 import { useAppDispatch, useAppSelector } from "../../../../store";
-import { Recording, fetchRecordings } from "../../../../slices/recordingSlice";
+import {
+	CaptureOptionSelection,
+	Recording,
+	captureOptions,
+	contentOverridesInputs,
+	fetchRecordings,
+} from "../../../../slices/recordingSlice";
 import { addNotification, removeNotificationWizardForm } from "../../../../slices/notificationSlice";
 import { parseISO } from "date-fns";
 import WizardNavigationButtons from "../../../shared/wizard/WizardNavigationButtons";
@@ -46,6 +52,7 @@ import ButtonLikeAnchor from "../../../shared/ButtonLikeAnchor";
 import SchedulingTime from "../wizards/scheduling/SchedulingTime";
 import SchedulingLocation from "../wizards/scheduling/SchedulingLocation";
 import SchedulingInputs from "../wizards/scheduling/SchedulingInputs";
+import SchedulingCaptureOptions from "../wizards/scheduling/SchedulingCaptureOptions";
 import SchedulingConflicts from "../wizards/scheduling/SchedulingConflicts";
 import { ParseKeys } from "i18next";
 import { LuCircleX } from "react-icons/lu";
@@ -54,7 +61,7 @@ import i18n from "../../../../i18n/i18n";
 /**
  * This component renders the source page for new events in the new event wizard.
  */
-interface RequiredFormProps {
+interface RequiredFormProps extends CaptureOptionSelection {
 	scheduleStartDate: string,
 	sourceMode: string,
 	// Schedule
@@ -393,7 +400,7 @@ const Upload = <T extends RequiredFormPropsUpload>({
 /*
  * Renders fields for providing information for schedule of event
  */
-const Schedule = <T extends {
+const Schedule = <T extends CaptureOptionSelection & {
 	location: string
 	scheduleStartDate: string
 	scheduleEndDate: string
@@ -485,17 +492,16 @@ const Schedule = <T extends {
 	};
 
 
+	const selectedDevice = inputDevices.find(({ name }) => name === formik.values.location);
+
 	const renderInputDeviceOptions = () => {
 		if (formik.values.location) {
-			const inputDevice = inputDevices.find(
-				({ name }) => name === formik.values.location,
-			);
-			if (!inputDevice) {
+			if (!selectedDevice) {
 				return <></>;
 			}
 			return (
 				<SchedulingInputs
-					inputs={inputDevice.inputs}
+					inputs={selectedDevice.inputs}
 				/>
 			);
 		}
@@ -759,17 +765,30 @@ const Schedule = <T extends {
 									if (inputDevice) {
 										await formik.setFieldValue("inputs", inputDevice.inputs.map(input => input.id));
 									}
+									// Select all options of the location
+									for (const { field, list } of captureOptions) {
+										await formik.setFieldValue(field, inputDevice ? inputDevice[list].map(option => option.id) : []);
+									}
 									// Set location
 									await formik.setFieldValue("location", value);
 								}}
 							/>
-						<tr>
-							<td>{t("EVENTS.EVENTS.NEW.SOURCE.PLACEHOLDER.INPUTS")}</td>
-							<td>
-								{/* Render checkbox for each input option of the selected input device*/}
-								{renderInputDeviceOptions()}
-							</td>
-						</tr>
+						{/* The inputs are not offered, if the content configuration determines them */}
+						{!contentOverridesInputs(selectedDevice) && (
+							<tr>
+								<td>{t("EVENTS.EVENTS.NEW.SOURCE.PLACEHOLDER.INPUTS")}</td>
+								<td>
+									{/* Render checkbox for each input option of the selected input device*/}
+									{renderInputDeviceOptions()}
+								</td>
+							</tr>
+						)}
+						{/* Other options the selected location offers */}
+						<SchedulingCaptureOptions
+							agent={selectedDevice}
+							selection={formik.values}
+							disabled={false}
+						/>
 					</tbody>
 				</table>
 			</div>

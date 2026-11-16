@@ -388,10 +388,18 @@
 		}
 	},
 	"CAPTURE_AGENT": {
+		"OPTIONS": {
+			"STREAM_CONFIGURATION": "Stream configuration",
+			"POSITION": "Camera position",
+			"CONTENT": "Content",
+			"CONTENT_NOTICE": "The inputs cannot be selected for this capture agent, because the content configuration determines which inputs are recorded."
+		},
 		"DEVICE": {
-			"MICROPHONE": "Microphone",
-			"CAMERA": "Camera",
-			"PRESENTATION": "Presentation"
+			"INPUTS": {
+				"MICROPHONE": "Microphone",
+				"CAMERA": "Camera",
+				"PRESENTATION": "Presentation"
+			}
 		}
 	},
 	"NAV": {
@@ -1411,7 +1419,12 @@
 					"NAME": "Name",
 					"URL": "Url",
 					"STATUS": "Status",
-					"UPDATE": "Last heard from"
+					"UPDATE": "Last heard from",
+					"VERSION": "Capture agent API version",
+					"VENDOR": "Vendor",
+					"MODEL": "Model",
+					"HARDWARE": "Hardware revision",
+					"FIRMWARE": "Firmware revision"
 				},
 				"CONFIGURATION": {
 					"CAPTION": "Configuration",
@@ -1419,7 +1432,13 @@
 				},
 				"CAPABILITIES": {
 					"CAPTION": "Capabilities",
-					"NO_CAPABILITIES": "No capabilities provided"
+					"NO_CAPABILITIES": "No capabilities provided",
+					"MODES": {
+						"CAPTION": "Capture modes",
+						"LOCAL": "Local capture",
+						"STREAM": "Streaming",
+						"START_PAUSED": "Can start paused"
+					}
 				}
 			}
 		}
@@ -2215,6 +2234,7 @@
 	"AGENTS": {
 		"STATUS": {
 			"CAPTURING": "Capturing",
+			"CAPTURING_AND_UPLOADING": "Capturing and uploading",
 			"ERROR": "Error",
 			"IDLE": "Idle",
 			"OFFLINE": "Offline",

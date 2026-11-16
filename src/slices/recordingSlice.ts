@@ -6,13 +6,68 @@ import { addNotification } from "./notificationSlice";
 import { TableConfig } from "../configs/tableConfigs/aclsTableConfig";
 import { createAppAsyncThunk } from "../createAsyncThunkWithTypes";
 import { AppThunk } from "../store";
+import { ParseKeys } from "i18next";
 
 /**
  * This file contains redux reducer for actions affecting the state of recordings
  */
+
+type CaptureAgentDevice = { id: string, value: string }
+
+// What the backend reports for an agent when asked for `withParsedCapabilities`
+export type ParsedCapabilities = {
+	config: {
+		local: { capture: boolean, startpaused: boolean },
+		stream: { stream: boolean, startpaused: boolean },
+	},
+	inputs: CaptureAgentDevice[],
+	streams: CaptureAgentDevice[],
+	positions: CaptureAgentDevice[],
+	contents: CaptureAgentDevice[],
+	vendorKeys: { key: string, value: string }[],
+}
+
+// Options an agent can offer to choose from for each event, besides the inputs
+export type CaptureOptionField = "streamConfiguration" | "devicePosition" | "deviceContent"
+
+// Ids of the selected options. The options are chosen like the inputs, all of them are selected by default.
+export type CaptureOptionSelection = Record<CaptureOptionField, string[]>
+
+// The agent declares the available options under `key`, the choice for an event is stored under the same key,
+// as comma separated ids
+export const captureOptions: {
+	field: CaptureOptionField,
+	key: string,
+	list: "streams" | "positions" | "contents",
+	label: ParseKeys,
+}[] = [
+	{
+		field: "streamConfiguration",
+		key: "capture.stream.configuration",
+		list: "streams",
+		label: "CAPTURE_AGENT.OPTIONS.STREAM_CONFIGURATION",
+	},
+	{
+		field: "devicePosition",
+		key: "capture.device.positions",
+		list: "positions",
+		label: "CAPTURE_AGENT.OPTIONS.POSITION",
+	},
+	{
+		field: "deviceContent",
+		key: "capture.device.content",
+		list: "contents",
+		label: "CAPTURE_AGENT.OPTIONS.CONTENT",
+	},
+];
+
 export type Recording = {
 	id: string,
-	inputs: { id: string, value: string }[],
+	inputs: CaptureAgentDevice[],
+	// Options the agent offers for each event, besides the inputs
+	streams: CaptureAgentDevice[],
+	positions: CaptureAgentDevice[],
+	contents: CaptureAgentDevice[],
 	name: string,
 	removable: boolean,
 	status: string,
@@ -20,6 +75,11 @@ export type Recording = {
 	updated: string,
 	url: string,
 }
+
+export type CaptureOptionLists = Partial<Pick<Recording, "streams" | "positions" | "contents">>
+
+// A content configuration overrides the selected inputs. Agents offering contents therefore have no inputs to choose.
+export const contentOverridesInputs = (agent?: CaptureOptionLists) => (agent?.contents ?? []).length > 0;
 
 type RecordingState = {
 	status: "uninitialized" | "loading" | "succeeded" | "failed",
@@ -57,7 +117,7 @@ export const fetchRecordings = createAppAsyncThunk("recordings/fetchRecordings",
 		Status: string,
 		Update: string,
 		URL: string,
-		inputs?: { id: string, value: string }[],
+		parsedCapabilities?: ParsedCapabilities,
 	};
 	type FetchRecordings = {
 		results: Results[],
@@ -70,13 +130,14 @@ export const fetchRecordings = createAppAsyncThunk("recordings/fetchRecordings",
 
 	if (flag === "inputs") {
 		res = await axios.get<FetchRecordings>(
-			"/admin-ng/capture-agents/agents.json?inputs=true",
-			);
+			"/admin-ng/capture-agents/agents.json",
+			{ params: { withParsedCapabilities: true } },
+		);
 	} else {
 		const state = getState();
 		const params = getURLParams(state, "recordings");
 
-		// /agents.json?filter={filter}&limit=100&offset=0&inputs=false&sort={sort}
+		// /agents.json?filter={filter}&limit=100&offset=0&withParsedCapabilities=false&sort={sort}
 		res = await axios.get<FetchRecordings>("/admin-ng/capture-agents/agents.json", {
 			params: params,
 		});
@@ -92,7 +153,10 @@ export const fetchRecordings = createAppAsyncThunk("recordings/fetchRecordings",
 			name: agent.Name,
 			status: agent.Status,
 			updated: agent.Update,
-			inputs: agent.inputs ? [...agent.inputs] : [],
+			inputs: agent.parsedCapabilities?.inputs ?? [],
+			streams: agent.parsedCapabilities?.streams ?? [],
+			positions: agent.parsedCapabilities?.positions ?? [],
+			contents: agent.parsedCapabilities?.contents ?? [],
 			type: "LOCATION",
 			url: agent.URL ? agent.URL : "",
 			removable:
