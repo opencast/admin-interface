@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Formik, FormikProps } from "formik";
-import _ from "lodash";
+import { isEqual } from "lodash-es";
 import Notifications from "../../../shared/Notifications";
 import { getUserInformation } from "../../../../selectors/userInfoSelectors";
 import { hasAccess } from "../../../../utils/utils";
@@ -36,7 +36,7 @@ const SeriesDetailsThemeTab = ({
 	const checkValidity = (formik: FormikProps<{theme: SeriesTheme | null }>) => {
 		if (formik.dirty && formik.isValid) {
 			// check if user provided values differ from initial ones
-			return !_.isEqual(formik.values, formik.initialValues);
+			return !isEqual(formik.values, formik.initialValues);
 		} else {
 			return false;
 		}

@@ -20,7 +20,7 @@ import {
 	Conflict,
 } from "../../../../slices/eventSlice";
 import { Recording } from "../../../../slices/recordingSlice";
-import lodash, { groupBy } from "lodash";
+import { cloneDeep, groupBy } from "lodash-es";
 import WizardNavigationButtons from "../../../shared/wizard/WizardNavigationButtons";
 import SchedulingTime from "../wizards/scheduling/SchedulingTime";
 import SchedulingLocation from "../wizards/scheduling/SchedulingLocation";
@@ -99,7 +99,7 @@ const EditScheduledEventsEditPage = <T extends RequiredFormProps>({
 				updateKey(key, prev, curr, defaultValuesEditedEvents);
 			}
 			return prev;
-		}, lodash.cloneDeep(groupedEvents[0]));
+		}, cloneDeep(groupedEvents[0]));
 		return result;
 	};
 

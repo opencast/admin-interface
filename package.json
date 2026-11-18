@@ -18,11 +18,10 @@
     "dompurify": "^3.4.17",
     "focus-trap-react": "^12.0.3",
     "formik": "^2.4.9",
-    "http-proxy-middleware": "^4.2.1",
     "i18next": "26.5.11",
     "i18next-browser-languagedetector": "^8.2.3",
     "i18next-http-backend": "^4.0.6",
-    "lodash": "^4.17.23",
+    "lodash-es": "^4.18.1",
     "react": "^19.3.1",
     "react-chartjs-2": "^5.3.1",
     "react-datepicker": "^8.8.0",
@@ -37,17 +36,14 @@
     "react-textarea-autosize": "^8.5.9",
     "react-tooltip": "^6.0.9",
     "react-window": "^2.5.1",
-    "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
-    "redux-thunk": "^3.1.0",
-    "reselect": "^5.3.0",
+    "uuid": "^14.0.3",
     "yup": "^1.7.1"
   },
   "scripts": {
     "start": "vite",
     "build": "tsc && eslint . --max-warnings=0 && vite build",
-    "serve": "vite preview",
-    "test": "vitest"
+    "serve": "vite preview"
   },
   "browserslist": {
     "production": [
@@ -63,18 +59,15 @@
   },
   "devDependencies": {
     "@opencast/eslint-config-ts-react": "^0.3.0",
-    "@redux-devtools/extension": "^4.0.0",
-    "@types/lodash": "^4.17.27",
+    "@types/lodash-es": "^4.17.12",
     "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
     "eslint": "^9.39.2",
-    "prop-types": "^15.8.1",
     "sass": "^1.107.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.72.1",
-    "uuid": "^14.0.3",
-    "vite": "^8.3.5",
-    "vitest": "^5.0.5"
+    "vite": "^8.3.5"
   }
 }

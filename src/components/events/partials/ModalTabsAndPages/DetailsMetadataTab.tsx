@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Formik, FormikProps } from "formik";
 import { Field } from "../../../shared/Field";
-import _ from "lodash";
+import { isEqual } from "lodash-es";
 import Notifications from "../../../shared/Notifications";
 import RenderMultiField from "../../../shared/wizard/RenderMultiField";
 import RenderField from "../../../shared/wizard/RenderField";
@@ -91,7 +91,7 @@ const DetailsMetadataTab = ({
 	const checkValidity = (formik: FormikProps<InitialValues>) => {
 		if (formik.dirty && formik.isValid && hasAccess(editAccessRole, user)) {
 			// check if user provided values differ from initial ones
-			return !_.isEqual(formik.values, formik.initialValues);
+			return !isEqual(formik.values, formik.initialValues);
 		} else {
 			return false;
 		}

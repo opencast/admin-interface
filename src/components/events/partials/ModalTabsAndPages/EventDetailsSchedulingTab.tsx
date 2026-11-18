@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import _ from "lodash";
+import { isEqual } from "lodash-es";
 import DatePicker from "react-datepicker";
 import { Formik, FormikHelpers, FormikProps } from "formik";
 import Notifications from "../../../shared/Notifications";
@@ -162,9 +162,9 @@ const EventDetailsSchedulingTab = ({
 			!(conflicts.length > 0)
 		) {
 			// check if user provided values differ from initial ones
-			if (!_.isEqual(formik.values, formik.initialValues)) {
-				if (!_.isEqual(formik.values.inputs, formik.initialValues.inputs)) {
-					return !_.isEqual(
+			if (!isEqual(formik.values, formik.initialValues)) {
+				if (!isEqual(formik.values.inputs, formik.initialValues.inputs)) {
+					return !isEqual(
 						[...formik.values.inputs].sort(),
 						[...formik.initialValues.inputs].sort(),
 					);
