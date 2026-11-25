@@ -1910,6 +1910,11 @@
 				"LABEL": "Needs cutting",
 				"YES": "Yes",
 				"NO": "No"
+			},
+			"IS_PUBLISHED": {
+				"LABEL": "Published",
+				"YES": "Yes",
+				"NO": "No"
 			}
 		},
 		"JOBS": {
