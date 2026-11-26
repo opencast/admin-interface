@@ -446,6 +446,8 @@ export const postNewEvent = (params: {
 		location: string,
 		uploadAssetsTrack?: UploadAssetsTrack[],
 		metadata: { [key: string]: unknown },
+		// Files chosen in the asset upload step are stored under their option id
+		[key: string]: unknown,
 	},
 	metadataInfo: MetadataCatalog,
 	extendedMetadata: MetadataCatalog[],
@@ -591,12 +593,12 @@ export const postNewEvent = (params: {
 	}
 	for (let i = 0; uploadAssetOptions.length > i; i++) {
 		if (
-			!!values.metadata[uploadAssetOptions[i].id] &&
+			values[uploadAssetOptions[i].id] instanceof File &&
 			values.sourceMode === "UPLOAD"
 		) {
 			formData.append(
 				uploadAssetOptions[i].id + ".0",
-				values.metadata[uploadAssetOptions[i].id] as File,
+				values[uploadAssetOptions[i].id] as File,
 			);
 			assets.options = assets.options.concat(uploadAssetOptions[i]);
 		}
